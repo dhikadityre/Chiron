@@ -16,6 +16,7 @@ import os
 import json
 import socket
 import argparse
+import subprocess
 from datetime import datetime, timezone
 from pathlib import Path
 from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
@@ -98,6 +99,100 @@ def resolve_local_file_path(gitlab_project: str, branch: str, rel_file_path: str
         "local_file_path": str(full_path),
         "file_exists": full_path.is_file()
     }
+
+
+SUPPORTED_IDES = {"xcode", "antigravity", "cursor", "vscode"}
+
+
+def validate_file_in_allowed_repositories(file_path: str) -> Path:
+    """
+    Validates that file_path exists and is located inside one of the
+    registered repository roots in chiron_config.json.
+    Raises FileNotFoundError or PermissionError/ValueError.
+    """
+    full_path = Path(file_path).resolve()
+    if not full_path.is_file():
+        raise FileNotFoundError(f"Target file does not exist: {file_path}")
+
+    config = load_chiron_config()
+    repos = config.get("repositories", {})
+
+    allowed_roots = []
+    for info in repos.values():
+        if info.get("local_path"):
+            allowed_roots.append(Path(info["local_path"]).resolve())
+        for branch_path in info.get("branch_mappings", {}).values():
+            allowed_roots.append(Path(branch_path).resolve())
+
+    # Also allow files inside Chiron itself
+    allowed_roots.append(CHIRON_ROOT)
+
+    for root in allowed_roots:
+        if str(full_path).startswith(str(root)):
+            return full_path
+
+    raise PermissionError(f"Access to file outside registered repository workspaces is forbidden: {file_path}")
+
+
+def build_open_command(ide: str, file_path: str, line: int = 1) -> list:
+    """
+    Constructs the exact CLI argument list to open file_path at the given line in the specified IDE.
+    Uses shell=False argument list format to prevent command injection.
+    """
+    clean_ide = ide.strip().lower()
+    if clean_ide not in SUPPORTED_IDES:
+        raise ValueError(f"Unsupported IDE '{ide}'. Must be one of: {sorted(SUPPORTED_IDES)}")
+
+    clean_line = max(1, int(line))
+    target_path = str(Path(file_path).resolve())
+
+    if clean_ide == "xcode":
+        # Native macOS Xcode CLI: xed -line <L> <file>
+        if os.path.isfile("/usr/bin/xed"):
+            return ["/usr/bin/xed", "-line", str(clean_line), target_path]
+        return ["/usr/bin/open", "-a", "Xcode", target_path]
+
+    elif clean_ide == "antigravity":
+        return ["/usr/bin/open", f"antigravity://file/{target_path}:{clean_line}"]
+
+    elif clean_ide == "cursor":
+        return ["/usr/bin/open", f"cursor://file/{target_path}:{clean_line}"]
+
+    elif clean_ide == "vscode":
+        return ["/usr/bin/open", f"vscode://file/{target_path}:{clean_line}"]
+
+    raise ValueError(f"Unknown IDE '{ide}'")
+
+
+def execute_open_ide(ide: str, file_path: str, line: int = 1, dry_run: bool = False) -> dict:
+    """
+    Validates security constraints and executes the open command for the given IDE.
+    """
+    validated_path = validate_file_in_allowed_repositories(file_path)
+    cmd = build_open_command(ide, str(validated_path), line)
+
+    if dry_run:
+        return {
+            "status": "ok",
+            "dry_run": True,
+            "ide": ide.strip().lower(),
+            "file_path": str(validated_path),
+            "line": int(line),
+            "command": cmd
+        }
+
+    try:
+        subprocess.run(cmd, check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
+        return {
+            "status": "ok",
+            "dry_run": False,
+            "ide": ide.strip().lower(),
+            "file_path": str(validated_path),
+            "line": int(line),
+            "command": cmd
+        }
+    except subprocess.CalledProcessError as e:
+        raise RuntimeError(f"Command execution failed with exit code {e.returncode}: {e.stderr or e.stdout}")
 
 
 def get_sidecar_path(lesson_rel_path: str) -> Path:
@@ -285,6 +380,56 @@ class ChironSyncHandler(SimpleHTTPRequestHandler):
                 })
             except Exception as e:
                 self._send_json(500, {"error": f"Failed to save annotations: {e}"})
+            return
+
+        elif path == "/api/open":
+            content_length = int(self.headers.get("Content-Length", 0))
+            if content_length <= 0:
+                self._send_json(400, {"error": "Empty payload"})
+                return
+
+            body = self.rfile.read(content_length)
+            try:
+                payload = json.loads(body.decode("utf-8"))
+            except Exception as e:
+                self._send_json(400, {"error": f"Invalid JSON payload: {e}"})
+                return
+
+            ide = payload.get("ide", "")
+            line = payload.get("line", 1)
+            dry_run = bool(payload.get("dry_run", False))
+
+            if not ide:
+                self._send_json(400, {"error": "Missing 'ide' parameter"})
+                return
+
+            target_file = payload.get("file_path", "")
+            if not target_file:
+                project = payload.get("project", "")
+                branch = payload.get("branch", "")
+                rel_file = payload.get("file", "")
+                if project and rel_file:
+                    try:
+                        resolved = resolve_local_file_path(project, branch, rel_file)
+                        target_file = resolved["local_file_path"]
+                    except Exception as e:
+                        self._send_json(400, {"error": f"Path resolution failed: {e}"})
+                        return
+                else:
+                    self._send_json(400, {"error": "Must provide either 'file_path' or ('project' and 'file')"})
+                    return
+
+            try:
+                res = execute_open_ide(ide, target_file, line=line, dry_run=dry_run)
+                self._send_json(200, res)
+            except FileNotFoundError as e:
+                self._send_json(404, {"error": str(e)})
+            except PermissionError as e:
+                self._send_json(403, {"error": str(e)})
+            except ValueError as e:
+                self._send_json(400, {"error": str(e)})
+            except Exception as e:
+                self._send_json(500, {"error": f"Execution error: {e}"})
             return
 
         self._send_json(404, {"error": "Endpoint not found"})

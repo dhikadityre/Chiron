@@ -2,9 +2,33 @@
 
 **Map:** [Chiron Multi-IDE Deep Link & Local Workspace Opener](file:///Users/samir/Documents/Workspace/Chiron/docs/wayfinder/map-local-ide-integration.md)  
 **Label:** `wayfinder:task`  
-**Status:** Open (Frontier)  
+**Status:** Closed / Resolved  
 **Blocked by:** Resolved ([01: Local Repository Mapping Configuration & Daemon Path Resolution](file:///Users/samir/Documents/Workspace/Chiron/docs/wayfinder/tickets/ide-integration/01-repo-mapping-config-and-daemon-path-resolution.md))  
 **Blocks:** [03: Client URL Parser & Hybrid Launcher Engine](file:///Users/samir/Documents/Workspace/Chiron/docs/wayfinder/tickets/ide-integration/03-client-url-parser-and-hybrid-launcher-engine.md)  
+**Resolved At:** 2026-10-22  
+
+---
+
+## Resolution
+
+1. **Endpoint `POST /api/open`:**
+   - Berhasil diimplementasikan di `.assets/chiron_sync.py`.
+   - Menerima payload JSON fleksibel: dapat menggunakan `file_path` absolut langsung atau kombinasi `project`, `branch`, dan relative `file`.
+   - Mendukung parameter `line` untuk lompat baris presisi, serta flag `dry_run` untuk testing dan validasi aman.
+
+2. **Eksekusi Subprocess Multi-IDE di macOS:**
+   - **Xcode Bridge:** Menggunakan `/usr/bin/xed -line <line> <file_path>` native macOS dengan fallback ke `open -a Xcode`.
+   - **Antigravity IDE:** Membuka `open antigravity://file/<file_path>:<line>`.
+   - **Cursor IDE:** Membuka `open cursor://file/<file_path>:<line>`.
+   - **VS Code IDE:** Membuka `open vscode://file/<file_path>:<line>`.
+   - Seluruh subprocess dijalankan dengan `shell=False` dan argument array untuk mencegah command injection.
+
+3. **Keamanan & Validasi:**
+   - Fungsi `validate_file_in_allowed_repositories()` memastikan file benar-benar ada dan berada di dalam workspace repositori resmi yang terdaftar di `chiron_config.json`. File di luar workspace langsung ditolak dengan status HTTP 403 Forbidden.
+
+4. **Testing & Verifikasi:**
+   - Test suite baru `.assets/test_ide_launcher.py` lulus 100% (Unit command generation, Security guard, Dry-run API, dan HTTP POST integration).
+   - Daemon live di port 8765 telah direstart dan terverifikasi via cURL untuk Xcode dan Antigravity.
 
 ---
 
