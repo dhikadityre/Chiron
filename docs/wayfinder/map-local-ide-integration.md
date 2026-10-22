@@ -30,22 +30,24 @@ Pengguna dapat membuka file kode target secara instan (langsung lompat ke baris 
 ## Decisions so far
 - [01: Local Repository Mapping Configuration & Daemon Path Resolution](file:///Users/samir/Documents/Workspace/Chiron/docs/wayfinder/tickets/ide-integration/01-repo-mapping-config-and-daemon-path-resolution.md): Selesai & terverifikasi. Berkas chiron_config.json terpusat di root Chiron, endpoint GET /api/config & GET /api/resolve di chiron_sync.py, pengamanan path traversal, serta test suite lulus 100%.
 - [02: Daemon IDE Launcher Endpoint & Xcode Bridge](file:///Users/samir/Documents/Workspace/Chiron/docs/wayfinder/tickets/ide-integration/02-daemon-ide-launcher-endpoint-and-xcode-bridge.md): Selesai & terverifikasi. Endpoint POST /api/open di chiron_sync.py, CLI bridge /usr/bin/xed untuk Xcode, URI Schemes untuk Antigravity/Cursor/VSCode, proteksi keamanan repository boundary, dan test suite lulus 100%.
+- [03: Client URL Parser & Hybrid Launcher Engine](file:///Users/samir/Documents/Workspace/Chiron/docs/wayfinder/tickets/ide-integration/03-client-url-parser-and-hybrid-launcher-engine.md): Selesai & terverifikasi. Modul klien chiron-ide-launcher.js, parser GitLab URL dengan multi-segment branch, hybrid execution dengan fallback URI schemes, dan toast notification system.
 
 ---
 
 ## Tickets & Frontier
 
 ### Frontier (Open & Unblocked)
-- [03: Client URL Parser & Hybrid Launcher Engine](file:///Users/samir/Documents/Workspace/Chiron/docs/wayfinder/tickets/ide-integration/03-client-url-parser-and-hybrid-launcher-engine.md) — `wayfinder:prototype`
+- [04: Compact Action Bar UI & Dynamic DOM Auto-Injection](file:///Users/samir/Documents/Workspace/Chiron/docs/wayfinder/tickets/ide-integration/04-compact-action-bar-ui-and-auto-injection.md) — `wayfinder:prototype`
 
 ### Blocked Tickets
-- [04: Compact Action Bar UI & Dynamic DOM Auto-Injection](file:///Users/samir/Documents/Workspace/Chiron/docs/wayfinder/tickets/ide-integration/04-compact-action-bar-ui-and-auto-injection.md) — `wayfinder:prototype` *(Blocked by: 03)*
+*(Semua tiket telah terbuka. Tidak ada tiket yang terblokir.)*
 
 ---
 
 ### Resolved Tickets
 - [01: Local Repository Mapping Configuration & Daemon Path Resolution](file:///Users/samir/Documents/Workspace/Chiron/docs/wayfinder/tickets/ide-integration/01-repo-mapping-config-and-daemon-path-resolution.md) — `wayfinder:task` *(Closed / Resolved)*
 - [02: Daemon IDE Launcher Endpoint & Xcode Bridge](file:///Users/samir/Documents/Workspace/Chiron/docs/wayfinder/tickets/ide-integration/02-daemon-ide-launcher-endpoint-and-xcode-bridge.md) — `wayfinder:task` *(Closed / Resolved)*
+- [03: Client URL Parser & Hybrid Launcher Engine](file:///Users/samir/Documents/Workspace/Chiron/docs/wayfinder/tickets/ide-integration/03-client-url-parser-and-hybrid-launcher-engine.md) — `wayfinder:prototype` *(Closed / Resolved)*
 
 ---
 

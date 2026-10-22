@@ -2,8 +2,8 @@
 
 **Map:** [Chiron Multi-IDE Deep Link & Local Workspace Opener](file:///Users/samir/Documents/Workspace/Chiron/docs/wayfinder/map-local-ide-integration.md)  
 **Label:** `wayfinder:prototype`  
-**Status:** Open (Blocked by 03)  
-**Blocked by:** [03: Client URL Parser & Hybrid Launcher Engine](file:///Users/samir/Documents/Workspace/Chiron/docs/wayfinder/tickets/ide-integration/03-client-url-parser-and-hybrid-launcher-engine.md)  
+**Status:** Open (Frontier)  
+**Blocked by:** Resolved ([03: Client URL Parser & Hybrid Launcher Engine](file:///Users/samir/Documents/Workspace/Chiron/docs/wayfinder/tickets/ide-integration/03-client-url-parser-and-hybrid-launcher-engine.md))  
 
 ---
 
