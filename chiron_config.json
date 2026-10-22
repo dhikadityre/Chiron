@@ -1,0 +1,37 @@
+{
+  "version": "1.0",
+  "repositories": {
+    "samir-mobile": {
+      "gitlab_project": "samir_it/samir-mobile",
+      "local_path": "/Users/samir/Documents/Workspace/SAMIR/Mobile/Nexus/samir-mobile-nexus",
+      "default_branch": "learn/iOS-Arch",
+      "xcode_project_path": "ios/IDSamirLoan.xcworkspace",
+      "branch_mappings": {
+        "learn/iOS-Arch": "/Users/samir/Documents/Workspace/SAMIR/Mobile/Nexus/samir-mobile-nexus",
+        "develop": "/Users/samir/Documents/Workspace/SAMIR/Mobile/Develop/samir-mobile-develop"
+      }
+    }
+  },
+  "ides": {
+    "antigravity": {
+      "name": "Antigravity",
+      "enabled": true,
+      "uri_scheme": "antigravity://file/{path}:{line}"
+    },
+    "cursor": {
+      "name": "Cursor",
+      "enabled": true,
+      "uri_scheme": "cursor://file/{path}:{line}"
+    },
+    "vscode": {
+      "name": "VS Code",
+      "enabled": true,
+      "uri_scheme": "vscode://file/{path}:{line}"
+    },
+    "xcode": {
+      "name": "Xcode",
+      "enabled": true,
+      "cli_command": "/usr/bin/xed -line {line} {path}"
+    }
+  }
+}
