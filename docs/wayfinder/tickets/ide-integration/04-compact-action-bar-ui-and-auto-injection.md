@@ -2,8 +2,34 @@
 
 **Map:** [Chiron Multi-IDE Deep Link & Local Workspace Opener](file:///Users/samir/Documents/Workspace/Chiron/docs/wayfinder/map-local-ide-integration.md)  
 **Label:** `wayfinder:prototype`  
-**Status:** Open (Frontier)  
+**Status:** Closed / Resolved  
 **Blocked by:** Resolved ([03: Client URL Parser & Hybrid Launcher Engine](file:///Users/samir/Documents/Workspace/Chiron/docs/wayfinder/tickets/ide-integration/03-client-url-parser-and-hybrid-launcher-engine.md))  
+**Resolved At:** 2026-10-22  
+
+---
+
+## Resolution
+
+1. **Styling Visual Compact Action Bar (`.assets/style.css`):**
+   - Menambahkan class `.chiron-code-action-bar` dengan dark obsidian & glassmorphism aesthetic.
+   - Menyediakan badge metadata file (`.chiron-cab-title`), branch (`.chiron-cab-branch`), dan baris target (`.chiron-cab-line`).
+   - Menyediakan 5 pill button dengan warna & icon khas masing-masing platform:
+     - 🦊 `.cab-gitlab`
+     - 🪐 `.cab-antigravity`
+     - ⚡ `.cab-cursor`
+     - 💻 `.cab-vscode`
+     - 🛠️ `.cab-xcode`
+   - Micro-interactions: hover glow effect, active scale feedback, dan layout responsif flexbox.
+
+2. **Dynamic DOM Auto-Injection (`initCodeActionBars`):**
+   - Mengambil semua elemen `.gitlab-code-link` di dokumen secara otomatis saat `DOMContentLoaded`.
+   - Menransformasi tag link lama menjadi Compact Action Bar lengkap dengan 5 tombol IDE tanpa merusak konten atau selektor anotasi stabilo Chiron.
+   - Ditautkan otomatis ke engine `openInIde` untuk eksekusi pembukaan file lokal atau GitLab web.
+   - Script `chiron-client.js` otomatis mem-bootstrap `chiron-ide-launcher.js` bila belum disertakan.
+
+3. **Verifikasi & Testing:**
+   - Dibuat unit test DOM `.assets/test_dom_action_bar.js` — lulus 100%.
+   - Dokumen pelajaran nyata `0001-startup-sequence-and-initial-routing.html` terverifikasi tersaji dengan action bar dan script launcher.
 
 ---
 

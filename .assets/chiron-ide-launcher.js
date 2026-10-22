@@ -401,6 +401,112 @@
     }
   }
 
+  /**
+   * Scans document for 'a.gitlab-code-link' elements and transforms them into
+   * the modern Compact Action Bar with [GitLab, Antigravity, Cursor, VS Code, Xcode] buttons.
+   */
+  async function initCodeActionBars(containerElement = null) {
+    if (typeof document === 'undefined') {
+      return;
+    }
+
+    const root = containerElement || document;
+    const links = root.querySelectorAll('a.gitlab-code-link:not(.chiron-enhanced)');
+    if (!links.length) {
+      return;
+    }
+
+    const config = await fetchConfig();
+
+    links.forEach((link) => {
+      link.classList.add('chiron-enhanced');
+      const rawUrl = link.getAttribute('href');
+      const parsed = parseGitLabUrl(rawUrl, config);
+      if (!parsed) {
+        return;
+      }
+
+      // Clean title text from original link
+      let titleText = link.textContent || '';
+      titleText = titleText.replace(/[🦊↗\n\r]/g, '').trim();
+      // Remove trailing branch badge text if present in textContent
+      if (parsed.branch && titleText.includes(parsed.branch)) {
+        titleText = titleText.replace(parsed.branch, '').trim();
+      }
+
+      const bar = document.createElement('div');
+      bar.className = 'chiron-code-action-bar';
+
+      // Meta section (filename, branch, line)
+      const meta = document.createElement('div');
+      meta.className = 'chiron-cab-meta';
+
+      const titleSpan = document.createElement('span');
+      titleSpan.className = 'chiron-cab-title';
+      const cleanFileName = parsed.filePath.split('/').pop() || 'Code';
+      titleSpan.innerHTML = `<strong>${cleanFileName}</strong>${titleText ? ` <span class="chiron-cab-sub">${titleText}</span>` : ''}`;
+      meta.appendChild(titleSpan);
+
+      if (parsed.branch) {
+        const branchBadge = document.createElement('span');
+        branchBadge.className = 'chiron-cab-branch';
+        branchBadge.textContent = parsed.branch;
+        meta.appendChild(branchBadge);
+      }
+
+      if (parsed.startLine) {
+        const lineBadge = document.createElement('span');
+        lineBadge.className = 'chiron-cab-line';
+        lineBadge.textContent = parsed.endLine ? `L${parsed.startLine}-${parsed.endLine}` : `L${parsed.startLine}`;
+        meta.appendChild(lineBadge);
+      }
+
+      // Actions section (GitLab + Local IDE pills)
+      const actions = document.createElement('div');
+      actions.className = 'chiron-cab-actions';
+
+      const ideList = [
+        { id: 'gitlab', label: 'GitLab', icon: '🦊', title: 'Buka di GitLab Web Browser' },
+        { id: 'antigravity', label: 'Antigravity', icon: '🪐', title: 'Buka di Google Antigravity IDE (Lokal)' },
+        { id: 'cursor', label: 'Cursor', icon: '⚡', title: 'Buka di Cursor IDE (Lokal)' },
+        { id: 'vscode', label: 'VS Code', icon: '💻', title: 'Buka di VS Code (Lokal)' },
+        { id: 'xcode', label: 'Xcode', icon: '🛠️', title: 'Buka di Apple Xcode (Lokal)' }
+      ];
+
+      ideList.forEach((item) => {
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = `chiron-cab-btn cab-${item.id}`;
+        btn.title = item.title;
+        btn.setAttribute('aria-label', item.title);
+        btn.innerHTML = `<span class="cab-icon">${item.icon}</span><span class="cab-label">${item.label}</span>`;
+        btn.addEventListener('click', (e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          openInIde(item.id, parsed, { line: parsed.startLine });
+        });
+        actions.appendChild(btn);
+      });
+
+      bar.appendChild(meta);
+      bar.appendChild(actions);
+
+      // Gracefully replace or attach inside parent
+      if (link.parentNode) {
+        link.parentNode.replaceChild(bar, link);
+      }
+    });
+  }
+
+  // Auto-initialize when running in browser
+  if (typeof document !== 'undefined') {
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', () => initCodeActionBars());
+    } else {
+      initCodeActionBars();
+    }
+  }
+
   return {
     parseGitLabUrl,
     resolveLocalPath,
@@ -408,6 +514,8 @@
     showToast,
     fetchConfig,
     openInIde,
+    initCodeActionBars,
     DAEMON_BASE_URL
   };
 });
+

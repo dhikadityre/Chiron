@@ -2221,3 +2221,179 @@ body.chiron-filter-hide-all .chiron-gutter-btn {
   opacity: 1;
   transform: scale(1.15);
 }
+
+/* ==============================================================================
+   Chiron Compact Code Action Bar & Multi-IDE Launcher Pills
+   ============================================================================== */
+.chiron-code-action-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+  background: rgba(22, 27, 40, 0.88);
+  border: 1px solid rgba(56, 189, 248, 0.28);
+  border-radius: 8px;
+  padding: 0.45rem 0.85rem;
+  margin: 1.25rem 0 0.6rem 0;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.25);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.chiron-code-action-bar:hover {
+  border-color: rgba(56, 189, 248, 0.5);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.35), 0 0 12px rgba(56, 189, 248, 0.15);
+}
+
+.chiron-cab-meta {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  min-width: 0;
+}
+
+.chiron-cab-title {
+  font-family: var(--font-mono);
+  font-size: 0.86rem;
+  color: #f1f5f9;
+  letter-spacing: -0.01em;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.chiron-cab-title strong {
+  color: #38bdf8;
+  font-weight: 700;
+}
+
+.chiron-cab-sub {
+  color: #94a3b8;
+  font-weight: 400;
+  font-size: 0.82rem;
+}
+
+.chiron-cab-branch {
+  background: rgba(56, 189, 248, 0.14);
+  border: 1px solid rgba(56, 189, 248, 0.35);
+  color: #7dd3fc;
+  font-size: 0.72rem;
+  font-family: var(--font-mono);
+  font-weight: 600;
+  padding: 0.1rem 0.45rem;
+  border-radius: 4px;
+}
+
+.chiron-cab-line {
+  background: rgba(245, 158, 11, 0.14);
+  border: 1px solid rgba(245, 158, 11, 0.35);
+  color: #fbbf24;
+  font-size: 0.72rem;
+  font-family: var(--font-mono);
+  font-weight: 700;
+  padding: 0.1rem 0.45rem;
+  border-radius: 4px;
+}
+
+.chiron-cab-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  flex-wrap: wrap;
+}
+
+.chiron-cab-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.32rem;
+  font-family: var(--font-sans);
+  font-size: 0.78rem;
+  font-weight: 600;
+  padding: 0.28rem 0.6rem;
+  border-radius: 6px;
+  cursor: pointer;
+  background: var(--surface-color);
+  border: 1px solid var(--surface-border);
+  color: var(--text-main);
+  text-decoration: none;
+  line-height: 1.2;
+  transition: all 0.18s cubic-bezier(0.16, 1, 0.3, 1);
+  user-select: none;
+}
+
+.chiron-cab-btn:hover {
+  transform: translateY(-1.5px);
+}
+
+.chiron-cab-btn:active {
+  transform: scale(0.96) translateY(0);
+}
+
+.chiron-cab-btn .cab-icon {
+  font-size: 0.92rem;
+  line-height: 1;
+}
+
+.chiron-cab-btn.cab-gitlab {
+  background: rgba(252, 109, 38, 0.12);
+  border-color: rgba(252, 109, 38, 0.35);
+  color: #fc6d26;
+}
+.chiron-cab-btn.cab-gitlab:hover {
+  background: rgba(252, 109, 38, 0.25);
+  border-color: #fc6d26;
+  color: #ff8b4d;
+  box-shadow: 0 0 10px rgba(252, 109, 38, 0.3);
+}
+
+.chiron-cab-btn.cab-antigravity {
+  background: rgba(56, 189, 248, 0.12);
+  border-color: rgba(56, 189, 248, 0.35);
+  color: #38bdf8;
+}
+.chiron-cab-btn.cab-antigravity:hover {
+  background: rgba(56, 189, 248, 0.25);
+  border-color: #38bdf8;
+  color: #7dd3fc;
+  box-shadow: 0 0 10px rgba(56, 189, 248, 0.35);
+}
+
+.chiron-cab-btn.cab-cursor {
+  background: rgba(168, 85, 247, 0.12);
+  border-color: rgba(168, 85, 247, 0.35);
+  color: #c084fc;
+}
+.chiron-cab-btn.cab-cursor:hover {
+  background: rgba(168, 85, 247, 0.25);
+  border-color: #c084fc;
+  color: #e9d5ff;
+  box-shadow: 0 0 10px rgba(168, 85, 247, 0.35);
+}
+
+.chiron-cab-btn.cab-vscode {
+  background: rgba(59, 130, 246, 0.12);
+  border-color: rgba(59, 130, 246, 0.35);
+  color: #60a5fa;
+}
+.chiron-cab-btn.cab-vscode:hover {
+  background: rgba(59, 130, 246, 0.25);
+  border-color: #60a5fa;
+  color: #93c5fd;
+  box-shadow: 0 0 10px rgba(59, 130, 246, 0.35);
+}
+
+.chiron-cab-btn.cab-xcode {
+  background: rgba(14, 165, 233, 0.12);
+  border-color: rgba(14, 165, 233, 0.35);
+  color: #38bdf8;
+}
+.chiron-cab-btn.cab-xcode:hover {
+  background: rgba(14, 165, 233, 0.25);
+  border-color: #38bdf8;
+  color: #bae6fd;
+  box-shadow: 0 0 10px rgba(14, 165, 233, 0.35);
+}
+

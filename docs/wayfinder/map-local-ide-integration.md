@@ -1,9 +1,9 @@
 # Wayfinder Map: Chiron Multi-IDE Deep Link & Local Workspace Opener
 
-**Status:** Active  
+**Status:** Completed / Fully Resolved  
 **Label:** `wayfinder:map`  
 **Tracker:** local-markdown  
-**Created:** 2026-10-22  
+**Completed At:** 2026-10-22  
 
 ---
 
@@ -31,23 +31,20 @@ Pengguna dapat membuka file kode target secara instan (langsung lompat ke baris 
 - [01: Local Repository Mapping Configuration & Daemon Path Resolution](file:///Users/samir/Documents/Workspace/Chiron/docs/wayfinder/tickets/ide-integration/01-repo-mapping-config-and-daemon-path-resolution.md): Selesai & terverifikasi. Berkas chiron_config.json terpusat di root Chiron, endpoint GET /api/config & GET /api/resolve di chiron_sync.py, pengamanan path traversal, serta test suite lulus 100%.
 - [02: Daemon IDE Launcher Endpoint & Xcode Bridge](file:///Users/samir/Documents/Workspace/Chiron/docs/wayfinder/tickets/ide-integration/02-daemon-ide-launcher-endpoint-and-xcode-bridge.md): Selesai & terverifikasi. Endpoint POST /api/open di chiron_sync.py, CLI bridge /usr/bin/xed untuk Xcode, URI Schemes untuk Antigravity/Cursor/VSCode, proteksi keamanan repository boundary, dan test suite lulus 100%.
 - [03: Client URL Parser & Hybrid Launcher Engine](file:///Users/samir/Documents/Workspace/Chiron/docs/wayfinder/tickets/ide-integration/03-client-url-parser-and-hybrid-launcher-engine.md): Selesai & terverifikasi. Modul klien chiron-ide-launcher.js, parser GitLab URL dengan multi-segment branch, hybrid execution dengan fallback URI schemes, dan toast notification system.
+- [04: Compact Action Bar UI & Dynamic DOM Auto-Injection](file:///Users/samir/Documents/Workspace/Chiron/docs/wayfinder/tickets/ide-integration/04-compact-action-bar-ui-and-auto-injection.md): Selesai & terverifikasi. Styling visual Compact Action Bar di style.css, dynamic DOM auto-injection di chiron-ide-launcher.js dan chiron-client.js, serta test DOM lulus 100%.
 
 ---
 
-## Tickets & Frontier
-
-### Frontier (Open & Unblocked)
-- [04: Compact Action Bar UI & Dynamic DOM Auto-Injection](file:///Users/samir/Documents/Workspace/Chiron/docs/wayfinder/tickets/ide-integration/04-compact-action-bar-ui-and-auto-injection.md) — `wayfinder:prototype`
-
-### Blocked Tickets
-*(Semua tiket telah terbuka. Tidak ada tiket yang terblokir.)*
+## Child Tickets (All Resolved)
+1. [01: Local Repository Mapping Configuration & Daemon Path Resolution](file:///Users/samir/Documents/Workspace/Chiron/docs/wayfinder/tickets/ide-integration/01-repo-mapping-config-and-daemon-path-resolution.md) — `wayfinder:task` *(Closed / Resolved)*
+2. [02: Daemon IDE Launcher Endpoint & Xcode Bridge](file:///Users/samir/Documents/Workspace/Chiron/docs/wayfinder/tickets/ide-integration/02-daemon-ide-launcher-endpoint-and-xcode-bridge.md) — `wayfinder:task` *(Closed / Resolved)*
+3. [03: Client URL Parser & Hybrid Launcher Engine](file:///Users/samir/Documents/Workspace/Chiron/docs/wayfinder/tickets/ide-integration/03-client-url-parser-and-hybrid-launcher-engine.md) — `wayfinder:prototype` *(Closed / Resolved)*
+4. [04: Compact Action Bar UI & Dynamic DOM Auto-Injection](file:///Users/samir/Documents/Workspace/Chiron/docs/wayfinder/tickets/ide-integration/04-compact-action-bar-ui-and-auto-injection.md) — `wayfinder:prototype` *(Closed / Resolved)*
 
 ---
 
-### Resolved Tickets
-- [01: Local Repository Mapping Configuration & Daemon Path Resolution](file:///Users/samir/Documents/Workspace/Chiron/docs/wayfinder/tickets/ide-integration/01-repo-mapping-config-and-daemon-path-resolution.md) — `wayfinder:task` *(Closed / Resolved)*
-- [02: Daemon IDE Launcher Endpoint & Xcode Bridge](file:///Users/samir/Documents/Workspace/Chiron/docs/wayfinder/tickets/ide-integration/02-daemon-ide-launcher-endpoint-and-xcode-bridge.md) — `wayfinder:task` *(Closed / Resolved)*
-- [03: Client URL Parser & Hybrid Launcher Engine](file:///Users/samir/Documents/Workspace/Chiron/docs/wayfinder/tickets/ide-integration/03-client-url-parser-and-hybrid-launcher-engine.md) — `wayfinder:prototype` *(Closed / Resolved)*
+## Frontier Status
+*(Seluruh tiket pada map ini telah tuntas diselesaikan & terverifikasi! Rute menuju Destination sudah 100% jelas dan berfungsi).*
 
 ---
 

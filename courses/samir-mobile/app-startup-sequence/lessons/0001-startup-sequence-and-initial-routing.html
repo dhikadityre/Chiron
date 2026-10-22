@@ -1,0 +1,1356 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Lesson 0001: Startup Sequence & Initial Routing | Chiron Academy</title>
+  
+  <!-- Chiron Base Stylesheet -->
+  <link rel="stylesheet" href="../../../../.assets/style.css">
+  
+  <!-- Prism.js Syntax Highlighting Theme (Tomorrow Night) -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css">
+  
+  <!-- Mermaid.js for Dynamic Flow Diagrams -->
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+  <script>mermaid.initialize({ startOnLoad: true, theme: 'dark' });</script>
+</head>
+<body>
+
+<!-- ========================================================================= -->
+<!-- STICKY TOP APPLICATION BAR (CROSSNOTE / VS CODE STYLE)                     -->
+<!-- ========================================================================= -->
+<nav class="app-topbar">
+  <div class="topbar-nav-row">
+    <!-- Browser-like History Navigation -->
+    <div class="nav-history-ctrls">
+      <button class="nav-ctrl-btn" onclick="history.back()" title="Kembali (Back)">◀</button>
+      <button class="nav-ctrl-btn" onclick="history.forward()" title="Maju (Forward)">▶</button>
+      <button class="nav-ctrl-btn" onclick="location.reload()" title="Segarkan (Reload)">↻</button>
+    </div>
+
+    <!-- Document Tabs Strip (Crossnote Style) -->
+    <div class="topbar-tabs-scroll" id="docTabsStrip">
+      <a class="doc-tab" href="file:///Users/samir/Documents/Workspace/SAMIR/Documentation/docs-learning-curve/iOS/02-understanding-app-startup/01-ios-entry-point.md" title="01-ios-entry-point.md">
+        <span class="tab-icon">📄</span> 01-ios-entry-point.md
+        <span class="tab-close" onclick="event.preventDefault(); this.parentElement.remove();">×</span>
+      </a>
+      <a class="doc-tab" href="file:///Users/samir/Documents/Workspace/SAMIR/Documentation/docs-learning-curve/iOS/02-understanding-app-startup/02-application-lifecycle.md" title="02-application-lifecycle.md">
+        <span class="tab-icon">📄</span> 02-application-lifecycle.md
+        <span class="tab-close" onclick="event.preventDefault(); this.parentElement.remove();">×</span>
+      </a>
+      <a class="doc-tab active" href="#" title="03-startup-sequence-and-initial-routing.md">
+        <span class="tab-icon">🟢</span> 03-startup-sequence-and-initial-routing.html
+        <span class="tab-close" onclick="event.preventDefault();">×</span>
+      </a>
+      <a class="doc-tab" href="file:///Users/samir/Documents/Workspace/SAMIR/Documentation/docs-learning-curve/iOS/02-understanding-app-startup/04-czmodulemanager-deep-dive.md" title="04-czmodulemanager-deep-dive.md">
+        <span class="tab-icon">📄</span> 04-czmodulemanager-deep-dive.md
+        <span class="tab-close" onclick="event.preventDefault(); this.parentElement.remove();">×</span>
+      </a>
+      <a class="doc-tab" href="file:///Users/samir/Documents/Workspace/SAMIR/Documentation/docs-learning-curve/iOS/03-understanding-architecture/01-architecture-overview.md" title="01-architecture-overview.md">
+        <span class="tab-icon">📄</span> 01-architecture-overview.md
+        <span class="tab-close" onclick="event.preventDefault(); this.parentElement.remove();">×</span>
+      </a>
+    </div>
+
+    <!-- Right Utilities -->
+    <div class="topbar-tools">
+      <button class="tool-btn" onclick="toggleCurriculumDrawer()" title="Buka seluruh daftar modul kurikulum">
+        📚 Semua Modul
+      </button>
+      <button class="tool-btn active" id="topbarTocBtn" onclick="handleTocToggleClick()" title="Buka/Tutup Daftar Isi (Mode Fokus Membaca)">
+        📑 Daftar Isi
+      </button>
+    </div>
+  </div>
+</nav>
+
+<!-- Floating Button to Restore TOC When Dismissed (Focus Mode) -->
+<button class="toc-expand-float-btn" id="tocExpandFloatBtn" onclick="toggleDesktopToc()" title="Tampilkan Kembali Daftar Isi">
+  📑 Buka Daftar Isi
+</button>
+
+<!-- ========================================================================= -->
+<!-- TWO-COLUMN DOCUMENTATION LAYOUT (MAIN CONTENT + STICKY TOC)               -->
+<!-- ========================================================================= -->
+<div class="docs-layout" id="docsLayout">
+
+  <!-- Main Content Column -->
+  <main class="docs-content">
+
+    <!-- Header Section -->
+    <header id="sec-title">
+      <div class="badge">CHIRON CLASSROOM • SAMIR MOBILE iOS</div>
+      <h1>03 — Startup Sequence & Initial Routing</h1>
+      <p style="color: var(--text-muted); font-size: 1.05rem; margin-top: 0.25rem;">
+        Dari Ikon Aplikasi ke Layar Utama: Menghubungkan UIKit, Prewarming FlutterEngine, dan Deep Link Routing
+      </p>
+      <div class="metadata" style="margin-top: 1rem;">
+        <span>📚 Modul: <strong>0001</strong></span>
+        <span>🎯 Scope: <strong>SAMIR Mobile (iOS Native)</strong></span>
+        <span>⏱️ Estimasi: <strong>20 Menit</strong></span>
+        <span>🏷️ Git Branch: <strong>learn/iOS-Arch</strong></span>
+      </div>
+    </header>
+
+    <!-- BAGIAN 1: DOKUMEN PEMBELAJARAN LENGKAP (SEKSI A - J) -->
+    <div class="section-banner">
+      <h2>📖 Bagian 1: Dokumen Pembelajaran Lengkap (Seksi A – J)</h2>
+      <span class="pill">Core Knowledge</span>
+    </div>
+
+    <p>
+      Bagian ini memuat teks komprehensif dari dokumentasi asli 
+      <a href="file:///Users/samir/Documents/Workspace/SAMIR/Documentation/docs-learning-curve/iOS/02-understanding-app-startup/03-startup-sequence-and-initial-routing.md"><code>03-startup-sequence-and-initial-routing.md</code></a>. 
+      Seluruh tautan berkas kode sumber terhubung langsung ke repositori 
+      <strong>GitLab SAMIR Mobile pada branch <code>learn/iOS-Arch</code></strong>.
+    </p>
+
+    <!-- SEKSI A -->
+    <section id="sec-obj">
+      <h3>🎯 A. Learning Objective</h3>
+      <p>Setelah mempelajari modul ini, Anda akan mampu:</p>
+      <ol>
+        <li>Menjelaskan 11 tahapan inisialisasi yang dijalankan di dalam <code>IDSamirMainModule.application(_:didFinishLaunchingWithOptions:)</code>.</li>
+        <li>Memahami implementasi fungsi <code>FlutterEngineManager.shared.prewarm()</code> dan mengapa <code>precondition(hasRun)</code> akan crash jika prewarm dilewati.</li>
+        <li>Memahami bagaimana <code>checkAppStartHide</code> menentukan apakah user melihat <code>IDLaunchViewController</code> (countdown 3s) atau langsung masuk ke <code>IDMainTabBarController</code>.</li>
+        <li>Menjelaskan bagaimana request konfigurasi aplikasi (<code>app-configuration</code>) diambil pada <code>applicationDidBecomeActive</code> untuk memperbarui pengaturan startup berikutnya.</li>
+        <li>Memahami mekanisme eksekusi deep link tertunda (<em>pending deep link</em>) melalui <code>Samir_DeepLink_Str</code> setelah peluncuran selesai.</li>
+      </ol>
+    </section>
+
+    <!-- SEKSI B -->
+    <section id="sec-prereq">
+      <h3>📋 B. Prerequisites</h3>
+      <ul>
+        <li>Sudah membaca fondasi siklus hidup aplikasi di <a href="file:///Users/samir/Documents/Workspace/SAMIR/Documentation/docs-learning-curve/iOS/02-understanding-app-startup/01-ios-entry-point.md">01-ios-entry-point.md</a> dan <a href="file:///Users/samir/Documents/Workspace/SAMIR/Documentation/docs-learning-curve/iOS/02-understanding-app-startup/02-application-lifecycle.md">02-application-lifecycle.md</a>.</li>
+        <li>Memahami konsep <code>UIWindow</code> dan hierarki <code>rootViewController</code> pada UIKit iOS.</li>
+      </ul>
+    </section>
+
+    <!-- SEKSI C -->
+    <section id="sec-simple">
+      <h3>💡 C. Simple Explanation (Analogi Masuk ke Toko Perhiasan)</h3>
+      <p>Bayangkan Anda mengunjungi sebuah toko perhiasan eksklusif di pusat kota:</p>
+      <ol>
+        <li><strong>Pintu otomatis terbuka:</strong> Petugas menyambut kedatangan Anda (<code>application(_:didFinishLaunchingWithOptions:)</code>).</li>
+        <li><strong>Sistem pendukung dinyalakan di latar belakang:</strong> Petugas mengaktifkan AC, lampu etalase, dan kamera keamanan (<code>initEnvironment</code>, <code>IDNetworkManager</code>, dan <code>FlutterEngineManager.shared.prewarm()</code> dihidupkan sebelum pengunjung melangkah ke dalam).</li>
+        <li><strong>Papan iklan promosi 3 detik di depan pintu (<code>IDLaunchViewController</code>):</strong>
+          <ul>
+            <li>Jika Anda adalah pelanggan VIP yang sudah pernah menyetel opsi <em>"Lewati Iklan"</em> di kunjungan sebelumnya (<code>APP_Start_Hide == "1"</code> di cache <code>UserDefaults</code>), papan iklan langsung disingkirkan.</li>
+            <li>Jika papan iklan aktif, Anda bisa menunggu 3 detik atau menekan tombol <em>"Lewati Ns"</em>.</li>
+          </ul>
+        </li>
+        <li><strong>Pintu lobi utama terbuka penuh (<code>IDMainTabBarController</code>):</strong> Menampilkan 3 etalase utama (Etalase Pinjaman Native, Etalase Tagihan Flutter, dan Meja Layanan Nasabah Flutter).</li>
+        <li><strong>Membawa kupon khusus dari luar (Deep Link):</strong> Jika Anda datang membawa kupon promosi dari SMS/WhatsApp, staf toko menahan kupon tersebut di saku (<code>Samir_DeepLink_Str</code>), lalu begitu Anda selesai melewati pintu depan, staf langsung mengantar Anda ke etalase yang tertera di kupon.</li>
+      </ol>
+    </section>
+
+    <!-- SEKSI D -->
+    <section id="sec-actual">
+      <h3>💻 D. Bukti Implementasi Kode Sumber Nyata di Production</h3>
+
+      <div id="sub-coldstart">
+        <h4>1. Inisialisasi Cold-Start IDSamirMainModule: Urutan Eksekusi 11 SDK & Penyiapan Runtime Sistem</h4>
+        <p>
+          Ketika aplikasi pertama kali dibuka (Cold-Start), method berikut dipanggil oleh <code>CZAppDelegate</code>:
+        </p>
+        
+        <div>
+          <a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/learn/iOS-Arch/ios/IDSamirLoan/Application/SamirMainModule/Classes/IDModule/IDSamirMainModule.swift#L54-L75" target="_blank" rel="noopener noreferrer">
+            🦊 IDSamirMainModule.swift — application(_:didFinishLaunchingWithOptions:) <span class="branch-tag">learn/iOS-Arch</span> ↗
+          </a>
+        </div>
+
+        <pre><code class="language-swift">public func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey : Any]? = nil) -> Bool {
+    // 1. Inisialisasi APM Tingyun
+    TYUtils.initTY()
+    
+    // 2. Inisialisasi Konfigurasi Environment (AppEnv)
+    initEnvironment()
+    
+    // 3. Inisialisasi Manajer Jaringan Global
+    IDNetworkManager.initNetwork()
+    
+    // 4. Prewarm Flutter Engine di Background
+    FlutterEngineManager.shared.prewarm()
+    
+    // 5. Inisialisasi Window & Tentukan Root ViewController
+    initWindow(application)
+    
+    // 6. Inisialisasi SDK Analitik (Firebase, AppsFlyer)
+    initPointsReport()
+    
+    // 7. Inisialisasi SDK Anti-Fraud TrustDecision (setelah ATT prompt)
+    initTrustDecision()
+    
+    // 8. Inisialisasi Facebook Core SDK
+    ApplicationDelegate.shared.application(application, didFinishLaunchingWithOptions: launchOptions)
+    Settings.shared.isAdvertiserTrackingEnabled = true
+    
+    // 9. Inisialisasi AppsFlyer Deep Link Delegate
+    initDeepLink()
+    
+    // 10. Konfigurasi Firebase Messaging & Daftarkan APNs Push
+    Messaging.messaging().delegate = self
+    UIApplication.cz.registerAPNsWithDelegate(self)
+    
+    // 11. Inisialisasi TikTok Business SDK
+    initTiktok()
+
+    return true
+}</code></pre>
+      </div>
+
+      <div id="sub-prewarm">
+        <h4>1.b. Pembedahan Mendalam FlutterEngineManager: Prewarming Runtime Dart VM & Penjagaan Fatal Crash Precondition</h4>
+        <p>
+          Mengapa tahap inisialisasi di <code>IDSamirMainModule</code> wajib memanggil <code>FlutterEngineManager.shared.prewarm()</code>? 
+          Mari kita buka implementasi aslinya di 
+          <a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/learn/iOS-Arch/ios/IDSamirLoan/Application/SamirCommonModule/Classes/FChannel/FlutterEngineManager.swift#L27-L158" target="_blank" rel="noopener noreferrer">
+            🦊 FlutterEngineManager.swift — prewarm() & Engine Lifecycle <span class="branch-tag">learn/iOS-Arch</span> ↗
+          </a>:
+        </p>
+
+        <pre><code class="language-swift">public final class FlutterEngineManager {
+    public static let shared = FlutterEngineManager()
+
+    // 1. Single Engine instance yang dipakai bersama oleh seluruh layar Flutter
+    private let engine = FlutterEngine(name: "samir_single_flutter_engine")
+    private var viewController: SamirFlutterViewController?
+    private weak var persistentContainerView: UIView?
+    private var hasRun = false
+
+    private init() {}
+
+    /// Starts the single engine before the persistent host is installed.
+    public func prewarm() {
+        startEngineIfNeeded()
+        inactive()
+    }
+
+    private func startEngineIfNeeded() {
+        assert(Thread.isMainThread, "FlutterEngine must be started on the main thread")
+        guard !hasRun else { return }
+
+        // Memulai eksekusi Dart VM dan me-load entrypoint awal di route '/root'
+        hasRun = engine.run(withEntrypoint: nil, initialRoute: "/root")
+        guard hasRun else {
+            assertionFailure("Failed to start the single FlutterEngine")
+            return
+        }
+
+        // Memasang binary messenger handler untuk komunikasi 2 arah Native <-> Flutter
+        FlutterNativeChannel.shared.setup(with: engine.binaryMessenger)
+        GeneratedPluginRegistrant.register(with: engine)
+    }
+
+    public func inactive() {
+        guard hasRun else { return }
+        // Mengistirahatkan rendering Flutter sampai user membuka Tab Tagihan / Profil
+        engine.lifecycleChannel.sendMessage("AppLifecycleState.inactive")
+    }
+}</code></pre>
+
+        <div class="callout critique">
+          <div class="callout-title">💥 Penjagaan Kritis (Assertion & Precondition Fatal Crash)</div>
+          <p>
+            Di dalam fungsi <code>sharedViewController()</code> pada <code>FlutterEngineManager.swift</code>, arsitek SAMIR memasang penjagaan precondition ketat untuk mencegah container Flutter dimuat sebelum engine siap:
+          </p>
+
+          <div style="margin: 0.75rem 0;">
+            <a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/learn/iOS-Arch/ios/IDSamirLoan/Application/SamirCommonModule/Classes/FChannel/FlutterEngineManager.swift#L129-L144" target="_blank" rel="noopener noreferrer">
+              🦊 FlutterEngineManager.swift — sharedViewController() <span class="branch-tag">learn/iOS-Arch</span> ↗
+            </a>
+          </div>
+
+          <pre><code class="language-swift">private func sharedViewController() -> SamirFlutterViewController {
+    precondition(
+        hasRun,
+        "FlutterEngineManager.prewarm() must run before installing the Flutter host"
+    )
+    if let viewController {
+        return viewController
+    }
+    let viewController = SamirFlutterViewController(
+        engine: engine,
+        nibName: nil,
+        bundle: nil
+    )
+    self.viewController = viewController
+    return viewController
+}</code></pre>
+          <p>
+            Jika pemanggilan <code>FlutterEngineManager.shared.prewarm()</code> pada tahap startup di <code>IDSamirMainModule</code> dilewati atau gagal dieksekusi, maka begitu <code>IDMainTabBarController</code> dimuat dan memanggil <code>installPersistentRoot</code>, <strong>aplikasi akan seketika mengalami Fatal Crash</strong> karena <code>hasRun</code> masih bernilai <code>false</code>!
+          </p>
+        </div>
+      </div>
+
+      <div id="sub-window">
+        <h4>2. Logika Pemilihan Layar Awal (initWindow & checkAppStartHide): Evaluasi Cache Lokal vs Remote Config</h4>
+        <p>
+          Method berikut menentukan apakah pengguna harus menunggu countdown 3 detik di <code>IDLaunchViewController</code> atau langsung dialihkan ke <code>IDMainTabBarController</code>:
+        </p>
+
+        <div>
+          <a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/learn/iOS-Arch/ios/IDSamirLoan/Application/SamirMainModule/Classes/IDModule/IDSamirMainModule.swift#L91-L129" target="_blank" rel="noopener noreferrer">
+            🦊 IDSamirMainModule.swift — initWindow() & checkAppStartHide() <span class="branch-tag">learn/iOS-Arch</span> ↗
+          </a>
+        </div>
+
+        <pre><code class="language-swift">private func initWindow(_ application: UIApplication) {
+    if let window = application.delegate?.window {
+        window?.backgroundColor = .white
+        if checkAppStartHide() {
+            changeMainRootViewController(window: window)
+        } else {
+            changeLaunchViewController(window: window)
+        }
+    }
+}
+
+private func changeMainRootViewController(window: UIWindow?) {
+    window?.rootViewController = IDMainTabBarController()
+    window?.makeKeyAndVisible()
+}
+
+private func changeLaunchViewController(window: UIWindow?) {
+    launchViewController = IDLaunchViewController()
+    window?.rootViewController = launchViewController
+    launchViewController?.launchProtocol = self
+    window?.makeKeyAndVisible()
+}
+
+func checkAppStartHide() -> Bool {
+    // 1. Periksa cache lokal di UserDefaults
+    if let startHide = UserDefaults.standard.string(forKey: "APP_Start_Hide") {
+        if startHide == "1" { return true }
+        return false
+    }
+    // 2. Periksa cache konfigurasi server jika ada
+    guard let appStartHide = IDServiceManager.mainService()?.getAppConfig()?.appStartHide else {
+        return false
+    }
+    return appStartHide == "1"
+}</code></pre>
+      </div>
+
+      <div id="sub-active">
+        <h4>3. Sinkronisasi Latar Belakang (applicationDidBecomeActive): Pembaruan Konfigurasi Global & Reaktivasi SDK</h4>
+        <p>
+          Method ini dieksekusi setiap kali aplikasi masuk ke foreground (baik cold-start maupun kembali dari background):
+        </p>
+
+        <div>
+          <a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/learn/iOS-Arch/ios/IDSamirLoan/Application/SamirMainModule/Classes/IDModule/IDSamirMainModule.swift#L77-L85" target="_blank" rel="noopener noreferrer">
+            🦊 IDSamirMainModule.swift — applicationDidBecomeActive(_:) <span class="branch-tag">learn/iOS-Arch</span> ↗
+          </a>
+        </div>
+
+        <pre><code class="language-swift">public func applicationDidBecomeActive(_ application: UIApplication) {
+    // Mengambil app-configuration terbaru tanpa tanda tangan (unsigned)
+    IDMainManager.shared.requestAppConfig()
+    AppConfigUtil.shared.requestConfig()
+
+    IDAppsFlyerManager.shared.applicationDidBecomeActive(application)
+    AppEvents.shared.activateApp()
+    IDCustomPointManager.refreshConfig()
+}</code></pre>
+        <p>
+          API endpoint <code>app-configuration</code> mengembalikan parameter global seperti <code>appStartHide</code>, nomor WhatsApp Customer Service, tautan FAQ, dan konfigurasi A/B test login. 
+          Nilai <code>appStartHide</code> langsung disimpan ke <code>UserDefaults.standard.set(..., forKey: "APP_Start_Hide")</code> sehingga peluncuran berikutnya dapat langsung melewati splash screen.
+        </p>
+      </div>
+    </section>
+
+    <!-- SEKSI E -->
+    <section id="sec-walkthrough">
+      <h3>🧭 E. Step-by-Step Walkthrough: Alur Kronologis Lengkap dari Ketukan Ikon Pengguna Hingga Layar Tab Utama Aktif</h3>
+
+      <!-- Interactive Zoomable Mermaid Container -->
+      <div class="mermaid-interactive-card" id="card-startup-flow">
+        <div class="mermaid-card-toolbar">
+          <span class="title">📊 Sequence Diagram: Startup Sequence & Initial Routing Lifecycle</span>
+          <button class="mermaid-zoom-trigger" onclick="openDiagramZoom('diagram-startup-flow', 'Sequence Diagram: Startup Sequence & Initial Routing')">
+            🔍 Klik untuk Memperbesar Diagram
+          </button>
+        </div>
+        <div class="mermaid-content-wrapper" onclick="openDiagramZoom('diagram-startup-flow', 'Sequence Diagram: Startup Sequence & Initial Routing')">
+          <div class="mermaid" id="diagram-startup-flow">
+sequenceDiagram
+    autonumber
+    participant OS as iOS System
+    participant Main as IDSamirMainModule
+    participant FEng as FlutterEngineManager
+    participant Launch as IDLaunchViewController
+    participant Tab as IDMainTabBarController
+    participant Deep as Deep Link Processor
+
+    OS->>Main: application(_:didFinishLaunchingWithOptions:)
+    Main->>FEng: prewarm() (Booting Dart VM di background)
+    Main->>Main: checkAppStartHide()
+    alt appStartHide == "1" (Sudah di-cache di UserDefaults)
+        Main->>Tab: window.rootViewController = IDMainTabBarController()
+    else appStartHide == "0" / Belum ada cache
+        Main->>Launch: window.rootViewController = IDLaunchViewController()
+        Note over Launch: Hitung mundur 3 detik / User tap "Lewati Ns"
+        Launch-->>Main: finishLaunch() dipanggil via protokol
+        Main->>Tab: window.rootViewController = IDMainTabBarController()
+    end
+    Tab->>Tab: installPersistentFlutterHost() & pasang 3 tab native
+    Main->>Deep: Proses deep link tertunda (Samir_DeepLink_Str) jika ada
+          </div>
+        </div>
+      </div>
+
+      <ol>
+        <li><strong>Inisialisasi Dasar:</strong> Environment dimuat, jaringan disiapkan, dan <code>FlutterEngineManager.shared.prewarm()</code> mem-booting single runtime engine Flutter agar siap pakai.</li>
+        <li><strong>Evaluasi Tampilan Awal:</strong> Sistem memeriksa kunci <code>APP_Start_Hide</code> pada <code>UserDefaults</code>.</li>
+        <li><strong>Penyajian Splash:</strong> Jika belum disetel skip, layar splash tampil selama 3 detik.</li>
+        <li><strong>Transisi ke Tab Bar:</strong> Root window diganti ke <code>IDMainTabBarController</code>. TabBar memasang 3 tab native dan meng-embed view kontainer persisten Flutter di bawah tab bar.</li>
+        <li><strong>Eksekusi Deep Link Tertunda:</strong> Jika aplikasi dibuka melalui link atribusi AppsFlyer saat aplikasi dalam kondisi mati (<em>cold start</em>), link disimpan sementara di UserDefaults (<code>Samir_DeepLink_Str</code>) dan baru didispatch ke router setelah <code>finishLaunch()</code> selesai.</li>
+      </ol>
+    </section>
+
+    <!-- SEKSI F -->
+    <section id="sec-why">
+      <h3>⚡ F. Why It Matters (Trade-Offs & Catatan Arsitektur)</h3>
+      <ul>
+        <li>
+          <strong>Mengapa Prewarm Flutter Dilakukan di Startup?</strong><br>
+          Memulai <code>FlutterEngine</code> membutuhkan waktu komputasi (spin up Dart VM sekitar 200–400ms). Dengan memanggil <code>FlutterEngineManager.shared.prewarm()</code> saat startup native, pengguna tidak akan merasakan <em>lag</em> atau kedipan layar kosong putih/hitam ketika berpindah ke Tab Tagihan atau Tab Profil.
+        </li>
+        <li>
+          <strong>Mengapa Request app-configuration Ditaruh di applicationDidBecomeActive?</strong><br>
+          Setiap kali aplikasi kembali dari background ke foreground, status konfigurasi server (misal: pengumuman darurat, pemeliharaan sistem, atau pembaruan nomor kontak darurat) harus selalu terbarui tanpa mengharuskan pengguna me-restart aplikasi.
+        </li>
+      </ul>
+    </section>
+
+    <!-- SEKSI G -->
+    <section id="sec-example">
+      <h3>🧪 G. Practical Example (Studi Kasus Penanganan Deep Link Cold Start)</h3>
+      <p>Misalkan pengguna mengklik tautan promosi SMS <code>samir://repay/historyOrder</code> saat aplikasi sedang mati total:</p>
+      <ol>
+        <li>iOS membangunkan aplikasi via method <code>application(_:open:options:)</code> atau AppsFlyer delegate.</li>
+        <li><code>IDSamirMainModule.didResolveDeepLink</code> menerima link tersebut.</li>
+        <li>Karena tab bar belum siap dan user belum tentu login, link disimpan sementara di <code>UserDefaults.standard.set(link, forKey: "Samir_DeepLink_Str")</code>.</li>
+        <li>Setelah <code>finishLaunch()</code> selesai dan pengguna terverifikasi login, method <code>finishLaunch()</code> membaca kembali cache tersebut dan mengeksekusi <code>IDRouterManager.id_perfromWithURLString(...)</code> untuk mengantar user langsung ke layar riwayat pinjaman.</li>
+      </ol>
+    </section>
+
+    <!-- SEKSI H -->
+    <section id="sec-mistakes">
+      <h3>⚠️ H. Common Mistakes & Debugging</h3>
+      <div class="callout critique">
+        <div class="callout-title">⚠️ Splash Screen Terus Muncul Berulang Kali di Staging</div>
+        <p>
+          <strong>Penyebab:</strong> Endpoint <code>app-configuration</code> di environment TEST mengembalikan <code>appStartHide = "0"</code> atau koneksi staging timeout.<br>
+          <strong>Pengecekan:</strong> Periksa isi <code>UserDefaults.standard.string(forKey: "APP_Start_Hide")</code> via debugger LLDB dengan perintah:<br>
+          <code>po UserDefaults.standard.string(forKey: "APP_Start_Hide")</code>
+        </p>
+      </div>
+
+      <div class="callout critique">
+        <div class="callout-title">⚠️ Flutter Tab Berkedip Hitam / Putih Saat Pertama Kali Dibuka</div>
+        <p>
+          <strong>Penyebab:</strong> <code>FlutterEngineManager.shared.prewarm()</code> gagal atau belum selesai dipanggil sebelum tab diakses.<br>
+          <strong>Pengecekan:</strong> Pastikan pemanggilan <code>FlutterEngineManager.shared.prewarm()</code> tetap dieksekusi di dalam <code>IDSamirMainModule.swift</code> sebelum <code>initWindow()</code> dijalankan.
+        </p>
+      </div>
+    </section>
+
+    <!-- SEKSI I & J -->
+    <section id="sec-check">
+      <h3>📝 I. Knowledge Check & Latihan Observasi</h3>
+      <ol>
+        <li>Berapa durasi hitung mundur default pada <code>IDLaunchViewController</code>? (Jawab: 3 detik).</li>
+        <li>Kunci apa di <code>UserDefaults</code> yang mengontrol apakah splash screen langsung dilewati? (Jawab: <code>APP_Start_Hide</code>).</li>
+        <li>Mengapa FlutterEngine wajib di-prewarm di awal startup native? (Jawab: Menghindari latensi 200-400ms dan mencegah crash precondition).</li>
+      </ol>
+      <p>
+        <strong>Latihan Observasi:</strong> Buka 
+        <a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/learn/iOS-Arch/ios/IDSamirLoan/Application/SamirMainModule/Classes/IDModule/IDSamirMainModule.swift#L344-L352" target="_blank" rel="noopener noreferrer">
+          🦊 IDSamirMainModule.swift — application(_:open:options:) Deep Link Handling <span class="branch-tag">learn/iOS-Arch</span> ↗
+        </a>.
+        Perhatikan implementasi <code>finishLaunch()</code> dan bagaimana transisi penggantian <code>window?.rootViewController</code> dieksekusi secara mulus.
+      </p>
+    </section>
+
+    <section id="sec-completion">
+      <h3>🏁 J. Completion Criteria</h3>
+      <p>
+        Anda telah menguasai dokumen ini jika Anda dapat menjelaskan urutan kejadian dari pemanggilan <code>application(_:didFinishLaunchingWithOptions:)</code> hingga <code>IDMainTabBarController</code> aktif di layar, serta keterkaitannya dengan <code>FlutterEngineManager</code>.
+      </p>
+    </section>
+
+    <!-- ========================================================================= -->
+    <!-- BAGIAN 2: CHIRON ARCHITECTURE LAB                                         -->
+    <!-- ========================================================================= -->
+
+    <div class="section-banner lab" id="sec-lab">
+      <h2>🏛️ Bagian 2: Chiron Architecture Lab (SOLID Audit & Refactoring)</h2>
+      <span class="pill">Senior Architect</span>
+    </div>
+
+    <p>
+      Setelah menguasai fakta dan alur kode nyata di Bagian 1, mari kita audit kualitas arsitektur inisialisasi startup SAMIR iOS menggunakan standar industri modern (SOLID, Clean Architecture, Testability).
+    </p>
+
+    <!-- SEGMEN 2: ARCHITECTURAL CRITIQUE -->
+    <section class="lesson-segment" id="sub-solid">
+      <h2>🏛️ Audit SOLID & Clean Architecture: Menemukan 3 Titik Lemah Kritis pada IDSamirMainModule Existing</h2>
+
+      <div class="callout critique">
+        <div class="callout-title">⚠️ Smells 1: Pelanggaran Keras Single Responsibility Principle (SRP)</div>
+        <p>
+          Class <code>IDSamirMainModule</code> bertindak sebagai <strong>God Object Coordinator</strong>. Class ini memikul 5 tanggung jawab yang sama sekali berbeda:
+        </p>
+        <ul>
+          <li>Inisialisasi APM, Crash, dan SDK Pelacak Pihak Ketiga (Tingyun, Facebook, TikTok, TrustDecision).</li>
+          <li>Konfigurasi hierarki <code>UIWindow</code> UIKit (mengganti Root ViewController).</li>
+          <li>Manajemen state persistensi dan cache UserDefaults (<code>APP_Start_Hide</code>, <code>Samir_DeepLink_Str</code>).</li>
+          <li>Delegasi protokol push notification Apple (APNs) dan Firebase Messaging.</li>
+          <li>Parsing deep link atribusi dan routing URL scheme.</li>
+        </ul>
+        <p>
+          <em>Dampak:</em> Setiap kali ada penambahan SDK analitik baru atau perubahan flow splash screen, file monolitik ini harus diedit, meningkatkan risiko regresi bagi seluruh siklus startup aplikasi.
+        </p>
+      </div>
+
+      <div class="callout critique">
+        <div class="callout-title">⚠️ Smells 2: Pelanggaran Dependency Inversion (DIP) & 0% Testability</div>
+        <p>
+          Modul utama terikat erat (<em>tightly-coupled</em>) pada implementasi konkret static singleton pihak ketiga: 
+          <code>TYUtils.initTY()</code>, <code>FlutterEngineManager.shared</code>, <code>IDNetworkManager.initNetwork()</code>, <code>AppsFlyerLib.shared()</code>, dan <code>UserDefaults.standard</code>.
+        </p>
+        <p>
+          <em>Dampak:</em> <strong>Tingkat Testability kode ini adalah 0% (Untestable)</strong>. 
+          Anda tidak dapat menulis Unit Test di XCTest untuk menguji logika penentuan rute startup tanpa memicu koneksi HTTP sungguhan, inisialisasi framework Tingyun, dan pencemaran analitik produksi.
+        </p>
+      </div>
+
+      <div class="callout critique">
+        <div class="callout-title">⚠️ Smells 3: Main Thread Congestion & Launch Latency</div>
+        <p>
+          Seluruh 11 langkah inisialisasi dijalankan secara sinkron pada Main Thread sebelum method mengembalikan nilai <code>true</code>. 
+          Jika salah satu SDK (misal: pembacaan disk config atau inisialisasi kriptografi) mengalami lag 150ms, waktu peluncuran aplikasi (<em>Time To First Meaningful Paint</em>) akan melonjak drastis.
+        </p>
+      </div>
+    </section>
+
+    <!-- SEGMEN 3: REFACTORING BLUEPRINT -->
+    <section class="lesson-segment" id="sub-blueprint">
+      <h2>🚀 Blueprint Refactoring Standar Industri: Mengubah God Object Menjadi Pipeline Composite Startup Task yang 100% Mockable</h2>
+      <p>
+        Standar arsitektur industri (Google, Apple, Uber) menyelesaikan inisialisasi aplikasi monolitik menggunakan pola 
+        <strong>Composite Startup Task Pipeline</strong>.
+      </p>
+
+      <div class="callout best-practice">
+        <div class="callout-title">✅ Blueprint Solusi: Abstraksi AppStartupTask Protocol</div>
+        <p>
+          Pisahkan setiap inisialisasi SDK menjadi unit task independen yang terisolasi dan mengadopsi satu protokol kontrak:
+        </p>
+
+        <pre><code class="language-swift">import Foundation
+import UIKit
+
+// 1. Protokol Kontrak Task Peluncuran
+public enum TaskExecutionQueue {
+    case mainQueueSync
+    case backgroundAsync
+}
+
+public protocol AppStartupTask {
+    var identifier: String { get }
+    var executionQueue: TaskExecutionQueue { get }
+    func execute(with application: UIApplication, launchOptions: [UIApplication.LaunchOptionsKey: Any]?)
+}
+
+// 2. Concrete Task: Prewarm Flutter Engine
+public final class PrewarmFlutterEngineTask: AppStartupTask {
+    private let engineManager: FlutterEngineManagerProtocol
+    
+    public init(engineManager: FlutterEngineManagerProtocol = FlutterEngineManager.shared) {
+        self.engineManager = engineManager
+    }
+    
+    public var identifier: String { "PrewarmFlutterEngineTask" }
+    public var executionQueue: TaskExecutionQueue { .mainQueueSync }
+    
+    public func execute(with application: UIApplication, launchOptions: [UIApplication.LaunchOptionsKey : Any]?) {
+        engineManager.prewarm()
+    }
+}
+
+// 3. Concrete Task: Setup Analytics SDKs (Background Queue)
+public final class AnalyticsStartupTask: AppStartupTask {
+    public var identifier: String { "AnalyticsStartupTask" }
+    public var executionQueue: TaskExecutionQueue { .backgroundAsync }
+    
+    public func execute(with application: UIApplication, launchOptions: [UIApplication.LaunchOptionsKey : Any]?) {
+        // Facebook, AppsFlyer, TikTok dieksekusi di background thread
+        Settings.shared.isAdvertiserTrackingEnabled = true
+    }
+}
+
+// 4. Coordinator Bersih & 100% Mockable di XCTest
+public final class AppStartupCoordinator {
+    private let tasks: [AppStartupTask]
+    
+    public init(tasks: [AppStartupTask]) {
+        self.tasks = tasks
+    }
+    
+    public func launch(application: UIApplication, options: [UIApplication.LaunchOptionsKey: Any]?) {
+        for task in tasks {
+            switch task.executionQueue {
+            case .mainQueueSync:
+                task.execute(with: application, launchOptions: options)
+            case .backgroundAsync:
+                DispatchQueue.global(qos: .userInitiated).async {
+                    task.execute(with: application, launchOptions: options)
+                }
+            }
+        }
+    }
+}</code></pre>
+      </div>
+
+      <h3>Keunggulan Arsitektur Refactoring Ini:</h3>
+      <ul>
+        <li><strong>100% Mockable & Testable:</strong> Di unit test XCTest, Anda cukup menyuntikkan array <code>MockStartupTask</code> tanpa memicu framework analitik produksi.</li>
+        <li><strong>Open/Closed Principle (OCP):</strong> Menambah SDK baru hanya memerlukan pembuatan class baru tanpa mengubah kode <code>IDSamirMainModule</code>.</li>
+        <li><strong>Performa Startup Kilat:</strong> Task analitik non-kritis langsung dialihkan ke background thread.</li>
+      </ul>
+    </section>
+
+    <!-- SEGMEN 4: INTERACTIVE RETENTION QUIZ (FIXED RESPONSIVE WRAPPING) -->
+    <section class="lesson-segment" id="sub-quiz">
+      <h2>🧠 Interactive Retention & Architectural Quiz</h2>
+      <p>Uji pemahaman alur kode nyata dan keputusan arsitektur Anda:</p>
+
+      <!-- KUIS 1 (RESPONSIVE INLINE WRAPPING) -->
+      <div class="quiz-card" id="quiz-1">
+        <h4>Kuis 1 (Memory Recall): Apa yang terjadi jika pemanggilan <code>FlutterEngineManager.shared.prewarm()</code> diabaikan atau gagal dijalankan saat startup aplikasi SAMIR?</h4>
+        <div class="quiz-options">
+          <button class="quiz-btn" onclick="submitQuiz(1, 'A', false)">
+            A. Aplikasi tetap berjalan normal karena FlutterEngine akan otomatis di-prewarm oleh iOS saat tab Tagihan diklik
+          </button>
+          <button class="quiz-btn" onclick="submitQuiz(1, 'B', true)">
+            B. Aplikasi mengalami Fatal Crash saat memasang tab container karena adanya penjagaan precondition(hasRun)
+          </button>
+          <button class="quiz-btn" onclick="submitQuiz(1, 'C', false)">
+            C. Layar splash screen IDLaunchViewController akan terkunci dan countdown 3 detik tidak pernah berhenti
+          </button>
+          <button class="quiz-btn" onclick="submitQuiz(1, 'D', false)">
+            D. Seluruh request network di IDNetworkManager akan dibatalkan otomatis oleh FlutterNativeChannel
+          </button>
+        </div>
+        <div class="quiz-feedback" id="feedback-1"></div>
+      </div>
+
+      <!-- KUIS 2 -->
+      <div class="quiz-card" id="quiz-2">
+        <h4>Kuis 2 (Memory Recall): Bagaimana alur penyimpanan cold-start deep link ketika aplikasi dibuka dari SMS promosi saat aplikasi dalam kondisi mati?</h4>
+        <div class="quiz-options">
+          <button class="quiz-btn" onclick="submitQuiz(2, 'A', false)">
+            A. Menunda eksekusi di background thread menggunakan sleep(3.0) sampai splash selesai
+          </button>
+          <button class="quiz-btn" onclick="submitQuiz(2, 'B', false)">
+            B. Memaksa splash screen langsung ditutup seketika tanpa menunggu countdown 3 detik
+          </button>
+          <button class="quiz-btn" onclick="submitQuiz(2, 'C', true)">
+            C. Menyimpan link ke UserDefaults dengan key 'Samir_DeepLink_Str' dan mengeksekusinya di finishLaunch()
+          </button>
+          <button class="quiz-btn" onclick="submitQuiz(2, 'D', false)">
+            D. Mengabaikan deep link cold start karena routing hanya didukung saat status foreground
+          </button>
+        </div>
+        <div class="quiz-feedback" id="feedback-2"></div>
+      </div>
+
+      <!-- KUIS 3 -->
+      <div class="quiz-card" id="quiz-3">
+        <h4>Kuis 3 (Architectural Decision): Apa keuntungan teknis paling krusial dari penerapan Composite Startup Task Pattern terhadap pengujian aplikasi (Testability)?</h4>
+        <div class="quiz-options">
+          <button class="quiz-btn" onclick="submitQuiz(3, 'A', false)">
+            A. Menghilangkan kebutuhan file main.swift dan AppDelegate dari proyek iOS
+          </button>
+          <button class="quiz-btn" onclick="submitQuiz(3, 'B', true)">
+            B. Mengisolasi inisialisasi tiap SDK sehingga alur startup 100% dapat di-unit test menggunakan mock task
+          </button>
+          <button class="quiz-btn" onclick="submitQuiz(3, 'C', false)">
+            C. Memperkecil ukuran bundle binary ipa dengan menghapus seluruh kode SDK pihak ketiga
+          </button>
+          <button class="quiz-btn" onclick="submitQuiz(3, 'D', false)">
+            D. Memungkinkan aplikasi berjalan tanpa koneksi internet sama sekali pada tahap startup
+          </button>
+        </div>
+        <div class="quiz-feedback" id="feedback-3"></div>
+      </div>
+
+    </section>
+
+    <!-- Footer -->
+    <footer>
+      <div>Chiron Codebase Mastery Academy • SAMIR iOS</div>
+      <div>Anchor Branch: <strong>learn/iOS-Arch</strong></div>
+    </footer>
+
+  </main>
+
+  <!-- ========================================================================= -->
+  <!-- RIGHT-HAND SIDEBAR: ON-PAGE TABLE OF CONTENTS (IMAGE MATCH WITH TREE DEPTH) -->
+  <!-- ========================================================================= -->
+  <aside class="docs-toc-sidebar" id="desktopTocSidebar">
+    <div class="toc-header-bar">
+      <span class="toc-header-label">📑 DAFTAR ISI</span>
+      <div class="toc-header-actions">
+        <button class="toc-action-btn" id="tocScrollTopBtn" title="Scroll ke Paling Atas" onclick="window.scrollTo({top: 0, behavior: 'smooth'})">▲</button>
+        <button class="toc-action-btn" id="tocToggleAllBtn" title="Buka/Tutup Semua Cabang" onclick="toggleAllTocBranches()">🔄</button>
+        <button class="toc-action-btn" id="tocResetActiveBtn" title="Fokuskan ke Topik Aktif" onclick="focusCurrentTocActive()">📑</button>
+        <button class="toc-action-btn toc-dismiss-btn" id="tocDismissBtn" title="Tutup Daftar Isi (Fokus Mode Membaca)" onclick="toggleDesktopToc()">✕</button>
+      </div>
+    </div>
+
+    <div class="toc-tree-container">
+      <div class="toc-tree-node root-node" id="toc-node-root">
+        <div class="toc-node-row">
+          <span class="toc-caret" onclick="toggleTocBranch(this)">▾</span>
+          <a class="toc-tree-link root-link" href="#sec-title" title="03 — Startup Sequence & Initial Routing: Dari Ikon ke Layar Utama">
+            03 — Startup Sequence &amp; Initial Routing: Dari Ikon ke Layar Utama
+          </a>
+        </div>
+
+        <div class="toc-branch">
+          <div class="toc-node-row">
+            <span class="toc-leaf-dot"></span>
+            <a class="toc-tree-link" href="#sec-obj">A. Learning Objective</a>
+          </div>
+          <div class="toc-node-row">
+            <span class="toc-leaf-dot"></span>
+            <a class="toc-tree-link" href="#sec-prereq">B. Prerequisites</a>
+          </div>
+          <div class="toc-node-row">
+            <span class="toc-leaf-dot"></span>
+            <a class="toc-tree-link" href="#sec-simple">C. Simple Explanation (Analogi Masuk ke Toko Perhiasan)</a>
+          </div>
+
+          <!-- D. Actual Implementation (Bukti Kode Sumber) with sub-items -->
+          <div class="toc-tree-node" id="toc-node-d">
+            <div class="toc-node-row">
+              <span class="toc-caret" onclick="toggleTocBranch(this)">▾</span>
+              <a class="toc-tree-link" href="#sec-actual">D. Actual Implementation (Bukti Kode Sumber)</a>
+            </div>
+            <div class="toc-branch">
+              <div class="toc-node-row">
+                <span class="toc-leaf-dot"></span>
+                <a class="toc-tree-link" href="#sub-coldstart">
+                  1. Urutan 11 Langkah di <span class="toc-code">IDSamirMainModule</span>
+                </a>
+              </div>
+              <div class="toc-node-row">
+                <span class="toc-leaf-dot"></span>
+                <a class="toc-tree-link" href="#sub-prewarm">
+                  1.b. Pembedahan <span class="toc-code">FlutterEngineManager.prewarm</span>
+                </a>
+              </div>
+              <div class="toc-node-row">
+                <span class="toc-leaf-dot"></span>
+                <a class="toc-tree-link" href="#sub-window">
+                  2. Logika Pemilihan Layar Awal ( <span class="toc-code">initWindow</span> &amp; <span class="toc-code">checkAppStartHide</span> )
+                </a>
+              </div>
+              <div class="toc-node-row">
+                <span class="toc-leaf-dot"></span>
+                <a class="toc-tree-link" href="#sub-active">
+                  3. Siklus <span class="toc-code">applicationDidBecomeActive</span> (Sinkronisasi Server)
+                </a>
+              </div>
+            </div>
+          </div>
+
+          <div class="toc-node-row">
+            <span class="toc-leaf-dot"></span>
+            <a class="toc-tree-link" href="#sec-walkthrough">E. Step-by-Step Walkthrough: Alur Lengkap dari Peluncuran Hingga Main Tab</a>
+          </div>
+          <div class="toc-node-row">
+            <span class="toc-leaf-dot"></span>
+            <a class="toc-tree-link" href="#sec-why">F. Why It Matters (Trade-Offs &amp; Catatan Arsitektur)</a>
+          </div>
+          <div class="toc-node-row">
+            <span class="toc-leaf-dot"></span>
+            <a class="toc-tree-link" href="#sec-example">G. Practical Example (Studi Kasus Penanganan Deep Link Cold Start)</a>
+          </div>
+          <div class="toc-node-row">
+            <span class="toc-leaf-dot"></span>
+            <a class="toc-tree-link" href="#sec-mistakes">H. Common Mistakes &amp; Debugging</a>
+          </div>
+          <div class="toc-node-row">
+            <span class="toc-leaf-dot"></span>
+            <a class="toc-tree-link" href="#sec-check">I. Knowledge Check</a>
+          </div>
+          <div class="toc-node-row">
+            <span class="toc-leaf-dot"></span>
+            <a class="toc-tree-link" href="#sec-completion">J. Completion Criteria</a>
+          </div>
+
+          <!-- Bagian 2: Architecture Lab -->
+          <div class="toc-tree-node" id="toc-node-lab" style="margin-top: 0.45rem;">
+            <div class="toc-node-row">
+              <span class="toc-caret" onclick="toggleTocBranch(this)">▾</span>
+              <a class="toc-tree-link" href="#sec-lab" style="font-weight: 700; color: var(--accent-warning);">
+                Bagian 2: Chiron Architecture Lab
+              </a>
+            </div>
+            <div class="toc-branch">
+              <div class="toc-node-row">
+                <span class="toc-leaf-dot"></span>
+                <a class="toc-tree-link" href="#sub-solid">1. Audit SOLID &amp; Clean Architecture</a>
+              </div>
+              <div class="toc-node-row">
+                <span class="toc-leaf-dot"></span>
+                <a class="toc-tree-link" href="#sub-blueprint">2. Blueprint Refactoring Standar Industri</a>
+              </div>
+              <div class="toc-node-row">
+                <span class="toc-leaf-dot"></span>
+                <a class="toc-tree-link" href="#sub-quiz">3. Interactive Retention Quiz</a>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </aside>
+
+</div>
+
+<!-- ========================================================================= -->
+<!-- MOBILE / DRAWER TABLE OF CONTENTS OVERLAY (TREE DEPTH)                     -->
+<!-- ========================================================================= -->
+<div class="mobile-toc-overlay" id="mobileTocOverlay" onclick="toggleMobileToc()"></div>
+<div class="mobile-toc-drawer" id="mobileTocDrawer">
+  <div class="toc-header-bar">
+    <span class="toc-header-label">📑 DAFTAR ISI HALAMAN</span>
+    <button class="drawer-close-btn" onclick="toggleMobileToc()">✕</button>
+  </div>
+  <div class="toc-tree-container" style="margin-top: 0.75rem;">
+    <div class="toc-tree-node root-node" id="mob-toc-node-root">
+      <div class="toc-node-row">
+        <span class="toc-caret" onclick="toggleTocBranch(this)">▾</span>
+        <a class="toc-tree-link root-link" href="#sec-title" onclick="toggleMobileToc()">
+          03 — Startup Sequence &amp; Initial Routing
+        </a>
+      </div>
+
+      <div class="toc-branch">
+        <div class="toc-node-row">
+          <span class="toc-leaf-dot"></span>
+          <a class="toc-tree-link" href="#sec-obj" onclick="toggleMobileToc()">A. Learning Objective</a>
+        </div>
+        <div class="toc-node-row">
+          <span class="toc-leaf-dot"></span>
+          <a class="toc-tree-link" href="#sec-prereq" onclick="toggleMobileToc()">B. Prerequisites</a>
+        </div>
+        <div class="toc-node-row">
+          <span class="toc-leaf-dot"></span>
+          <a class="toc-tree-link" href="#sec-simple" onclick="toggleMobileToc()">C. Simple Explanation</a>
+        </div>
+
+        <div class="toc-tree-node" id="mob-toc-node-d">
+          <div class="toc-node-row">
+            <span class="toc-caret" onclick="toggleTocBranch(this)">▾</span>
+            <a class="toc-tree-link" href="#sec-actual" onclick="toggleMobileToc()">D. Actual Implementation</a>
+          </div>
+          <div class="toc-branch">
+            <div class="toc-node-row">
+              <span class="toc-leaf-dot"></span>
+              <a class="toc-tree-link" href="#sub-coldstart" onclick="toggleMobileToc()">
+                1. Urutan 11 Langkah di <span class="toc-code">IDSamirMainModule</span>
+              </a>
+            </div>
+            <div class="toc-node-row">
+              <span class="toc-leaf-dot"></span>
+              <a class="toc-tree-link" href="#sub-prewarm" onclick="toggleMobileToc()">
+                1.b. Pembedahan <span class="toc-code">FlutterEngineManager.prewarm</span>
+              </a>
+            </div>
+            <div class="toc-node-row">
+              <span class="toc-leaf-dot"></span>
+              <a class="toc-tree-link" href="#sub-window" onclick="toggleMobileToc()">
+                2. Logika Layar Awal ( <span class="toc-code">initWindow</span> &amp; <span class="toc-code">checkAppStartHide</span> )
+              </a>
+            </div>
+            <div class="toc-node-row">
+              <span class="toc-leaf-dot"></span>
+              <a class="toc-tree-link" href="#sub-active" onclick="toggleMobileToc()">
+                3. Siklus <span class="toc-code">applicationDidBecomeActive</span>
+              </a>
+            </div>
+          </div>
+        </div>
+
+        <div class="toc-node-row">
+          <span class="toc-leaf-dot"></span>
+          <a class="toc-tree-link" href="#sec-walkthrough" onclick="toggleMobileToc()">E. Step-by-Step Walkthrough</a>
+        </div>
+        <div class="toc-node-row">
+          <span class="toc-leaf-dot"></span>
+          <a class="toc-tree-link" href="#sec-why" onclick="toggleMobileToc()">F. Why It Matters</a>
+        </div>
+        <div class="toc-node-row">
+          <span class="toc-leaf-dot"></span>
+          <a class="toc-tree-link" href="#sec-example" onclick="toggleMobileToc()">G. Practical Example</a>
+        </div>
+        <div class="toc-node-row">
+          <span class="toc-leaf-dot"></span>
+          <a class="toc-tree-link" href="#sec-mistakes" onclick="toggleMobileToc()">H. Common Mistakes &amp; Debugging</a>
+        </div>
+        <div class="toc-node-row">
+          <span class="toc-leaf-dot"></span>
+          <a class="toc-tree-link" href="#sec-check" onclick="toggleMobileToc()">I. Knowledge Check</a>
+        </div>
+        <div class="toc-node-row">
+          <span class="toc-leaf-dot"></span>
+          <a class="toc-tree-link" href="#sec-completion" onclick="toggleMobileToc()">J. Completion Criteria</a>
+        </div>
+
+        <div class="toc-tree-node" id="mob-toc-node-lab" style="margin-top: 0.45rem;">
+          <div class="toc-node-row">
+            <span class="toc-caret" onclick="toggleTocBranch(this)">▾</span>
+            <a class="toc-tree-link" href="#sec-lab" onclick="toggleMobileToc()" style="font-weight: 700; color: var(--accent-warning);">
+              Bagian 2: Architecture Lab
+            </a>
+          </div>
+          <div class="toc-branch">
+            <div class="toc-node-row">
+              <span class="toc-leaf-dot"></span>
+              <a class="toc-tree-link" href="#sub-solid" onclick="toggleMobileToc()">1. Audit SOLID &amp; Clean Arch</a>
+            </div>
+            <div class="toc-node-row">
+              <span class="toc-leaf-dot"></span>
+              <a class="toc-tree-link" href="#sub-blueprint" onclick="toggleMobileToc()">2. Composite Blueprint</a>
+            </div>
+            <div class="toc-node-row">
+              <span class="toc-leaf-dot"></span>
+              <a class="toc-tree-link" href="#sub-quiz" onclick="toggleMobileToc()">3. Retention Quiz</a>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ========================================================================= -->
+<!-- FULL CURRICULUM DRAWER (CATALOG OF ALL 8 LEVELS IN SAMIR iOS)             -->
+<!-- ========================================================================= -->
+<div class="curriculum-drawer-overlay" id="curriculumOverlay" onclick="toggleCurriculumDrawer()"></div>
+<div class="curriculum-drawer" id="curriculumDrawer">
+  <div class="drawer-header">
+    <div class="drawer-title">📚 Kurikulum Lengkap SAMIR iOS</div>
+    <button class="drawer-close-btn" onclick="toggleCurriculumDrawer()">✕</button>
+  </div>
+  <div class="drawer-search">
+    <input type="text" id="moduleSearchInput" placeholder="🔍 Cari modul (contoh: startup, router, auth)..." oninput="filterCurriculum()">
+  </div>
+  <div class="drawer-body" id="curriculumListBody">
+
+    <!-- Level 1 -->
+    <div class="curriculum-level-group">
+      <div class="curriculum-level-title">Level 1: Project Foundation</div>
+      <a class="curriculum-item-link" href="file:///Users/samir/Documents/Workspace/SAMIR/Documentation/docs-learning-curve/iOS/01-project-foundation/01-application-overview.md">
+        <span>📄</span> 01 — Application Overview
+      </a>
+      <a class="curriculum-item-link" href="file:///Users/samir/Documents/Workspace/SAMIR/Documentation/docs-learning-curve/iOS/01-project-foundation/02-repository-structure.md">
+        <span>📄</span> 02 — Repository Structure
+      </a>
+      <a class="curriculum-item-link" href="file:///Users/samir/Documents/Workspace/SAMIR/Documentation/docs-learning-curve/iOS/01-project-foundation/03-technology-stack-and-build.md">
+        <span>📄</span> 03 — Technology Stack & Build
+      </a>
+    </div>
+
+    <!-- Level 2 -->
+    <div class="curriculum-level-group">
+      <div class="curriculum-level-title">Level 2: Understanding App Startup</div>
+      <a class="curriculum-item-link" href="file:///Users/samir/Documents/Workspace/SAMIR/Documentation/docs-learning-curve/iOS/02-understanding-app-startup/01-ios-entry-point.md">
+        <span>📄</span> 01 — iOS Entry Point
+      </a>
+      <a class="curriculum-item-link" href="file:///Users/samir/Documents/Workspace/SAMIR/Documentation/docs-learning-curve/iOS/02-understanding-app-startup/02-application-lifecycle.md">
+        <span>📄</span> 02 — Application Lifecycle
+      </a>
+      <a class="curriculum-item-link active" href="#">
+        <span>🟢</span> 03 — Startup Sequence & Initial Routing (Sedang Dibaca)
+      </a>
+      <a class="curriculum-item-link" href="file:///Users/samir/Documents/Workspace/SAMIR/Documentation/docs-learning-curve/iOS/02-understanding-app-startup/04-czmodulemanager-deep-dive.md">
+        <span>📄</span> 04 — CZModuleManager Deep Dive
+      </a>
+    </div>
+
+    <!-- Level 3 -->
+    <div class="curriculum-level-group">
+      <div class="curriculum-level-title">Level 3: Understanding Architecture</div>
+      <a class="curriculum-item-link" href="file:///Users/samir/Documents/Workspace/SAMIR/Documentation/docs-learning-curve/iOS/03-understanding-architecture/01-architecture-overview.md">
+        <span>📄</span> 01 — Architecture Overview
+      </a>
+      <a class="curriculum-item-link" href="file:///Users/samir/Documents/Workspace/SAMIR/Documentation/docs-learning-curve/iOS/03-understanding-architecture/02-layers-and-responsibilities.md">
+        <span>📄</span> 02 — Layers & Responsibilities
+      </a>
+      <a class="curriculum-item-link" href="file:///Users/samir/Documents/Workspace/SAMIR/Documentation/docs-learning-curve/iOS/03-understanding-architecture/03-dependency-direction.md">
+        <span>📄</span> 03 — Dependency Direction
+      </a>
+      <a class="curriculum-item-link" href="file:///Users/samir/Documents/Workspace/SAMIR/Documentation/docs-learning-curve/iOS/03-understanding-architecture/04-shared-components-and-services.md">
+        <span>📄</span> 04 — Shared Components & Services
+      </a>
+    </div>
+
+    <!-- Level 4 -->
+    <div class="curriculum-level-group">
+      <div class="curriculum-level-title">Level 4: Understanding Navigation</div>
+      <a class="curriculum-item-link" href="file:///Users/samir/Documents/Workspace/SAMIR/Documentation/docs-learning-curve/iOS/04-understanding-navigation/01-feature-inventory.md">
+        <span>📄</span> 01 — Feature Inventory
+      </a>
+      <a class="curriculum-item-link" href="file:///Users/samir/Documents/Workspace/SAMIR/Documentation/docs-learning-curve/iOS/04-understanding-navigation/02-navigation-fundamentals.md">
+        <span>📄</span> 02 — Navigation Fundamentals
+      </a>
+      <a class="curriculum-item-link" href="file:///Users/samir/Documents/Workspace/SAMIR/Documentation/docs-learning-curve/iOS/04-understanding-navigation/03-complete-navigation-map.md">
+        <span>📄</span> 03 — Complete Navigation Map
+      </a>
+      <a class="curriculum-item-link" href="file:///Users/samir/Documents/Workspace/SAMIR/Documentation/docs-learning-curve/iOS/04-understanding-navigation/04-navigation-conditions-and-edge-cases.md">
+        <span>📄</span> 04 — Navigation Conditions & Edge Cases
+      </a>
+    </div>
+
+    <!-- Level 5 -->
+    <div class="curriculum-level-group">
+      <div class="curriculum-level-title">Level 5: Learning Business Flows</div>
+      <a class="curriculum-item-link" href="file:///Users/samir/Documents/Workspace/SAMIR/Documentation/docs-learning-curve/iOS/05-learning-business-flows/01-user-journey-overview.md">
+        <span>📄</span> 01 — User Journey Overview
+      </a>
+      <a class="curriculum-item-link" href="file:///Users/samir/Documents/Workspace/SAMIR/Documentation/docs-learning-curve/iOS/05-learning-business-flows/02-authentication-and-session-flow.md">
+        <span>📄</span> 02 — Authentication & Session Flow
+      </a>
+      <a class="curriculum-item-link" href="file:///Users/samir/Documents/Workspace/SAMIR/Documentation/docs-learning-curve/iOS/05-learning-business-flows/03-core-feature-flows.md">
+        <span>📄</span> 03 — Core Feature Flows
+      </a>
+      <a class="curriculum-item-link" href="file:///Users/samir/Documents/Workspace/SAMIR/Documentation/docs-learning-curve/iOS/05-learning-business-flows/04-cross-feature-journeys.md">
+        <span>📄</span> 04 — Cross-Feature Journeys
+      </a>
+      <a class="curriculum-item-link" href="file:///Users/samir/Documents/Workspace/SAMIR/Documentation/docs-learning-curve/iOS/05-learning-business-flows/05-production-low-level-flows.md">
+        <span>📄</span> 05 — Production Low-Level Flows
+      </a>
+    </div>
+
+    <!-- Level 6 -->
+    <div class="curriculum-level-group">
+      <div class="curriculum-level-title">Level 6: Understanding Data & Dependencies</div>
+      <a class="curriculum-item-link" href="file:///Users/samir/Documents/Workspace/SAMIR/Documentation/docs-learning-curve/iOS/06-understanding-data-and-dependencies/01-dependency-catalog.md">
+        <span>📄</span> 01 — Dependency Catalog
+      </a>
+      <a class="curriculum-item-link" href="file:///Users/samir/Documents/Workspace/SAMIR/Documentation/docs-learning-curve/iOS/06-understanding-data-and-dependencies/02-networking-and-api-flow.md">
+        <span>📄</span> 02 — Networking & API Flow
+      </a>
+      <a class="curriculum-item-link" href="file:///Users/samir/Documents/Workspace/SAMIR/Documentation/docs-learning-curve/iOS/06-understanding-data-and-dependencies/03-models-and-data-transformation.md">
+        <span>📄</span> 03 — Models & Data Transformation
+      </a>
+      <a class="curriculum-item-link" href="file:///Users/samir/Documents/Workspace/SAMIR/Documentation/docs-learning-curve/iOS/06-understanding-data-and-dependencies/04-state-management-and-persistence.md">
+        <span>📄</span> 04 — State Management & Persistence
+      </a>
+      <a class="curriculum-item-link" href="file:///Users/samir/Documents/Workspace/SAMIR/Documentation/docs-learning-curve/iOS/06-understanding-data-and-dependencies/05-native-flutter-integration.md">
+        <span>📄</span> 05 — Native-Flutter Integration
+      </a>
+    </div>
+
+    <!-- Level 7 & 8 -->
+    <div class="curriculum-level-group">
+      <div class="curriculum-level-title">Level 7: Debugging & Maintenance</div>
+      <a class="curriculum-item-link" href="file:///Users/samir/Documents/Workspace/SAMIR/Documentation/docs-learning-curve/iOS/07-learning-to-debug-and-maintain/01-error-handling.md">
+        <span>📄</span> 01 — Error Handling
+      </a>
+      <a class="curriculum-item-link" href="file:///Users/samir/Documents/Workspace/SAMIR/Documentation/docs-learning-curve/iOS/07-learning-to-debug-and-maintain/02-testing-and-debugging.md">
+        <span>📄</span> 02 — Testing & Debugging
+      </a>
+      <a class="curriculum-item-link" href="file:///Users/samir/Documents/Workspace/SAMIR/Documentation/docs-learning-curve/iOS/07-learning-to-debug-and-maintain/03-coupling-and-technical-debt.md">
+        <span>📄</span> 03 — Coupling & Technical Debt
+      </a>
+    </div>
+
+  </div>
+</div>
+
+<!-- ========================================================================= -->
+<!-- FULLSCREEN MERMAID DIAGRAM LIGHTBOX MODAL                                 -->
+<!-- ========================================================================= -->
+<div id="diagramModal" class="diagram-modal" onclick="closeDiagramModal(event)">
+  <div class="diagram-modal-dialog" onclick="event.stopPropagation()">
+    <div class="diagram-modal-header">
+      <h3 id="modalDiagramTitle">🔍 Pembesaran Diagram Alur</h3>
+      <div class="diagram-modal-controls">
+        <button class="diagram-ctrl-btn" onclick="zoomDiagram(1.25)">➕ Zoom In</button>
+        <button class="diagram-ctrl-btn" onclick="zoomDiagram(0.8)">➖ Zoom Out</button>
+        <button class="diagram-ctrl-btn" onclick="resetDiagramZoom()">↺ 100%</button>
+        <button class="diagram-close-btn" onclick="closeDiagramModal()">✕ Tutup [Esc]</button>
+      </div>
+    </div>
+    <div class="diagram-modal-body" id="diagramModalBody">
+      <!-- Cloned SVG inserted dynamically -->
+    </div>
+  </div>
+</div>
+
+<!-- Prism.js Scripts for Syntax Highlighting -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-swift.min.js"></script>
+
+<!-- Interactive Scripts: Tabs, TOC ScrollSpy, Drawers & Quiz -->
+<script>
+  // ---------------------------------------------------------------------------
+  // 1. Drawers (Curriculum & Mobile TOC)
+  // ---------------------------------------------------------------------------
+  function toggleCurriculumDrawer() {
+    const drawer = document.getElementById('curriculumDrawer');
+    const overlay = document.getElementById('curriculumOverlay');
+    drawer.classList.toggle('open');
+    overlay.classList.toggle('open');
+  }
+
+  function toggleMobileToc() {
+    const drawer = document.getElementById('mobileTocDrawer');
+    const overlay = document.getElementById('mobileTocOverlay');
+    drawer.classList.toggle('open');
+    overlay.classList.toggle('open');
+  }
+
+  function filterCurriculum() {
+    const query = document.getElementById('moduleSearchInput').value.toLowerCase();
+    const links = document.querySelectorAll('.curriculum-item-link');
+    links.forEach(link => {
+      const text = link.innerText.toLowerCase();
+      link.style.display = text.includes(query) ? 'flex' : 'none';
+    });
+  }
+
+  // ---------------------------------------------------------------------------
+  // 2. Active ScrollSpy for Table of Contents & Tree Interactive Controls
+  // ---------------------------------------------------------------------------
+  function handleTocToggleClick() {
+    if (window.innerWidth > 1200) {
+      toggleDesktopToc();
+    } else {
+      toggleMobileToc();
+    }
+  }
+
+  function toggleDesktopToc() {
+    document.body.classList.toggle('toc-collapsed');
+    const isCollapsed = document.body.classList.contains('toc-collapsed');
+    try {
+      localStorage.setItem('chiron_toc_collapsed', isCollapsed ? '1' : '0');
+    } catch (e) {}
+
+    const topbarBtn = document.getElementById('topbarTocBtn');
+    if (topbarBtn) {
+      if (isCollapsed) {
+        topbarBtn.classList.remove('active');
+        topbarBtn.title = "Tampilkan Daftar Isi (Mode Normal)";
+      } else {
+        topbarBtn.classList.add('active');
+        topbarBtn.title = "Tutup Daftar Isi (Mode Fokus Membaca)";
+      }
+    }
+  }
+
+  function toggleTocBranch(caretEl) {
+    const node = caretEl.closest('.toc-tree-node');
+    if (node) {
+      node.classList.toggle('collapsed');
+      caretEl.textContent = node.classList.contains('collapsed') ? '▸' : '▾';
+    }
+  }
+
+  function toggleAllTocBranches() {
+    const allNodes = document.querySelectorAll('.toc-tree-node');
+    let hasCollapsed = false;
+    allNodes.forEach(n => {
+      if (n.classList.contains('collapsed')) hasCollapsed = true;
+    });
+    allNodes.forEach(n => {
+      const caret = n.querySelector(':scope > .toc-node-row > .toc-caret');
+      if (hasCollapsed) {
+        n.classList.remove('collapsed');
+        if (caret) caret.textContent = '▾';
+      } else {
+        if (!n.classList.contains('root-node')) {
+          n.classList.add('collapsed');
+          if (caret) caret.textContent = '▸';
+        }
+      }
+    });
+  }
+
+  function focusCurrentTocActive() {
+    const activeLink = document.querySelector('.toc-tree-link.active');
+    if (activeLink) {
+      activeLink.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+    } else {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  }
+
+  window.addEventListener('DOMContentLoaded', () => {
+    // Restore user's TOC state preference on load
+    try {
+      if (localStorage.getItem('chiron_toc_collapsed') === '1' && window.innerWidth > 1200) {
+        document.body.classList.add('toc-collapsed');
+        const topbarBtn = document.getElementById('topbarTocBtn');
+        if (topbarBtn) topbarBtn.classList.remove('active');
+      }
+    } catch (e) {}
+
+    const sectionIds = [
+      'sec-title', 'sec-obj', 'sec-prereq', 'sec-simple', 'sec-actual', 
+      'sub-coldstart', 'sub-prewarm', 'sub-window', 'sub-active',
+      'sec-walkthrough', 'sec-why', 'sec-example', 'sec-mistakes',
+      'sec-check', 'sec-completion', 'sec-lab', 'sub-solid', 'sub-blueprint', 'sub-quiz'
+    ];
+
+    const tocLinks = document.querySelectorAll('.toc-tree-link');
+
+    window.addEventListener('scroll', () => {
+      let currentSection = '';
+      const scrollPos = window.scrollY + 140;
+
+      sectionIds.forEach(id => {
+        const el = document.getElementById(id);
+        if (el && el.offsetTop <= scrollPos) {
+          currentSection = id;
+        }
+      });
+
+      if (currentSection) {
+        tocLinks.forEach(link => {
+          link.classList.remove('active');
+          if (link.getAttribute('href') === '#' + currentSection) {
+            link.classList.add('active');
+          }
+        });
+      }
+    }, { passive: true });
+  });
+
+  // ---------------------------------------------------------------------------
+  // 3. Mermaid Lightbox Zoom Modal Logic
+  // ---------------------------------------------------------------------------
+  let currentDiagramScale = 1.0;
+
+  function openDiagramZoom(diagramId, title) {
+    const originalEl = document.getElementById(diagramId);
+    if (!originalEl) return;
+    
+    const svgEl = originalEl.querySelector('svg');
+    if (!svgEl) return;
+
+    const modal = document.getElementById('diagramModal');
+    const modalBody = document.getElementById('diagramModalBody');
+    const modalTitle = document.getElementById('modalDiagramTitle');
+
+    modalTitle.innerHTML = title ? '🔍 ' + title : '🔍 Pembesaran Diagram Alur';
+    modalBody.innerHTML = svgEl.outerHTML;
+    
+    currentDiagramScale = 1.0;
+    const clonedSvg = modalBody.querySelector('svg');
+    if (clonedSvg) {
+      clonedSvg.style.transform = 'scale(' + currentDiagramScale + ')';
+    }
+
+    modal.classList.add('active');
+    document.body.style.overflow = 'hidden';
+  }
+
+  function closeDiagramModal(event) {
+    if (event && event.target && event.target.closest && event.target.closest('.diagram-modal-dialog') && !event.target.classList.contains('diagram-close-btn')) {
+      return;
+    }
+    const modal = document.getElementById('diagramModal');
+    modal.classList.remove('active');
+    document.body.style.overflow = 'auto';
+  }
+
+  function zoomDiagram(factor) {
+    const modalBody = document.getElementById('diagramModalBody');
+    const svg = modalBody.querySelector('svg');
+    if (!svg) return;
+    currentDiagramScale *= factor;
+    svg.style.transform = 'scale(' + currentDiagramScale + ')';
+  }
+
+  function resetDiagramZoom() {
+    const modalBody = document.getElementById('diagramModalBody');
+    const svg = modalBody.querySelector('svg');
+    if (!svg) return;
+    currentDiagramScale = 1.0;
+    svg.style.transform = 'scale(1)';
+  }
+
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') {
+      closeDiagramModal();
+      const cDrawer = document.getElementById('curriculumDrawer');
+      if (cDrawer && cDrawer.classList.contains('open')) toggleCurriculumDrawer();
+      const tDrawer = document.getElementById('mobileTocDrawer');
+      if (tDrawer && tDrawer.classList.contains('open')) toggleMobileToc();
+    } else if (e.key === ']' && !e.ctrlKey && !e.metaKey && e.target.tagName !== 'INPUT') {
+      handleTocToggleClick();
+    }
+  });
+
+  // ---------------------------------------------------------------------------
+  // 4. Interactive Retention Quiz Evaluation Logic
+  // ---------------------------------------------------------------------------
+  const explanations = {
+    1: {
+      success: "Tepat sekali! Pada FlutterEngineManager.swift di dalam fungsi sharedViewController(), terdapat precondition(hasRun, 'FlutterEngineManager.prewarm() must run before installing the Flutter host'). Jika prewarm dilewati, aplikasi akan crash seketika saat IDMainTabBarController memuat container host Flutter.",
+      danger: "Kurang tepat. Periksa implementasi sharedViewController() di FlutterEngineManager.swift! Terdapat assertion ketat precondition(hasRun) saat installPersistentRoot dipanggil. Jika prewarm() dilewati, hasRun bernilai false dan aplikasi akan seketika mengalami fatal crash."
+    },
+    2: {
+      success: "Benar! Karena saat cold-start rootViewController masih berupa IDLaunchViewController, IDSamirMainModule menyimpan link ke UserDefaults ('Samir_DeepLink_Str'). Begitu finishLaunch() dipanggil, link tersebut dibaca dan didispatch via IDRouterManager.",
+      danger: "Kurang tepat. Periksa fungsi application(_:open:options:) pada IDSamirMainModule.swift. Aplikasi menyimpan URL ke key 'Samir_DeepLink_Str' di UserDefaults untuk dieksekusi segera setelah finishLaunch() selesai mengganti rootViewController ke IDMainTabBarController."
+    },
+    3: {
+      success: "Sempurna! Dengan Composite Startup Task Pattern, kita dapat menyuntikkan MockStartupTask ke dalam AppStartupCoordinator di unit test XCTest tanpa menginisialisasi framework analitik atau jaringan sungguhan, mencapai 100% testability.",
+      danger: "Kurang tepat. Keuntungan utama dari Composite Startup Task Pattern adalah decoupling dan testability: kita dapat menguji orkestrasi startup secara terisolasi tanpa memicu dependensi pihak ketiga sungguhan."
+    }
+  };
+
+  function submitQuiz(quizId, selectedOption, isCorrect) {
+    const card = document.getElementById('quiz-' + quizId);
+    const buttons = card.querySelectorAll('.quiz-btn');
+    const feedback = document.getElementById('feedback-' + quizId);
+
+    // Disable all buttons in this card
+    buttons.forEach(btn => {
+      btn.disabled = true;
+      btn.style.cursor = 'default';
+    });
+
+    // Highlight selected
+    event.target.classList.add(isCorrect ? 'correct' : 'incorrect');
+
+    // Display feedback
+    feedback.className = 'quiz-feedback show ' + (isCorrect ? 'success' : 'danger');
+    feedback.innerHTML = '<strong>' + (isCorrect ? '🎉 Jawaban Tepat!' : '❌ Jawaban Salah!') + '</strong> ' + 
+      (isCorrect ? explanations[quizId].success : explanations[quizId].danger);
+  }
+</script>
+
+<!-- Chiron Annotations & Background Sync Engine -->
+<script src="../../../../.assets/chiron-client.js"></script>
+<script src="../../../../.assets/chiron-ide-launcher.js"></script>
+<script src="../../../../.assets/chiron-annotations.js"></script>
+
+</body>
+</html>
