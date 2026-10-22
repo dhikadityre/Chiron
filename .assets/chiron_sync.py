@@ -153,7 +153,14 @@ def build_open_command(ide: str, file_path: str, line: int = 1) -> list:
         return ["/usr/bin/open", "-a", "Xcode", target_path]
 
     elif clean_ide == "antigravity":
-        return ["/usr/bin/open", f"antigravity://file/{target_path}:{clean_line}"]
+        # Explicitly target Antigravity IDE (com.google.antigravity-ide), NOT Antigravity Agent (com.google.antigravity)
+        ide_bin = "/Applications/Antigravity IDE.app/Contents/Resources/app/bin/antigravity-ide"
+        if not os.path.isfile(ide_bin):
+            ide_bin = "/Users/samir/.antigravity-ide/antigravity-ide/bin/antigravity-ide"
+
+        if os.path.isfile(ide_bin):
+            return [ide_bin, "-r", "-g", f"{target_path}:{clean_line}"]
+        return ["/usr/bin/open", "-b", "com.google.antigravity-ide", f"antigravity-ide://file/{target_path}:{clean_line}"]
 
     elif clean_ide == "cursor":
         return ["/usr/bin/open", f"cursor://file/{target_path}:{clean_line}"]

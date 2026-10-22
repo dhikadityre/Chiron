@@ -33,11 +33,10 @@ def test_unit_build_open_command():
     assert "xed" in cmd_xcode[0] or "open" in cmd_xcode[0]
     assert "-line" in cmd_xcode and "54" in cmd_xcode
 
-    # Antigravity
+    # Antigravity IDE (must target Antigravity IDE app / CLI, NOT Antigravity Agent)
     cmd_ag = build_open_command("antigravity", TEST_FILE, line=70)
     assert isinstance(cmd_ag, list)
-    assert cmd_ag[0] == "/usr/bin/open"
-    assert f"antigravity://file/{TEST_FILE}:70" in cmd_ag
+    assert "antigravity-ide" in cmd_ag[0] or "com.google.antigravity-ide" in cmd_ag
 
     # Cursor
     cmd_cursor = build_open_command("cursor", TEST_FILE, line=20)

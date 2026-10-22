@@ -173,7 +173,7 @@
 
     switch (cleanIde) {
       case 'antigravity':
-        return `antigravity://file/${localFilePath}:${cleanLine}`;
+        return `antigravity-ide://file/${localFilePath}:${cleanLine}`;
       case 'cursor':
         return `cursor://file/${localFilePath}:${cleanLine}`;
       case 'vscode':
@@ -467,7 +467,7 @@
 
       const ideList = [
         { id: 'gitlab', label: 'GitLab', icon: '🦊', title: 'Buka di GitLab Web Browser' },
-        { id: 'antigravity', label: 'Antigravity', icon: '🪐', title: 'Buka di Google Antigravity IDE (Lokal)' },
+        { id: 'antigravity', label: 'Antigravity IDE', icon: '🪐', title: 'Buka di Google Antigravity IDE (Lokal)' },
         { id: 'cursor', label: 'Cursor', icon: '⚡', title: 'Buka di Cursor IDE (Lokal)' },
         { id: 'vscode', label: 'VS Code', icon: '💻', title: 'Buka di VS Code (Lokal)' },
         { id: 'xcode', label: 'Xcode', icon: '🛠️', title: 'Buka di Apple Xcode (Lokal)' }

@@ -51,7 +51,7 @@ console.log("   -> Local path resolved correctly via config mappings!");
 
 console.log("--- [TEST 4: Build IDE URI Schemes] ---");
 const uriAg = launcher.buildIdeUri("antigravity", localPath, 54);
-assert.strictEqual(uriAg, `antigravity://file/${localPath}:54`);
+assert.strictEqual(uriAg, `antigravity-ide://file/${localPath}:54`);
 
 const uriCursor = launcher.buildIdeUri("cursor", localPath, 54);
 assert.strictEqual(uriCursor, `cursor://file/${localPath}:54`);

@@ -14,9 +14,11 @@
   },
   "ides": {
     "antigravity": {
-      "name": "Antigravity",
+      "name": "Antigravity IDE",
       "enabled": true,
-      "uri_scheme": "antigravity://file/{path}:{line}"
+      "bundle_id": "com.google.antigravity-ide",
+      "uri_scheme": "antigravity-ide://file/{path}:{line}",
+      "cli_command": "antigravity-ide -r -g {path}:{line}"
     },
     "cursor": {
       "name": "Cursor",
