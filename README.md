@@ -8,7 +8,7 @@ Selamat datang di **Chiron**. Direktori ini adalah wadah mandiri (independent re
 
 | Namespace | Topik Kursus | Status | File Misi | Lesson Terakhir |
 | :--- | :--- | :--- | :--- | :--- |
-| *(Belum ada kursus aktif)* | - | - | - | - |
+| `samir-mobile` | **iOS App Startup Sequence & Initial Routing** | 🟡 Sedang Belajar | [MISSION.md](courses/samir-mobile/app-startup-sequence/MISSION.md) | [0001-startup-sequence-and-initial-routing.html](courses/samir-mobile/app-startup-sequence/lessons/0001-startup-sequence-and-initial-routing.html) |
 
 > **Catatan:** Jalankan perintah `/teach <topik>` dari AI Agent untuk memulai kursus baru atau melanjutkan materi yang sudah ada.
 
