@@ -98,79 +98,79 @@
 <p>Dokumentasi ini menyediakan kamus istilah resmi (<em>canonical glossary</em>) yang memuat definisi terminologi teknis, akronim arsitektur, parameter otentikasi, serta istilah domain bisnis finansial P2P lending yang digunakan di dalam modul <strong>SAMIR Flutter</strong> (<code>flutter_app_project</code>).</p>
 <p>Status Verifikasi: <code>[Verified]</code> (diverifikasi langsung dari kode sumber aktif dan kontrak API).</p>
 <section id="sec-obj" class="doc-section">
-<h3>📌 A. Terminologi Arsitektur Mobile &amp; Add-to-App</h3>
+<h3>📌 A. Terminologi Arsitektur Mobile & Add-to-App</h3>
 <div id="sub-add-to-app" class="doc-subsection">
-<h4>**Add-to-App**</h4>
+<h4>Add-to-App</h4>
 </div>
 <p>Pola integrasi di mana framework Flutter tidak menguasai seluruh siklus hidup aplikasi (<em>greenfield</em>), melainkan disematkan sebagai modul library ke dalam aplikasi host native iOS (<code>IDSamirLoan</code>) dan Android yang sudah ada.</p>
 <div id="sub-single-engine-architecture" class="doc-subsection">
-<h4>**Single-Engine Architecture**</h4>
+<h4>Single-Engine Architecture</h4>
 </div>
 <p>Pola desain di mana hanya satu instance <code>FlutterEngine</code> yang dibuat dan disimpan di memori host native (<code>FlutterEngineManager</code>). Engine tunggal ini digunakan secara bersama oleh Tab Tagihan (Repay) dan Tab Saya (Mine) untuk menghemat RAM dan menjaga status otentikasi tetap sinkron.</p>
 <div id="sub-prewarming" class="doc-subsection">
-<h4>**Prewarming**</h4>
+<h4>Prewarming</h4>
 </div>
 <p>Proses menjalankan engine Flutter di latar belakang (<code>run(withEntrypoint: nil)</code>) sesaat setelah aplikasi native dibuka (<code>didFinishLaunchingWithOptions</code>), jauh sebelum pengguna membuka tab Flutter. Prewarming mengeliminasi waktu tunggu inisialisasi Dart VM sehingga tampilan Flutter terbuka secara instan.</p>
 <div id="sub-indexedstack" class="doc-subsection">
-<h4>**IndexedStack**</h4>
+<h4>IndexedStack</h4>
 </div>
 <p>Widget bawaan Flutter yang menampung daftar tumpukan widget (<em>children</em>), di mana hanya satu widget yang terlihat pada satu waktu berdasarkan <code>index</code>. Widget lain yang tidak aktif tetap dipertahankan di memori element tree, menjaga form input dan posisi scroll tidak hilang saat berpindah tab.</p>
 <div id="sub-native-route-chrome" class="doc-subsection">
-<h4>**Native Route Chrome**</h4>
+<h4>Native Route Chrome</h4>
 </div>
 <p>Mekanisme koordinasi tampilan di mana modul Flutter memerintahkan host native untuk menyembunyikan atau menampilkan elemen antarmuka luar (khususnya <code>UITabBar</code> bawah) sebelum animasi navigasi dimulai via <code>NativeRouteChrome.prepareForLocation()</code>.</p>
 <div id="sub-methodchannel" class="doc-subsection">
-<h4>**MethodChannel**</h4>
+<h4>MethodChannel</h4>
 </div>
 <p>Pipa komunikasi asynchronous dua arah antara Dart dan kode native (Swift / Kotlin) berbasis binary message encoding. Di SAMIR, terdapat dua kanal resmi: <code>samir_native_channel</code> dan <code>samir_tracking_channel</code>.</p>
 </section>
 <section id="sec-prereq" class="doc-section">
-<h3>📌 B. Terminologi Sesi, Keamanan, &amp; Jaringan</h3>
+<h3>📌 B. Terminologi Sesi, Keamanan, & Jaringan</h3>
 <div id="sub-mid-member-id" class="doc-subsection">
-<h4>**`mid` (Member ID)**</h4>
+<h4><code>mid</code> (Member ID)</h4>
 </div>
 <p>Token otentikasi sesi utama pengguna yang dikembalikan oleh backend saat login berhasil. Bersifat rahasia dan wajib disertakan di setiap request HTTP yang membutuhkan otorisasi.</p>
 <div id="sub-userno" class="doc-subsection">
-<h4>**`userNo`**</h4>
+<h4><code>userNo</code></h4>
 </div>
 <p>Nomor identitas unik nasabah di dalam sistem core banking SAMIR (contoh format: <code>U20261022001</code>). Digunakan untuk mengaitkan kontrak pinjaman, rekening bank, dan skor kredit.</p>
 <div id="sub-custid" class="doc-subsection">
-<h4>**`custId`**</h4>
+<h4><code>custId</code></h4>
 </div>
 <p>Customer ID nasabah yang digunakan pada integrasi CRM dan sistem penagihan eksternal.</p>
 <div id="sub-dynamicsignkey" class="doc-subsection">
-<h4>**`dynamicSignKey`**</h4>
+<h4><code>dynamicSignKey</code></h4>
 </div>
 <p>Kunci enkripsi dinamis yang diterbitkan oleh backend atau host native per sesi login untuk menghitung tanda tangan parameter request (<code>sign</code>).</p>
 <div id="sub-two-pass-md5-signature" class="doc-subsection">
-<h4>**`Two-Pass MD5 Signature`**</h4>
+<h4><code>Two-Pass MD5 Signature</code></h4>
 </div>
 <p>Mekanisme verifikasi integritas data request di mana parameter diurutkan secara alfabetis (<code>SplayTreeMap</code>), digabungkan dengan kunci rahasia, di-hash dengan MD5 tahap 1, lalu digabungkan kembali dengan salt kedua (<code>qwer1234_Samir</code>) dan di-hash dengan MD5 tahap 2.</p>
 <div id="sub-error-code-10006" class="doc-subsection">
-<h4>**Error Code `10006`**</h4>
+<h4>Error Code <code>10006</code></h4>
 </div>
 <p>Kode respon bisnis standar backend SAMIR yang menandakan bahwa token sesi telah kedaluwarsa (<em>Token Expired</em>) atau sesi telah diambil alih oleh perangkat lain. Memicu pembersihan sesi otomatis via <code>Global.clearUser()</code> dan pembukaan layar login native.</p>
 </section>
 <section id="sec-simple" class="doc-section">
 <h3>📌 C. Terminologi Bisnis Pinjaman P2P Lending</h3>
 <div id="sub-repay-repayment" class="doc-subsection">
-<h4>**Repay / Repayment**</h4>
+<h4>Repay / Repayment</h4>
 </div>
 <p>Proses pelunasan pinjaman oleh nasabah penerima dana (<em>borrower</em>), mencakup pengembalian pokok pinjaman, bunga berjalan, dan denda keterlambatan jika ada.</p>
 <div id="sub-virtual-account-va" class="doc-subsection">
-<h4>**Virtual Account (VA)**</h4>
+<h4>Virtual Account (VA)</h4>
 </div>
 <p>Nomor rekening bank virtual sementara yang dialokasikan khusus untuk satu nasabah per transaksi pinjaman (BCA, Mandiri, BRI, BNI, Permata) yang memungkinkan verifikasi pelunasan secara otomatis dan real-time.</p>
 <div id="sub-deductor-code-kode-potong-kode-bayar" class="doc-subsection">
-<h4>**Deductor Code (Kode Potong / Kode Bayar)**</h4>
+<h4>Deductor Code (Kode Potong / Kode Bayar)</h4>
 </div>
 <p>Kode transaksi pembayaran khusus yang dapat ditunjukkan nasabah ke kasir gerai ritel minimarket (Alfamart atau Indomaret) untuk melunasi tagihan pinjaman secara tunai.</p>
 <div id="sub-overdue-days" class="doc-subsection">
-<h4>**Overdue Days**</h4>
+<h4>Overdue Days</h4>
 </div>
 <p>Jumlah hari keterlambatan pembayaran dihitung sejak tanggal jatuh tempo (<em>due date</em>) terlewati. Memicu kalkulasi akumulasi denda harian pada model <code>RepayOrderModel</code>.</p>
 <div id="sub-e-kyc-know-your-customer" class="doc-subsection">
-<h4>**e-KYC (Know Your Customer)**</h4>
+<h4>e-KYC (Know Your Customer)</h4>
 </div>
 <p>Proses verifikasi identitas nasabah secara elektronik yang mencakup pengenalan karakter optik e-KTP (OCR), pengisian informasi pekerjaan, dan deteksi keaslian wajah (Liveness Detection).</p>
 </section>
@@ -344,27 +344,27 @@ class GlobalSessionManager implements SessionContract {
             <div class="toc-branch">
               <div class="toc-node-row">
                 <span class="toc-leaf-dot"></span>
-                <a class="toc-tree-link" href="#sub-add-to-app">**Add-to-App**</a>
+                <a class="toc-tree-link" href="#sub-add-to-app">Add-to-App</a>
               </div>
               <div class="toc-node-row">
                 <span class="toc-leaf-dot"></span>
-                <a class="toc-tree-link" href="#sub-single-engine-architecture">**Single-Engine Architecture**</a>
+                <a class="toc-tree-link" href="#sub-single-engine-architecture">Single-Engine Architecture</a>
               </div>
               <div class="toc-node-row">
                 <span class="toc-leaf-dot"></span>
-                <a class="toc-tree-link" href="#sub-prewarming">**Prewarming**</a>
+                <a class="toc-tree-link" href="#sub-prewarming">Prewarming</a>
               </div>
               <div class="toc-node-row">
                 <span class="toc-leaf-dot"></span>
-                <a class="toc-tree-link" href="#sub-indexedstack">**IndexedStack**</a>
+                <a class="toc-tree-link" href="#sub-indexedstack">IndexedStack</a>
               </div>
               <div class="toc-node-row">
                 <span class="toc-leaf-dot"></span>
-                <a class="toc-tree-link" href="#sub-native-route-chrome">**Native Route Chrome**</a>
+                <a class="toc-tree-link" href="#sub-native-route-chrome">Native Route Chrome</a>
               </div>
               <div class="toc-node-row">
                 <span class="toc-leaf-dot"></span>
-                <a class="toc-tree-link" href="#sub-methodchannel">**MethodChannel**</a>
+                <a class="toc-tree-link" href="#sub-methodchannel">MethodChannel</a>
               </div>
             </div>
           </div>
@@ -376,27 +376,27 @@ class GlobalSessionManager implements SessionContract {
             <div class="toc-branch">
               <div class="toc-node-row">
                 <span class="toc-leaf-dot"></span>
-                <a class="toc-tree-link" href="#sub-mid-member-id">**`mid` (Member ID)**</a>
+                <a class="toc-tree-link" href="#sub-mid-member-id"><span class="toc-code">mid</span> (Member ID)</a>
               </div>
               <div class="toc-node-row">
                 <span class="toc-leaf-dot"></span>
-                <a class="toc-tree-link" href="#sub-userno">**`userNo`**</a>
+                <a class="toc-tree-link" href="#sub-userno"><span class="toc-code">userNo</span></a>
               </div>
               <div class="toc-node-row">
                 <span class="toc-leaf-dot"></span>
-                <a class="toc-tree-link" href="#sub-custid">**`custId`**</a>
+                <a class="toc-tree-link" href="#sub-custid"><span class="toc-code">custId</span></a>
               </div>
               <div class="toc-node-row">
                 <span class="toc-leaf-dot"></span>
-                <a class="toc-tree-link" href="#sub-dynamicsignkey">**`dynamicSignKey`**</a>
+                <a class="toc-tree-link" href="#sub-dynamicsignkey"><span class="toc-code">dynamicSignKey</span></a>
               </div>
               <div class="toc-node-row">
                 <span class="toc-leaf-dot"></span>
-                <a class="toc-tree-link" href="#sub-two-pass-md5-signature">**`Two-Pass MD5 Signature`**</a>
+                <a class="toc-tree-link" href="#sub-two-pass-md5-signature"><span class="toc-code">Two-Pass MD5 Signature</span></a>
               </div>
               <div class="toc-node-row">
                 <span class="toc-leaf-dot"></span>
-                <a class="toc-tree-link" href="#sub-error-code-10006">**Error Code `10006`**</a>
+                <a class="toc-tree-link" href="#sub-error-code-10006">Error Code <span class="toc-code">10006</span></a>
               </div>
             </div>
           </div>
@@ -408,23 +408,23 @@ class GlobalSessionManager implements SessionContract {
             <div class="toc-branch">
               <div class="toc-node-row">
                 <span class="toc-leaf-dot"></span>
-                <a class="toc-tree-link" href="#sub-repay-repayment">**Repay / Repayment**</a>
+                <a class="toc-tree-link" href="#sub-repay-repayment">Repay / Repayment</a>
               </div>
               <div class="toc-node-row">
                 <span class="toc-leaf-dot"></span>
-                <a class="toc-tree-link" href="#sub-virtual-account-va">**Virtual Account (VA)**</a>
+                <a class="toc-tree-link" href="#sub-virtual-account-va">Virtual Account (VA)</a>
               </div>
               <div class="toc-node-row">
                 <span class="toc-leaf-dot"></span>
-                <a class="toc-tree-link" href="#sub-deductor-code-kode-potong-kode-bayar">**Deductor Code (Kode Potong / Kode Bayar)**</a>
+                <a class="toc-tree-link" href="#sub-deductor-code-kode-potong-kode-bayar">Deductor Code (Kode Potong / Kode Bayar)</a>
               </div>
               <div class="toc-node-row">
                 <span class="toc-leaf-dot"></span>
-                <a class="toc-tree-link" href="#sub-overdue-days">**Overdue Days**</a>
+                <a class="toc-tree-link" href="#sub-overdue-days">Overdue Days</a>
               </div>
               <div class="toc-node-row">
                 <span class="toc-leaf-dot"></span>
-                <a class="toc-tree-link" href="#sub-e-kyc-know-your-customer">**e-KYC (Know Your Customer)**</a>
+                <a class="toc-tree-link" href="#sub-e-kyc-know-your-customer">e-KYC (Know Your Customer)</a>
               </div>
             </div>
           </div>
@@ -488,27 +488,27 @@ class GlobalSessionManager implements SessionContract {
           <div class="toc-branch">
             <div class="toc-node-row">
               <span class="toc-leaf-dot"></span>
-              <a class="toc-tree-link" href="#sub-add-to-app" onclick="toggleMobileToc()">**Add-to-App**</a>
+              <a class="toc-tree-link" href="#sub-add-to-app" onclick="toggleMobileToc()">Add-to-App</a>
             </div>
             <div class="toc-node-row">
               <span class="toc-leaf-dot"></span>
-              <a class="toc-tree-link" href="#sub-single-engine-architecture" onclick="toggleMobileToc()">**Single-Engine Architecture**</a>
+              <a class="toc-tree-link" href="#sub-single-engine-architecture" onclick="toggleMobileToc()">Single-Engine Architecture</a>
             </div>
             <div class="toc-node-row">
               <span class="toc-leaf-dot"></span>
-              <a class="toc-tree-link" href="#sub-prewarming" onclick="toggleMobileToc()">**Prewarming**</a>
+              <a class="toc-tree-link" href="#sub-prewarming" onclick="toggleMobileToc()">Prewarming</a>
             </div>
             <div class="toc-node-row">
               <span class="toc-leaf-dot"></span>
-              <a class="toc-tree-link" href="#sub-indexedstack" onclick="toggleMobileToc()">**IndexedStack**</a>
+              <a class="toc-tree-link" href="#sub-indexedstack" onclick="toggleMobileToc()">IndexedStack</a>
             </div>
             <div class="toc-node-row">
               <span class="toc-leaf-dot"></span>
-              <a class="toc-tree-link" href="#sub-native-route-chrome" onclick="toggleMobileToc()">**Native Route Chrome**</a>
+              <a class="toc-tree-link" href="#sub-native-route-chrome" onclick="toggleMobileToc()">Native Route Chrome</a>
             </div>
             <div class="toc-node-row">
               <span class="toc-leaf-dot"></span>
-              <a class="toc-tree-link" href="#sub-methodchannel" onclick="toggleMobileToc()">**MethodChannel**</a>
+              <a class="toc-tree-link" href="#sub-methodchannel" onclick="toggleMobileToc()">MethodChannel</a>
             </div>
           </div>
         </div>
@@ -520,27 +520,27 @@ class GlobalSessionManager implements SessionContract {
           <div class="toc-branch">
             <div class="toc-node-row">
               <span class="toc-leaf-dot"></span>
-              <a class="toc-tree-link" href="#sub-mid-member-id" onclick="toggleMobileToc()">**`mid` (Member ID)**</a>
+              <a class="toc-tree-link" href="#sub-mid-member-id" onclick="toggleMobileToc()"><span class="toc-code">mid</span> (Member ID)</a>
             </div>
             <div class="toc-node-row">
               <span class="toc-leaf-dot"></span>
-              <a class="toc-tree-link" href="#sub-userno" onclick="toggleMobileToc()">**`userNo`**</a>
+              <a class="toc-tree-link" href="#sub-userno" onclick="toggleMobileToc()"><span class="toc-code">userNo</span></a>
             </div>
             <div class="toc-node-row">
               <span class="toc-leaf-dot"></span>
-              <a class="toc-tree-link" href="#sub-custid" onclick="toggleMobileToc()">**`custId`**</a>
+              <a class="toc-tree-link" href="#sub-custid" onclick="toggleMobileToc()"><span class="toc-code">custId</span></a>
             </div>
             <div class="toc-node-row">
               <span class="toc-leaf-dot"></span>
-              <a class="toc-tree-link" href="#sub-dynamicsignkey" onclick="toggleMobileToc()">**`dynamicSignKey`**</a>
+              <a class="toc-tree-link" href="#sub-dynamicsignkey" onclick="toggleMobileToc()"><span class="toc-code">dynamicSignKey</span></a>
             </div>
             <div class="toc-node-row">
               <span class="toc-leaf-dot"></span>
-              <a class="toc-tree-link" href="#sub-two-pass-md5-signature" onclick="toggleMobileToc()">**`Two-Pass MD5 Signature`**</a>
+              <a class="toc-tree-link" href="#sub-two-pass-md5-signature" onclick="toggleMobileToc()"><span class="toc-code">Two-Pass MD5 Signature</span></a>
             </div>
             <div class="toc-node-row">
               <span class="toc-leaf-dot"></span>
-              <a class="toc-tree-link" href="#sub-error-code-10006" onclick="toggleMobileToc()">**Error Code `10006`**</a>
+              <a class="toc-tree-link" href="#sub-error-code-10006" onclick="toggleMobileToc()">Error Code <span class="toc-code">10006</span></a>
             </div>
           </div>
         </div>
@@ -552,23 +552,23 @@ class GlobalSessionManager implements SessionContract {
           <div class="toc-branch">
             <div class="toc-node-row">
               <span class="toc-leaf-dot"></span>
-              <a class="toc-tree-link" href="#sub-repay-repayment" onclick="toggleMobileToc()">**Repay / Repayment**</a>
+              <a class="toc-tree-link" href="#sub-repay-repayment" onclick="toggleMobileToc()">Repay / Repayment</a>
             </div>
             <div class="toc-node-row">
               <span class="toc-leaf-dot"></span>
-              <a class="toc-tree-link" href="#sub-virtual-account-va" onclick="toggleMobileToc()">**Virtual Account (VA)**</a>
+              <a class="toc-tree-link" href="#sub-virtual-account-va" onclick="toggleMobileToc()">Virtual Account (VA)</a>
             </div>
             <div class="toc-node-row">
               <span class="toc-leaf-dot"></span>
-              <a class="toc-tree-link" href="#sub-deductor-code-kode-potong-kode-bayar" onclick="toggleMobileToc()">**Deductor Code (Kode Potong / Kode Bayar)**</a>
+              <a class="toc-tree-link" href="#sub-deductor-code-kode-potong-kode-bayar" onclick="toggleMobileToc()">Deductor Code (Kode Potong / Kode Bayar)</a>
             </div>
             <div class="toc-node-row">
               <span class="toc-leaf-dot"></span>
-              <a class="toc-tree-link" href="#sub-overdue-days" onclick="toggleMobileToc()">**Overdue Days**</a>
+              <a class="toc-tree-link" href="#sub-overdue-days" onclick="toggleMobileToc()">Overdue Days</a>
             </div>
             <div class="toc-node-row">
               <span class="toc-leaf-dot"></span>
-              <a class="toc-tree-link" href="#sub-e-kyc-know-your-customer" onclick="toggleMobileToc()">**e-KYC (Know Your Customer)**</a>
+              <a class="toc-tree-link" href="#sub-e-kyc-know-your-customer" onclick="toggleMobileToc()">e-KYC (Know Your Customer)</a>
             </div>
           </div>
         </div>

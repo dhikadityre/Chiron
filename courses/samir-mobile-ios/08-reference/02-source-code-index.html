@@ -97,34 +97,34 @@
 
 <p>Dokumen ini adalah indeks komprehensif berkas kode sumber utama, class-class kunci, rute URL (<code>samir://</code>), dan endpoint API yang diimplementasikan di dalam codebase iOS SAMIR. Gunakan dokumen ini sebagai peta pencarian cepat (<em>lookup directory</em>) saat bekerja.</p>
 <section id="sec-obj" class="doc-section">
-<h3>📌 A. Indeks Modul &amp; File Utama</h3>
+<h3>📌 A. Indeks Modul & File Utama</h3>
 <div id="sub-1-foundation-lifecycle-modul-inti" class="doc-subsection">
-<h4>1. Foundation &amp; Lifecycle (Modul Inti)</h4>
+<h4>1. Foundation & Lifecycle (Modul Inti)</h4>
 </div>
 <div class="table-container"><table class="data-table"><thead><tr><th>Path Berkas Relatif</th><th>Simbol / Class Utama</th><th>Tanggung Jawab / Peran</th></tr></thead><tbody><tr><td><code>ios/IDSamirLoan/main.swift</code></td><td><code>main</code></td><td>Entry point aplikasi, inisialisasi APM Tingyun dan <code>ModuleManagerApplicationMain</code>.</td></tr><tr><td><code>ios/IDSamirLoan/Application/CZSwiftModuleLib/Classes/CZAppDelegate.swift</code></td><td><code>CZAppDelegate</code></td><td><code>UIApplicationDelegate</code> yang mendelegasikan event ke <code>CZModuleManager</code>.</td></tr><tr><td><code>ios/IDSamirLoan/Application/CZSwiftModuleLib/Classes/CZModuleManager.swift</code></td><td><code>CZModuleManager</code></td><td>Mengurai <code>IDModuleList.plist</code> dan memicu lifecycle hook pada modul.</td></tr><tr><td><code>ios/IDSamirLoan/Application/SamirServiceModule/Classes/IDServiceManager.swift</code></td><td><code>IDServiceManager</code></td><td>Service Locator registry penyedia implementasi protokol antarmodul.</td></tr><tr><td><code>ios/IDSamirLoan/Application/CZSwiftRouterLib/Classes/CZRouterCenter.swift</code></td><td><code>CZRouterCenter</code></td><td>Engine registrasi dan pencocokan pola regex skema URL <code>samir://</code>.</td></tr><tr><td><code>ios/IDSamirLoan/Application/CZSwiftEnviromentLib/Classes/Base/AppEnv.swift</code></td><td><code>AppEnv</code></td><td>Penyedia konfigurasi lingkungan build (TEST, PROD-TEST, PROD).</td></tr></tbody></table></div>
 <div id="sub-2-main-tab-bar-module-samirmainmodule" class="doc-subsection">
-<h4>2. Main &amp; Tab Bar Module (`SamirMainModule`)</h4>
+<h4>2. Main & Tab Bar Module (<code>SamirMainModule</code>)</h4>
 </div>
 <div class="table-container"><table class="data-table"><thead><tr><th>Path Berkas Relatif</th><th>Simbol / Class Utama</th><th>Tanggung Jawab / Peran</th></tr></thead><tbody><tr><td><code>.../SamirMainModule/Classes/IDController/IDMainTabBarController.swift</code></td><td><code>IDMainTabBarController</code></td><td>Host 3 tab utama, inisialisasi floating <code>DebugUI</code>, dan host persistent Flutter engine.</td></tr><tr><td><code>.../SamirMainModule/Classes/IDController/IDSplashViewController.swift</code></td><td><code>IDSplashViewController</code></td><td>Splash screen, animasi countdown 3 detik, dan resolusi pending deep link.</td></tr><tr><td><code>.../SamirMainModule/Classes/IDModule/IDSamirMainModule.swift</code></td><td><code>IDSamirMainModule</code></td><td>Startup sequence 11 langkah, registrasi APNs/FCM, dan inisialisasi TrustDecision.</td></tr><tr><td><code>.../SamirMainModule/Classes/Flutter/FlutterEngineManager.swift</code></td><td><code>FlutterEngineManager</code></td><td>Pre-warming single instance <code>FlutterEngine</code> dan bridging <code>samir_native_channel</code>.</td></tr><tr><td><code>.../SamirMainModule/Classes/IDRouter/IDRouterManager.swift</code></td><td><code>IDRouterManager</code></td><td>Titik orkestrasi pendaftaran seluruh router handler aplikasi.</td></tr></tbody></table></div>
 <div id="sub-3-autentikasi-akun-samirloginmodule" class="doc-subsection">
-<h4>3. Autentikasi &amp; Akun (`SamirLoginModule`)</h4>
+<h4>3. Autentikasi & Akun (<code>SamirLoginModule</code>)</h4>
 </div>
 <div class="table-container"><table class="data-table"><thead><tr><th>Path Berkas Relatif</th><th>Simbol / Class Utama</th><th>Tanggung Jawab / Peran</th></tr></thead><tbody><tr><td><code>.../SamirLoginModule/Classes/IDController/IDLoginViewController.swift</code></td><td><code>IDLoginViewController</code></td><td>Input nomor HP, validasi format nomor Indonesia, dan trigger OTP.</td></tr><tr><td><code>.../SamirLoginModule/Classes/IDController/IDVerificationCodeController.swift</code></td><td><code>IDVerificationCodeController</code></td><td>Input kode OTP 4/6 digit, timer countdown, dan submit autentikasi.</td></tr><tr><td><code>.../SamirLoginModule/Classes/IDPresenter/IDLoginManager.swift</code></td><td><code>IDLoginManager</code></td><td>Presenter bisnis login, validasi token, dan eksekusi logout.</td></tr><tr><td><code>.../SamirLoginModule/Classes/IDModel/IDLoginCodeModel.swift</code></td><td><code>IDLoginCodeModel</code></td><td>Model data pengguna dan implementasi persistensi terenkripsi AES-GCM (<code>idn_userFile.plist</code>).</td></tr></tbody></table></div>
 <div id="sub-4-peminjaman-dashboard-samirloanmodule-samirloanconfirmmodule" class="doc-subsection">
-<h4>4. Peminjaman &amp; Dashboard (`SamirLoanModule` &amp; `SamirLoanConfirmModule`)</h4>
+<h4>4. Peminjaman & Dashboard (<code>SamirLoanModule</code> & <code>SamirLoanConfirmModule</code>)</h4>
 </div>
 <div class="table-container"><table class="data-table"><thead><tr><th>Path Berkas Relatif</th><th>Simbol / Class Utama</th><th>Tanggung Jawab / Peran</th></tr></thead><tbody><tr><td><code>.../SamirLoanModule/Classes/IDController/IDHomeViewController.swift</code></td><td><code>IDHomeViewController</code></td><td>Dashboard tab 0, render kuota pinjaman, pulling status audit KYC, dan promo banners.</td></tr><tr><td><code>.../SamirLoanConfirmModule/Controllers/LoanConfirmViewController_Rx.swift</code></td><td><code>LoanConfirmViewController_Rx</code></td><td>Form konfirmasi pinjaman raksasa (2.250 baris), kalkulasi bunga dan cicilan berbasis RxSwift.</td></tr><tr><td><code>.../SamirLoanConfirmModule/ViewModels/LoanConfirmViewModel.swift</code></td><td><code>LoanConfirmViewModel</code></td><td>State management reaktif konfirmasi pinjaman via <code>BehaviorRelay</code>.</td></tr><tr><td><code>.../SamirLoanConfirmModule/Services/LoanConfirmService.swift</code></td><td><code>LoanConfirmService</code></td><td>Orkestrasi panggilan API pengajuan kredit, agreement signature, dan polling hasil persetujuan.</td></tr></tbody></table></div>
 <div id="sub-5-e-kyc-identity-verification-samirauthmodule" class="doc-subsection">
-<h4>5. e-KYC Identity Verification (`SamirAuthModule`)</h4>
+<h4>5. e-KYC Identity Verification (<code>SamirAuthModule</code>)</h4>
 </div>
 <div class="table-container"><table class="data-table"><thead><tr><th>Path Berkas Relatif</th><th>Simbol / Class Utama</th><th>Tanggung Jawab / Peran</th></tr></thead><tbody><tr><td><code>.../SamirAuthModule/Classes/IDPresenterV2/IDNewAuthPresenter.swift</code></td><td><code>IDNewAuthPresenter</code></td><td>Presenter sentral 6 tahapan form KYC dan penanganan status review.</td></tr><tr><td><code>.../SamirAuthModule/Classes/IDController/IDAuthKtpViewController.swift</code></td><td><code>IDAuthKtpViewController</code></td><td>Kamera pemotretan KTP dengan deteksi orientasi dan OCR Advance AI.</td></tr><tr><td><code>.../SamirAuthModule/Classes/IDController/IDAuthLiveViewController.swift</code></td><td><code>IDAuthLiveViewController</code></td><td>Deteksi biometrik wajah bergerak via <code>AAILivenessSDK</code>.</td></tr><tr><td><code>.../SamirAuthModule/Classes/IDController/IDAuthPersonalInfoViewController.swift</code></td><td><code>IDAuthPersonalInfoViewController</code></td><td>Form data pribadi, pendidikan, agama, dan status perkawinan.</td></tr><tr><td><code>.../SamirAuthModule/Classes/IDController/IDAuthWorkInfoViewController.swift</code></td><td><code>IDAuthWorkInfoViewController</code></td><td>Form pekerjaan, nama perusahaan, estimasi pendapatan bulanan, dan NPWP.</td></tr><tr><td><code>.../SamirAuthModule/Classes/IDController/IDAuthEmergencyContactViewController.swift</code></td><td><code>IDAuthEmergencyContactViewController</code></td><td>Form 2-3 kontak darurat (hubungan keluarga, nomor HP valid).</td></tr><tr><td><code>.../SamirAuthModule/Classes/IDController/IDAuthBankCardViewController.swift</code></td><td><code>IDAuthBankCardViewController</code></td><td>Form rekening bank pencairan dana (nama pemilik rekening harus sama dengan KTP).</td></tr></tbody></table></div>
 <div id="sub-6-networking-telemetri" class="doc-subsection">
-<h4>6. Networking &amp; Telemetri</h4>
+<h4>6. Networking & Telemetri</h4>
 </div>
 <div class="table-container"><table class="data-table"><thead><tr><th>Path Berkas Relatif</th><th>Simbol / Class Utama</th><th>Tanggung Jawab / Peran</th></tr></thead><tbody><tr><td><code>.../SamirNetworkModule/Classes/Common/IDNetworkRequest.swift</code></td><td><code>IDNetworkRequest</code></td><td>Kelas dasar HTTP request SAMIR, konfigurasi header, delegasi ke Alamofire, dan error parser.</td></tr><tr><td><code>.../SamirNetworkModule/Classes/Common/ApiParamsHelper.swift</code></td><td><code>ApiParamsHelper</code></td><td>Kompilasi 18 parameter umum dan integrasi <code>LibNetSignGenerator.framework</code>.</td></tr><tr><td><code>.../SamirPointsModule/Classes/IDAppsFlyerManager.swift</code></td><td><code>IDAppsFlyerManager</code></td><td>Pelacak attribution instalasi dan event konversi AppsFlyer.</td></tr><tr><td><code>.../SamirPointsModule/Classes/Custom/IDCustomPointNetworkManager.swift</code></td><td><code>IDCustomPointNetworkManager</code></td><td>Pengirim event tracking telemetri internal SAMIR.</td></tr></tbody></table></div>
 </section>
 <section id="sec-prereq" class="doc-section">
-<h3>📌 B. Indeks URL Schemes &amp; Router Tables (`samir://`)</h3>
+<h3>📌 B. Indeks URL Schemes & Router Tables (<code>samir://</code>)</h3>
 <div class="table-container"><table class="data-table"><thead><tr><th>URL Scheme Pattern</th><th>Handler Class</th><th>Destinasi Tampilan / Aksi</th></tr></thead><tbody><tr><td><code>samir://login/login</code></td><td><code>IDSamirLoginRouterHandler</code></td><td>Membuka modal form input nomor HP login.</td></tr><tr><td><code>samir://login/verifyCode</code></td><td><code>IDSamirLoginRouterHandler</code></td><td>Membuka layar verifikasi kode OTP.</td></tr><tr><td><code>samir://home/index</code></td><td><code>IDSamirLoanRouterHandler</code></td><td>Membawa navigasi kembali ke Tab 0 (Home).</td></tr><tr><td><code>samir://loan/confirm</code></td><td><code>IDSamirLoanRouterHandler</code></td><td>Membuka form konfirmasi nominal dan tenor pinjaman.</td></tr><tr><td><code>samir://auth/baseInfo</code></td><td><code>IDSamirAuthRouterHandler</code></td><td>Membuka step KYC yang sesuai berdasarkan status audit pengguna.</td></tr><tr><td><code>samir://auth/ktp</code></td><td><code>IDSamirAuthRouterHandler</code></td><td>Membuka layar pengambilan foto KTP OCR.</td></tr><tr><td><code>samir://auth/liveness</code></td><td><code>IDSamirAuthRouterHandler</code></td><td>Membuka deteksi wajah biometrik Advance AI.</td></tr><tr><td><code>samir://repay/index</code></td><td><code>IDSamirRepayRouterHandler</code></td><td>Berpindah ke Tab 1 (Repay Flutter engine).</td></tr><tr><td><code>samir://mine/index</code></td><td><code>IDSamirMineRouterHandler</code></td><td>Berpindah ke Tab 2 (Mine Flutter engine).</td></tr><tr><td><code>samir://webview/open</code></td><td><code>IDSamirWebViewRouterHandler</code></td><td>Membuka WebViewController dengan URL target dan inject token sesi.</td></tr></tbody></table></div>
 </section>
 <section id="sec-simple" class="doc-section">
@@ -316,19 +316,19 @@ public final class AppSessionManager: SessionProvider {
               </div>
               <div class="toc-node-row">
                 <span class="toc-leaf-dot"></span>
-                <a class="toc-tree-link" href="#sub-2-main-tab-bar-module-samirmainmodule">2. Main &amp; Tab Bar Module (`SamirMainModule`)</a>
+                <a class="toc-tree-link" href="#sub-2-main-tab-bar-module-samirmainmodule">2. Main &amp; Tab Bar Module (<span class="toc-code">SamirMainModule</span>)</a>
               </div>
               <div class="toc-node-row">
                 <span class="toc-leaf-dot"></span>
-                <a class="toc-tree-link" href="#sub-3-autentikasi-akun-samirloginmodule">3. Autentikasi &amp; Akun (`SamirLoginModule`)</a>
+                <a class="toc-tree-link" href="#sub-3-autentikasi-akun-samirloginmodule">3. Autentikasi &amp; Akun (<span class="toc-code">SamirLoginModule</span>)</a>
               </div>
               <div class="toc-node-row">
                 <span class="toc-leaf-dot"></span>
-                <a class="toc-tree-link" href="#sub-4-peminjaman-dashboard-samirloanmodule-samirloanconfirmmodule">4. Peminjaman &amp; Dashboard (`SamirLoanModule` &amp; `SamirLoanConfirmModule`)</a>
+                <a class="toc-tree-link" href="#sub-4-peminjaman-dashboard-samirloanmodule-samirloanconfirmmodule">4. Peminjaman &amp; Dashboard (<span class="toc-code">SamirLoanModule</span> &amp; <span class="toc-code">SamirLoanConfirmModule</span>)</a>
               </div>
               <div class="toc-node-row">
                 <span class="toc-leaf-dot"></span>
-                <a class="toc-tree-link" href="#sub-5-e-kyc-identity-verification-samirauthmodule">5. e-KYC Identity Verification (`SamirAuthModule`)</a>
+                <a class="toc-tree-link" href="#sub-5-e-kyc-identity-verification-samirauthmodule">5. e-KYC Identity Verification (<span class="toc-code">SamirAuthModule</span>)</a>
               </div>
               <div class="toc-node-row">
                 <span class="toc-leaf-dot"></span>
@@ -338,7 +338,7 @@ public final class AppSessionManager: SessionProvider {
           </div>
           <div class="toc-node-row">
             <span class="toc-leaf-dot"></span>
-            <a class="toc-tree-link" href="#sec-prereq">B. Indeks URL Schemes &amp; Router Tables (`samir://`)</a>
+            <a class="toc-tree-link" href="#sec-prereq">B. Indeks URL Schemes &amp; Router Tables (<span class="toc-code">samir://</span>)</a>
           </div>
           <div class="toc-node-row">
             <span class="toc-leaf-dot"></span>
@@ -412,19 +412,19 @@ public final class AppSessionManager: SessionProvider {
             </div>
             <div class="toc-node-row">
               <span class="toc-leaf-dot"></span>
-              <a class="toc-tree-link" href="#sub-2-main-tab-bar-module-samirmainmodule" onclick="toggleMobileToc()">2. Main &amp; Tab Bar Module (`SamirMainModule`)</a>
+              <a class="toc-tree-link" href="#sub-2-main-tab-bar-module-samirmainmodule" onclick="toggleMobileToc()">2. Main &amp; Tab Bar Module (<span class="toc-code">SamirMainModule</span>)</a>
             </div>
             <div class="toc-node-row">
               <span class="toc-leaf-dot"></span>
-              <a class="toc-tree-link" href="#sub-3-autentikasi-akun-samirloginmodule" onclick="toggleMobileToc()">3. Autentikasi &amp; Akun (`SamirLoginModule`)</a>
+              <a class="toc-tree-link" href="#sub-3-autentikasi-akun-samirloginmodule" onclick="toggleMobileToc()">3. Autentikasi &amp; Akun (<span class="toc-code">SamirLoginModule</span>)</a>
             </div>
             <div class="toc-node-row">
               <span class="toc-leaf-dot"></span>
-              <a class="toc-tree-link" href="#sub-4-peminjaman-dashboard-samirloanmodule-samirloanconfirmmodule" onclick="toggleMobileToc()">4. Peminjaman &amp; Dashboard (`SamirLoanModule` &amp; `SamirLoanConfirmModule`)</a>
+              <a class="toc-tree-link" href="#sub-4-peminjaman-dashboard-samirloanmodule-samirloanconfirmmodule" onclick="toggleMobileToc()">4. Peminjaman &amp; Dashboard (<span class="toc-code">SamirLoanModule</span> &amp; <span class="toc-code">SamirLoanConfirmModule</span>)</a>
             </div>
             <div class="toc-node-row">
               <span class="toc-leaf-dot"></span>
-              <a class="toc-tree-link" href="#sub-5-e-kyc-identity-verification-samirauthmodule" onclick="toggleMobileToc()">5. e-KYC Identity Verification (`SamirAuthModule`)</a>
+              <a class="toc-tree-link" href="#sub-5-e-kyc-identity-verification-samirauthmodule" onclick="toggleMobileToc()">5. e-KYC Identity Verification (<span class="toc-code">SamirAuthModule</span>)</a>
             </div>
             <div class="toc-node-row">
               <span class="toc-leaf-dot"></span>
@@ -434,7 +434,7 @@ public final class AppSessionManager: SessionProvider {
         </div>
         <div class="toc-node-row">
           <span class="toc-leaf-dot"></span>
-          <a class="toc-tree-link" href="#sec-prereq" onclick="toggleMobileToc()">B. Indeks URL Schemes &amp; Router Tables (`samir://`)</a>
+          <a class="toc-tree-link" href="#sec-prereq" onclick="toggleMobileToc()">B. Indeks URL Schemes &amp; Router Tables (<span class="toc-code">samir://</span>)</a>
         </div>
         <div class="toc-node-row">
           <span class="toc-leaf-dot"></span>

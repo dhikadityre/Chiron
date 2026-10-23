@@ -112,7 +112,7 @@
 <p>Telah membaca <a href="01-error-handling.html">01-error-handling.md</a>.</p>
 </section>
 <section id="sec-simple" class="doc-section">
-<h3>💡 C. Simple Explanation (Analogi &amp; Konsep Sederhana)</h3>
+<h3>💡 C. Simple Explanation (Analogi & Konsep Sederhana)</h3>
 <p>Bayangkan Anda ingin memeriksa kejernihan air yang mengalir di pipa bawah tanah tanpa membongkar jalan raya:</p>
 <ul>
 <li><strong>Jalur Standar</strong>: Air mengalir langsung dari PDAM ke keran rumah (Koneksi normal ke server backend).</li>
@@ -123,7 +123,7 @@
 <section id="sec-actual" class="doc-section">
 <h3>💻 D. Actual Implementation (Bukti di Kode Sumber)</h3>
 <div id="sub-1-layar-pengaturan-proxy-proxydebugpage" class="doc-subsection">
-<h4>1. Layar Pengaturan Proxy: `ProxyDebugPage`</h4>
+<h4>1. Layar Pengaturan Proxy: <code>ProxyDebugPage</code></h4>
 </div>
 <p>File <a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/learn/Flutter-Arch/flutter/lib/pages/mine/debug/proxy_debug_page.dart" target="_blank" rel="noopener noreferrer">🦊 flutter/lib/pages/mine/debug/proxy_debug_page.dart <span class="branch-tag">learn/Flutter-Arch</span> ↗</a>:</p>
 <pre><code class="language-dart">void _save() {
@@ -156,7 +156,7 @@
 <li>Halaman <code>ProxyDebugPage</code> akan terbuka.</li>
 </ol>
 <div id="sub-2-mekanisme-injeksi-proxy-di-iohttpclientadapter" class="doc-subsection">
-<h4>2. Mekanisme Injeksi Proxy di `IOHttpClientAdapter`</h4>
+<h4>2. Mekanisme Injeksi Proxy di <code>IOHttpClientAdapter</code></h4>
 </div>
 <p>Pada <a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/learn/Flutter-Arch/flutter/lib/common/http/http_client.dart" target="_blank" rel="noopener noreferrer">🦊 flutter/lib/common/http/http_client.dart <span class="branch-tag">learn/Flutter-Arch</span> ↗</a> (baris 43–59):</p>
 <pre><code class="language-dart">dio.httpClientAdapter = IOHttpClientAdapter(
@@ -236,7 +236,7 @@
 </ul>
 </section>
 <section id="sec-why" class="doc-section">
-<h3>⚖️ F. Why It Matters (Trade-Offs &amp; Implikasi Teknis)</h3>
+<h3>⚖️ F. Why It Matters (Trade-Offs & Implikasi Teknis)</h3>
 <ul>
 <li><strong>Kecepatan Diagnosis Masalah QA</strong>:</li>
 </ul>
@@ -247,7 +247,7 @@
 <p>Kode <code>if (AppEnv.isProd) return;</code> memastikan bahwa mekanisme proxy injection dan bypass SSL <strong>mati total</strong> di build App Store / Google Play resmi, melindungi nasabah dari serangan MITM di jaringan Wi-Fi publik.</p>
 </section>
 <section id="sec-example" class="doc-section">
-<h3>⚠️ G. Common Mistakes &amp; Debugging</h3>
+<h3>⚠️ G. Common Mistakes & Debugging</h3>
 <ul>
 <li><strong>Salah Menulis Format Port Proxy</strong>:</li>
 <li>Menulis <code>http://192.168.1.50:8888</code> (dengan protokol <code>http://</code>) akan ditolak oleh validator regex <code>_isValidProxy()</code>. Format yang benar adalah murni <code>host:port</code> (contoh: <code>192.168.1.50:8888</code>).</li>
@@ -447,11 +447,11 @@ class GlobalSessionManager implements SessionContract {
             <div class="toc-branch">
               <div class="toc-node-row">
                 <span class="toc-leaf-dot"></span>
-                <a class="toc-tree-link" href="#sub-1-layar-pengaturan-proxy-proxydebugpage">1. Layar Pengaturan Proxy: `ProxyDebugPage`</a>
+                <a class="toc-tree-link" href="#sub-1-layar-pengaturan-proxy-proxydebugpage">1. Layar Pengaturan Proxy: <span class="toc-code">ProxyDebugPage</span></a>
               </div>
               <div class="toc-node-row">
                 <span class="toc-leaf-dot"></span>
-                <a class="toc-tree-link" href="#sub-2-mekanisme-injeksi-proxy-di-iohttpclientadapter">2. Mekanisme Injeksi Proxy di `IOHttpClientAdapter`</a>
+                <a class="toc-tree-link" href="#sub-2-mekanisme-injeksi-proxy-di-iohttpclientadapter">2. Mekanisme Injeksi Proxy di <span class="toc-code">IOHttpClientAdapter</span></a>
               </div>
               <div class="toc-node-row">
                 <span class="toc-leaf-dot"></span>
@@ -551,11 +551,11 @@ class GlobalSessionManager implements SessionContract {
           <div class="toc-branch">
             <div class="toc-node-row">
               <span class="toc-leaf-dot"></span>
-              <a class="toc-tree-link" href="#sub-1-layar-pengaturan-proxy-proxydebugpage" onclick="toggleMobileToc()">1. Layar Pengaturan Proxy: `ProxyDebugPage`</a>
+              <a class="toc-tree-link" href="#sub-1-layar-pengaturan-proxy-proxydebugpage" onclick="toggleMobileToc()">1. Layar Pengaturan Proxy: <span class="toc-code">ProxyDebugPage</span></a>
             </div>
             <div class="toc-node-row">
               <span class="toc-leaf-dot"></span>
-              <a class="toc-tree-link" href="#sub-2-mekanisme-injeksi-proxy-di-iohttpclientadapter" onclick="toggleMobileToc()">2. Mekanisme Injeksi Proxy di `IOHttpClientAdapter`</a>
+              <a class="toc-tree-link" href="#sub-2-mekanisme-injeksi-proxy-di-iohttpclientadapter" onclick="toggleMobileToc()">2. Mekanisme Injeksi Proxy di <span class="toc-code">IOHttpClientAdapter</span></a>
             </div>
             <div class="toc-node-row">
               <span class="toc-leaf-dot"></span>

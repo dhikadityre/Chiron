@@ -112,7 +112,7 @@
 <p>Telah membaca <a href="../06-understanding-data-and-dependencies/02-networking-and-api-flow.html">Level 6: Jaringan &amp; Keamanan</a>.</p>
 </section>
 <section id="sec-simple" class="doc-section">
-<h3>💡 C. Simple Explanation (Analogi &amp; Konsep Sederhana)</h3>
+<h3>💡 C. Simple Explanation (Analogi & Konsep Sederhana)</h3>
 <p>Bayangkan Anda memesan makanan melalui telepon ke restoran:</p>
 <ol>
 <li><strong>Kesalahan Jaringan (Transport Error)</strong>: Sinyal telepon terputus atau nomor restoran sibuk (<strong><code>DioExceptionType.connectionTimeout</code></strong>). Anda tahu masalahnya ada pada saluran kabel telepon.</li>
@@ -140,7 +140,7 @@
 │    - Ditangani oleh: _getResponse()                    │
 └────────────────────────────────────────────────────────┘</code></pre>
 <div id="sub-2-pembungkus-eksepsi-dio-createerrorresponse" class="doc-subsection">
-<h4>2. Pembungkus Eksepsi Dio: `_createErrorResponse()`</h4>
+<h4>2. Pembungkus Eksepsi Dio: <code>_createErrorResponse()</code></h4>
 </div>
 <p>File <a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/learn/Flutter-Arch/flutter/lib/common/http/http_client.dart" target="_blank" rel="noopener noreferrer">🦊 flutter/lib/common/http/http_client.dart <span class="branch-tag">learn/Flutter-Arch</span> ↗</a> (baris 151–183):</p>
 <pre><code class="language-dart">BaseResponse&lt;dynamic&gt; _createErrorResponse(dynamic error) {
@@ -181,7 +181,7 @@
 <li>Layer <code>Service</code> tidak perlu menangani puluhan tipe exception yang berbeda; cukup memeriksa <code>BaseResponse.code</code>.</li>
 </ul>
 <div id="sub-3-filter-respon-bisnis-getresponse" class="doc-subsection">
-<h4>3. Filter Respon Bisnis: `_getResponse()`</h4>
+<h4>3. Filter Respon Bisnis: <code>_getResponse()</code></h4>
 </div>
 <p>Pada <code>http_client.dart</code> (baris 133–149):</p>
 <pre><code class="language-dart">dynamic _getResponse(Response&lt;dynamic&gt; response) {
@@ -223,7 +223,7 @@
 </ol>
 </section>
 <section id="sec-why" class="doc-section">
-<h3>⚖️ F. Why It Matters (Trade-Offs &amp; Implikasi Teknis)</h3>
+<h3>⚖️ F. Why It Matters (Trade-Offs & Implikasi Teknis)</h3>
 <ul>
 <li><strong>Menjamin UI Tidak Pernah Mengalami "Freeze"</strong>:</li>
 </ul>
@@ -243,7 +243,7 @@
 </ul>
 </section>
 <section id="sec-mistakes" class="doc-section">
-<h3>⚠️ H. Common Mistakes &amp; Debugging</h3>
+<h3>⚠️ H. Common Mistakes & Debugging</h3>
 <ul>
 <li><strong>Mengabaikan Respon Bernilai Null di Service</strong>:</li>
 <li>Karena <code>_getResponse()</code> mengembalikan <code>baseResponse.data</code> yang dapat bernilai <code>null</code> saat error terjadi, class model yang mem-parsing data wajib memiliki factory null-safe: <code>RepayHomeModel.fromJson(responseData is Map ? responseData : null)</code>.</li>
@@ -445,11 +445,11 @@ class GlobalSessionManager implements SessionContract {
               </div>
               <div class="toc-node-row">
                 <span class="toc-leaf-dot"></span>
-                <a class="toc-tree-link" href="#sub-2-pembungkus-eksepsi-dio-createerrorresponse">2. Pembungkus Eksepsi Dio: `_createErrorResponse()`</a>
+                <a class="toc-tree-link" href="#sub-2-pembungkus-eksepsi-dio-createerrorresponse">2. Pembungkus Eksepsi Dio: <span class="toc-code">_createErrorResponse()</span></a>
               </div>
               <div class="toc-node-row">
                 <span class="toc-leaf-dot"></span>
-                <a class="toc-tree-link" href="#sub-3-filter-respon-bisnis-getresponse">3. Filter Respon Bisnis: `_getResponse()`</a>
+                <a class="toc-tree-link" href="#sub-3-filter-respon-bisnis-getresponse">3. Filter Respon Bisnis: <span class="toc-code">_getResponse()</span></a>
               </div>
               <div class="toc-node-row">
                 <span class="toc-leaf-dot"></span>
@@ -553,11 +553,11 @@ class GlobalSessionManager implements SessionContract {
             </div>
             <div class="toc-node-row">
               <span class="toc-leaf-dot"></span>
-              <a class="toc-tree-link" href="#sub-2-pembungkus-eksepsi-dio-createerrorresponse" onclick="toggleMobileToc()">2. Pembungkus Eksepsi Dio: `_createErrorResponse()`</a>
+              <a class="toc-tree-link" href="#sub-2-pembungkus-eksepsi-dio-createerrorresponse" onclick="toggleMobileToc()">2. Pembungkus Eksepsi Dio: <span class="toc-code">_createErrorResponse()</span></a>
             </div>
             <div class="toc-node-row">
               <span class="toc-leaf-dot"></span>
-              <a class="toc-tree-link" href="#sub-3-filter-respon-bisnis-getresponse" onclick="toggleMobileToc()">3. Filter Respon Bisnis: `_getResponse()`</a>
+              <a class="toc-tree-link" href="#sub-3-filter-respon-bisnis-getresponse" onclick="toggleMobileToc()">3. Filter Respon Bisnis: <span class="toc-code">_getResponse()</span></a>
             </div>
             <div class="toc-node-row">
               <span class="toc-leaf-dot"></span>

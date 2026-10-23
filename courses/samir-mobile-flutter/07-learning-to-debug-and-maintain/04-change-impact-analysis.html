@@ -112,7 +112,7 @@
 <p>Telah membaca <a href="../01-project-foundation/01-application-overview.html">Level 1: Pondasi</a> hingga <a href="../07-learning-to-debug-and-maintain/03-coupling-and-technical-debt.html">Level 7: Debugging</a>.</p>
 </section>
 <section id="sec-simple" class="doc-section">
-<h3>💡 C. Simple Explanation (Analogi &amp; Konsep Sederhana)</h3>
+<h3>💡 C. Simple Explanation (Analogi & Konsep Sederhana)</h3>
 <p>Bayangkan merenovasi instalasi pipa gas di dalam gedung apartemen bertingkat:</p>
 <ul>
 <li>Jika Anda hanya mengganti kran air di wastafel dapur sendiri (mengubah padding di <code>mine_home_header.dart</code>), dampaknya hanya terasa di dapur Anda sendiri.</li>
@@ -167,7 +167,7 @@ xcodebuild -workspace IDSamirLoan.xcworkspace -scheme TEST -configuration Debug 
 <p><em>Kriteria Lolos</em>: <code>** BUILD SUCCEEDED **</code>.</p>
 </section>
 <section id="sec-why" class="doc-section">
-<h3>⚖️ F. Why It Matters (Trade-Offs &amp; Implikasi Teknis)</h3>
+<h3>⚖️ F. Why It Matters (Trade-Offs & Implikasi Teknis)</h3>
 <ul>
 <li><strong>Menghindari Kerusakan Kompilasi di CI/CD</strong>:</li>
 </ul>
@@ -178,7 +178,7 @@ xcodebuild -workspace IDSamirLoan.xcworkspace -scheme TEST -configuration Debug 
 <p>Bug pada file UI (seperti teks terpotong) dapat diperbaiki dengan cepat. Namun, bug pada <code>sign_utils.dart</code> yang lolos ke rilis App Store akan membuat ribuan nasabah tidak dapat membayar pinjaman atau melihat profil mereka, berpotensi memicu denda regulasi dari OJK.</p>
 </section>
 <section id="sec-example" class="doc-section">
-<h3>⚠️ G. Common Mistakes &amp; Debugging</h3>
+<h3>⚠️ G. Common Mistakes & Debugging</h3>
 <ul>
 <li><strong>Mengubah Nama Method Channel Hanya di Sisi Flutter</strong>:</li>
 <li>Mengubah <code>FlutterNativeChannelMethod.requestRepayBenefitPopup</code> tanpa mengoordinasikan dengan engineer iOS yang memelihara <code>FlutterNativeChannel+method.swift</code>.</li>

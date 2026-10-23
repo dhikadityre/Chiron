@@ -115,7 +115,7 @@
 </ul>
 </section>
 <section id="sec-simple" class="doc-section">
-<h3>💡 C. Simple Explanation (Analogi Kantor Pos &amp; Alamat Surat)</h3>
+<h3>💡 C. Simple Explanation (Analogi Kantor Pos & Alamat Surat)</h3>
 <p>Bayangkan sistem pengiriman surat pos internal:</p>
 <ul>
 <li><strong>Format Alamat (<code>samir://auth/identity?step=1</code>)</strong>:</li>
@@ -191,7 +191,7 @@ sequenceDiagram
     // ... rute lainnya
 }</code></pre>
 <div id="sub-2-pendaftaran-router-di-modul-czroutertable" class="doc-subsection">
-<h4>2. Pendaftaran Router di Modul (`CZRouterTable`)</h4>
+<h4>2. Pendaftaran Router di Modul (<code>CZRouterTable</code>)</h4>
 </div>
 <p>Setiap modul yang ingin menyediakan navigasi mengimplementasikan method <code>routers()</code> dari <code>CZModuleProtocol</code>. Contoh pada <code>SamirAuthModule</code>:</p>
 <pre><code class="language-swift">// IDSamirAuthModule.swift
@@ -212,18 +212,18 @@ func routers() -&gt; [CZRouter] {
     return [router!]
 }</code></pre>
 <div id="sub-3-bedah-pustaka-czswiftrouterlib-fungsi-czrouter" class="doc-subsection">
-<h4>3. Bedah Pustaka `CZSwiftRouterLib` &amp; Fungsi `CZRouter`</h4>
+<h4>3. Bedah Pustaka <code>CZSwiftRouterLib</code> & Fungsi <code>CZRouter</code></h4>
 </div>
 <p>Path: <a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/learn/iOS-Arch/ios/IDSamirLoan/Application/CZSwiftRouterLib/" target="_blank" rel="noopener noreferrer">🦊 ios/IDSamirLoan/Application/CZSwiftRouterLib/ <span class="branch-tag">learn/iOS-Arch</span> ↗</a></p>
 <p><code>CZSwiftRouterLib</code> adalah pustaka router in-house berbasis URL Scheme yang menjadi tulang punggung navigasi ter-decouple di SAMIR iOS.</p>
-<h5 id="item-a-untuk-apa-czrouter-digunakan">A. Untuk Apa `CZRouter` Digunakan?</h5>
+<h5 id="item-a-untuk-apa-czrouter-digunakan">A. Untuk Apa <code>CZRouter</code> Digunakan?</h5>
 <p><code>CZRouter</code> menyelesaikan masalah ketergantungan silang (<em>circular dependency</em>) antar modul:</p>
 <ol>
 <li><strong>Decoupling Antar Modul</strong>: Halaman Beranda (<code>SamirMainModule</code>) dapat membuka formulir OCR KTP (<code>SamirAuthModule</code>) atau halaman pengajuan pinjaman (<code>SamirLoanModule</code>) tanpa perlu meng-import class <code>IDNewOCRViewController</code> atau <code>IDLoanViewController</code>.</li>
 <li><strong>Deep Linking Universal</strong>: Format URL internal (<code>samir://auth/identity</code>) identik dengan URL skema dari push notification, SMS kampanye, maupun halaman web H5 hybrid, sehingga satu engine router melayani seluruh sumber navigasi.</li>
 <li>*<em>Penyaringan Rute Terpusat (</em>Route Filter<em>)</em><em>: Kemampuan memetakan alias URL atau mengalihkan (</em>redirect*) rute sebelum handler dijalankan.</li>
 </ol>
-<h5 id="item-b-komponen-utama-di-dalam-czswiftrouterlib">B. Komponen Utama di dalam `CZSwiftRouterLib`:</h5>
+<h5 id="item-b-komponen-utama-di-dalam-czswiftrouterlib">B. Komponen Utama di dalam <code>CZSwiftRouterLib</code>:</h5>
 <ol>
 <li><strong><code>CZRouter</code></strong>:</li>
 </ol>
@@ -257,13 +257,13 @@ func routers() -&gt; [CZRouter] {
 <li>Kontrak yang wajib diimplementasikan oleh setiap handler modul (seperti <code>IDSamirAuthModuleRouterHandler</code>) untuk mengeksekusi transisi UI (<code>pushViewController</code> atau <code>present</code>).</li>
 </ul>
 <div id="sub-4-fasad-pemanggilan-idroutermanager" class="doc-subsection">
-<h4>4. Fasad Pemanggilan (`IDRouterManager`)</h4>
+<h4>4. Fasad Pemanggilan (<code>IDRouterManager</code>)</h4>
 </div>
 <p>Path: <a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/learn/iOS-Arch/ios/IDSamirLoan/Application/SamirRouterModule/Classes/IDRouterManager.swift" target="_blank" rel="noopener noreferrer">🦊 ios/IDSamirLoan/Application/SamirRouterModule/Classes/IDRouterManager.swift <span class="branch-tag">learn/iOS-Arch</span> ↗</a></p>
 <p>Daripada memanggil pustaka internal <code>CZRouterCenter</code> secara langsung, semua pemanggil menggunakan fasad statis <code>IDRouterManager</code>:</p>
 <pre><code class="language-swift">IDRouterManager.id_perfromWithURLString(&quot;samir://auth/identity&quot;, params: [&quot;isEdit&quot;: &quot;1&quot;])</code></pre>
 <div id="sub-5-resolusi-ui-penampilan-layar" class="doc-subsection">
-<h4>5. Resolusi UI &amp; Penampilan Layar</h4>
+<h4>5. Resolusi UI & Penampilan Layar</h4>
 </div>
 <p>Di dalam class Handler (contoh: <code>IDSamirAuthModuleRouterHandler.swift</code> baris 142–146):</p>
 <pre><code class="language-swift">func openVC(_ vc: UIViewController) {
@@ -319,7 +319,7 @@ IDBusinessWebViewController.loadUrlWithAuth(
 )</code></pre>
 </section>
 <section id="sec-mistakes" class="doc-section">
-<h3>⚠️ H. Common Mistakes &amp; Debugging</h3>
+<h3>⚠️ H. Common Mistakes & Debugging</h3>
 <ul>
 <li><strong>Typo pada Skema atau Host</strong>:</li>
 <li>Memanggil <code>samir://atuh/identity</code> (typo <code>atuh</code> alih-alih <code>auth</code>).</li>
@@ -528,15 +528,15 @@ public final class RepayFlowCoordinator: Coordinator {
               </div>
               <div class="toc-node-row">
                 <span class="toc-leaf-dot"></span>
-                <a class="toc-tree-link" href="#sub-2-pendaftaran-router-di-modul-czroutertable">2. Pendaftaran Router di Modul (`CZRouterTable`)</a>
+                <a class="toc-tree-link" href="#sub-2-pendaftaran-router-di-modul-czroutertable">2. Pendaftaran Router di Modul (<span class="toc-code">CZRouterTable</span>)</a>
               </div>
               <div class="toc-node-row">
                 <span class="toc-leaf-dot"></span>
-                <a class="toc-tree-link" href="#sub-3-bedah-pustaka-czswiftrouterlib-fungsi-czrouter">3. Bedah Pustaka `CZSwiftRouterLib` &amp; Fungsi `CZRouter`</a>
+                <a class="toc-tree-link" href="#sub-3-bedah-pustaka-czswiftrouterlib-fungsi-czrouter">3. Bedah Pustaka <span class="toc-code">CZSwiftRouterLib</span> &amp; Fungsi <span class="toc-code">CZRouter</span></a>
               </div>
               <div class="toc-node-row">
                 <span class="toc-leaf-dot"></span>
-                <a class="toc-tree-link" href="#sub-4-fasad-pemanggilan-idroutermanager">4. Fasad Pemanggilan (`IDRouterManager`)</a>
+                <a class="toc-tree-link" href="#sub-4-fasad-pemanggilan-idroutermanager">4. Fasad Pemanggilan (<span class="toc-code">IDRouterManager</span>)</a>
               </div>
               <div class="toc-node-row">
                 <span class="toc-leaf-dot"></span>
@@ -640,15 +640,15 @@ public final class RepayFlowCoordinator: Coordinator {
             </div>
             <div class="toc-node-row">
               <span class="toc-leaf-dot"></span>
-              <a class="toc-tree-link" href="#sub-2-pendaftaran-router-di-modul-czroutertable" onclick="toggleMobileToc()">2. Pendaftaran Router di Modul (`CZRouterTable`)</a>
+              <a class="toc-tree-link" href="#sub-2-pendaftaran-router-di-modul-czroutertable" onclick="toggleMobileToc()">2. Pendaftaran Router di Modul (<span class="toc-code">CZRouterTable</span>)</a>
             </div>
             <div class="toc-node-row">
               <span class="toc-leaf-dot"></span>
-              <a class="toc-tree-link" href="#sub-3-bedah-pustaka-czswiftrouterlib-fungsi-czrouter" onclick="toggleMobileToc()">3. Bedah Pustaka `CZSwiftRouterLib` &amp; Fungsi `CZRouter`</a>
+              <a class="toc-tree-link" href="#sub-3-bedah-pustaka-czswiftrouterlib-fungsi-czrouter" onclick="toggleMobileToc()">3. Bedah Pustaka <span class="toc-code">CZSwiftRouterLib</span> &amp; Fungsi <span class="toc-code">CZRouter</span></a>
             </div>
             <div class="toc-node-row">
               <span class="toc-leaf-dot"></span>
-              <a class="toc-tree-link" href="#sub-4-fasad-pemanggilan-idroutermanager" onclick="toggleMobileToc()">4. Fasad Pemanggilan (`IDRouterManager`)</a>
+              <a class="toc-tree-link" href="#sub-4-fasad-pemanggilan-idroutermanager" onclick="toggleMobileToc()">4. Fasad Pemanggilan (<span class="toc-code">IDRouterManager</span>)</a>
             </div>
             <div class="toc-node-row">
               <span class="toc-leaf-dot"></span>

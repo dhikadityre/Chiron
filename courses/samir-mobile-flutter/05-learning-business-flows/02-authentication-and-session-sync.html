@@ -116,7 +116,7 @@
 <p>Telah membaca <a href="01-user-journey-overview.html">01-user-journey-overview.md</a> dan <a href="../03-understanding-architecture/01-architecture-overview.html">Level 3: Arsitektur Hybrid</a>.</p>
 </section>
 <section id="sec-simple" class="doc-section">
-<h3>💡 C. Simple Explanation (Analogi &amp; Konsep Sederhana)</h3>
+<h3>💡 C. Simple Explanation (Analogi & Konsep Sederhana)</h3>
 <p>Bayangkan sebuah gelang akses masuk kamar hotel pintar:</p>
 <ul>
 <li><strong>Kunci Induk Fisik (Native Host)</strong>: Disimpan aman di dalam brankas resepsionis hotel (iOS Keychain).</li>
@@ -128,7 +128,7 @@
 <section id="sec-actual" class="doc-section">
 <h3>💻 D. Actual Implementation (Bukti di Kode Sumber)</h3>
 <div id="sub-1-in-memory-session-store-global" class="doc-subsection">
-<h4>1. In-Memory Session Store: `Global`</h4>
+<h4>1. In-Memory Session Store: <code>Global</code></h4>
 </div>
 <p>File <a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/learn/Flutter-Arch/flutter/lib/common/global.dart" target="_blank" rel="noopener noreferrer">🦊 flutter/lib/common/global.dart <span class="branch-tag">learn/Flutter-Arch</span> ↗</a> mengelola sesi pengguna selama runtime proses Flutter:</p>
 <pre><code class="language-dart">class Global {
@@ -166,7 +166,7 @@
   }
 }</code></pre>
 <div id="sub-2-pengambilan-status-sesi-dari-host-native-getrootpagedata" class="doc-subsection">
-<h4>2. Pengambilan Status Sesi dari Host Native (`getRootPageData`)</h4>
+<h4>2. Pengambilan Status Sesi dari Host Native (<code>getRootPageData</code>)</h4>
 </div>
 <p>Diimplementasikan pada <a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/learn/Flutter-Arch/flutter/lib/common/platform/flutter_native_channel_method.dart" target="_blank" rel="noopener noreferrer">🦊 flutter/lib/common/platform/flutter_native_channel_method.dart <span class="branch-tag">learn/Flutter-Arch</span> ↗</a> (baris 22–26):</p>
 <pre><code class="language-dart">static Future&lt;Map&lt;dynamic, dynamic&gt;?&gt; getRootPageData() {
@@ -247,7 +247,7 @@ sequenceDiagram
 </div>
 </section>
 <section id="sec-why" class="doc-section">
-<h3>⚖️ F. Why It Matters (Trade-Offs &amp; Implikasi Teknis)</h3>
+<h3>⚖️ F. Why It Matters (Trade-Offs & Implikasi Teknis)</h3>
 <ul>
 <li><strong>Zero-Storage Security di Flutter</strong>:</li>
 </ul>
@@ -267,7 +267,7 @@ sequenceDiagram
 </ol>
 </section>
 <section id="sec-mistakes" class="doc-section">
-<h3>⚠️ H. Common Mistakes &amp; Debugging</h3>
+<h3>⚠️ H. Common Mistakes & Debugging</h3>
 <ul>
 <li><strong>Mengubah Nilai <code>Global.mid</code> Secara Manual di Widget</strong>:</li>
 <li>Dilarang keras memodifikasi <code>Global.mid = &#x27;...&#x27;</code> di luar fungsi <code>saveUser()</code> atau <code>clearUser()</code>. Mengubah atribut ini secara terpisah dapat membuat <code>isLogin</code> tidak tersinkronisasi.</li>
@@ -467,11 +467,11 @@ class DefaultGetLoanStatusUseCase implements GetLoanStatusUseCase {
             <div class="toc-branch">
               <div class="toc-node-row">
                 <span class="toc-leaf-dot"></span>
-                <a class="toc-tree-link" href="#sub-1-in-memory-session-store-global">1. In-Memory Session Store: `Global`</a>
+                <a class="toc-tree-link" href="#sub-1-in-memory-session-store-global">1. In-Memory Session Store: <span class="toc-code">Global</span></a>
               </div>
               <div class="toc-node-row">
                 <span class="toc-leaf-dot"></span>
-                <a class="toc-tree-link" href="#sub-2-pengambilan-status-sesi-dari-host-native-getrootpagedata">2. Pengambilan Status Sesi dari Host Native (`getRootPageData`)</a>
+                <a class="toc-tree-link" href="#sub-2-pengambilan-status-sesi-dari-host-native-getrootpagedata">2. Pengambilan Status Sesi dari Host Native (<span class="toc-code">getRootPageData</span>)</a>
               </div>
               <div class="toc-node-row">
                 <span class="toc-leaf-dot"></span>
@@ -571,11 +571,11 @@ class DefaultGetLoanStatusUseCase implements GetLoanStatusUseCase {
           <div class="toc-branch">
             <div class="toc-node-row">
               <span class="toc-leaf-dot"></span>
-              <a class="toc-tree-link" href="#sub-1-in-memory-session-store-global" onclick="toggleMobileToc()">1. In-Memory Session Store: `Global`</a>
+              <a class="toc-tree-link" href="#sub-1-in-memory-session-store-global" onclick="toggleMobileToc()">1. In-Memory Session Store: <span class="toc-code">Global</span></a>
             </div>
             <div class="toc-node-row">
               <span class="toc-leaf-dot"></span>
-              <a class="toc-tree-link" href="#sub-2-pengambilan-status-sesi-dari-host-native-getrootpagedata" onclick="toggleMobileToc()">2. Pengambilan Status Sesi dari Host Native (`getRootPageData`)</a>
+              <a class="toc-tree-link" href="#sub-2-pengambilan-status-sesi-dari-host-native-getrootpagedata" onclick="toggleMobileToc()">2. Pengambilan Status Sesi dari Host Native (<span class="toc-code">getRootPageData</span>)</a>
             </div>
             <div class="toc-node-row">
               <span class="toc-leaf-dot"></span>

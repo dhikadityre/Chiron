@@ -108,7 +108,7 @@
 <p>Telah membaca <a href="01-application-overview.html">01-application-overview.md</a> dan <a href="02-repository-structure.html">02-repository-structure.md</a>.</p>
 </section>
 <section id="sec-simple" class="doc-section">
-<h3>💡 C. Simple Explanation (Analogi &amp; Konsep Sederhana)</h3>
+<h3>💡 C. Simple Explanation (Analogi & Konsep Sederhana)</h3>
 <p>Bayangkan modul Flutter sebagai <strong>mesin bertenaga listrik</strong> yang dipasang ke dalam <strong>chassis mobil berbahan bakar konvensional (Host Native)</strong>:</p>
 <ul>
 <li>Supaya mesin listrik tersebut pas dan bekerja tanpa getaran, dibutuhkan kabel penghubung khusus dan bracket transmisi standar.</li>
@@ -119,7 +119,7 @@
 <section id="sec-actual" class="doc-section">
 <h3>💻 D. Actual Implementation (Bukti di Kode Sumber)</h3>
 <div id="sub-1-spesifikasi-bahasa-runtime-sdk" class="doc-subsection">
-<h4>1. Spesifikasi Bahasa &amp; Runtime SDK</h4>
+<h4>1. Spesifikasi Bahasa & Runtime SDK</h4>
 </div>
 <p>Berdasarkan <a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/learn/Flutter-Arch/flutter/pubspec.yaml" target="_blank" rel="noopener noreferrer">🦊 flutter/pubspec.yaml <span class="branch-tag">learn/Flutter-Arch</span> ↗</a> (baris 21–24):</p>
 <pre><code class="language-yaml">environment:
@@ -149,7 +149,7 @@ dev_dependencies:
 <li><code>chucker_flutter: ^1.9.2</code>: Inspector HTTP in-app berbasis floating notification untuk memantau request dan response tanpa kabel USB.</li>
 </ul>
 <div id="sub-3-integrasi-cocoapods-ios-via-podhelperrb" class="doc-subsection">
-<h4>3. Integrasi CocoaPods iOS via `podhelper.rb`</h4>
+<h4>3. Integrasi CocoaPods iOS via <code>podhelper.rb</code></h4>
 </div>
 <p>Host iOS mengonsumsi modul Flutter melalui file <a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/learn/Flutter-Arch/ios/Podfile" target="_blank" rel="noopener noreferrer">🦊 ios/Podfile <span class="branch-tag">learn/Flutter-Arch</span> ↗</a>:</p>
 <pre><code class="language-ruby"># ios/Podfile (Baris 14-20)
@@ -190,7 +190,7 @@ pod install</code></pre>
 flutter analyze</code></pre>
 </section>
 <section id="sec-why" class="doc-section">
-<h3>⚖️ F. Why It Matters (Trade-Offs &amp; Implikasi Teknis)</h3>
+<h3>⚖️ F. Why It Matters (Trade-Offs & Implikasi Teknis)</h3>
 <ul>
 <li><strong>Mengapa Versi SDK Terkunci Ketat?</strong></li>
 </ul>
@@ -209,7 +209,7 @@ flutter analyze</code></pre>
 </ul>
 </section>
 <section id="sec-mistakes" class="doc-section">
-<h3>⚠️ H. Common Mistakes &amp; Debugging</h3>
+<h3>⚠️ H. Common Mistakes & Debugging</h3>
 <ul>
 <li><strong>Menjalankan <code>pod update</code> tanpa <code>flutter pub get</code> terlebih dahulu</strong>:</li>
 <li>CocoaPods akan mengacu pada snapshot plugin lama dan memicu error <code>Plugin not found in podhelper.rb</code>.</li>
@@ -417,7 +417,7 @@ class GlobalSessionManager implements SessionContract {
               </div>
               <div class="toc-node-row">
                 <span class="toc-leaf-dot"></span>
-                <a class="toc-tree-link" href="#sub-3-integrasi-cocoapods-ios-via-podhelperrb">3. Integrasi CocoaPods iOS via `podhelper.rb`</a>
+                <a class="toc-tree-link" href="#sub-3-integrasi-cocoapods-ios-via-podhelperrb">3. Integrasi CocoaPods iOS via <span class="toc-code">podhelper.rb</span></a>
               </div>
             </div>
           </div>
@@ -533,7 +533,7 @@ class GlobalSessionManager implements SessionContract {
             </div>
             <div class="toc-node-row">
               <span class="toc-leaf-dot"></span>
-              <a class="toc-tree-link" href="#sub-3-integrasi-cocoapods-ios-via-podhelperrb" onclick="toggleMobileToc()">3. Integrasi CocoaPods iOS via `podhelper.rb`</a>
+              <a class="toc-tree-link" href="#sub-3-integrasi-cocoapods-ios-via-podhelperrb" onclick="toggleMobileToc()">3. Integrasi CocoaPods iOS via <span class="toc-code">podhelper.rb</span></a>
             </div>
           </div>
         </div>

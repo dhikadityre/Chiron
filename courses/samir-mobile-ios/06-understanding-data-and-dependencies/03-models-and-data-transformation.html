@@ -161,7 +161,7 @@ if let array = responseDict[&quot;result&quot;] as? [[String: Any]] {
     let productList = array.kj.modelArray(IDProductModel.self)
 }</code></pre>
 <div id="sub-2-kustomisasi-pemetaan-kunci-kj-modelkey" class="doc-subsection">
-<h4>2. Kustomisasi Pemetaan Kunci (`kj_modelKey`)</h4>
+<h4>2. Kustomisasi Pemetaan Kunci (<code>kj_modelKey</code>)</h4>
 </div>
 <p>Terkadang backend menggunakan konvensi penamaan <em>snake_case</em> (misal: <code>created_at</code> atau <code>user_mobile</code>), sementara kode Swift menggunakan <em>camelCase</em>. <code>KakaJSON</code> menyediakan fungsi pemetaan:</p>
 <pre><code class="language-swift">public struct IDLoanRepaidModel: Convertible {
@@ -182,7 +182,7 @@ if let array = responseDict[&quot;result&quot;] as? [[String: Any]] {
     }
 }</code></pre>
 <div id="sub-3-model-sesi-pengguna-idlogincodemodel-nscoding" class="doc-subsection">
-<h4>3. Model Sesi Pengguna: `IDLoginCodeModel` (`NSCoding`)</h4>
+<h4>3. Model Sesi Pengguna: <code>IDLoginCodeModel</code> (<code>NSCoding</code>)</h4>
 </div>
 <p>Path: <a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/learn/iOS-Arch/ios/IDSamirLoan/Application/SamirLoginModule/Classes/IDModel/IDLoginCodeModel.swift" target="_blank" rel="noopener noreferrer">🦊 ios/IDSamirLoan/Application/SamirLoginModule/Classes/IDModel/IDLoginCodeModel.swift <span class="branch-tag">learn/iOS-Arch</span> ↗</a></p>
 <p>Berbeda dari model lainnya yang hanya di-parse dari JSON, <code>IDLoginCodeModel</code> <strong>wajib mendukung serialisasi binary disk</strong> karena akan disimpan ke dalam file terenkripsi <code>idn_userFile.plist</code>:</p>
@@ -267,7 +267,7 @@ graph LR
    }</code></pre>
 </section>
 <section id="sec-why" class="doc-section">
-<h3>⚖️ F. Why It Matters: KakaJSON vs Apple Swift `Codable`</h3>
+<h3>⚖️ F. Why It Matters: KakaJSON vs Apple Swift <code>Codable</code></h3>
 <p>Mengapa SAMIR iOS menggunakan <code>KakaJSON</code> dan bukan protokol standar bawaan Apple <code>Codable</code>?</p>
 <ul>
 <li>*<em>Ketahanan Terhadap Tipe Data yang Berubah (</em>Type Tolerance<em>)</em>*:</li>
@@ -290,7 +290,7 @@ graph LR
 }</code></pre>
 </section>
 <section id="sec-mistakes" class="doc-section">
-<h3>⚠️ H. Common Mistakes &amp; Debugging</h3>
+<h3>⚠️ H. Common Mistakes & Debugging</h3>
 <ul>
 <li><strong>Lupa Menambahkan <code>init() {}</code></strong>:</li>
 <li><code>KakaJSON</code> mewajibkan struct atau class yang mengadopsi <code>Convertible</code> memiliki konstruktor kosong <code>init()</code>. Jika lupa, kompilasi akan menampilkan error <code>Initializer &#x27;init()&#x27; must be declared</code>.</li>
@@ -491,11 +491,11 @@ public final class AppSessionManager: SessionProvider {
               </div>
               <div class="toc-node-row">
                 <span class="toc-leaf-dot"></span>
-                <a class="toc-tree-link" href="#sub-2-kustomisasi-pemetaan-kunci-kj-modelkey">2. Kustomisasi Pemetaan Kunci (`kj_modelKey`)</a>
+                <a class="toc-tree-link" href="#sub-2-kustomisasi-pemetaan-kunci-kj-modelkey">2. Kustomisasi Pemetaan Kunci (<span class="toc-code">kj_modelKey</span>)</a>
               </div>
               <div class="toc-node-row">
                 <span class="toc-leaf-dot"></span>
-                <a class="toc-tree-link" href="#sub-3-model-sesi-pengguna-idlogincodemodel-nscoding">3. Model Sesi Pengguna: `IDLoginCodeModel` (`NSCoding`)</a>
+                <a class="toc-tree-link" href="#sub-3-model-sesi-pengguna-idlogincodemodel-nscoding">3. Model Sesi Pengguna: <span class="toc-code">IDLoginCodeModel</span> (<span class="toc-code">NSCoding</span>)</a>
               </div>
               <div class="toc-node-row">
                 <span class="toc-leaf-dot"></span>
@@ -509,7 +509,7 @@ public final class AppSessionManager: SessionProvider {
           </div>
           <div class="toc-node-row">
             <span class="toc-leaf-dot"></span>
-            <a class="toc-tree-link" href="#sec-why">F. Why It Matters: KakaJSON vs Apple Swift `Codable`</a>
+            <a class="toc-tree-link" href="#sec-why">F. Why It Matters: KakaJSON vs Apple Swift <span class="toc-code">Codable</span></a>
           </div>
           <div class="toc-node-row">
             <span class="toc-leaf-dot"></span>
@@ -599,11 +599,11 @@ public final class AppSessionManager: SessionProvider {
             </div>
             <div class="toc-node-row">
               <span class="toc-leaf-dot"></span>
-              <a class="toc-tree-link" href="#sub-2-kustomisasi-pemetaan-kunci-kj-modelkey" onclick="toggleMobileToc()">2. Kustomisasi Pemetaan Kunci (`kj_modelKey`)</a>
+              <a class="toc-tree-link" href="#sub-2-kustomisasi-pemetaan-kunci-kj-modelkey" onclick="toggleMobileToc()">2. Kustomisasi Pemetaan Kunci (<span class="toc-code">kj_modelKey</span>)</a>
             </div>
             <div class="toc-node-row">
               <span class="toc-leaf-dot"></span>
-              <a class="toc-tree-link" href="#sub-3-model-sesi-pengguna-idlogincodemodel-nscoding" onclick="toggleMobileToc()">3. Model Sesi Pengguna: `IDLoginCodeModel` (`NSCoding`)</a>
+              <a class="toc-tree-link" href="#sub-3-model-sesi-pengguna-idlogincodemodel-nscoding" onclick="toggleMobileToc()">3. Model Sesi Pengguna: <span class="toc-code">IDLoginCodeModel</span> (<span class="toc-code">NSCoding</span>)</a>
             </div>
             <div class="toc-node-row">
               <span class="toc-leaf-dot"></span>
@@ -617,7 +617,7 @@ public final class AppSessionManager: SessionProvider {
         </div>
         <div class="toc-node-row">
           <span class="toc-leaf-dot"></span>
-          <a class="toc-tree-link" href="#sec-why" onclick="toggleMobileToc()">F. Why It Matters: KakaJSON vs Apple Swift `Codable`</a>
+          <a class="toc-tree-link" href="#sec-why" onclick="toggleMobileToc()">F. Why It Matters: KakaJSON vs Apple Swift <span class="toc-code">Codable</span></a>
         </div>
         <div class="toc-node-row">
           <span class="toc-leaf-dot"></span>

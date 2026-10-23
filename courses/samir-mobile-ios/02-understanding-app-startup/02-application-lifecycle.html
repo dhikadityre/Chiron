@@ -128,7 +128,7 @@
 <section id="sec-actual" class="doc-section">
 <h3>💻 D. Actual Implementation (Bukti Kode Sumber)</h3>
 <div id="sub-1-czappdelegate-delegat-sentral-yang-ramping" class="doc-subsection">
-<h4>1. `CZAppDelegate`: Delegat Sentral yang Ramping</h4>
+<h4>1. <code>CZAppDelegate</code>: Delegat Sentral yang Ramping</h4>
 </div>
 <p>Path: <a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/learn/iOS-Arch/ios/IDSamirLoan/Application/CZSwiftModuleLib/Classes/CZAppDelegate.swift#L19-L87" target="_blank" rel="noopener noreferrer">🦊 ios/IDSamirLoan/Application/CZSwiftModuleLib/Classes/CZAppDelegate.swift <span class="branch-tag">learn/iOS-Arch</span> ↗</a></p>
 <p>Perhatikan bahwa <code>CZAppDelegate</code> hanya memiliki 88 baris kode! Tidak ada logika bisnis pinjaman di sini. Setiap fungsi delegat hanya meneruskan panggilan ke <code>CZModuleManager.shared</code>:</p>
@@ -155,7 +155,7 @@
     // ... metode delegat lainnya
 }</code></pre>
 <div id="sub-2-czmodulemanager-distribusi-event-ke-modul" class="doc-subsection">
-<h4>2. `CZModuleManager`: Distribusi Event ke Modul</h4>
+<h4>2. <code>CZModuleManager</code>: Distribusi Event ke Modul</h4>
 </div>
 <p>Path: <a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/learn/iOS-Arch/ios/IDSamirLoan/Application/CZSwiftModuleLib/Classes/CZModuleManager.swift" target="_blank" rel="noopener noreferrer">🦊 ios/IDSamirLoan/Application/CZSwiftModuleLib/Classes/CZModuleManager.swift <span class="branch-tag">learn/iOS-Arch</span> ↗</a></p>
 <p><code>CZModuleManager</code> menyimpan daftar modul terdaftar di dalam array <code>moduleContextArray: [CZModuleContext]</code>. Ketika menerima event dari <code>CZAppDelegate</code>, ia melakukan perulangan (<em>looping</em>) ke semua modul:</p>
@@ -170,7 +170,7 @@
     return result
 }</code></pre>
 <div id="sub-3-daftar-modul-terdaftar-idmodulelistplist" class="doc-subsection">
-<h4>3. Daftar Modul Terdaftar (`IDModuleList.plist`)</h4>
+<h4>3. Daftar Modul Terdaftar (<code>IDModuleList.plist</code>)</h4>
 </div>
 <p>Path: <a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/learn/iOS-Arch/ios/IDSamirLoan/Application/Configuration/Module/IDModuleList.plist" target="_blank" rel="noopener noreferrer">🦊 ios/IDSamirLoan/Application/Configuration/Module/IDModuleList.plist <span class="branch-tag">learn/iOS-Arch</span> ↗</a></p>
 <p>Hanya ada <strong>6 modul resmi</strong> yang didaftarkan ke dalam siklus hidup aplikasi:</p>
@@ -214,7 +214,7 @@ sequenceDiagram
 </ol>
 </section>
 <section id="sec-why" class="doc-section">
-<h3>⚖️ F. Why It Matters: Audit Bug Prioritas Modul (`CZModuleManager`)</h3>
+<h3>⚖️ F. Why It Matters: Audit Bug Prioritas Modul (<code>CZModuleManager</code>)</h3>
 <p>Saat melakukan analisis mendalam terhadap source code <a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/learn/iOS-Arch/ios/IDSamirLoan/Application/CZSwiftModuleLib/Classes/CZModuleManager.swift#L74-L98" target="_blank" rel="noopener noreferrer">🦊 ios/IDSamirLoan/Application/CZSwiftModuleLib/Classes/CZModuleManager.swift <span class="branch-tag">learn/iOS-Arch</span> ↗</a>, ditemukan sebuah <strong>anomali implementasi (technical debt)</strong>:</p>
 <pre><code class="language-swift">// CZModuleManager.swift:L87-92
 var moduleContext: CZModuleContext = CZModuleContext()
@@ -240,7 +240,7 @@ moduleContextArray.append(moduleContext)</code></pre>
 </ol>
 </section>
 <section id="sec-mistakes" class="doc-section">
-<h3>⚠️ H. Common Mistakes &amp; Debugging</h3>
+<h3>⚠️ H. Common Mistakes & Debugging</h3>
 <ul>
 <li><strong>Typo Nama Class di Plist</strong>:</li>
 <li>Jika nama class di <code>IDModuleList.plist</code> salah ketik (misal <code>IDSamirAuthModuleX</code>), <code>NSClassFromString</code> akan mengembalikan <code>nil</code>. Registrasi gagal secara diam-diam (<em>silent failure</em>) tanpa pesan error yang jelas.</li>
@@ -446,15 +446,15 @@ public final class AppStartupCoordinator {
             <div class="toc-branch">
               <div class="toc-node-row">
                 <span class="toc-leaf-dot"></span>
-                <a class="toc-tree-link" href="#sub-1-czappdelegate-delegat-sentral-yang-ramping">1. `CZAppDelegate`: Delegat Sentral yang Ramping</a>
+                <a class="toc-tree-link" href="#sub-1-czappdelegate-delegat-sentral-yang-ramping">1. <span class="toc-code">CZAppDelegate</span>: Delegat Sentral yang Ramping</a>
               </div>
               <div class="toc-node-row">
                 <span class="toc-leaf-dot"></span>
-                <a class="toc-tree-link" href="#sub-2-czmodulemanager-distribusi-event-ke-modul">2. `CZModuleManager`: Distribusi Event ke Modul</a>
+                <a class="toc-tree-link" href="#sub-2-czmodulemanager-distribusi-event-ke-modul">2. <span class="toc-code">CZModuleManager</span>: Distribusi Event ke Modul</a>
               </div>
               <div class="toc-node-row">
                 <span class="toc-leaf-dot"></span>
-                <a class="toc-tree-link" href="#sub-3-daftar-modul-terdaftar-idmodulelistplist">3. Daftar Modul Terdaftar (`IDModuleList.plist`)</a>
+                <a class="toc-tree-link" href="#sub-3-daftar-modul-terdaftar-idmodulelistplist">3. Daftar Modul Terdaftar (<span class="toc-code">IDModuleList.plist</span>)</a>
               </div>
             </div>
           </div>
@@ -464,7 +464,7 @@ public final class AppStartupCoordinator {
           </div>
           <div class="toc-node-row">
             <span class="toc-leaf-dot"></span>
-            <a class="toc-tree-link" href="#sec-why">F. Why It Matters: Audit Bug Prioritas Modul (`CZModuleManager`)</a>
+            <a class="toc-tree-link" href="#sec-why">F. Why It Matters: Audit Bug Prioritas Modul (<span class="toc-code">CZModuleManager</span>)</a>
           </div>
           <div class="toc-node-row">
             <span class="toc-leaf-dot"></span>
@@ -550,15 +550,15 @@ public final class AppStartupCoordinator {
           <div class="toc-branch">
             <div class="toc-node-row">
               <span class="toc-leaf-dot"></span>
-              <a class="toc-tree-link" href="#sub-1-czappdelegate-delegat-sentral-yang-ramping" onclick="toggleMobileToc()">1. `CZAppDelegate`: Delegat Sentral yang Ramping</a>
+              <a class="toc-tree-link" href="#sub-1-czappdelegate-delegat-sentral-yang-ramping" onclick="toggleMobileToc()">1. <span class="toc-code">CZAppDelegate</span>: Delegat Sentral yang Ramping</a>
             </div>
             <div class="toc-node-row">
               <span class="toc-leaf-dot"></span>
-              <a class="toc-tree-link" href="#sub-2-czmodulemanager-distribusi-event-ke-modul" onclick="toggleMobileToc()">2. `CZModuleManager`: Distribusi Event ke Modul</a>
+              <a class="toc-tree-link" href="#sub-2-czmodulemanager-distribusi-event-ke-modul" onclick="toggleMobileToc()">2. <span class="toc-code">CZModuleManager</span>: Distribusi Event ke Modul</a>
             </div>
             <div class="toc-node-row">
               <span class="toc-leaf-dot"></span>
-              <a class="toc-tree-link" href="#sub-3-daftar-modul-terdaftar-idmodulelistplist" onclick="toggleMobileToc()">3. Daftar Modul Terdaftar (`IDModuleList.plist`)</a>
+              <a class="toc-tree-link" href="#sub-3-daftar-modul-terdaftar-idmodulelistplist" onclick="toggleMobileToc()">3. Daftar Modul Terdaftar (<span class="toc-code">IDModuleList.plist</span>)</a>
             </div>
           </div>
         </div>
@@ -568,7 +568,7 @@ public final class AppStartupCoordinator {
         </div>
         <div class="toc-node-row">
           <span class="toc-leaf-dot"></span>
-          <a class="toc-tree-link" href="#sec-why" onclick="toggleMobileToc()">F. Why It Matters: Audit Bug Prioritas Modul (`CZModuleManager`)</a>
+          <a class="toc-tree-link" href="#sec-why" onclick="toggleMobileToc()">F. Why It Matters: Audit Bug Prioritas Modul (<span class="toc-code">CZModuleManager</span>)</a>
         </div>
         <div class="toc-node-row">
           <span class="toc-leaf-dot"></span>

@@ -116,7 +116,7 @@
 <p>Telah membaca <a href="02-networking-and-api-flow.html">02-networking-and-api-flow.md</a>.</p>
 </section>
 <section id="sec-simple" class="doc-section">
-<h3>💡 C. Simple Explanation (Analogi &amp; Konsep Sederhana)</h3>
+<h3>💡 C. Simple Explanation (Analogi & Konsep Sederhana)</h3>
 <p>Bayangkan mengirimkan cek transfer dana melalui kurir:</p>
 <ul>
 <li>Jika Anda hanya menulis nominal di atas kertas biasa, kurir nakal dapat menambahkan angka nol di belakang nominal tersebut.</li>
@@ -134,7 +134,7 @@
 <section id="sec-actual" class="doc-section">
 <h3>💻 D. Actual Implementation (Bukti di Kode Sumber)</h3>
 <div id="sub-1-algoritma-dua-tahap-md5-di-sign-utilsdart" class="doc-subsection">
-<h4>1. Algoritma Dua Tahap MD5 di `sign_utils.dart`</h4>
+<h4>1. Algoritma Dua Tahap MD5 di <code>sign_utils.dart</code></h4>
 </div>
 <p>File <a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/learn/Flutter-Arch/flutter/lib/common/http/sign_utils.dart" target="_blank" rel="noopener noreferrer">🦊 flutter/lib/common/http/sign_utils.dart <span class="branch-tag">learn/Flutter-Arch</span> ↗</a>:</p>
 <pre><code class="language-dart">/// Kunci rahasia tahap pertama (dinamis dari host atau fallback UUID)
@@ -180,7 +180,7 @@ String signParamMapWithSignKey(
   return sign;
 }</code></pre>
 <div id="sub-2-pengurutan-alfabetis-menggunakan-splaytreemap" class="doc-subsection">
-<h4>2. Pengurutan Alfabetis Menggunakan `SplayTreeMap`</h4>
+<h4>2. Pengurutan Alfabetis Menggunakan <code>SplayTreeMap</code></h4>
 </div>
 <p>Di <a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/learn/Flutter-Arch/flutter/lib/common/http/param_utils.dart" target="_blank" rel="noopener noreferrer">🦊 flutter/lib/common/http/param_utils.dart <span class="branch-tag">learn/Flutter-Arch</span> ↗</a> (baris 9–23):</p>
 <pre><code class="language-dart">Future&lt;SplayTreeMap&lt;String, dynamic&gt;&gt; addDefaultParamsAndSign(
@@ -208,13 +208,13 @@ String signParamMapWithSignKey(
 <li><code>SplayTreeMap</code> secara otomatis mengurutkan semua kunci (<em>keys</em>) secara alfabetis leksikografis (A–Z), menjamin hasil konkatenasi selalu 100% identik di setiap perangkat dan di server.</li>
 </ul>
 <div id="sub-3-parameter-bawaan-platform-defaultparamsbyplatform" class="doc-subsection">
-<h4>3. Parameter Bawaan Platform (`_defaultParamsByPlatform`)</h4>
+<h4>3. Parameter Bawaan Platform (<code>_defaultParamsByPlatform</code>)</h4>
 </div>
 <p>Sebelum tanda tangan dihitung, parameter dasar disuntikkan:</p>
 <div class="table-container"><table class="data-table"><thead><tr><th>Nama Parameter</th><th>Nilai Sumber</th><th>Contoh Nilai</th></tr></thead><tbody><tr><td><strong><code>clientId</code></strong></td><td><code>Global.appId</code></td><td><code>3f321e51-eabd-4266-b937-079dd20452f6</code> (Dev)</td></tr><tr><td><strong><code>appName</code></strong></td><td><code>Global.appName</code></td><td><code>Samir</code></td></tr><tr><td><strong><code>appPackage</code></strong> / <strong><code>pkg_name</code></strong></td><td><code>Global.packageName</code></td><td><code>com.samir.loan</code></td></tr><tr><td><strong><code>timestamp</code></strong></td><td>Waktu milidetik saat ini</td><td><code>1729600000000</code></td></tr><tr><td><strong><code>version</code></strong></td><td><code>Global.appVersion</code></td><td><code>1.3.5</code></td></tr><tr><td><strong><code>channel</code></strong> / <strong><code>sourceChannel</code></strong></td><td>Platform detection</td><td><code>AppStore</code> (iOS) atau <code>GooglePlay</code> (Android)</td></tr><tr><td><strong><code>androidIos</code></strong></td><td>Platform detection</td><td><code>&#x27;1&#x27;</code> (iOS) atau <code>&#x27;2&#x27;</code> (Android)</td></tr><tr><td><strong><code>source</code></strong></td><td>Platform detection</td><td><code>&#x27;iOS&#x27;</code> atau <code>&#x27;Android&#x27;</code></td></tr><tr><td><strong><code>userNo</code></strong> / <strong><code>user_id</code></strong></td><td><code>Global.userNo</code> (jika ada)</td><td><code>U20261022001</code></td></tr><tr><td><strong><code>mid</code></strong></td><td><code>Global.mid</code> (jika ada)</td><td>Token otentikasi sesi</td></tr><tr><td><strong><code>custId</code></strong></td><td><code>Global.custId</code> (jika ada)</td><td>ID nasabah</td></tr></tbody></table></div>
 </section>
 <section id="sec-walkthrough" class="doc-section">
-<h3>🪜 E. Step-by-Step Walkthrough: Rekonstruksi Pembentukan Nilai `sign`</h3>
+<h3>🪜 E. Step-by-Step Walkthrough: Rekonstruksi Pembentukan Nilai <code>sign</code></h3>
 <p>Misalkan request memiliki parameter berikut:</p>
 <pre><code class="language-json">{
   &quot;orderId&quot;: &quot;ORD123&quot;,
@@ -253,7 +253,7 @@ String signParamMapWithSignKey(
 <p>Kunci <code>&#x27;sign&#x27;</code> disisipkan ke dalam request sebelum dikirim melalui HTTP.</p>
 </section>
 <section id="sec-why" class="doc-section">
-<h3>⚖️ F. Why It Matters (Trade-Offs &amp; Implikasi Teknis)</h3>
+<h3>⚖️ F. Why It Matters (Trade-Offs & Implikasi Teknis)</h3>
 <ul>
 <li><strong>Mencegah Serangan Replay & Modifikasi Nominal</strong>:</li>
 </ul>
@@ -273,7 +273,7 @@ String signParamMapWithSignKey(
 </ul>
 </section>
 <section id="sec-mistakes" class="doc-section">
-<h3>⚠️ H. Common Mistakes &amp; Debugging</h3>
+<h3>⚠️ H. Common Mistakes & Debugging</h3>
 <ul>
 <li><strong>Menyisipkan Nilai Null ke Parameter</strong>:</li>
 <li><code>sign_utils.dart</code> secara ketat melewati nilai <code>null</code> (<code>if (value != null)</code>). Jika backend mengharapkan string <code>&quot;null&quot;</code> literal, tanda tangan akan berbeda. Hindari mengirim field bernilai null ke endpoint bertanda tangan.</li>
@@ -471,21 +471,21 @@ class GlobalSessionManager implements SessionContract {
             <div class="toc-branch">
               <div class="toc-node-row">
                 <span class="toc-leaf-dot"></span>
-                <a class="toc-tree-link" href="#sub-1-algoritma-dua-tahap-md5-di-sign-utilsdart">1. Algoritma Dua Tahap MD5 di `sign_utils.dart`</a>
+                <a class="toc-tree-link" href="#sub-1-algoritma-dua-tahap-md5-di-sign-utilsdart">1. Algoritma Dua Tahap MD5 di <span class="toc-code">sign_utils.dart</span></a>
               </div>
               <div class="toc-node-row">
                 <span class="toc-leaf-dot"></span>
-                <a class="toc-tree-link" href="#sub-2-pengurutan-alfabetis-menggunakan-splaytreemap">2. Pengurutan Alfabetis Menggunakan `SplayTreeMap`</a>
+                <a class="toc-tree-link" href="#sub-2-pengurutan-alfabetis-menggunakan-splaytreemap">2. Pengurutan Alfabetis Menggunakan <span class="toc-code">SplayTreeMap</span></a>
               </div>
               <div class="toc-node-row">
                 <span class="toc-leaf-dot"></span>
-                <a class="toc-tree-link" href="#sub-3-parameter-bawaan-platform-defaultparamsbyplatform">3. Parameter Bawaan Platform (`_defaultParamsByPlatform`)</a>
+                <a class="toc-tree-link" href="#sub-3-parameter-bawaan-platform-defaultparamsbyplatform">3. Parameter Bawaan Platform (<span class="toc-code">_defaultParamsByPlatform</span>)</a>
               </div>
             </div>
           </div>
           <div class="toc-node-row">
             <span class="toc-leaf-dot"></span>
-            <a class="toc-tree-link" href="#sec-walkthrough">E. Step-by-Step Walkthrough: Rekonstruksi Pembentukan Nilai `sign`</a>
+            <a class="toc-tree-link" href="#sec-walkthrough">E. Step-by-Step Walkthrough: Rekonstruksi Pembentukan Nilai <span class="toc-code">sign</span></a>
           </div>
           <div class="toc-node-row">
             <span class="toc-leaf-dot"></span>
@@ -575,21 +575,21 @@ class GlobalSessionManager implements SessionContract {
           <div class="toc-branch">
             <div class="toc-node-row">
               <span class="toc-leaf-dot"></span>
-              <a class="toc-tree-link" href="#sub-1-algoritma-dua-tahap-md5-di-sign-utilsdart" onclick="toggleMobileToc()">1. Algoritma Dua Tahap MD5 di `sign_utils.dart`</a>
+              <a class="toc-tree-link" href="#sub-1-algoritma-dua-tahap-md5-di-sign-utilsdart" onclick="toggleMobileToc()">1. Algoritma Dua Tahap MD5 di <span class="toc-code">sign_utils.dart</span></a>
             </div>
             <div class="toc-node-row">
               <span class="toc-leaf-dot"></span>
-              <a class="toc-tree-link" href="#sub-2-pengurutan-alfabetis-menggunakan-splaytreemap" onclick="toggleMobileToc()">2. Pengurutan Alfabetis Menggunakan `SplayTreeMap`</a>
+              <a class="toc-tree-link" href="#sub-2-pengurutan-alfabetis-menggunakan-splaytreemap" onclick="toggleMobileToc()">2. Pengurutan Alfabetis Menggunakan <span class="toc-code">SplayTreeMap</span></a>
             </div>
             <div class="toc-node-row">
               <span class="toc-leaf-dot"></span>
-              <a class="toc-tree-link" href="#sub-3-parameter-bawaan-platform-defaultparamsbyplatform" onclick="toggleMobileToc()">3. Parameter Bawaan Platform (`_defaultParamsByPlatform`)</a>
+              <a class="toc-tree-link" href="#sub-3-parameter-bawaan-platform-defaultparamsbyplatform" onclick="toggleMobileToc()">3. Parameter Bawaan Platform (<span class="toc-code">_defaultParamsByPlatform</span>)</a>
             </div>
           </div>
         </div>
         <div class="toc-node-row">
           <span class="toc-leaf-dot"></span>
-          <a class="toc-tree-link" href="#sec-walkthrough" onclick="toggleMobileToc()">E. Step-by-Step Walkthrough: Rekonstruksi Pembentukan Nilai `sign`</a>
+          <a class="toc-tree-link" href="#sec-walkthrough" onclick="toggleMobileToc()">E. Step-by-Step Walkthrough: Rekonstruksi Pembentukan Nilai <span class="toc-code">sign</span></a>
         </div>
         <div class="toc-node-row">
           <span class="toc-leaf-dot"></span>

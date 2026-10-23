@@ -134,7 +134,7 @@
 <section id="sec-actual" class="doc-section">
 <h3>💻 D. Actual Implementation (Bukti Kode Sumber)</h3>
 <div id="sub-1-urutan-11-langkah-di-idsamirmainmodule" class="doc-subsection">
-<h4>1. Urutan 11 Langkah di `IDSamirMainModule`</h4>
+<h4>1. Urutan 11 Langkah di <code>IDSamirMainModule</code></h4>
 </div>
 <p>Path: <a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/learn/iOS-Arch/ios/IDSamirLoan/Application/SamirMainModule/Classes/IDModule/IDSamirMainModule.swift:L54-75" target="_blank" rel="noopener noreferrer">🦊 ios/IDSamirLoan/Application/SamirMainModule/Classes/IDModule/IDSamirMainModule.swift <span class="branch-tag">learn/iOS-Arch</span> ↗</a></p>
 <pre><code class="language-swift">public func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey : Any]? = nil) -&gt; Bool {
@@ -176,7 +176,7 @@
     return true
 }</code></pre>
 <div id="sub-2-logika-pemilihan-layar-awal-initwindow-checkappstarthide" class="doc-subsection">
-<h4>2. Logika Pemilihan Layar Awal (`initWindow` &amp; `checkAppStartHide`)</h4>
+<h4>2. Logika Pemilihan Layar Awal (<code>initWindow</code> & <code>checkAppStartHide</code>)</h4>
 </div>
 <p>Path: <a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/learn/iOS-Arch/ios/IDSamirLoan/Application/SamirMainModule/Classes/IDModule/IDSamirMainModule.swift:L91-129" target="_blank" rel="noopener noreferrer">🦊 ios/IDSamirLoan/Application/SamirMainModule/Classes/IDModule/IDSamirMainModule.swift <span class="branch-tag">learn/iOS-Arch</span> ↗</a></p>
 <pre><code class="language-swift">private func initWindow(_ application: UIApplication) {
@@ -205,7 +205,7 @@ func checkAppStartHide() -&gt; Bool {
 <p>Jika <code>checkAppStartHide() == false</code>, aplikasi memasang <a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/learn/iOS-Arch/ios/IDSamirLoan/Application/SamirMainModule/Classes/IDController/IDLaunchViewController.swift" target="_blank" rel="noopener noreferrer">🦊 IDLaunchViewController.swift <span class="branch-tag">learn/iOS-Arch</span> ↗</a>. Controller ini memulai hitung mundur 3 detik dengan tombol <em>"Lewati Ns"</em>.</p>
 <p>Saat hitung mundur selesai atau tombol ditekan, protokol <code>IDLaunchViewProtocol.finishLaunch()</code> dipanggil untuk mengganti root menjadi <code>IDMainTabBarController()</code>.</p>
 <div id="sub-3-siklus-applicationdidbecomeactive-sinkronisasi-server" class="doc-subsection">
-<h4>3. Siklus `applicationDidBecomeActive` (Sinkronisasi Server)</h4>
+<h4>3. Siklus <code>applicationDidBecomeActive</code> (Sinkronisasi Server)</h4>
 </div>
 <p>Path: <a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/learn/iOS-Arch/ios/IDSamirLoan/Application/SamirMainModule/Classes/IDModule/IDSamirMainModule.swift:L77-85" target="_blank" rel="noopener noreferrer">🦊 ios/IDSamirLoan/Application/SamirMainModule/Classes/IDModule/IDSamirMainModule.swift <span class="branch-tag">learn/iOS-Arch</span> ↗</a></p>
 <pre><code class="language-swift">public func applicationDidBecomeActive(_ application: UIApplication) {
@@ -262,7 +262,7 @@ sequenceDiagram
 </ol>
 </section>
 <section id="sec-why" class="doc-section">
-<h3>⚖️ F. Why It Matters (Trade-Offs &amp; Catatan Arsitektur)</h3>
+<h3>⚖️ F. Why It Matters (Trade-Offs & Catatan Arsitektur)</h3>
 <ul>
 <li><strong>Mengapa Prewarm Flutter Dilakukan di Startup?</strong></li>
 </ul>
@@ -283,7 +283,7 @@ sequenceDiagram
 </ol>
 </section>
 <section id="sec-mistakes" class="doc-section">
-<h3>⚠️ H. Common Mistakes &amp; Debugging</h3>
+<h3>⚠️ H. Common Mistakes & Debugging</h3>
 <ul>
 <li><strong>Splash Screen Terus Muncul Berulang Kali di Staging</strong>:</li>
 <li><em>Penyebab</em>: Endpoint <code>app-configuration</code> di environment TEST mengembalikan <code>appStartHide = &quot;0&quot;</code> atau gagal terhubung.</li>
@@ -487,15 +487,15 @@ public final class AppStartupCoordinator {
             <div class="toc-branch">
               <div class="toc-node-row">
                 <span class="toc-leaf-dot"></span>
-                <a class="toc-tree-link" href="#sub-1-urutan-11-langkah-di-idsamirmainmodule">1. Urutan 11 Langkah di `IDSamirMainModule`</a>
+                <a class="toc-tree-link" href="#sub-1-urutan-11-langkah-di-idsamirmainmodule">1. Urutan 11 Langkah di <span class="toc-code">IDSamirMainModule</span></a>
               </div>
               <div class="toc-node-row">
                 <span class="toc-leaf-dot"></span>
-                <a class="toc-tree-link" href="#sub-2-logika-pemilihan-layar-awal-initwindow-checkappstarthide">2. Logika Pemilihan Layar Awal (`initWindow` &amp; `checkAppStartHide`)</a>
+                <a class="toc-tree-link" href="#sub-2-logika-pemilihan-layar-awal-initwindow-checkappstarthide">2. Logika Pemilihan Layar Awal (<span class="toc-code">initWindow</span> &amp; <span class="toc-code">checkAppStartHide</span>)</a>
               </div>
               <div class="toc-node-row">
                 <span class="toc-leaf-dot"></span>
-                <a class="toc-tree-link" href="#sub-3-siklus-applicationdidbecomeactive-sinkronisasi-server">3. Siklus `applicationDidBecomeActive` (Sinkronisasi Server)</a>
+                <a class="toc-tree-link" href="#sub-3-siklus-applicationdidbecomeactive-sinkronisasi-server">3. Siklus <span class="toc-code">applicationDidBecomeActive</span> (Sinkronisasi Server)</a>
               </div>
             </div>
           </div>
@@ -591,15 +591,15 @@ public final class AppStartupCoordinator {
           <div class="toc-branch">
             <div class="toc-node-row">
               <span class="toc-leaf-dot"></span>
-              <a class="toc-tree-link" href="#sub-1-urutan-11-langkah-di-idsamirmainmodule" onclick="toggleMobileToc()">1. Urutan 11 Langkah di `IDSamirMainModule`</a>
+              <a class="toc-tree-link" href="#sub-1-urutan-11-langkah-di-idsamirmainmodule" onclick="toggleMobileToc()">1. Urutan 11 Langkah di <span class="toc-code">IDSamirMainModule</span></a>
             </div>
             <div class="toc-node-row">
               <span class="toc-leaf-dot"></span>
-              <a class="toc-tree-link" href="#sub-2-logika-pemilihan-layar-awal-initwindow-checkappstarthide" onclick="toggleMobileToc()">2. Logika Pemilihan Layar Awal (`initWindow` &amp; `checkAppStartHide`)</a>
+              <a class="toc-tree-link" href="#sub-2-logika-pemilihan-layar-awal-initwindow-checkappstarthide" onclick="toggleMobileToc()">2. Logika Pemilihan Layar Awal (<span class="toc-code">initWindow</span> &amp; <span class="toc-code">checkAppStartHide</span>)</a>
             </div>
             <div class="toc-node-row">
               <span class="toc-leaf-dot"></span>
-              <a class="toc-tree-link" href="#sub-3-siklus-applicationdidbecomeactive-sinkronisasi-server" onclick="toggleMobileToc()">3. Siklus `applicationDidBecomeActive` (Sinkronisasi Server)</a>
+              <a class="toc-tree-link" href="#sub-3-siklus-applicationdidbecomeactive-sinkronisasi-server" onclick="toggleMobileToc()">3. Siklus <span class="toc-code">applicationDidBecomeActive</span> (Sinkronisasi Server)</a>
             </div>
           </div>
         </div>

@@ -112,7 +112,7 @@
 <p>Telah membaca <a href="../01-project-foundation/01-application-overview.html">Level 1</a> hingga <a href="../03-understanding-architecture/01-architecture-overview.html">Level 3</a>.</p>
 </section>
 <section id="sec-simple" class="doc-section">
-<h3>💡 C. Simple Explanation (Analogi &amp; Konsep Sederhana)</h3>
+<h3>💡 C. Simple Explanation (Analogi & Konsep Sederhana)</h3>
 <p>Bayangkan denah sebuah gedung kantor pelayanan publik:</p>
 <ul>
 <li><strong>Lantai Utama (Root Container)</strong>: Memiliki dua loket utama berdampingan yang selalu terbuka, yaitu <strong>Loket Pembayaran / Tagihan (Repay)</strong> dan <strong>Loket Layanan Akun Nasabah (Mine)</strong>.</li>
@@ -130,7 +130,7 @@
 <section id="sec-walkthrough" class="doc-section">
 <h3>📌 E. Rincian Fungsional Masing-Masing Layar</h3>
 <div id="sub-1-flutterrootpage-root" class="doc-subsection">
-<h4>1. `FlutterRootPage` (`/root`)</h4>
+<h4>1. <code>FlutterRootPage</code> (<code>/root</code>)</h4>
 </div>
 <ul>
 <li><strong>Fungsi</strong>: Wadah persisten tunggal yang menjaga state kedua tab native tetap hidup di memori.</li>
@@ -140,7 +140,7 @@
 <li><code>PageLifecycleVisibility</code>: Mendistribusikan visibilitas ke child yang sedang aktif.</li>
 </ul>
 <div id="sub-2-repayhomepage-repay" class="doc-subsection">
-<h4>2. `RepayHomePage` (`/repay`)</h4>
+<h4>2. <code>RepayHomePage</code> (<code>/repay</code>)</h4>
 </div>
 <ul>
 <li><strong>Fungsi</strong>: Pusat manajemen pelunasan pinjaman aktif nasabah.</li>
@@ -152,7 +152,7 @@
 <li><strong>Tautan Customer Support</strong>: Tombol pintas bantuan langsung ke tim penagihan.</li>
 </ul>
 <div id="sub-3-minehomepage-mine" class="doc-subsection">
-<h4>3. `MineHomePage` (`/mine`)</h4>
+<h4>3. <code>MineHomePage</code> (<code>/mine</code>)</h4>
 </div>
 <ul>
 <li><strong>Fungsi</strong>: Dasbor akun nasabah dan pusat pengaturan aplikasi.</li>
@@ -171,14 +171,14 @@
 <li><strong>Kanal Media Sosial</strong>: Seksi resmi Instagram, Facebook, dan WhatsApp di bagian bawah halaman.</li>
 </ul>
 <div id="sub-4-minepersonalpage-minepersonal" class="doc-subsection">
-<h4>4. `MinePersonalPage` (`/mine/personal`)</h4>
+<h4>4. <code>MinePersonalPage</code> (<code>/mine/personal</code>)</h4>
 </div>
 <ul>
 <li><strong>Fungsi</strong>: Menampilkan daftar rincian verifikasi data nasabah (e-KTP, informasi pekerjaan, kontak darurat, rekening bank).</li>
 <li><strong>Karakteristik Navigasi</strong>: Ketika halaman ini dibuka, <code>NativeRouteChrome</code> otomatis menyembunyikan Tab Bar native agar layar terasa luas dan fokus.</li>
 </ul>
 <div id="sub-5-proxydebugpage" class="doc-subsection">
-<h4>5. `ProxyDebugPage`</h4>
+<h4>5. <code>ProxyDebugPage</code></h4>
 </div>
 <ul>
 <li><strong>Fungsi</strong>: Sarana pengetesan jaringan untuk tim QA dan developer di environment non-PROD (Dev & Test).</li>
@@ -186,7 +186,7 @@
 </ul>
 </section>
 <section id="sec-why" class="doc-section">
-<h3>⚖️ F. Why It Matters (Trade-Offs &amp; Implikasi Teknis)</h3>
+<h3>⚖️ F. Why It Matters (Trade-Offs & Implikasi Teknis)</h3>
 <ul>
 <li><strong>Inventori Terbatas Menjamin Kecepatan</strong>:</li>
 </ul>
@@ -202,7 +202,7 @@
 </ol>
 </section>
 <section id="sec-mistakes" class="doc-section">
-<h3>⚠️ H. Common Mistakes &amp; Debugging</h3>
+<h3>⚠️ H. Common Mistakes & Debugging</h3>
 <ul>
 <li><strong>Mencoba Mengakses <code>ProxyDebugPage</code> di Build Production</strong>:</li>
 <li>Pada build PROD, akses ke halaman debug dinonaktifkan secara ketat untuk mematuhi regulasi keamanan OJK dan standar perlindungan data pribadi perbankan.</li>
@@ -411,23 +411,23 @@ class StandardRepayCoordinator implements AppRouteCoordinator {
             <div class="toc-branch">
               <div class="toc-node-row">
                 <span class="toc-leaf-dot"></span>
-                <a class="toc-tree-link" href="#sub-1-flutterrootpage-root">1. `FlutterRootPage` (`/root`)</a>
+                <a class="toc-tree-link" href="#sub-1-flutterrootpage-root">1. <span class="toc-code">FlutterRootPage</span> (<span class="toc-code">/root</span>)</a>
               </div>
               <div class="toc-node-row">
                 <span class="toc-leaf-dot"></span>
-                <a class="toc-tree-link" href="#sub-2-repayhomepage-repay">2. `RepayHomePage` (`/repay`)</a>
+                <a class="toc-tree-link" href="#sub-2-repayhomepage-repay">2. <span class="toc-code">RepayHomePage</span> (<span class="toc-code">/repay</span>)</a>
               </div>
               <div class="toc-node-row">
                 <span class="toc-leaf-dot"></span>
-                <a class="toc-tree-link" href="#sub-3-minehomepage-mine">3. `MineHomePage` (`/mine`)</a>
+                <a class="toc-tree-link" href="#sub-3-minehomepage-mine">3. <span class="toc-code">MineHomePage</span> (<span class="toc-code">/mine</span>)</a>
               </div>
               <div class="toc-node-row">
                 <span class="toc-leaf-dot"></span>
-                <a class="toc-tree-link" href="#sub-4-minepersonalpage-minepersonal">4. `MinePersonalPage` (`/mine/personal`)</a>
+                <a class="toc-tree-link" href="#sub-4-minepersonalpage-minepersonal">4. <span class="toc-code">MinePersonalPage</span> (<span class="toc-code">/mine/personal</span>)</a>
               </div>
               <div class="toc-node-row">
                 <span class="toc-leaf-dot"></span>
-                <a class="toc-tree-link" href="#sub-5-proxydebugpage">5. `ProxyDebugPage`</a>
+                <a class="toc-tree-link" href="#sub-5-proxydebugpage">5. <span class="toc-code">ProxyDebugPage</span></a>
               </div>
             </div>
           </div>
@@ -531,23 +531,23 @@ class StandardRepayCoordinator implements AppRouteCoordinator {
           <div class="toc-branch">
             <div class="toc-node-row">
               <span class="toc-leaf-dot"></span>
-              <a class="toc-tree-link" href="#sub-1-flutterrootpage-root" onclick="toggleMobileToc()">1. `FlutterRootPage` (`/root`)</a>
+              <a class="toc-tree-link" href="#sub-1-flutterrootpage-root" onclick="toggleMobileToc()">1. <span class="toc-code">FlutterRootPage</span> (<span class="toc-code">/root</span>)</a>
             </div>
             <div class="toc-node-row">
               <span class="toc-leaf-dot"></span>
-              <a class="toc-tree-link" href="#sub-2-repayhomepage-repay" onclick="toggleMobileToc()">2. `RepayHomePage` (`/repay`)</a>
+              <a class="toc-tree-link" href="#sub-2-repayhomepage-repay" onclick="toggleMobileToc()">2. <span class="toc-code">RepayHomePage</span> (<span class="toc-code">/repay</span>)</a>
             </div>
             <div class="toc-node-row">
               <span class="toc-leaf-dot"></span>
-              <a class="toc-tree-link" href="#sub-3-minehomepage-mine" onclick="toggleMobileToc()">3. `MineHomePage` (`/mine`)</a>
+              <a class="toc-tree-link" href="#sub-3-minehomepage-mine" onclick="toggleMobileToc()">3. <span class="toc-code">MineHomePage</span> (<span class="toc-code">/mine</span>)</a>
             </div>
             <div class="toc-node-row">
               <span class="toc-leaf-dot"></span>
-              <a class="toc-tree-link" href="#sub-4-minepersonalpage-minepersonal" onclick="toggleMobileToc()">4. `MinePersonalPage` (`/mine/personal`)</a>
+              <a class="toc-tree-link" href="#sub-4-minepersonalpage-minepersonal" onclick="toggleMobileToc()">4. <span class="toc-code">MinePersonalPage</span> (<span class="toc-code">/mine/personal</span>)</a>
             </div>
             <div class="toc-node-row">
               <span class="toc-leaf-dot"></span>
-              <a class="toc-tree-link" href="#sub-5-proxydebugpage" onclick="toggleMobileToc()">5. `ProxyDebugPage`</a>
+              <a class="toc-tree-link" href="#sub-5-proxydebugpage" onclick="toggleMobileToc()">5. <span class="toc-code">ProxyDebugPage</span></a>
             </div>
           </div>
         </div>

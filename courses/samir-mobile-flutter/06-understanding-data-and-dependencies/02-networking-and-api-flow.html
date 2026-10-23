@@ -116,7 +116,7 @@
 <p>Telah membaca <a href="01-dependency-catalog.html">01-dependency-catalog.md</a> dan <a href="../05-learning-business-flows/02-authentication-and-session-sync.html">Level 5: Alur Bisnis</a>.</p>
 </section>
 <section id="sec-simple" class="doc-section">
-<h3>💡 C. Simple Explanation (Analogi &amp; Konsep Sederhana)</h3>
+<h3>💡 C. Simple Explanation (Analogi & Konsep Sederhana)</h3>
 <p>Bayangkan sebuah kantor pos diplomatik khusus:</p>
 <ol>
 <li><strong>Surat Masuk</strong>: Setiap surat yang akan dikirim (API Request) otomatis diperiksa kelengkapan prangkonya dan distempel tanggal resmi oleh staf administrasi (<strong><code>LoadingInterceptor</code></strong> & <strong><code>ParamUtils</code></strong>).</li>
@@ -128,7 +128,7 @@
 <section id="sec-actual" class="doc-section">
 <h3>💻 D. Actual Implementation (Bukti di Kode Sumber)</h3>
 <div id="sub-1-inisialisasi-singleton-httpclient" class="doc-subsection">
-<h4>1. Inisialisasi Singleton `HttpClient`</h4>
+<h4>1. Inisialisasi Singleton <code>HttpClient</code></h4>
 </div>
 <p>File <a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/learn/Flutter-Arch/flutter/lib/common/http/http_client.dart" target="_blank" rel="noopener noreferrer">🦊 flutter/lib/common/http/http_client.dart <span class="branch-tag">learn/Flutter-Arch</span> ↗</a> (baris 17–60):</p>
 <pre><code class="language-dart">final HttpClient httpClient = HttpClient();
@@ -211,7 +211,7 @@ graph LR
 </ul>
 <p>Mencetak tag log terstruktur <code>[HTTP-REQ]</code> dan <code>[HTTP-RESP]</code> di konsol debug untuk mempermudah analisis data oleh developer.</p>
 <div id="sub-3-struktur-amplop-respon-baseresponset" class="doc-subsection">
-<h4>3. Struktur Amplop Respon: `BaseResponse&lt;T&gt;`</h4>
+<h4>3. Struktur Amplop Respon: <code>BaseResponse&lt;T&gt;</code></h4>
 </div>
 <p>File <a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/learn/Flutter-Arch/flutter/lib/common/http/response.dart" target="_blank" rel="noopener noreferrer">🦊 flutter/lib/common/http/response.dart <span class="branch-tag">learn/Flutter-Arch</span> ↗</a> mendefinisikan format kontrak JSON backend SAMIR:</p>
 <pre><code class="language-dart">class BaseResponse&lt;T&gt; {
@@ -232,7 +232,7 @@ graph LR
 }</code></pre>
 </section>
 <section id="sec-walkthrough" class="doc-section">
-<h3>🪜 E. Step-by-Step Walkthrough: Alur Lengkap Eksekusi `httpClient.post()`</h3>
+<h3>🪜 E. Step-by-Step Walkthrough: Alur Lengkap Eksekusi <code>httpClient.post()</code></h3>
 <ol>
 <li><strong>Pemanggilan Method</strong>:</li>
 </ol>
@@ -263,7 +263,7 @@ graph LR
 <p><code>LoadingInterceptor.onResponse</code> memanggil <code>Loading.hide()</code>.</p>
 </section>
 <section id="sec-why" class="doc-section">
-<h3>⚖️ F. Why It Matters (Trade-Offs &amp; Implikasi Teknis)</h3>
+<h3>⚖️ F. Why It Matters (Trade-Offs & Implikasi Teknis)</h3>
 <ul>
 <li><strong>Mengapa Menggunakan Timeout 120 Detik?</strong></li>
 </ul>
@@ -283,7 +283,7 @@ graph LR
 </ul>
 </section>
 <section id="sec-mistakes" class="doc-section">
-<h3>⚠️ H. Common Mistakes &amp; Debugging</h3>
+<h3>⚠️ H. Common Mistakes & Debugging</h3>
 <ul>
 <li><strong>Lupa Menambahkan <code>showLoading: false</code> pada Panggilan Background</strong>:</li>
 <li>Untuk polling status atau pemuatan data saat tab bar berpindah, selalu tentukan <code>showLoading: false</code> agar pengguna tidak terganggu oleh kedipan spinner modal yang muncul sekilas.</li>
@@ -481,7 +481,7 @@ class GlobalSessionManager implements SessionContract {
             <div class="toc-branch">
               <div class="toc-node-row">
                 <span class="toc-leaf-dot"></span>
-                <a class="toc-tree-link" href="#sub-1-inisialisasi-singleton-httpclient">1. Inisialisasi Singleton `HttpClient`</a>
+                <a class="toc-tree-link" href="#sub-1-inisialisasi-singleton-httpclient">1. Inisialisasi Singleton <span class="toc-code">HttpClient</span></a>
               </div>
               <div class="toc-node-row">
                 <span class="toc-leaf-dot"></span>
@@ -489,13 +489,13 @@ class GlobalSessionManager implements SessionContract {
               </div>
               <div class="toc-node-row">
                 <span class="toc-leaf-dot"></span>
-                <a class="toc-tree-link" href="#sub-3-struktur-amplop-respon-baseresponset">3. Struktur Amplop Respon: `BaseResponse&lt;T&gt;`</a>
+                <a class="toc-tree-link" href="#sub-3-struktur-amplop-respon-baseresponset">3. Struktur Amplop Respon: <span class="toc-code">BaseResponse&lt;T&gt;</span></a>
               </div>
             </div>
           </div>
           <div class="toc-node-row">
             <span class="toc-leaf-dot"></span>
-            <a class="toc-tree-link" href="#sec-walkthrough">E. Step-by-Step Walkthrough: Alur Lengkap Eksekusi `httpClient.post()`</a>
+            <a class="toc-tree-link" href="#sec-walkthrough">E. Step-by-Step Walkthrough: Alur Lengkap Eksekusi <span class="toc-code">httpClient.post()</span></a>
           </div>
           <div class="toc-node-row">
             <span class="toc-leaf-dot"></span>
@@ -585,7 +585,7 @@ class GlobalSessionManager implements SessionContract {
           <div class="toc-branch">
             <div class="toc-node-row">
               <span class="toc-leaf-dot"></span>
-              <a class="toc-tree-link" href="#sub-1-inisialisasi-singleton-httpclient" onclick="toggleMobileToc()">1. Inisialisasi Singleton `HttpClient`</a>
+              <a class="toc-tree-link" href="#sub-1-inisialisasi-singleton-httpclient" onclick="toggleMobileToc()">1. Inisialisasi Singleton <span class="toc-code">HttpClient</span></a>
             </div>
             <div class="toc-node-row">
               <span class="toc-leaf-dot"></span>
@@ -593,13 +593,13 @@ class GlobalSessionManager implements SessionContract {
             </div>
             <div class="toc-node-row">
               <span class="toc-leaf-dot"></span>
-              <a class="toc-tree-link" href="#sub-3-struktur-amplop-respon-baseresponset" onclick="toggleMobileToc()">3. Struktur Amplop Respon: `BaseResponse&lt;T&gt;`</a>
+              <a class="toc-tree-link" href="#sub-3-struktur-amplop-respon-baseresponset" onclick="toggleMobileToc()">3. Struktur Amplop Respon: <span class="toc-code">BaseResponse&lt;T&gt;</span></a>
             </div>
           </div>
         </div>
         <div class="toc-node-row">
           <span class="toc-leaf-dot"></span>
-          <a class="toc-tree-link" href="#sec-walkthrough" onclick="toggleMobileToc()">E. Step-by-Step Walkthrough: Alur Lengkap Eksekusi `httpClient.post()`</a>
+          <a class="toc-tree-link" href="#sec-walkthrough" onclick="toggleMobileToc()">E. Step-by-Step Walkthrough: Alur Lengkap Eksekusi <span class="toc-code">httpClient.post()</span></a>
         </div>
         <div class="toc-node-row">
           <span class="toc-leaf-dot"></span>

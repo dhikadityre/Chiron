@@ -113,7 +113,7 @@
 <p>Telah membaca <a href="02-layers-and-responsibilities.html">02-layers-and-responsibilities.md</a>.</p>
 </section>
 <section id="sec-simple" class="doc-section">
-<h3>💡 C. Simple Explanation (Analogi &amp; Konsep Sederhana)</h3>
+<h3>💡 C. Simple Explanation (Analogi & Konsep Sederhana)</h3>
 <p>Bayangkan merancang seragam dan perlengkapan standar untuk staf bank:</p>
 <ul>
 <li><strong><code>BasePage</code></strong> adalah setelan jas resmi yang sudah dilengkapi name tag dan lencana bank; setiap teller baru cukup mengenakannya tanpa perlu menjahit baju dari nol.</li>
@@ -124,7 +124,7 @@
 <section id="sec-actual" class="doc-section">
 <h3>💻 D. Actual Implementation (Bukti di Kode Sumber)</h3>
 <div id="sub-1-standarisasi-layar-dengan-basepage" class="doc-subsection">
-<h4>1. Standarisasi Layar dengan `BasePage`</h4>
+<h4>1. Standarisasi Layar dengan <code>BasePage</code></h4>
 </div>
 <p>File <a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/learn/Flutter-Arch/flutter/lib/common/widgets/basePage/base_page.dart" target="_blank" rel="noopener noreferrer">🦊 flutter/lib/common/widgets/basePage/base_page.dart <span class="branch-tag">learn/Flutter-Arch</span> ↗</a> adalah widget Scaffold pembungkus kanonikal:</p>
 <pre><code class="language-dart">class BasePage extends StatefulWidget {
@@ -155,7 +155,7 @@
 <li><strong>Penanganan Back Terpadu</strong>: Callback <code>onBack</code> dapat di-override untuk intercept tombol kembali (misal menampilkan dialog konfirmasi <em>"Batalkan perubahan?"</em> sebelum menutup halaman).</li>
 </ol>
 <div id="sub-2-loading-spinner-global-apploadingoverlay" class="doc-subsection">
-<h4>2. Loading Spinner Global: `AppLoadingOverlay`</h4>
+<h4>2. Loading Spinner Global: <code>AppLoadingOverlay</code></h4>
 </div>
 <p>Dikonfigurasi di root <code>MyApp.builder</code> dan diimplementasikan di <a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/learn/Flutter-Arch/flutter/lib/common/widgets/loading/loading.dart" target="_blank" rel="noopener noreferrer">🦊 flutter/lib/common/widgets/loading/loading.dart <span class="branch-tag">learn/Flutter-Arch</span> ↗</a>:</p>
 <pre><code class="language-dart">class AppLoadingOverlay extends StatefulWidget {
@@ -171,7 +171,7 @@
 <li>Begitu response diterima atau timeout terjadi, <code>LoadingInterceptor</code> memanggil <code>Loading.hide()</code> untuk menghapus overlay.</li>
 </ul>
 <div id="sub-3-dialog-terisolasi-appdialoghost-appdialog" class="doc-subsection">
-<h4>3. Dialog Terisolasi: `AppDialogHost` &amp; `AppDialog`</h4>
+<h4>3. Dialog Terisolasi: <code>AppDialogHost</code> & <code>AppDialog</code></h4>
 </div>
 <p>File <a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/learn/Flutter-Arch/flutter/lib/common/router/app_dialog.dart" target="_blank" rel="noopener noreferrer">🦊 flutter/lib/common/router/app_dialog.dart <span class="branch-tag">learn/Flutter-Arch</span> ↗</a>:</p>
 <pre><code class="language-dart">class AppDialogHost extends StatefulWidget {
@@ -186,7 +186,7 @@
 <li><code>AppDialogHost</code> membungkus aplikasi di luar GoRouter. Dialog bisnis dapat ditampilkan dan ditutup secara independen tanpa memengaruhi riwayat URL routing.</li>
 </ul>
 <div id="sub-4-kanal-resmi-appsocialmediasection" class="doc-subsection">
-<h4>4. Kanal Resmi: `AppSocialMediaSection`</h4>
+<h4>4. Kanal Resmi: <code>AppSocialMediaSection</code></h4>
 </div>
 <p>File <a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/learn/Flutter-Arch/flutter/lib/common/widgets/contact/app_social_media_section.dart" target="_blank" rel="noopener noreferrer">🦊 flutter/lib/common/widgets/contact/app_social_media_section.dart <span class="branch-tag">learn/Flutter-Arch</span> ↗</a> menyediakan komponen standar untuk menampilkan tautan resmi:</p>
 <ul>
@@ -198,7 +198,7 @@
 <p>Komponen ini digunakan secara seragam di bagian bawah tab Tagihan (<code>RepayHomePage</code>) dan tab Profil (<code>MineHomePage</code>).</p>
 </section>
 <section id="sec-walkthrough" class="doc-section">
-<h3>🪜 E. Step-by-Step Walkthrough: Membuat Halaman Baru Menggunakan `BasePage`</h3>
+<h3>🪜 E. Step-by-Step Walkthrough: Membuat Halaman Baru Menggunakan <code>BasePage</code></h3>
 <pre><code class="language-dart">import &#x27;package:flutter/material.dart&#x27;;
 import &#x27;package:flutter_app_project/common/widgets/basePage/base_page.dart&#x27;;
 
@@ -229,7 +229,7 @@ class FaqDetailPage extends StatelessWidget {
 </ul>
 </section>
 <section id="sec-why" class="doc-section">
-<h3>⚖️ F. Why It Matters (Trade-Offs &amp; Implikasi Teknis)</h3>
+<h3>⚖️ F. Why It Matters (Trade-Offs & Implikasi Teknis)</h3>
 <ul>
 <li><strong>Eliminasi Kode Boilerplate</strong>:</li>
 </ul>
@@ -248,7 +248,7 @@ class FaqDetailPage extends StatelessWidget {
 </ul>
 </section>
 <section id="sec-mistakes" class="doc-section">
-<h3>⚠️ H. Common Mistakes &amp; Debugging</h3>
+<h3>⚠️ H. Common Mistakes & Debugging</h3>
 <ul>
 <li><strong>Menggunakan <code>Scaffold</code> Biasa Alih-Alih <code>BasePage</code></strong>:</li>
 <li>Menyebabkan status bar perangkat berubah menjadi putih (ikon tak terlihat) dan tombol back tidak mengikuti aturan navigasi <code>NativeRouteChrome</code>.</li>
@@ -448,25 +448,25 @@ class GlobalSessionManager implements SessionContract {
             <div class="toc-branch">
               <div class="toc-node-row">
                 <span class="toc-leaf-dot"></span>
-                <a class="toc-tree-link" href="#sub-1-standarisasi-layar-dengan-basepage">1. Standarisasi Layar dengan `BasePage`</a>
+                <a class="toc-tree-link" href="#sub-1-standarisasi-layar-dengan-basepage">1. Standarisasi Layar dengan <span class="toc-code">BasePage</span></a>
               </div>
               <div class="toc-node-row">
                 <span class="toc-leaf-dot"></span>
-                <a class="toc-tree-link" href="#sub-2-loading-spinner-global-apploadingoverlay">2. Loading Spinner Global: `AppLoadingOverlay`</a>
+                <a class="toc-tree-link" href="#sub-2-loading-spinner-global-apploadingoverlay">2. Loading Spinner Global: <span class="toc-code">AppLoadingOverlay</span></a>
               </div>
               <div class="toc-node-row">
                 <span class="toc-leaf-dot"></span>
-                <a class="toc-tree-link" href="#sub-3-dialog-terisolasi-appdialoghost-appdialog">3. Dialog Terisolasi: `AppDialogHost` &amp; `AppDialog`</a>
+                <a class="toc-tree-link" href="#sub-3-dialog-terisolasi-appdialoghost-appdialog">3. Dialog Terisolasi: <span class="toc-code">AppDialogHost</span> &amp; <span class="toc-code">AppDialog</span></a>
               </div>
               <div class="toc-node-row">
                 <span class="toc-leaf-dot"></span>
-                <a class="toc-tree-link" href="#sub-4-kanal-resmi-appsocialmediasection">4. Kanal Resmi: `AppSocialMediaSection`</a>
+                <a class="toc-tree-link" href="#sub-4-kanal-resmi-appsocialmediasection">4. Kanal Resmi: <span class="toc-code">AppSocialMediaSection</span></a>
               </div>
             </div>
           </div>
           <div class="toc-node-row">
             <span class="toc-leaf-dot"></span>
-            <a class="toc-tree-link" href="#sec-walkthrough">E. Step-by-Step Walkthrough: Membuat Halaman Baru Menggunakan `BasePage`</a>
+            <a class="toc-tree-link" href="#sec-walkthrough">E. Step-by-Step Walkthrough: Membuat Halaman Baru Menggunakan <span class="toc-code">BasePage</span></a>
           </div>
           <div class="toc-node-row">
             <span class="toc-leaf-dot"></span>
@@ -556,25 +556,25 @@ class GlobalSessionManager implements SessionContract {
           <div class="toc-branch">
             <div class="toc-node-row">
               <span class="toc-leaf-dot"></span>
-              <a class="toc-tree-link" href="#sub-1-standarisasi-layar-dengan-basepage" onclick="toggleMobileToc()">1. Standarisasi Layar dengan `BasePage`</a>
+              <a class="toc-tree-link" href="#sub-1-standarisasi-layar-dengan-basepage" onclick="toggleMobileToc()">1. Standarisasi Layar dengan <span class="toc-code">BasePage</span></a>
             </div>
             <div class="toc-node-row">
               <span class="toc-leaf-dot"></span>
-              <a class="toc-tree-link" href="#sub-2-loading-spinner-global-apploadingoverlay" onclick="toggleMobileToc()">2. Loading Spinner Global: `AppLoadingOverlay`</a>
+              <a class="toc-tree-link" href="#sub-2-loading-spinner-global-apploadingoverlay" onclick="toggleMobileToc()">2. Loading Spinner Global: <span class="toc-code">AppLoadingOverlay</span></a>
             </div>
             <div class="toc-node-row">
               <span class="toc-leaf-dot"></span>
-              <a class="toc-tree-link" href="#sub-3-dialog-terisolasi-appdialoghost-appdialog" onclick="toggleMobileToc()">3. Dialog Terisolasi: `AppDialogHost` &amp; `AppDialog`</a>
+              <a class="toc-tree-link" href="#sub-3-dialog-terisolasi-appdialoghost-appdialog" onclick="toggleMobileToc()">3. Dialog Terisolasi: <span class="toc-code">AppDialogHost</span> &amp; <span class="toc-code">AppDialog</span></a>
             </div>
             <div class="toc-node-row">
               <span class="toc-leaf-dot"></span>
-              <a class="toc-tree-link" href="#sub-4-kanal-resmi-appsocialmediasection" onclick="toggleMobileToc()">4. Kanal Resmi: `AppSocialMediaSection`</a>
+              <a class="toc-tree-link" href="#sub-4-kanal-resmi-appsocialmediasection" onclick="toggleMobileToc()">4. Kanal Resmi: <span class="toc-code">AppSocialMediaSection</span></a>
             </div>
           </div>
         </div>
         <div class="toc-node-row">
           <span class="toc-leaf-dot"></span>
-          <a class="toc-tree-link" href="#sec-walkthrough" onclick="toggleMobileToc()">E. Step-by-Step Walkthrough: Membuat Halaman Baru Menggunakan `BasePage`</a>
+          <a class="toc-tree-link" href="#sec-walkthrough" onclick="toggleMobileToc()">E. Step-by-Step Walkthrough: Membuat Halaman Baru Menggunakan <span class="toc-code">BasePage</span></a>
         </div>
         <div class="toc-node-row">
           <span class="toc-leaf-dot"></span>

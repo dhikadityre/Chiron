@@ -108,7 +108,7 @@
 <p>Tidak ada prasyarat teknis khusus. Pembaca hanya perlu memahami konsep dasar mobile app development dan arsitektur hybrid.</p>
 </section>
 <section id="sec-simple" class="doc-section">
-<h3>💡 C. Simple Explanation (Analogi &amp; Konsep Sederhana)</h3>
+<h3>💡 C. Simple Explanation (Analogi & Konsep Sederhana)</h3>
 <p>Bayangkan sebuah pusat perbelanjaan modern (Aplikasi Host Native):</p>
 <ul>
 <li><strong>Lantai 1 (Beranda / Pengajuan Pinjaman)</strong> dan <strong>Ruang Verifikasi KTP (e-KYC)</strong> dikelola langsung oleh tim internal gedung dengan standar pengamanan ketat (Native Swift di iOS dan Native Kotlin di Android).</li>
@@ -120,7 +120,7 @@
 <section id="sec-actual" class="doc-section">
 <h3>💻 D. Actual Implementation (Bukti di Kode Sumber)</h3>
 <div id="sub-1-identitas-profil-teknis-modul" class="doc-subsection">
-<h4>1. Identitas &amp; Profil Teknis Modul</h4>
+<h4>1. Identitas & Profil Teknis Modul</h4>
 </div>
 <p>Berdasarkan file <a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/learn/Flutter-Arch/flutter/pubspec.yaml" target="_blank" rel="noopener noreferrer">🦊 flutter/pubspec.yaml <span class="branch-tag">learn/Flutter-Arch</span> ↗</a> dan konfigurasi runtime:</p>
 <div class="table-container"><table class="data-table"><thead><tr><th>Properti</th><th>Nilai Aktual di Repositori</th><th>Keterangan / Sumber</th></tr></thead><tbody><tr><td><strong>Package Name</strong></td><td><code>flutter_app_project</code></td><td><code>pubspec.yaml:L1</code></td></tr><tr><td><strong>Deskripsi</strong></td><td><code>Shared Flutter add-to-app module for the native Android and iOS apps.</code></td><td><code>pubspec.yaml:L2</code></td></tr><tr><td><strong>Publish Status</strong></td><td><code>publish_to: &#x27;none&#x27;</code> (Private Module)</td><td><code>pubspec.yaml:L5</code></td></tr><tr><td><strong>Flutter SDK</strong></td><td><code>3.41.9</code></td><td><code>pubspec.yaml:L23</code></td></tr><tr><td><strong>Dart SDK</strong></td><td><code>3.11.5</code></td><td><code>pubspec.yaml:L22</code></td></tr><tr><td><strong>Package ID Host</strong></td><td><code>com.samir.loan</code></td><td>Diteruskan dari native via <code>Global.packageName</code></td></tr><tr><td><strong>Default App Name</strong></td><td><code>Samir</code></td><td>Didefinisikan di <code>Global.appName</code></td></tr><tr><td><strong>Default Language</strong></td><td><code>id_ID</code> (Bahasa Indonesia)</td><td>Ditetapkan pada header HTTP Dio (<code>http_client.dart:L34</code>)</td></tr></tbody></table></div>
@@ -185,7 +185,7 @@ end</code></pre>
 <p>Jika user menekan menu yang membutuhkan aksi native (misal: verifikasi e-KTP atau pembukaan browser luar), Flutter mengirimkan sinyal navigasi ke host via <code>FlutterNativeChannelRoute.openNativeRoute()</code>.</p>
 </section>
 <section id="sec-why" class="doc-section">
-<h3>⚖️ F. Why It Matters (Trade-Offs &amp; Implikasi Teknis)</h3>
+<h3>⚖️ F. Why It Matters (Trade-Offs & Implikasi Teknis)</h3>
 <ul>
 <li><strong>Mengapa Single Engine Add-to-App?</strong></li>
 </ul>
@@ -206,7 +206,7 @@ end</code></pre>
 </ol>
 </section>
 <section id="sec-mistakes" class="doc-section">
-<h3>⚠️ H. Common Mistakes &amp; Debugging</h3>
+<h3>⚠️ H. Common Mistakes & Debugging</h3>
 <ul>
 <li><strong>Kesalahan Menjalankan Flutter Secara Terpisah (<code>flutter run</code>)</strong>:</li>
 <li>Modul ini dirancang dengan asumsi host native menyediakan parameter perangkat dan environment via MethodChannel. Menjalankan modul secara standalone tanpa native host akan menggunakan data fallback (<code>AppEnv.devAppId</code>, host dummy).</li>

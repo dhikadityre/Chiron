@@ -107,7 +107,7 @@
 </ol>
 </section>
 <section id="sec-prereq" class="doc-section">
-<h3>📌 B. Daftar Isu Terbuka &amp; Pertanyaan Arsitektural</h3>
+<h3>📌 B. Daftar Isu Terbuka & Pertanyaan Arsitektural</h3>
 <div id="sub-1-isu-terbuka-1-kebijakan-bypass-sertifikat-ssl-di-production" class="doc-subsection">
 <h4>1. Isu Terbuka 1: Kebijakan Bypass Sertifikat SSL di Production</h4>
 </div>
@@ -126,7 +126,7 @@
 <p>Konfirmasikan ke Lead Architect untuk menambahkan guard:</p>
 <pre><code class="language-dart">  client.badCertificateCallback = (cert, host, port) =&gt; !AppEnv.isProd;</code></pre>
 <div id="sub-2-isu-terbuka-2-masa-berlaku-kunci-salt-fallback-766b035b" class="doc-subsection">
-<h4>2. Isu Terbuka 2: Masa Berlaku Kunci Salt Fallback `766b035b-...`</h4>
+<h4>2. Isu Terbuka 2: Masa Berlaku Kunci Salt Fallback <code>766b035b-...</code></h4>
 </div>
 <ul>
 <li><strong>Status</strong>: <code>[Unverified - API Contract]</code></li>
@@ -150,7 +150,7 @@
 </ul>
 <p>Apakah perlu ditambahkan interceptor retry otomatis (misal: 2x retry berjarak 1 detik) khusus untuk endpoint pembacaan data (<code>GET</code> atau query tagihan yang aman dari efek samping ganda)?</p>
 <div id="sub-4-isu-terbuka-4-skenario-pergantian-akun-cepat-fast-account-switching" class="doc-subsection">
-<h4>4. Isu Terbuka 4: Skenario Pergantian Akun Cepat (*Fast Account Switching*)</h4>
+<h4>4. Isu Terbuka 4: Skenario Pergantian Akun Cepat (<em>Fast Account Switching</em>)</h4>
 </div>
 <ul>
 <li><strong>Status</strong>: <code>[Unverified - Edge Case]</code></li>
@@ -348,7 +348,7 @@ class GlobalSessionManager implements SessionContract {
               </div>
               <div class="toc-node-row">
                 <span class="toc-leaf-dot"></span>
-                <a class="toc-tree-link" href="#sub-2-isu-terbuka-2-masa-berlaku-kunci-salt-fallback-766b035b">2. Isu Terbuka 2: Masa Berlaku Kunci Salt Fallback `766b035b-...`</a>
+                <a class="toc-tree-link" href="#sub-2-isu-terbuka-2-masa-berlaku-kunci-salt-fallback-766b035b">2. Isu Terbuka 2: Masa Berlaku Kunci Salt Fallback <span class="toc-code">766b035b-...</span></a>
               </div>
               <div class="toc-node-row">
                 <span class="toc-leaf-dot"></span>
@@ -432,7 +432,7 @@ class GlobalSessionManager implements SessionContract {
             </div>
             <div class="toc-node-row">
               <span class="toc-leaf-dot"></span>
-              <a class="toc-tree-link" href="#sub-2-isu-terbuka-2-masa-berlaku-kunci-salt-fallback-766b035b" onclick="toggleMobileToc()">2. Isu Terbuka 2: Masa Berlaku Kunci Salt Fallback `766b035b-...`</a>
+              <a class="toc-tree-link" href="#sub-2-isu-terbuka-2-masa-berlaku-kunci-salt-fallback-766b035b" onclick="toggleMobileToc()">2. Isu Terbuka 2: Masa Berlaku Kunci Salt Fallback <span class="toc-code">766b035b-...</span></a>
             </div>
             <div class="toc-node-row">
               <span class="toc-leaf-dot"></span>

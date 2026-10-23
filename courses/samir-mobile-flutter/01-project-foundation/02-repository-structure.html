@@ -108,7 +108,7 @@
 <p>Telah membaca <a href="01-application-overview.html">01-application-overview.md</a>.</p>
 </section>
 <section id="sec-simple" class="doc-section">
-<h3>💡 C. Simple Explanation (Analogi &amp; Konsep Sederhana)</h3>
+<h3>💡 C. Simple Explanation (Analogi & Konsep Sederhana)</h3>
 <p>Bayangkan sebuah pabrik komponen otomotif:</p>
 <ul>
 <li>Folder <strong><code>common/</code></strong> adalah bengkel perkakas bersama dan stasiun kontrol umum (kunci pas, baut, jalur pipa oli, jembatan radio dengan stasiun pusat). Semua lini produksi menggunakannya.</li>
@@ -119,7 +119,7 @@
 <section id="sec-actual" class="doc-section">
 <h3>💻 D. Actual Implementation (Bukti di Kode Sumber)</h3>
 <div id="sub-1-struktur-level-atas-direktori-flutter" class="doc-subsection">
-<h4>1. Struktur Level Atas Direktori `flutter/`</h4>
+<h4>1. Struktur Level Atas Direktori <code>flutter/</code></h4>
 </div>
 <pre><code class="language-text">flutter/
 ├── analysis_options.yaml    # Aturan lint kode Dart (flutter_lints ^6.0.0)
@@ -136,7 +136,7 @@
     ├── common/              # Fondasi bersama, platform bridge, http, &amp; reusable UI
     └── pages/               # Layar bisnis (Mine, Repay, &amp; Root Container)</code></pre>
 <div id="sub-2-anatomi-mendalam-flutterlibcommon" class="doc-subsection">
-<h4>2. Anatomi Mendalam `flutter/lib/common/`</h4>
+<h4>2. Anatomi Mendalam <code>flutter/lib/common/</code></h4>
 </div>
 <p>Subdirektori <code>common/</code> bertindak sebagai fondasi modul yang bersifat independen terhadap fitur bisnis tertentu:</p>
 <pre><code class="language-text">lib/common/
@@ -189,7 +189,7 @@
     ├── navigation/app_action_icon_button.dart # Tombol ikon aksi di navbar
     └── refresh/app_refresh_indicator.dart    # Komponen pull-to-refresh seragam</code></pre>
 <div id="sub-3-anatomi-mendalam-flutterlibpages" class="doc-subsection">
-<h4>3. Anatomi Mendalam `flutter/lib/pages/`</h4>
+<h4>3. Anatomi Mendalam <code>flutter/lib/pages/</code></h4>
 </div>
 <p>Subdirektori <code>pages/</code> menampung seluruh implementasi layar bisnis. Setiap fitur bisnis diisolasi dalam subdirektori tersendiri:</p>
 <pre><code class="language-text">lib/pages/
@@ -244,7 +244,7 @@
 </ol>
 </section>
 <section id="sec-why" class="doc-section">
-<h3>⚖️ F. Why It Matters (Trade-Offs &amp; Implikasi Teknis)</h3>
+<h3>⚖️ F. Why It Matters (Trade-Offs & Implikasi Teknis)</h3>
 <ul>
 <li><strong>Mengapa Menggunakan Sintaks <code>part</code> dan <code>part of</code> pada Folder Widgets?</strong></li>
 </ul>
@@ -259,7 +259,7 @@
 <p>Ketika ada kebutuhan untuk mengubah domain API staging, developer tidak perlu mencari ke setiap file page. Cukup buka satu file konfigurasi terpusat: <a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/learn/Flutter-Arch/flutter/lib/common/constants/app_env.dart" target="_blank" rel="noopener noreferrer">🦊 flutter/lib/common/constants/app_env.dart <span class="branch-tag">learn/Flutter-Arch</span> ↗</a>.</p>
 </section>
 <section id="sec-mistakes" class="doc-section">
-<h3>⚠️ H. Common Mistakes &amp; Debugging</h3>
+<h3>⚠️ H. Common Mistakes & Debugging</h3>
 <ul>
 <li><strong>Mengubah file di dalam <code>.ios/</code> atau <code>.android/</code></strong>:</li>
 <li>File-file ini bersifat transient dan dapat ditimpa ulang (<em>overwritten</em>) secara otomatis setiap kali perintah <code>flutter packages get</code> atau <code>flutter build</code> dijalankan. Perubahan konfigurasi native wajib dilakukan di folder host asli: <code>ios/</code> atau <code>android/</code>.</li>
@@ -459,15 +459,15 @@ class GlobalSessionManager implements SessionContract {
             <div class="toc-branch">
               <div class="toc-node-row">
                 <span class="toc-leaf-dot"></span>
-                <a class="toc-tree-link" href="#sub-1-struktur-level-atas-direktori-flutter">1. Struktur Level Atas Direktori `flutter/`</a>
+                <a class="toc-tree-link" href="#sub-1-struktur-level-atas-direktori-flutter">1. Struktur Level Atas Direktori <span class="toc-code">flutter/</span></a>
               </div>
               <div class="toc-node-row">
                 <span class="toc-leaf-dot"></span>
-                <a class="toc-tree-link" href="#sub-2-anatomi-mendalam-flutterlibcommon">2. Anatomi Mendalam `flutter/lib/common/`</a>
+                <a class="toc-tree-link" href="#sub-2-anatomi-mendalam-flutterlibcommon">2. Anatomi Mendalam <span class="toc-code">flutter/lib/common/</span></a>
               </div>
               <div class="toc-node-row">
                 <span class="toc-leaf-dot"></span>
-                <a class="toc-tree-link" href="#sub-3-anatomi-mendalam-flutterlibpages">3. Anatomi Mendalam `flutter/lib/pages/`</a>
+                <a class="toc-tree-link" href="#sub-3-anatomi-mendalam-flutterlibpages">3. Anatomi Mendalam <span class="toc-code">flutter/lib/pages/</span></a>
               </div>
             </div>
           </div>
@@ -563,15 +563,15 @@ class GlobalSessionManager implements SessionContract {
           <div class="toc-branch">
             <div class="toc-node-row">
               <span class="toc-leaf-dot"></span>
-              <a class="toc-tree-link" href="#sub-1-struktur-level-atas-direktori-flutter" onclick="toggleMobileToc()">1. Struktur Level Atas Direktori `flutter/`</a>
+              <a class="toc-tree-link" href="#sub-1-struktur-level-atas-direktori-flutter" onclick="toggleMobileToc()">1. Struktur Level Atas Direktori <span class="toc-code">flutter/</span></a>
             </div>
             <div class="toc-node-row">
               <span class="toc-leaf-dot"></span>
-              <a class="toc-tree-link" href="#sub-2-anatomi-mendalam-flutterlibcommon" onclick="toggleMobileToc()">2. Anatomi Mendalam `flutter/lib/common/`</a>
+              <a class="toc-tree-link" href="#sub-2-anatomi-mendalam-flutterlibcommon" onclick="toggleMobileToc()">2. Anatomi Mendalam <span class="toc-code">flutter/lib/common/</span></a>
             </div>
             <div class="toc-node-row">
               <span class="toc-leaf-dot"></span>
-              <a class="toc-tree-link" href="#sub-3-anatomi-mendalam-flutterlibpages" onclick="toggleMobileToc()">3. Anatomi Mendalam `flutter/lib/pages/`</a>
+              <a class="toc-tree-link" href="#sub-3-anatomi-mendalam-flutterlibpages" onclick="toggleMobileToc()">3. Anatomi Mendalam <span class="toc-code">flutter/lib/pages/</span></a>
             </div>
           </div>
         </div>

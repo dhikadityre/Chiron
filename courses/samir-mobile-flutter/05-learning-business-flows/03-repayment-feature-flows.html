@@ -116,7 +116,7 @@
 <p>Telah membaca <a href="01-user-journey-overview.html">01-user-journey-overview.md</a> dan <a href="02-authentication-and-session-sync.html">02-authentication-and-session-sync.md</a>.</p>
 </section>
 <section id="sec-simple" class="doc-section">
-<h3>💡 C. Simple Explanation (Analogi &amp; Konsep Sederhana)</h3>
+<h3>💡 C. Simple Explanation (Analogi & Konsep Sederhana)</h3>
 <p>Bayangkan Anda menerima lembar tagihan listrik bulanan di rumah:</p>
 <ul>
 <li><strong>Bagian Atas (Header Tagihan)</strong>: Menampilkan kotak merah besar bertuliskan <em>"Total Tagihan: Rp 1.500.000 — Jatuh tempo dalam 3 hari!"</em>.</li>
@@ -128,12 +128,12 @@
 <section id="sec-actual" class="doc-section">
 <h3>💻 D. Actual Implementation (Bukti di Kode Sumber)</h3>
 <div id="sub-1-struktur-model-data-tagihan-repayordermodel" class="doc-subsection">
-<h4>1. Struktur Model Data Tagihan (`RepayOrderModel`)</h4>
+<h4>1. Struktur Model Data Tagihan (<code>RepayOrderModel</code>)</h4>
 </div>
 <p>Didefinisikan pada <a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/learn/Flutter-Arch/flutter/lib/pages/repay/home/models/repay_home_model.dart" target="_blank" rel="noopener noreferrer">🦊 flutter/lib/pages/repay/home/models/repay_home_model.dart <span class="branch-tag">learn/Flutter-Arch</span> ↗</a>:</p>
 <div class="table-container"><table class="data-table"><thead><tr><th>Field Model</th><th>Tipe Data</th><th>Deskripsi Bisnis</th></tr></thead><tbody><tr><td><strong><code>orderId</code></strong></td><td><code>String</code></td><td>Nomor kontrak unik transaksi pinjaman nasabah.</td></tr><tr><td><strong><code>repayAmount</code></strong></td><td><code>String</code></td><td>Total nominal yang wajib dibayar (pokok + bunga + denda).</td></tr><tr><td><strong><code>surplusAmount</code></strong></td><td><code>String</code></td><td>Sisa pokok pinjaman yang belum terlunasi.</td></tr><tr><td><strong><code>overdueDays</code></strong></td><td><code>int</code></td><td>Jumlah hari keterlambatan (0 jika belum menunggak).</td></tr><tr><td><strong><code>penaltyAmount</code></strong></td><td><code>String</code></td><td>Akumulasi denda penalti keterlambatan harian.</td></tr><tr><td><strong><code>dueDate</code></strong></td><td><code>String</code></td><td>Tanggal tenggat akhir pembayaran (format: YYYY-MM-DD).</td></tr><tr><td><strong><code>productName</code></strong></td><td><code>String</code></td><td>Nama skema produk pinjaman (misal: "Pinjaman Kilat").</td></tr><tr><td><strong><code>repayStatus</code></strong></td><td><code>int</code></td><td>Kode status: Menunggu Jatuh Tempo, Terlambat, atau Diproses.</td></tr></tbody></table></div>
 <div id="sub-2-orkestrasi-service-repayhomeservice" class="doc-subsection">
-<h4>2. Orkestrasi Service: `RepayHomeService`</h4>
+<h4>2. Orkestrasi Service: <code>RepayHomeService</code></h4>
 </div>
 <p>Pada <a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/learn/Flutter-Arch/flutter/lib/pages/repay/home/services/repay_home_service.dart" target="_blank" rel="noopener noreferrer">🦊 flutter/lib/pages/repay/home/services/repay_home_service.dart <span class="branch-tag">learn/Flutter-Arch</span> ↗</a>:</p>
 <pre><code class="language-dart">class RepayHomeService {
@@ -174,7 +174,7 @@
 <li><strong>Silent Loading</strong>: Menggunakan <code>showLoading: false</code> agar pemuatan data tagihan di background tidak memblokir antarmuka pengguna dengan modal spinner penuh.</li>
 </ol>
 <div id="sub-3-pengambilan-kode-bayar-queryabroaddeductlist" class="doc-subsection">
-<h4>3. Pengambilan Kode Bayar (`queryAbroadDeDuctList`)</h4>
+<h4>3. Pengambilan Kode Bayar (<code>queryAbroadDeDuctList</code>)</h4>
 </div>
 <p>Ketika pengguna menekan tombol <em>"Bayar Sekarang"</em> pada kartu order:</p>
 <ul>
@@ -233,7 +233,7 @@ sequenceDiagram
 </div>
 </section>
 <section id="sec-why" class="doc-section">
-<h3>⚖️ F. Why It Matters (Trade-Offs &amp; Implikasi Teknis)</h3>
+<h3>⚖️ F. Why It Matters (Trade-Offs & Implikasi Teknis)</h3>
 <ul>
 <li><strong>Handling Hari Keterlambatan (<code>overdueDays</code>) Secara Real-time</strong>:</li>
 </ul>
@@ -255,7 +255,7 @@ sequenceDiagram
 </ol>
 </section>
 <section id="sec-mistakes" class="doc-section">
-<h3>⚠️ H. Common Mistakes &amp; Debugging</h3>
+<h3>⚠️ H. Common Mistakes & Debugging</h3>
 <ul>
 <li><strong>Mengandalkan Cache Lama untuk Nomor Virtual Account</strong>:</li>
 <li>Nomor Virtual Account memiliki batas waktu kedaluwarsa (misalnya 24 jam). Mengambil nomor VA langsung dari API <code>queryAbroadDeDuctList</code> saat tombol bayar ditekan mencegah transfer ke nomor VA yang sudah mati.</li>
@@ -453,15 +453,15 @@ class DefaultGetLoanStatusUseCase implements GetLoanStatusUseCase {
             <div class="toc-branch">
               <div class="toc-node-row">
                 <span class="toc-leaf-dot"></span>
-                <a class="toc-tree-link" href="#sub-1-struktur-model-data-tagihan-repayordermodel">1. Struktur Model Data Tagihan (`RepayOrderModel`)</a>
+                <a class="toc-tree-link" href="#sub-1-struktur-model-data-tagihan-repayordermodel">1. Struktur Model Data Tagihan (<span class="toc-code">RepayOrderModel</span>)</a>
               </div>
               <div class="toc-node-row">
                 <span class="toc-leaf-dot"></span>
-                <a class="toc-tree-link" href="#sub-2-orkestrasi-service-repayhomeservice">2. Orkestrasi Service: `RepayHomeService`</a>
+                <a class="toc-tree-link" href="#sub-2-orkestrasi-service-repayhomeservice">2. Orkestrasi Service: <span class="toc-code">RepayHomeService</span></a>
               </div>
               <div class="toc-node-row">
                 <span class="toc-leaf-dot"></span>
-                <a class="toc-tree-link" href="#sub-3-pengambilan-kode-bayar-queryabroaddeductlist">3. Pengambilan Kode Bayar (`queryAbroadDeDuctList`)</a>
+                <a class="toc-tree-link" href="#sub-3-pengambilan-kode-bayar-queryabroaddeductlist">3. Pengambilan Kode Bayar (<span class="toc-code">queryAbroadDeDuctList</span>)</a>
               </div>
               <div class="toc-node-row">
                 <span class="toc-leaf-dot"></span>
@@ -561,15 +561,15 @@ class DefaultGetLoanStatusUseCase implements GetLoanStatusUseCase {
           <div class="toc-branch">
             <div class="toc-node-row">
               <span class="toc-leaf-dot"></span>
-              <a class="toc-tree-link" href="#sub-1-struktur-model-data-tagihan-repayordermodel" onclick="toggleMobileToc()">1. Struktur Model Data Tagihan (`RepayOrderModel`)</a>
+              <a class="toc-tree-link" href="#sub-1-struktur-model-data-tagihan-repayordermodel" onclick="toggleMobileToc()">1. Struktur Model Data Tagihan (<span class="toc-code">RepayOrderModel</span>)</a>
             </div>
             <div class="toc-node-row">
               <span class="toc-leaf-dot"></span>
-              <a class="toc-tree-link" href="#sub-2-orkestrasi-service-repayhomeservice" onclick="toggleMobileToc()">2. Orkestrasi Service: `RepayHomeService`</a>
+              <a class="toc-tree-link" href="#sub-2-orkestrasi-service-repayhomeservice" onclick="toggleMobileToc()">2. Orkestrasi Service: <span class="toc-code">RepayHomeService</span></a>
             </div>
             <div class="toc-node-row">
               <span class="toc-leaf-dot"></span>
-              <a class="toc-tree-link" href="#sub-3-pengambilan-kode-bayar-queryabroaddeductlist" onclick="toggleMobileToc()">3. Pengambilan Kode Bayar (`queryAbroadDeDuctList`)</a>
+              <a class="toc-tree-link" href="#sub-3-pengambilan-kode-bayar-queryabroaddeductlist" onclick="toggleMobileToc()">3. Pengambilan Kode Bayar (<span class="toc-code">queryAbroadDeDuctList</span>)</a>
             </div>
             <div class="toc-node-row">
               <span class="toc-leaf-dot"></span>

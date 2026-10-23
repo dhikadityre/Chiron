@@ -112,7 +112,7 @@
 <p>Telah membaca <a href="01-feature-inventory.html">01-feature-inventory.md</a>.</p>
 </section>
 <section id="sec-simple" class="doc-section">
-<h3>💡 C. Simple Explanation (Analogi &amp; Konsep Sederhana)</h3>
+<h3>💡 C. Simple Explanation (Analogi & Konsep Sederhana)</h3>
 <p>Bayangkan sistem transportasi kereta cepat:</p>
 <ul>
 <li><strong><code>Routers.go(&#x27;/root&#x27;)</code></strong> seperti menaiki kereta ekspres yang langsung membawa Anda ke stasiun sentral: seluruh gerbong tambahan dilepas, dan Anda tiba di terminal utama yang luas.</li>
@@ -123,7 +123,7 @@
 <section id="sec-actual" class="doc-section">
 <h3>💻 D. Actual Implementation (Bukti di Kode Sumber)</h3>
 <div id="sub-1-inisialisasi-approuter" class="doc-subsection">
-<h4>1. Inisialisasi `appRouter`</h4>
+<h4>1. Inisialisasi <code>appRouter</code></h4>
 </div>
 <p>Pada file <a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/learn/Flutter-Arch/flutter/lib/common/router/routers.dart" target="_blank" rel="noopener noreferrer">🦊 flutter/lib/common/router/routers.dart <span class="branch-tag">learn/Flutter-Arch</span> ↗</a> (baris 19–48):</p>
 <pre><code class="language-dart">final GlobalKey&lt;NavigatorState&gt; navigatorKey = GlobalKey&lt;NavigatorState&gt;();
@@ -168,7 +168,7 @@ final GoRouter appRouter = GoRouter(
 <li><code>pageLifecycleRouteObserver</code>: Menyalurkan event lifecycle route ke <code>PageLifecycleMixin</code>.</li>
 </ul>
 <div id="sub-2-kelas-pembantu-statis-routers" class="doc-subsection">
-<h4>2. Kelas Pembantu Statis `Routers`</h4>
+<h4>2. Kelas Pembantu Statis <code>Routers</code></h4>
 </div>
 <p>Untuk mencegah developer memanggil <code>GoRouter.of(context)</code> secara acak dengan risiko <code>context</code> tidak valid, tim SAMIR menyediakan kelas pembantu terpusat:</p>
 <pre><code class="language-dart">class Routers {
@@ -212,7 +212,7 @@ final GoRouter appRouter = GoRouter(
 <div class="table-container"><table class="data-table"><thead><tr><th>Metode</th><th>Perilaku Stack Navigasi</th><th>Kapan Digunakan di SAMIR</th></tr></thead><tbody><tr><td><strong><code>Routers.go(path)</code></strong></td><td>Mengganti seluruh tumpukan navigasi ke rute target. Jika path adalah <code>/mine</code> atau <code>/repay</code>, ia mengaktifkan tab di <code>FlutterRootPage</code>.</td><td>Digunakan saat perpindahan antar-tab utama atau navigasi kembali ke root.</td></tr><tr><td><strong><code>Routers.push(path)</code></strong></td><td>Menumpuk halaman baru di atas halaman saat ini. Menampilkan tombol kembali otomatis di <code>NavTitleBar</code>.</td><td>Digunakan untuk membuka subhalaman detail (misal: <code>/mine/personal</code>).</td></tr><tr><td><strong><code>Routers.replace(path)</code></strong></td><td>Menimpa rute paling atas saat ini dengan rute baru tanpa menambah kedalaman stack.</td><td>Digunakan saat transisi alur satu arah (misal setelah submit form sukses).</td></tr><tr><td><strong><code>Routers.pop([result])</code></strong></td><td>Mengeluarkan halaman paling atas dari stack GoRouter jika <code>canPop() == true</code>.</td><td>Digunakan pada tombol kembali (<code>NavTitleBar.onBack</code>).</td></tr></tbody></table></div>
 </section>
 <section id="sec-why" class="doc-section">
-<h3>⚖️ F. Why It Matters (Trade-Offs &amp; Implikasi Teknis)</h3>
+<h3>⚖️ F. Why It Matters (Trade-Offs & Implikasi Teknis)</h3>
 <ul>
 <li><strong>Mengapa Wajib <code>await NativeRouteChrome.prepareForLocation(location)</code> Sebelum Navigasi?</strong></li>
 </ul>
@@ -236,7 +236,7 @@ final GoRouter appRouter = GoRouter(
 </ol>
 </section>
 <section id="sec-mistakes" class="doc-section">
-<h3>⚠️ H. Common Mistakes &amp; Debugging</h3>
+<h3>⚠️ H. Common Mistakes & Debugging</h3>
 <ul>
 <li><strong>Menggunakan <code>Navigator.of(context).pushNamed(...)</code></strong>:</li>
 <li>Hindari menggunakan Navigator 1.0 langsung. Pemanggilan ini tidak akan memicu <code>NativeRouteChrome.prepareForLocation</code>, menyebabkan tab bar native tetap muncul menutupi bagian bawah layar.</li>
@@ -435,11 +435,11 @@ class StandardRepayCoordinator implements AppRouteCoordinator {
             <div class="toc-branch">
               <div class="toc-node-row">
                 <span class="toc-leaf-dot"></span>
-                <a class="toc-tree-link" href="#sub-1-inisialisasi-approuter">1. Inisialisasi `appRouter`</a>
+                <a class="toc-tree-link" href="#sub-1-inisialisasi-approuter">1. Inisialisasi <span class="toc-code">appRouter</span></a>
               </div>
               <div class="toc-node-row">
                 <span class="toc-leaf-dot"></span>
-                <a class="toc-tree-link" href="#sub-2-kelas-pembantu-statis-routers">2. Kelas Pembantu Statis `Routers`</a>
+                <a class="toc-tree-link" href="#sub-2-kelas-pembantu-statis-routers">2. Kelas Pembantu Statis <span class="toc-code">Routers</span></a>
               </div>
             </div>
           </div>
@@ -535,11 +535,11 @@ class StandardRepayCoordinator implements AppRouteCoordinator {
           <div class="toc-branch">
             <div class="toc-node-row">
               <span class="toc-leaf-dot"></span>
-              <a class="toc-tree-link" href="#sub-1-inisialisasi-approuter" onclick="toggleMobileToc()">1. Inisialisasi `appRouter`</a>
+              <a class="toc-tree-link" href="#sub-1-inisialisasi-approuter" onclick="toggleMobileToc()">1. Inisialisasi <span class="toc-code">appRouter</span></a>
             </div>
             <div class="toc-node-row">
               <span class="toc-leaf-dot"></span>
-              <a class="toc-tree-link" href="#sub-2-kelas-pembantu-statis-routers" onclick="toggleMobileToc()">2. Kelas Pembantu Statis `Routers`</a>
+              <a class="toc-tree-link" href="#sub-2-kelas-pembantu-statis-routers" onclick="toggleMobileToc()">2. Kelas Pembantu Statis <span class="toc-code">Routers</span></a>
             </div>
           </div>
         </div>

@@ -112,7 +112,7 @@
 <p>Telah membaca <a href="01-flutter-entry-point.html">01-flutter-entry-point.md</a> dan <a href="02-module-lifecycle-and-host-sync.html">02-module-lifecycle-and-host-sync.md</a>.</p>
 </section>
 <section id="sec-simple" class="doc-section">
-<h3>💡 C. Simple Explanation (Analogi &amp; Konsep Sederhana)</h3>
+<h3>💡 C. Simple Explanation (Analogi & Konsep Sederhana)</h3>
 <p>Bayangkan Anda menaiki lift di gedung bertingkat:</p>
 <ul>
 <li>Jika penumpang menekan tombol lantai sebelum pintu lift tertutup (<code>defaultRouteName</code>), lift langsung meluncur ke lantai tersebut saat dinyalakan.</li>
@@ -123,7 +123,7 @@
 <section id="sec-actual" class="doc-section">
 <h3>💻 D. Actual Implementation (Bukti di Kode Sumber)</h3>
 <div id="sub-1-logika-pembacaan-initiallocation" class="doc-subsection">
-<h4>1. Logika Pembacaan `_initialLocation`</h4>
+<h4>1. Logika Pembacaan <code>_initialLocation</code></h4>
 </div>
 <p>Pada <a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/learn/Flutter-Arch/flutter/lib/common/router/routers.dart" target="_blank" rel="noopener noreferrer">🦊 flutter/lib/common/router/routers.dart <span class="branch-tag">learn/Flutter-Arch</span> ↗</a> (baris 50–65):</p>
 <pre><code class="language-dart">String get _initialLocation {
@@ -150,7 +150,7 @@
 <li><strong>Kondisi Fallback</strong>: Jika tidak ada parameter atau bernilai <code>/</code>, buka <code>/root</code>.</li>
 </ol>
 <div id="sub-2-penanganan-panggilan-rute-dari-host-showflutterroute" class="doc-subsection">
-<h4>2. Penanganan Panggilan Rute dari Host (`showFlutterRoute`)</h4>
+<h4>2. Penanganan Panggilan Rute dari Host (<code>showFlutterRoute</code>)</h4>
 </div>
 <p>Setelah engine berjalan, host native dapat meminta perpindahan rute kapan saja melalui method channel <code>showFlutterRoute</code>.</p>
 <p>Diimplementasikan pada <a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/learn/Flutter-Arch/flutter/lib/common/platform/flutter_native_route_dispatcher.dart" target="_blank" rel="noopener noreferrer">🦊 flutter/lib/common/platform/flutter_native_route_dispatcher.dart <span class="branch-tag">learn/Flutter-Arch</span> ↗</a> (baris 51–103):</p>
@@ -177,7 +177,7 @@
   return request.response(frameReady: true);
 }</code></pre>
 <div id="sub-3-pencegahan-race-condition-dengan-latestrootrequestid" class="doc-subsection">
-<h4>3. Pencegahan Race Condition dengan `_latestRootRequestId`</h4>
+<h4>3. Pencegahan Race Condition dengan <code>_latestRootRequestId</code></h4>
 </div>
 <p>Saat pengguna mengetuk tab Tagihan dan tab Saya secara bergantian dengan cepat di antarmuka native, event MethodChannel dapat tiba tidak berurutan karena latensi thread:</p>
 <pre><code class="language-dart">static Future&lt;Map&lt;String, Object?&gt;&gt; _showRootTab(_NativeRouteRequest request) async {
@@ -240,7 +240,7 @@ sequenceDiagram
 </div>
 </section>
 <section id="sec-why" class="doc-section">
-<h3>⚖️ F. Why It Matters (Trade-Offs &amp; Implikasi Teknis)</h3>
+<h3>⚖️ F. Why It Matters (Trade-Offs & Implikasi Teknis)</h3>
 <ul>
 <li><strong>Mengapa Harus Ada <code>requestId</code>?</strong></li>
 </ul>
@@ -261,7 +261,7 @@ sequenceDiagram
 <p>Flutter menerima payload ini, memastikan <code>104 &gt;= _latestRootRequestId</code>, mengalihkan <code>FlutterRootController</code> ke <code>/repay</code>, memicu sinyal <code>refreshRepayHome()</code>, dan mengembalikan <code>{ &quot;requestId&quot;: 104, &quot;frameReady&quot;: true }</code> ke native host.</p>
 </section>
 <section id="sec-mistakes" class="doc-section">
-<h3>⚠️ H. Common Mistakes &amp; Debugging</h3>
+<h3>⚠️ H. Common Mistakes & Debugging</h3>
 <ul>
 <li><strong>Mendaftarkan Rute Root Langsung ke Daftar <code>routes</code> di GoRouter</strong>:</li>
 <li>Jika <code>/repay</code> dan <code>/mine</code> dideklarasikan sebagai <code>GoRoute</code> terpisah yang masing-masing mengembalikan widget baru tanpa <code>IndexedStack</code>, setiap kali user berpindah tab, state form, scroll position, dan cache data akan musnah. Keduanya <strong>wajib</strong> dikonsolidasikan di bawah rute <code>/root</code>.</li>
@@ -463,15 +463,15 @@ class StartupTaskCoordinator {
             <div class="toc-branch">
               <div class="toc-node-row">
                 <span class="toc-leaf-dot"></span>
-                <a class="toc-tree-link" href="#sub-1-logika-pembacaan-initiallocation">1. Logika Pembacaan `_initialLocation`</a>
+                <a class="toc-tree-link" href="#sub-1-logika-pembacaan-initiallocation">1. Logika Pembacaan <span class="toc-code">_initialLocation</span></a>
               </div>
               <div class="toc-node-row">
                 <span class="toc-leaf-dot"></span>
-                <a class="toc-tree-link" href="#sub-2-penanganan-panggilan-rute-dari-host-showflutterroute">2. Penanganan Panggilan Rute dari Host (`showFlutterRoute`)</a>
+                <a class="toc-tree-link" href="#sub-2-penanganan-panggilan-rute-dari-host-showflutterroute">2. Penanganan Panggilan Rute dari Host (<span class="toc-code">showFlutterRoute</span>)</a>
               </div>
               <div class="toc-node-row">
                 <span class="toc-leaf-dot"></span>
-                <a class="toc-tree-link" href="#sub-3-pencegahan-race-condition-dengan-latestrootrequestid">3. Pencegahan Race Condition dengan `_latestRootRequestId`</a>
+                <a class="toc-tree-link" href="#sub-3-pencegahan-race-condition-dengan-latestrootrequestid">3. Pencegahan Race Condition dengan <span class="toc-code">_latestRootRequestId</span></a>
               </div>
             </div>
           </div>
@@ -567,15 +567,15 @@ class StartupTaskCoordinator {
           <div class="toc-branch">
             <div class="toc-node-row">
               <span class="toc-leaf-dot"></span>
-              <a class="toc-tree-link" href="#sub-1-logika-pembacaan-initiallocation" onclick="toggleMobileToc()">1. Logika Pembacaan `_initialLocation`</a>
+              <a class="toc-tree-link" href="#sub-1-logika-pembacaan-initiallocation" onclick="toggleMobileToc()">1. Logika Pembacaan <span class="toc-code">_initialLocation</span></a>
             </div>
             <div class="toc-node-row">
               <span class="toc-leaf-dot"></span>
-              <a class="toc-tree-link" href="#sub-2-penanganan-panggilan-rute-dari-host-showflutterroute" onclick="toggleMobileToc()">2. Penanganan Panggilan Rute dari Host (`showFlutterRoute`)</a>
+              <a class="toc-tree-link" href="#sub-2-penanganan-panggilan-rute-dari-host-showflutterroute" onclick="toggleMobileToc()">2. Penanganan Panggilan Rute dari Host (<span class="toc-code">showFlutterRoute</span>)</a>
             </div>
             <div class="toc-node-row">
               <span class="toc-leaf-dot"></span>
-              <a class="toc-tree-link" href="#sub-3-pencegahan-race-condition-dengan-latestrootrequestid" onclick="toggleMobileToc()">3. Pencegahan Race Condition dengan `_latestRootRequestId`</a>
+              <a class="toc-tree-link" href="#sub-3-pencegahan-race-condition-dengan-latestrootrequestid" onclick="toggleMobileToc()">3. Pencegahan Race Condition dengan <span class="toc-code">_latestRootRequestId</span></a>
             </div>
           </div>
         </div>

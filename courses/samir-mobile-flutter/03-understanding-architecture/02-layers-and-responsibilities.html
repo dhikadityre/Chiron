@@ -112,7 +112,7 @@
 <p>Telah membaca <a href="01-architecture-overview.html">01-architecture-overview.md</a>.</p>
 </section>
 <section id="sec-simple" class="doc-section">
-<h3>💡 C. Simple Explanation (Analogi &amp; Konsep Sederhana)</h3>
+<h3>💡 C. Simple Explanation (Analogi & Konsep Sederhana)</h3>
 <p>Bayangkan sebuah kantor penerbitan surat kabar internasional:</p>
 <ol>
 <li><strong>Wartawan & Fotografer (Presentation Layer)</strong>: Berfokus pada tata letak visual, gambar, dan keterbacaan teks agar pembaca merasa nyaman.</li>
@@ -124,17 +124,17 @@
 <section id="sec-actual" class="doc-section">
 <h3>💻 D. Actual Implementation (Bukti di Kode Sumber)</h3>
 <div id="sub-1-presentation-layer-tampilan-interaksi-pengguna" class="doc-subsection">
-<h4>1. Presentation Layer (Tampilan &amp; Interaksi Pengguna)</h4>
+<h4>1. Presentation Layer (Tampilan & Interaksi Pengguna)</h4>
 </div>
 <p>Lapisan ini hanya berurusan dengan rendering widget, penanganan gesture pengguna, dan pembaruan visual state (<code>setState()</code>).</p>
 <div class="table-container"><table class="data-table"><thead><tr><th>Komponen</th><th>Lokasi File</th><th>Tanggung Jawab Utama</th></tr></thead><tbody><tr><td><strong><code>FlutterRootPage</code></strong></td><td><code>pages/root/flutter_root_page.dart</code></td><td>Kontainer <code>IndexedStack</code> yang menampung tab Tagihan dan tab Saya.</td></tr><tr><td><strong><code>RepayHomePage</code></strong></td><td><code>pages/repay/home/repay_home_page.dart</code></td><td>Menampilkan ringkasan tagihan jatuh tempo, daftar pinjaman aktif, dan tombol bayar.</td></tr><tr><td><strong><code>MineHomePage</code></strong></td><td><code>pages/mine/home/mine_home_page.dart</code></td><td>Menampilkan dasbor profil nasabah, nomor telepon, limit pinjaman, dan menu bantuan.</td></tr><tr><td><strong><code>MinePersonalPage</code></strong></td><td><code>pages/mine/personal/mine_personal_page.dart</code></td><td>Halaman sekunder yang menampilkan progres kelengkapan verifikasi data diri nasabah.</td></tr><tr><td><strong><code>BasePage</code></strong></td><td><code>common/widgets/basePage/base_page.dart</code></td><td>Scaffold standar yang menyatukan AppBar, status bar overlay, dan penanganan back.</td></tr><tr><td><strong><code>NavTitleBar</code></strong></td><td><code>common/widgets/navBar/nav_title_bar.dart</code></td><td>Komponen bilah navigasi atas dengan judul dan tombol aksi kustom.</td></tr><tr><td><strong><code>AppLoadingOverlay</code></strong></td><td><code>common/widgets/loading/loading.dart</code></td><td>Modal spinner global yang muncul otomatis saat API request sedang berlangsung.</td></tr></tbody></table></div>
 <div id="sub-2-business-service-layer-logika-bisnis-pengolahan-data" class="doc-subsection">
-<h4>2. Business Service Layer (Logika Bisnis &amp; Pengolahan Data)</h4>
+<h4>2. Business Service Layer (Logika Bisnis & Pengolahan Data)</h4>
 </div>
 <p>Lapisan ini murni berisi class orkestrator bisnis tanpa kode UI (tanpa <code>BuildContext</code> atau <code>Widget</code>). Ia memanggil Network Layer, memeriksa respon, dan mengubah JSON menjadi Data Model.</p>
 <div class="table-container"><table class="data-table"><thead><tr><th>Komponen</th><th>Lokasi File</th><th>Tanggung Jawab Utama</th></tr></thead><tbody><tr><td><strong><code>RepayHomeService</code></strong></td><td><code>pages/repay/home/services/repay_home_service.dart</code></td><td>Mengambil daftar tagihan (<code>repayOrderList</code>), daftar kode bayar VA (<code>queryAbroadDeDuctList</code>), dan memicu pop-up insentif.</td></tr><tr><td><strong><code>MineHomeService</code></strong></td><td><code>pages/mine/home/services/mine_home_service.dart</code></td><td>Mengambil skema menu pengguna (<code>mergeUserCenterSchema</code>) dan jumlah pesan baru (<code>queryCount</code>).</td></tr><tr><td><strong><code>PersonalAuthService</code></strong></td><td><code>pages/mine/personal/services/personal_auth_service.dart</code></td><td>Mengambil rincian status verifikasi data diri nasabah.</td></tr></tbody></table></div>
 <div id="sub-3-network-infrastructure-layer-komunikasi-jaringan-kriptografi" class="doc-subsection">
-<h4>3. Network &amp; Infrastructure Layer (Komunikasi Jaringan &amp; Kriptografi)</h4>
+<h4>3. Network & Infrastructure Layer (Komunikasi Jaringan & Kriptografi)</h4>
 </div>
 <p>Lapisan ini mengelola koneksi TCP/HTTPS, interceptor, penandatanganan kriptografis parameter, serta penyimpanan sesi memori.</p>
 <div class="table-container"><table class="data-table"><thead><tr><th>Komponen</th><th>Lokasi File</th><th>Tanggung Jawab Utama</th></tr></thead><tbody><tr><td><strong><code>HttpClient</code></strong></td><td><code>common/http/http_client.dart</code></td><td>Instance singleton <code>Dio</code>, bypass SSL (<code>badCertificateCallback</code>), penanganan proxy IP, dan wrapper error.</td></tr><tr><td><strong><code>SignUtils</code></strong></td><td><code>common/http/sign_utils.dart</code></td><td>Logika penandatanganan dua tahap MD5 (<code>signParamMap</code>) dengan <code>dynamicSignKey</code>.</td></tr><tr><td><strong><code>ParamUtils</code></strong></td><td><code>common/http/param_utils.dart</code></td><td>Penggabung parameter wajib (<code>clientId</code>, <code>timestamp</code>, <code>appName</code>, <code>userNo</code>) sebelum dikirim ke API.</td></tr><tr><td><strong><code>ServerApi</code></strong></td><td><code>common/api/server_api.dart</code></td><td>Konstanta path endpoint API REST backend SAMIR.</td></tr><tr><td><strong><code>Global</code></strong></td><td><code>common/global.dart</code></td><td>In-memory store untuk data sesi otentikasi (<code>mid</code>, <code>userNo</code>, <code>custId</code>, <code>dynamicSignKey</code>, <code>isLogin</code>).</td></tr><tr><td><strong><code>AppEnv</code></strong></td><td><code>common/constants/app_env.dart</code></td><td>Resolver domain base URL (API, Web, Track) berdasarkan environment active.</td></tr></tbody></table></div>
@@ -178,7 +178,7 @@ sequenceDiagram
 </div>
 </section>
 <section id="sec-why" class="doc-section">
-<h3>⚖️ F. Why It Matters (Trade-Offs &amp; Implikasi Teknis)</h3>
+<h3>⚖️ F. Why It Matters (Trade-Offs & Implikasi Teknis)</h3>
 <ul>
 <li><strong>Strict Separation of Concerns (SoC)</strong>:</li>
 </ul>
@@ -198,7 +198,7 @@ sequenceDiagram
 </ol>
 </section>
 <section id="sec-mistakes" class="doc-section">
-<h3>⚠️ H. Common Mistakes &amp; Debugging</h3>
+<h3>⚠️ H. Common Mistakes & Debugging</h3>
 <ul>
 <li><strong>Menaruh State Bisnis di <code>Global</code> yang Seharusnya di State Widget</strong>:</li>
 <li><code>Global</code> hanya untuk kredensial otentikasi global (token, user ID, tenant ID). Data transaksi seperti order tagihan atau voucher promo <strong>dilarang</strong> disimpan di <code>Global</code> karena berisiko menampilkan data usang milik user lain jika terjadi pergantian akun.</li>

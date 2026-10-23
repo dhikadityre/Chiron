@@ -208,7 +208,7 @@ sequenceDiagram
 </div>
 <h5 id="item-1-cara-a-intersepsi-skema-url">1. Cara A — Intersepsi Skema URL:</h5>
 <p>Jika link web mengarah ke URL ber-scheme <code>samir://</code> (misal: tombol <em>"Ambil Foto KTP"</em> di halaman panduan web), delegat navigasi webview mencegat URL tersebut (<code>decidePolicyFor navigationAction</code>), membatalkan navigasi browser, dan meneruskannya ke <code>IDRouterManager.id_perfromWithURLString(url)</code>.</p>
-<h5 id="item-2-cara-b-javascript-bridge-handler-apphandlersplist">2. Cara B — JavaScript Bridge Handler (`AppHandlers.plist`):</h5>
+<h5 id="item-2-cara-b-javascript-bridge-handler-apphandlersplist">2. Cara B — JavaScript Bridge Handler (<code>AppHandlers.plist</code>):</h5>
 <p>Pustaka menyuntikkan script bridge di <code>IDWebInjectJSBridge</code>:</p>
 <ul>
 <li><code>showToast</code>: Menampilkan toast native.</li>
@@ -303,7 +303,7 @@ sequenceDiagram
 <p>Dengan pola <strong>Single Prewarmed Engine</strong> + <strong>Persistent Container</strong> + <strong>IndexedStack</strong> yang diterapkan di SAMIR iOS, konsumsi memori tetap stabil dan performa antarmuka terasa seperti aplikasi native 100%.</p>
 </section>
 <section id="sec-example" class="doc-section">
-<h3>🔬 G. Practical Example: Penanganan Tombol Back Fisik &amp; Dialog Disclaimer</h3>
+<h3>🔬 G. Practical Example: Penanganan Tombol Back Fisik & Dialog Disclaimer</h3>
 <p>Ketika user berada di halaman profil Flutter dan mengklik tombol "Disclaimer Hukum":</p>
 <ol>
 <li>Flutter mengirim pesan <code>jumpDisclaimerPopup</code> ke native channel.</li>
@@ -313,7 +313,7 @@ sequenceDiagram
 </ol>
 </section>
 <section id="sec-mistakes" class="doc-section">
-<h3>⚠️ H. Common Mistakes &amp; Debugging</h3>
+<h3>⚠️ H. Common Mistakes & Debugging</h3>
 <ul>
 <li><strong>Crash Saat Transisi Flutter ke Native</strong>:</li>
 <li><em>Penyebab</em>: Memanggil UI update dari thread background di MethodChannel.</li>

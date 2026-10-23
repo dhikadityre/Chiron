@@ -133,7 +133,7 @@
 ├── docs/                    # Dokumentasi umum repositori
 └── README.md                # Readme dasar repositori</code></pre>
 <div id="sub-2-isi-direktori-ios" class="doc-subsection">
-<h4>2. Isi Direktori `ios/`</h4>
+<h4>2. Isi Direktori <code>ios/</code></h4>
 </div>
 <p>Path: <code>samir-mobile-develop/ios/</code></p>
 <pre><code class="language-text">ios/
@@ -146,10 +146,10 @@
 ├── exportOptionsPlist/      # Konfigurasi ekspor arsip IPA (Ad-Hoc / App Store)
 └── environment_preprocess.h # Header makro hasil build script (generated)</code></pre>
 <div id="sub-3-arsitektur-folder-iosidsamirloanapplication" class="doc-subsection">
-<h4>3. Arsitektur Folder `ios/IDSamirLoan/Application/`</h4>
+<h4>3. Arsitektur Folder <code>ios/IDSamirLoan/Application/</code></h4>
 </div>
 <p>Seluruh logika aplikasi native terpusat di folder <code>Application/</code>. Terbagi menjadi dua kategori utama:</p>
-<h5 id="item-kategori-a-pustaka-fondasi-internal-cz">Kategori A: Pustaka Fondasi Internal (`CZ*`)</h5>
+<h5 id="item-kategori-a-pustaka-fondasi-internal-cz">Kategori A: Pustaka Fondasi Internal (<code>CZ*</code>)</h5>
 <p>Dibuat dengan prefix <code>CZ</code>, pustaka ini tidak mengandung aturan bisnis (business logic-agnostic):</p>
 <ul>
 <li><a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/learn/iOS-Arch/ios/IDSamirLoan/Application/CZSwiftModuleLib" target="_blank" rel="noopener noreferrer">🦊 CZSwiftModuleLib/ <span class="branch-tag">learn/iOS-Arch</span> ↗</a>: Kerangka runtime modular, <code>CZModuleManager</code>, <code>CZAppDelegate</code>, dan lifecycle routing.</li>
@@ -161,7 +161,7 @@
 <li><a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/learn/iOS-Arch/ios/IDSamirLoan/Application/CZSwiftUtils" target="_blank" rel="noopener noreferrer">🦊 CZSwiftUtils/ <span class="branch-tag">learn/iOS-Arch</span> ↗</a>: Helper string, tanggal, regex, debouncer, dan logging.</li>
 <li><a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/learn/iOS-Arch/ios/IDSamirLoan/Application/CZNetworkLib" target="_blank" rel="noopener noreferrer">🦊 CZNetworkLib/ <span class="branch-tag">learn/iOS-Arch</span> ↗</a>: Library jaringan warisan (ObjC/AFNetworking).</li>
 </ul>
-<h5 id="item-kategori-b-modul-bisnis-samirmodule">Kategori B: Modul Bisnis (`Samir*Module`)</h5>
+<h5 id="item-kategori-b-modul-bisnis-samirmodule">Kategori B: Modul Bisnis (<code>Samir*Module</code>)</h5>
 <p>Dibuat dengan prefix <code>Samir</code>, setiap folder merepresentasikan satu domain bisnis mandiri:</p>
 <ul>
 <li><a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/learn/iOS-Arch/ios/IDSamirLoan/Application/SamirMainModule" target="_blank" rel="noopener noreferrer">🦊 SamirMainModule/ <span class="branch-tag">learn/iOS-Arch</span> ↗</a>: Bootstrapping, splash screen, tab bar controller (<code>IDMainTabBarController</code>), konfigurasi global, deep link dispatcher.</li>
@@ -177,7 +177,7 @@
 <li><a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/learn/iOS-Arch/ios/IDSamirLoan/Application/SamirServiceModule" target="_blank" rel="noopener noreferrer">🦊 SamirServiceModule/ <span class="branch-tag">learn/iOS-Arch</span> ↗</a>: Kontrak antarmuka (protokol) untuk komunikasi data lintas modul tanpa tight coupling.</li>
 <li><a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/learn/iOS-Arch/ios/IDSamirLoan/Application/SamirCommonModule" target="_blank" rel="noopener noreferrer">🦊 SamirCommonModule/ <span class="branch-tag">learn/iOS-Arch</span> ↗</a>: Jembatan integrasi Flutter (<code>FlutterEngineManager</code>, <code>FlutterNativeChannel</code>), base class UI, dan konfigurasi umum.</li>
 </ul>
-<h5 id="item-kategori-c-konfigurasi-tooling">Kategori C: Konfigurasi &amp; Tooling</h5>
+<h5 id="item-kategori-c-konfigurasi-tooling">Kategori C: Konfigurasi & Tooling</h5>
 <ul>
 <li><a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/learn/iOS-Arch/ios/IDSamirLoan/Application/Configuration/Module/IDModuleList.plist" target="_blank" rel="noopener noreferrer">🦊 Configuration/Module/IDModuleList.plist <span class="branch-tag">learn/iOS-Arch</span> ↗</a>: Daftar 6 modul runtime terdaftar.</li>
 <li><a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/learn/iOS-Arch/ios/IDSamirLoan/Application/Configuration/Module/IDServiceList.plist" target="_blank" rel="noopener noreferrer">🦊 Configuration/Module/IDServiceList.plist <span class="branch-tag">learn/iOS-Arch</span> ↗</a>: Daftar 4 handler protokol layanan.</li>
@@ -185,7 +185,7 @@
 <li><a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/learn/iOS-Arch/ios/IDSamirLoan/Application/Debug" target="_blank" rel="noopener noreferrer">🦊 Debug/ <span class="branch-tag">learn/iOS-Arch</span> ↗</a>: Tooling in-app debug (<code>DebugUI.swift</code>, <code>DebugListViewController.swift</code>).</li>
 </ul>
 <div id="sub-4-struktur-modul-flutter-flutterlib" class="doc-subsection">
-<h4>4. Struktur Modul Flutter (`flutter/lib/`)</h4>
+<h4>4. Struktur Modul Flutter (<code>flutter/lib/</code>)</h4>
 </div>
 <p>Path: <code>samir-mobile-develop/flutter/lib/</code></p>
 <pre><code class="language-text">flutter/lib/
@@ -248,7 +248,7 @@
 <p>Pemisahan file dengan extension membantu merapikan ViewController yang berukuran masif (monolitik).</p>
 </section>
 <section id="sec-mistakes" class="doc-section">
-<h3>⚠️ H. Common Mistakes &amp; Debugging</h3>
+<h3>⚠️ H. Common Mistakes & Debugging</h3>
 <ul>
 <li><strong>Salah Folder Modul</strong>: Meletakkan file controller baru langsung di root folder <code>Application/</code>.</li>
 <li><strong>Dampak</strong>: Merusak kerapian modularisasi dan menyulitkan pencarian kepemilikan kode.</li>
@@ -451,15 +451,15 @@ public final class AppSessionManager: SessionProvider {
               </div>
               <div class="toc-node-row">
                 <span class="toc-leaf-dot"></span>
-                <a class="toc-tree-link" href="#sub-2-isi-direktori-ios">2. Isi Direktori `ios/`</a>
+                <a class="toc-tree-link" href="#sub-2-isi-direktori-ios">2. Isi Direktori <span class="toc-code">ios/</span></a>
               </div>
               <div class="toc-node-row">
                 <span class="toc-leaf-dot"></span>
-                <a class="toc-tree-link" href="#sub-3-arsitektur-folder-iosidsamirloanapplication">3. Arsitektur Folder `ios/IDSamirLoan/Application/`</a>
+                <a class="toc-tree-link" href="#sub-3-arsitektur-folder-iosidsamirloanapplication">3. Arsitektur Folder <span class="toc-code">ios/IDSamirLoan/Application/</span></a>
               </div>
               <div class="toc-node-row">
                 <span class="toc-leaf-dot"></span>
-                <a class="toc-tree-link" href="#sub-4-struktur-modul-flutter-flutterlib">4. Struktur Modul Flutter (`flutter/lib/`)</a>
+                <a class="toc-tree-link" href="#sub-4-struktur-modul-flutter-flutterlib">4. Struktur Modul Flutter (<span class="toc-code">flutter/lib/</span>)</a>
               </div>
             </div>
           </div>
@@ -559,15 +559,15 @@ public final class AppSessionManager: SessionProvider {
             </div>
             <div class="toc-node-row">
               <span class="toc-leaf-dot"></span>
-              <a class="toc-tree-link" href="#sub-2-isi-direktori-ios" onclick="toggleMobileToc()">2. Isi Direktori `ios/`</a>
+              <a class="toc-tree-link" href="#sub-2-isi-direktori-ios" onclick="toggleMobileToc()">2. Isi Direktori <span class="toc-code">ios/</span></a>
             </div>
             <div class="toc-node-row">
               <span class="toc-leaf-dot"></span>
-              <a class="toc-tree-link" href="#sub-3-arsitektur-folder-iosidsamirloanapplication" onclick="toggleMobileToc()">3. Arsitektur Folder `ios/IDSamirLoan/Application/`</a>
+              <a class="toc-tree-link" href="#sub-3-arsitektur-folder-iosidsamirloanapplication" onclick="toggleMobileToc()">3. Arsitektur Folder <span class="toc-code">ios/IDSamirLoan/Application/</span></a>
             </div>
             <div class="toc-node-row">
               <span class="toc-leaf-dot"></span>
-              <a class="toc-tree-link" href="#sub-4-struktur-modul-flutter-flutterlib" onclick="toggleMobileToc()">4. Struktur Modul Flutter (`flutter/lib/`)</a>
+              <a class="toc-tree-link" href="#sub-4-struktur-modul-flutter-flutterlib" onclick="toggleMobileToc()">4. Struktur Modul Flutter (<span class="toc-code">flutter/lib/</span>)</a>
             </div>
           </div>
         </div>

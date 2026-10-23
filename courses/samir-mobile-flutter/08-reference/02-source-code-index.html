@@ -98,13 +98,13 @@
 <p>Dokumentasi ini menyediakan indeks pencarian komprehensif seluruh berkas Dart, class arsitektur, method channel, rute navigasi, dan endpoint REST API yang aktif di dalam repositori <strong>SAMIR Flutter</strong> (<code>flutter_app_project</code>).</p>
 <p>Status Verifikasi: <code>[Verified]</code> (diverifikasi langsung dari kode sumber aktif di <code>Mobile/Develop/samir-mobile-develop/flutter/lib</code>).</p>
 <section id="sec-obj" class="doc-section">
-<h3>📌 A. Indeks Seluruh Berkas Dart (`flutter/lib`)</h3>
+<h3>📌 A. Indeks Seluruh Berkas Dart (<code>flutter/lib</code>)</h3>
 <div class="table-container"><table class="data-table"><thead><tr><th>Path Relatif Berkas</th><th>Kategori Lapisan</th><th>Tanggung Jawab Utama</th></tr></thead><tbody><tr><td><strong><code>lib/main.dart</code></strong></td><td>Entry Point</td><td>Bootstrapping modul, perakitan root <code>MyApp</code>, dan sinyal <code>flutterReady</code>.</td></tr><tr><td><strong><code>lib/common/global.dart</code></strong></td><td>Infrastructure</td><td>Toko status sesi in-memory (<code>mid</code>, <code>userNo</code>, <code>custId</code>, <code>dynamicSignKey</code>).</td></tr><tr><td><strong><code>lib/common/api/server_api.dart</code></strong></td><td>Infrastructure</td><td>Konstanta path endpoint API REST backend.</td></tr><tr><td><strong><code>lib/common/constants/app_env.dart</code></strong></td><td>Infrastructure</td><td>Konfigurasi domain base URL (API, Web, Tracking) per environment.</td></tr><tr><td><strong><code>lib/common/constants/app_images.dart</code></strong></td><td>Assets</td><td>Pemetaan path file aset gambar statis di <code>assets/images/</code>.</td></tr><tr><td><strong><code>lib/common/http/http.dart</code></strong></td><td>Network</td><td>Export barrel untuk pustaka HTTP.</td></tr><tr><td><strong><code>lib/common/http/http_client.dart</code></strong></td><td>Network</td><td>Instance singleton Dio, proxy adapter, dan penanganan respon terpusat.</td></tr><tr><td><strong><code>lib/common/http/interceptors.dart</code></strong></td><td>Network</td><td>Logging interceptor request dan response ke konsol debug.</td></tr><tr><td><strong><code>lib/common/http/loading_interceptors.dart</code></strong></td><td>Network</td><td>Interceptor otomatis penampil/penutup overlay spinner loading.</td></tr><tr><td><strong><code>lib/common/http/param_utils.dart</code></strong></td><td>Network</td><td>Penggabung parameter platform bawaan dan pemanggil fungsi sign.</td></tr><tr><td><strong><code>lib/common/http/response.dart</code></strong></td><td>Network</td><td>Model amplop data standar <code>BaseResponse&lt;T&gt;</code>.</td></tr><tr><td><strong><code>lib/common/http/sign_utils.dart</code></strong></td><td>Network / Crypto</td><td>Logika hashing kriptografis MD5 dua tahap (<code>signParamMap</code>).</td></tr><tr><td><strong><code>lib/common/lifecycle/page_lifecycle.dart</code></strong></td><td>Lifecycle</td><td>Mixin pemantau visibilitas halaman di <code>IndexedStack</code>.</td></tr><tr><td><strong><code>lib/common/platform/flutter_native_channel.dart</code></strong></td><td>Platform Bridge</td><td>Deklarasi instansi <code>MethodChannel</code> (<code>samir_native_channel</code>, <code>tracking</code>).</td></tr><tr><td><strong><code>lib/common/platform/flutter_native_channel_method.dart</code></strong></td><td>Platform Bridge</td><td>Panggilan method native: <code>getNativeAppEnv</code>, <code>getRootPageData</code>, dll.</td></tr><tr><td><strong><code>lib/common/platform/flutter_native_channel_route.dart</code></strong></td><td>Platform Bridge</td><td>Panggilan navigasi native: <code>openNativeRoute</code>, <code>setNativeTabBarHidden</code>.</td></tr><tr><td><strong><code>lib/common/platform/flutter_native_channel_track.dart</code></strong></td><td>Platform Bridge</td><td>Pengirim event analitik pengguna ke pipeline native.</td></tr><tr><td><strong><code>lib/common/platform/flutter_native_page_signal.dart</code></strong></td><td>Platform Bridge</td><td>Event broadcast stream untuk memicu refresh data halaman.</td></tr><tr><td><strong><code>lib/common/platform/flutter_native_route_dispatcher.dart</code></strong></td><td>Platform Bridge</td><td>Handler pemrosesan panggilan masuk dari native (<code>showFlutterRoute</code>).</td></tr><tr><td><strong><code>lib/common/router/app_back_button_dispatcher.dart</code></strong></td><td>Navigation</td><td>Penangan tombol fisik back perangkat.</td></tr><tr><td><strong><code>lib/common/router/app_dialog.dart</code></strong></td><td>Navigation</td><td>Host dialog bisnis yang terisolasi dari URL GoRouter.</td></tr><tr><td><strong><code>lib/common/router/base_page_mixin.dart</code></strong></td><td>Navigation</td><td>Mixin pembantu styling halaman dasar.</td></tr><tr><td><strong><code>lib/common/router/flutter_root_controller.dart</code></strong></td><td>Navigation</td><td><code>ValueNotifier</code> pengendali index tab root yang sedang aktif.</td></tr><tr><td><strong><code>lib/common/router/native_route_chrome.dart</code></strong></td><td>Navigation</td><td>Pengendali sinkronisasi visibilitas tab bar native anti-flicker.</td></tr><tr><td><strong><code>lib/common/router/root_routes.dart</code></strong></td><td>Navigation</td><td>Pengklasifikasi rute root tab vs secondary child routes.</td></tr><tr><td><strong><code>lib/common/router/route_paths.dart</code></strong></td><td>Navigation</td><td>Konstanta string path rute resmi aplikasi.</td></tr><tr><td><strong><code>lib/common/router/routers.dart</code></strong></td><td>Navigation</td><td>Deklarasi <code>GoRouter</code> dan kelas pembantu navigasi <code>Routers</code>.</td></tr><tr><td><strong><code>lib/common/theme/app_system_ui_style.dart</code></strong></td><td>Theme</td><td>Konfigurasi kontras warna status bar perangkat.</td></tr><tr><td><strong><code>lib/common/utils/color_utils.dart</code></strong></td><td>Theme / Utils</td><td>Palet warna resmi hex SAMIR.</td></tr><tr><td><strong><code>lib/common/utils/encrypt_utils.dart</code></strong></td><td>Utils</td><td>Wrapper fungsi enkripsi dan hashing MD5.</td></tr><tr><td><strong><code>lib/common/utils/font_utils.dart</code></strong></td><td>Theme / Utils</td><td>Konfigurasi font Lato terpadu.</td></tr><tr><td><strong><code>lib/common/utils/log_utils.dart</code></strong></td><td>Utils</td><td>Utilitas pencatatan log konsol terformat.</td></tr><tr><td><strong><code>lib/common/utils/toast.dart</code></strong></td><td>Utils</td><td>Penampil notifikasi Toast global tanpa <code>BuildContext</code>.</td></tr><tr><td><strong><code>lib/common/utils/track_utils.dart</code></strong></td><td>Utils</td><td>Mixin pelacak page view otomatis.</td></tr><tr><td><strong><code>lib/common/widgets/basePage/base_page.dart</code></strong></td><td>UI Widgets</td><td>Scaffold standar pembungkus halaman sekunder.</td></tr><tr><td><strong><code>lib/common/widgets/contact/app_social_media_section.dart</code></strong></td><td>UI Widgets</td><td>Komponen tautan CS resmi dan kanal media sosial SAMIR.</td></tr><tr><td><strong><code>lib/common/widgets/loading/loading.dart</code></strong></td><td>UI Widgets</td><td>Komponen visual overlay spinner loading modal.</td></tr><tr><td><strong><code>lib/common/widgets/navBar/nav_title_bar.dart</code></strong></td><td>UI Widgets</td><td>Bilah navigasi atas kustom dengan tombol kembali.</td></tr><tr><td><strong><code>lib/common/widgets/navigation/app_action_icon_button.dart</code></strong></td><td>UI Widgets</td><td>Tombol ikon aksi bilah navigasi.</td></tr><tr><td><strong><code>lib/common/widgets/refresh/app_refresh_indicator.dart</code></strong></td><td>UI Widgets</td><td>Komponen pull-to-refresh seragam.</td></tr><tr><td><strong><code>lib/pages/root/flutter_root_page.dart</code></strong></td><td>Root Presentation</td><td>Kontainer <code>IndexedStack</code> penampung Tab Tagihan dan Saya.</td></tr><tr><td><strong><code>lib/pages/mine/home/mine_home_page.dart</code></strong></td><td>Mine Presentation</td><td>Halaman utama dasbor profil nasabah.</td></tr><tr><td><strong><code>lib/pages/mine/home/services/mine_home_service.dart</code></strong></td><td>Mine Business</td><td>Service API profil (<code>mergeUserCenterSchema</code>, <code>queryCount</code>).</td></tr><tr><td><strong><code>lib/pages/mine/home/models/mine_home_model.dart</code></strong></td><td>Mine Model</td><td>Model data profil nasabah dan skema menu dinamis.</td></tr><tr><td><strong><code>lib/pages/mine/personal/mine_personal_page.dart</code></strong></td><td>Mine Presentation</td><td>Halaman kelengkapan verifikasi data diri (e-KYC).</td></tr><tr><td><strong><code>lib/pages/mine/personal/services/personal_auth_service.dart</code></strong></td><td>Mine Business</td><td>Service API verifikasi data diri.</td></tr><tr><td><strong><code>lib/pages/mine/personal/models/personal_auth_model.dart</code></strong></td><td>Mine Model</td><td>Model kelengkapan dokumen KTP, pekerjaan, dan bank.</td></tr><tr><td><strong><code>lib/pages/mine/debug/proxy_debug_page.dart</code></strong></td><td>Debug Tool</td><td>Layar konfigurasi proxy IP untuk inspeksi traffic non-PROD.</td></tr><tr><td><strong><code>lib/pages/repay/home/repay_home_page.dart</code></strong></td><td>Repay Presentation</td><td>Halaman utama daftar tagihan dan pelunasan pinjaman.</td></tr><tr><td><strong><code>lib/pages/repay/home/services/repay_home_service.dart</code></strong></td><td>Repay Business</td><td>Service API tagihan (<code>repayOrderList</code>, <code>queryAbroadDeDuctList</code>).</td></tr><tr><td><strong><code>lib/pages/repay/home/models/repay_home_model.dart</code></strong></td><td>Repay Model</td><td>Model data kontrak pinjaman, denda, dan kode bayar.</td></tr></tbody></table></div>
 </section>
 <section id="sec-prereq" class="doc-section">
 <h3>📌 B. Indeks Method Channel</h3>
 <div id="sub-saluran-samir-native-channel" class="doc-subsection">
-<h4>Saluran: `samir_native_channel`</h4>
+<h4>Saluran: <code>samir_native_channel</code></h4>
 </div>
 <ul>
 <li><strong>Flutter -> Native</strong>:</li>
@@ -129,7 +129,7 @@
 <li><code>refreshRepayHome</code> -> Pemicu refresh tagihan.</li>
 </ol>
 <div id="sub-saluran-samir-tracking-channel" class="doc-subsection">
-<h4>Saluran: `samir_tracking_channel`</h4>
+<h4>Saluran: <code>samir_tracking_channel</code></h4>
 </div>
 <ul>
 <li><code>trackEvent</code> -> Meneruskan event analitik ke pipeline native.</li>
@@ -140,7 +140,7 @@
 <div class="table-container"><table class="data-table"><thead><tr><th>Endpoint Constant</th><th>Path Endpoint Backend</th><th>Digunakan Oleh</th></tr></thead><tbody><tr><td><code>ServerApi.repayList</code></td><td><code>repayment/repayOrderList</code></td><td><code>RepayHomeService.fetchRepayHomeData()</code></td></tr><tr><td><code>ServerApi.repayCodeList</code></td><td><code>queryAbroadDeDuctList</code></td><td><code>RepayHomeService.queryAbroadDeDuctList()</code></td></tr><tr><td><code>ServerApi.personalAuthSchema</code></td><td><code>product/V4/mergeUserCenterSchema</code></td><td><code>MineHomeService.fetchMineHomeData()</code></td></tr><tr><td><code>ServerApi.messageCount</code></td><td><code>msg/queryCount</code></td><td><code>MineHomeService.fetchMessageCount()</code></td></tr><tr><td><code>ServerApi.benefitCardInfo</code></td><td><code>benefit/cardInfo</code></td><td><code>RepayHomeService</code> / Promo Handler</td></tr></tbody></table></div>
 </section>
 <section id="sec-actual" class="doc-section">
-<h3>📌 D. Indeks Path Rute Aplikasi (`RoutePaths`)</h3>
+<h3>📌 D. Indeks Path Rute Aplikasi (<code>RoutePaths</code>)</h3>
 <div class="table-container"><table class="data-table"><thead><tr><th>Rute Path</th><th>Deskripsi</th><th>Handler Widget</th><th>Visibilitas Tab Bar</th></tr></thead><tbody><tr><td><strong><code>/root</code></strong></td><td>Wadah persisten seluruh root tabs</td><td><code>FlutterRootPage</code></td><td>Tergantung tab aktif</td></tr><tr><td><strong><code>/mine</code></strong></td><td>Tab Akun Saya (Tab 2 Native)</td><td><code>MineHomePage</code> (Index 0)</td><td><strong>Tampil</strong></td></tr><tr><td><strong><code>/repay</code></strong></td><td>Tab Tagihan Pinjaman (Tab 1 Native)</td><td><code>RepayHomePage</code> (Index 1)</td><td><strong>Tampil</strong></td></tr><tr><td><strong><code>/mine/personal</code></strong></td><td>Halaman Verifikasi Data Diri</td><td><code>MinePersonalPage</code></td><td><strong>Tersembunyi</strong></td></tr></tbody></table></div>
 </section>
 <section id="sec-walkthrough" class="doc-section">
@@ -307,7 +307,7 @@ class GlobalSessionManager implements SessionContract {
         <div class="toc-branch">
           <div class="toc-node-row">
             <span class="toc-leaf-dot"></span>
-            <a class="toc-tree-link" href="#sec-obj">A. Indeks Seluruh Berkas Dart (`flutter/lib`)</a>
+            <a class="toc-tree-link" href="#sec-obj">A. Indeks Seluruh Berkas Dart (<span class="toc-code">flutter/lib</span>)</a>
           </div>
           <div class="toc-tree-node" id="toc-node-sec-prereq">
             <div class="toc-node-row">
@@ -317,11 +317,11 @@ class GlobalSessionManager implements SessionContract {
             <div class="toc-branch">
               <div class="toc-node-row">
                 <span class="toc-leaf-dot"></span>
-                <a class="toc-tree-link" href="#sub-saluran-samir-native-channel">Saluran: `samir_native_channel`</a>
+                <a class="toc-tree-link" href="#sub-saluran-samir-native-channel">Saluran: <span class="toc-code">samir_native_channel</span></a>
               </div>
               <div class="toc-node-row">
                 <span class="toc-leaf-dot"></span>
-                <a class="toc-tree-link" href="#sub-saluran-samir-tracking-channel">Saluran: `samir_tracking_channel`</a>
+                <a class="toc-tree-link" href="#sub-saluran-samir-tracking-channel">Saluran: <span class="toc-code">samir_tracking_channel</span></a>
               </div>
             </div>
           </div>
@@ -331,7 +331,7 @@ class GlobalSessionManager implements SessionContract {
           </div>
           <div class="toc-node-row">
             <span class="toc-leaf-dot"></span>
-            <a class="toc-tree-link" href="#sec-actual">D. Indeks Path Rute Aplikasi (`RoutePaths`)</a>
+            <a class="toc-tree-link" href="#sec-actual">D. Indeks Path Rute Aplikasi (<span class="toc-code">RoutePaths</span>)</a>
           </div>
           <div class="toc-node-row">
             <span class="toc-leaf-dot"></span>
@@ -387,7 +387,7 @@ class GlobalSessionManager implements SessionContract {
       <div class="toc-branch">
         <div class="toc-node-row">
           <span class="toc-leaf-dot"></span>
-          <a class="toc-tree-link" href="#sec-obj" onclick="toggleMobileToc()">A. Indeks Seluruh Berkas Dart (`flutter/lib`)</a>
+          <a class="toc-tree-link" href="#sec-obj" onclick="toggleMobileToc()">A. Indeks Seluruh Berkas Dart (<span class="toc-code">flutter/lib</span>)</a>
         </div>
         <div class="toc-tree-node" id="mob-toc-node-sec-prereq">
           <div class="toc-node-row">
@@ -397,11 +397,11 @@ class GlobalSessionManager implements SessionContract {
           <div class="toc-branch">
             <div class="toc-node-row">
               <span class="toc-leaf-dot"></span>
-              <a class="toc-tree-link" href="#sub-saluran-samir-native-channel" onclick="toggleMobileToc()">Saluran: `samir_native_channel`</a>
+              <a class="toc-tree-link" href="#sub-saluran-samir-native-channel" onclick="toggleMobileToc()">Saluran: <span class="toc-code">samir_native_channel</span></a>
             </div>
             <div class="toc-node-row">
               <span class="toc-leaf-dot"></span>
-              <a class="toc-tree-link" href="#sub-saluran-samir-tracking-channel" onclick="toggleMobileToc()">Saluran: `samir_tracking_channel`</a>
+              <a class="toc-tree-link" href="#sub-saluran-samir-tracking-channel" onclick="toggleMobileToc()">Saluran: <span class="toc-code">samir_tracking_channel</span></a>
             </div>
           </div>
         </div>
@@ -411,7 +411,7 @@ class GlobalSessionManager implements SessionContract {
         </div>
         <div class="toc-node-row">
           <span class="toc-leaf-dot"></span>
-          <a class="toc-tree-link" href="#sec-actual" onclick="toggleMobileToc()">D. Indeks Path Rute Aplikasi (`RoutePaths`)</a>
+          <a class="toc-tree-link" href="#sec-actual" onclick="toggleMobileToc()">D. Indeks Path Rute Aplikasi (<span class="toc-code">RoutePaths</span>)</a>
         </div>
         <div class="toc-node-row">
           <span class="toc-leaf-dot"></span>

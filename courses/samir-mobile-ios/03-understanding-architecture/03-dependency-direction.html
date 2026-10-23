@@ -260,7 +260,7 @@ sequenceDiagram
 </ol>
 </section>
 <section id="sec-why" class="doc-section">
-<h3>⚖️ F. Why It Matters (Trade-Offs &amp; Analisis Dampak)</h3>
+<h3>⚖️ F. Why It Matters (Trade-Offs & Analisis Dampak)</h3>
 <ul>
 <li><strong>Keuntungan</strong>:</li>
 <li>Modul Login dapat ditulis ulang atau diganti antarmukanya tanpa mengubah kode internal Modul Pinjaman.</li>
@@ -283,7 +283,7 @@ if let isLogin = IDServiceManager.loginService()?.isLogin(), isLogin == true {
 <p>Kode ini sangat bersih karena tidak peduli bagaimana <code>SamirLoginModule</code> menyimpan sesi login (apakah di Keychain, UserDefaults, atau file terenkripsi).</p>
 </section>
 <section id="sec-mistakes" class="doc-section">
-<h3>⚠️ H. Common Mistakes &amp; Debugging</h3>
+<h3>⚠️ H. Common Mistakes & Debugging</h3>
 <ul>
 <li><strong>Crash Karena Handler Bernilai <code>nil</code></strong>:</li>
 <li><em>Gejala</em>: <code>IDServiceManager.loginService()</code> mengembalikan <code>nil</code> sehingga logika sesi gagal.</li>

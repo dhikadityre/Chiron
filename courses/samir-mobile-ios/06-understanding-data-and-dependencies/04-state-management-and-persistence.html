@@ -171,7 +171,7 @@ graph TD
   </div>
 </div>
 <div id="sub-1-lapisan-1-penyimpanan-terenkripsi-application-support-directory" class="doc-subsection">
-<h4>1. Lapisan 1: Penyimpanan Terenkripsi (`Application Support Directory`)</h4>
+<h4>1. Lapisan 1: Penyimpanan Terenkripsi (<code>Application Support Directory</code>)</h4>
 </div>
 <p>Path: <a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/learn/iOS-Arch/ios/IDSamirLoan/Application/SamirLoginModule/Classes/IDPresenter/IDLoginManager.swift:L172-206" target="_blank" rel="noopener noreferrer">🦊 ios/IDSamirLoan/Application/SamirLoginModule/Classes/IDPresenter/IDLoginManager.swift <span class="branch-tag">learn/iOS-Arch</span> ↗</a></p>
 <ul>
@@ -192,7 +192,7 @@ graph TD
 <li><strong>Tingkat Keamanan</strong>: <strong>Sangat Tinggi</strong>. Jika file diekstrak dari perangkat yang di-jailbreak, penyerang hanya melihat byte teracak (<em>ciphertext</em>) tanpa bisa membaca nomor HP atau <code>staticKey</code>.</li>
 </ul>
 <div id="sub-2-lapisan-2-ios-keychain-services-czkeychainmanager" class="doc-subsection">
-<h4>2. Lapisan 2: iOS Keychain Services (`CZKeychainManager`)</h4>
+<h4>2. Lapisan 2: iOS Keychain Services (<code>CZKeychainManager</code>)</h4>
 </div>
 <p>Path: <a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/learn/iOS-Arch/ios/IDSamirLoan/Application/CZSwiftAntiFraudLib/Classes/CZCommon/CZKeychainManager.swift" target="_blank" rel="noopener noreferrer">🦊 ios/IDSamirLoan/Application/CZSwiftAntiFraudLib/Classes/CZCommon/CZKeychainManager.swift <span class="branch-tag">learn/iOS-Arch</span> ↗</a></p>
 <ul>
@@ -204,7 +204,7 @@ graph TD
 <li><code>secure.liveness_token</code>: Kredensial lisensi SDK deteksi wajah.</li>
 </ul>
 <div id="sub-3-lapisan-3-pengaturan-non-sensitif-userdefaults" class="doc-subsection">
-<h4>3. Lapisan 3: Pengaturan Non-Sensitif (`UserDefaults`)</h4>
+<h4>3. Lapisan 3: Pengaturan Non-Sensitif (<code>UserDefaults</code>)</h4>
 </div>
 <p>Digunakan <strong>hanya untuk penanda status UI dan transisi navigasi</strong>:</p>
 <div class="table-container"><table class="data-table"><thead><tr><th>Kunci UserDefaults</th><th>Tipe Data</th><th>Tujuan Teknis</th></tr></thead><tbody><tr><td><code>APP_Start_Hide</code></td><td>String (<code>&quot;1&quot;</code> / <code>&quot;0&quot;</code>)</td><td>Menentukan apakah splash screen countdown dilewati saat boot berikutnya.</td></tr><tr><td><code>Samir_DeepLink_Str</code></td><td>String</td><td>Menyimpan URL deep link yang tiba saat cold start sebelum UI siap.</td></tr><tr><td><code>Samir_DeepLink_Type</code></td><td>String (<code>&quot;1&quot;</code> / <code>&quot;2&quot;</code>)</td><td>Tipe deep link yang sedang menunggu eksekusi.</td></tr><tr><td><code>Environment_Defaults_Key_EnvType</code></td><td>Int</td><td>Menyimpan override environment saat aplikasi dijalankan tanpa debugger Xcode.</td></tr><tr><td><code>BIZ_ID</code></td><td>String</td><td>Nomor transaksi pesanan pinjaman yang sedang diproses.</td></tr></tbody></table></div>
@@ -278,10 +278,10 @@ public func serviceForProtocol(_ serviceProtocolName: String) -&gt; CZBaseServic
 <p>Karena pemanggilan service seperti <code>IDServiceManager.loginService()</code> dapat terjadi bersamaan dari background network thread dan main UI thread, penggunaan <code>serviceCacheQueue.sync</code> mencegah terjadinya crash fatal akibat <em>dictionary concurrent read-write mutation</em>.</p>
 </section>
 <section id="sec-example" class="doc-section">
-<h3>📌 G. Bedah Pustaka `CZSwiftStorageLib`: Penggunaan &amp; Panduan Pembuatan di Proyek Baru</h3>
+<h3>📌 G. Bedah Pustaka <code>CZSwiftStorageLib</code>: Penggunaan & Panduan Pembuatan di Proyek Baru</h3>
 <p>Path: <a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/learn/iOS-Arch/ios/IDSamirLoan/Application/CZSwiftStorageLib/" target="_blank" rel="noopener noreferrer">🦊 ios/IDSamirLoan/Application/CZSwiftStorageLib/ <span class="branch-tag">learn/iOS-Arch</span> ↗</a></p>
 <div id="sub-1-struktur-internal-digunakan-di-mana-saja" class="doc-subsection">
-<h4>1. Struktur Internal &amp; Digunakan di Mana Saja?</h4>
+<h4>1. Struktur Internal & Digunakan di Mana Saja?</h4>
 </div>
 <p><code>CZSwiftStorageLib</code> adalah pustaka manajemen cache in-house yang mengimplementasikan arsitektur <em>two-tier caching</em> (Memory + Disk):</p>
 <ul>
@@ -342,7 +342,7 @@ public func serviceForProtocol(_ serviceProtocolName: String) -&gt; CZBaseServic
 <p>Method <code>getUserModel()</code> pertama-tama memeriksa cache RAM <code>self.userModel</code>. Jika <code>nil</code> (misal: baru boot), ia otomatis memanggil <code>__decodeUserModel()</code> untuk mendekripsi file disk <code>idn_userFile.plist</code>.</p>
 </section>
 <section id="sec-check" class="doc-section">
-<h3>⚠️ I. Common Mistakes &amp; Debugging</h3>
+<h3>⚠️ I. Common Mistakes & Debugging</h3>
 <ul>
 <li><strong>Menyimpan Kredensial Baru di UserDefaults</strong>:</li>
 <li><em>Kesalahan</em>: Menambahkan <code>UserDefaults.standard.set(token, forKey: &quot;user_auth_token&quot;)</code>.</li>
@@ -540,15 +540,15 @@ public final class AppSessionManager: SessionProvider {
             <div class="toc-branch">
               <div class="toc-node-row">
                 <span class="toc-leaf-dot"></span>
-                <a class="toc-tree-link" href="#sub-1-lapisan-1-penyimpanan-terenkripsi-application-support-directory">1. Lapisan 1: Penyimpanan Terenkripsi (`Application Support Directory`)</a>
+                <a class="toc-tree-link" href="#sub-1-lapisan-1-penyimpanan-terenkripsi-application-support-directory">1. Lapisan 1: Penyimpanan Terenkripsi (<span class="toc-code">Application Support Directory</span>)</a>
               </div>
               <div class="toc-node-row">
                 <span class="toc-leaf-dot"></span>
-                <a class="toc-tree-link" href="#sub-2-lapisan-2-ios-keychain-services-czkeychainmanager">2. Lapisan 2: iOS Keychain Services (`CZKeychainManager`)</a>
+                <a class="toc-tree-link" href="#sub-2-lapisan-2-ios-keychain-services-czkeychainmanager">2. Lapisan 2: iOS Keychain Services (<span class="toc-code">CZKeychainManager</span>)</a>
               </div>
               <div class="toc-node-row">
                 <span class="toc-leaf-dot"></span>
-                <a class="toc-tree-link" href="#sub-3-lapisan-3-pengaturan-non-sensitif-userdefaults">3. Lapisan 3: Pengaturan Non-Sensitif (`UserDefaults`)</a>
+                <a class="toc-tree-link" href="#sub-3-lapisan-3-pengaturan-non-sensitif-userdefaults">3. Lapisan 3: Pengaturan Non-Sensitif (<span class="toc-code">UserDefaults</span>)</a>
               </div>
               <div class="toc-node-row">
                 <span class="toc-leaf-dot"></span>
@@ -567,7 +567,7 @@ public final class AppSessionManager: SessionProvider {
           <div class="toc-tree-node" id="toc-node-sec-example">
             <div class="toc-node-row">
               <span class="toc-caret" onclick="toggleTocBranch(this)">▾</span>
-              <a class="toc-tree-link" href="#sec-example">G. Bedah Pustaka `CZSwiftStorageLib`: Penggunaan &amp; Panduan Pembuatan di Proyek Baru</a>
+              <a class="toc-tree-link" href="#sec-example">G. Bedah Pustaka <span class="toc-code">CZSwiftStorageLib</span>: Penggunaan &amp; Panduan Pembuatan di Proyek Baru</a>
             </div>
             <div class="toc-branch">
               <div class="toc-node-row">
@@ -664,15 +664,15 @@ public final class AppSessionManager: SessionProvider {
           <div class="toc-branch">
             <div class="toc-node-row">
               <span class="toc-leaf-dot"></span>
-              <a class="toc-tree-link" href="#sub-1-lapisan-1-penyimpanan-terenkripsi-application-support-directory" onclick="toggleMobileToc()">1. Lapisan 1: Penyimpanan Terenkripsi (`Application Support Directory`)</a>
+              <a class="toc-tree-link" href="#sub-1-lapisan-1-penyimpanan-terenkripsi-application-support-directory" onclick="toggleMobileToc()">1. Lapisan 1: Penyimpanan Terenkripsi (<span class="toc-code">Application Support Directory</span>)</a>
             </div>
             <div class="toc-node-row">
               <span class="toc-leaf-dot"></span>
-              <a class="toc-tree-link" href="#sub-2-lapisan-2-ios-keychain-services-czkeychainmanager" onclick="toggleMobileToc()">2. Lapisan 2: iOS Keychain Services (`CZKeychainManager`)</a>
+              <a class="toc-tree-link" href="#sub-2-lapisan-2-ios-keychain-services-czkeychainmanager" onclick="toggleMobileToc()">2. Lapisan 2: iOS Keychain Services (<span class="toc-code">CZKeychainManager</span>)</a>
             </div>
             <div class="toc-node-row">
               <span class="toc-leaf-dot"></span>
-              <a class="toc-tree-link" href="#sub-3-lapisan-3-pengaturan-non-sensitif-userdefaults" onclick="toggleMobileToc()">3. Lapisan 3: Pengaturan Non-Sensitif (`UserDefaults`)</a>
+              <a class="toc-tree-link" href="#sub-3-lapisan-3-pengaturan-non-sensitif-userdefaults" onclick="toggleMobileToc()">3. Lapisan 3: Pengaturan Non-Sensitif (<span class="toc-code">UserDefaults</span>)</a>
             </div>
             <div class="toc-node-row">
               <span class="toc-leaf-dot"></span>
@@ -691,7 +691,7 @@ public final class AppSessionManager: SessionProvider {
         <div class="toc-tree-node" id="mob-toc-node-sec-example">
           <div class="toc-node-row">
             <span class="toc-caret" onclick="toggleTocBranch(this)">▾</span>
-            <a class="toc-tree-link" href="#sec-example" onclick="toggleMobileToc()">G. Bedah Pustaka `CZSwiftStorageLib`: Penggunaan &amp; Panduan Pembuatan di Proyek Baru</a>
+            <a class="toc-tree-link" href="#sec-example" onclick="toggleMobileToc()">G. Bedah Pustaka <span class="toc-code">CZSwiftStorageLib</span>: Penggunaan &amp; Panduan Pembuatan di Proyek Baru</a>
           </div>
           <div class="toc-branch">
             <div class="toc-node-row">

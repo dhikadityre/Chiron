@@ -107,7 +107,7 @@
 <p>Tidak ada prasyarat khusus untuk dokumen ini. Ini adalah pintu gerbang pengenalan sebelum mendalami arsitektur dan kode.</p>
 </section>
 <section id="sec-simple" class="doc-section">
-<h3>💡 C. Simple Explanation (Analogi &amp; Konsep Sederhana)</h3>
+<h3>💡 C. Simple Explanation (Analogi & Konsep Sederhana)</h3>
 <p>Bayangkan aplikasi perbankan mikro di mana nasabah dapat meminjam dana darurat tanpa harus datang ke kantor cabang fisik:</p>
 <ol>
 <li>Nasabah mengunduh aplikasi SAMIR dari App Store.</li>
@@ -121,7 +121,7 @@
 <section id="sec-actual" class="doc-section">
 <h3>💻 D. Actual Implementation (Bukti di Kode Sumber)</h3>
 <div id="sub-1-identitas-profil-teknis-aplikasi" class="doc-subsection">
-<h4>1. Identitas &amp; Profil Teknis Aplikasi</h4>
+<h4>1. Identitas & Profil Teknis Aplikasi</h4>
 </div>
 <p>Berdasarkan file <a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/learn/iOS-Arch/ios/IDSamirLoan.xcodeproj/project.pbxproj" target="_blank" rel="noopener noreferrer">🦊 ios/IDSamirLoan.xcodeproj/project.pbxproj <span class="branch-tag">learn/iOS-Arch</span> ↗</a> dan <a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/learn/iOS-Arch/ios/IDSamirLoan/Application/IDSamirLoan-Info.plist" target="_blank" rel="noopener noreferrer">🦊 ios/IDSamirLoan/Application/IDSamirLoan-Info.plist <span class="branch-tag">learn/iOS-Arch</span> ↗</a>:</p>
 <div class="table-container"><table class="data-table"><thead><tr><th>Properti</th><th>Nilai Aktual di Repositori</th><th>Keterangan / Sumber</th></tr></thead><tbody><tr><td><strong>App Name</strong></td><td><code>Samir</code> (atau <code>Samir &lt;hari&gt;</code> di non-PROD)</td><td>Ditentukan via <code>app_environment.sh</code></td></tr><tr><td><strong>Product Bundle Identifier</strong></td><td><code>com.samir.loan</code></td><td><code>project.pbxproj:L25</code></td></tr><tr><td><strong>Apple App ID</strong></td><td><code>6475002606</code></td><td>Terdaftar di <code>AppEnv.swift</code> & Firebase</td></tr><tr><td><strong>Deployment Target</strong></td><td><code>iOS 14.0</code></td><td><code>project.pbxproj:L1283</code>, <code>Podfile:L8</code></td></tr><tr><td><strong>Bahasa Utama</strong></td><td>Swift 5.0 (dengan integrasi Flutter Engine & library ObjC)</td><td><code>project.pbxproj:L1530</code></td></tr><tr><td><strong>URL Scheme</strong></td><td><code>samir://</code></td><td><code>AppEnv.swift</code>, <code>IDRouterConstants.swift</code></td></tr><tr><td><strong>Orientasi Layar</strong></td><td>Portrait Only (<code>UIInterfaceOrientationPortrait</code>)</td><td><code>IDSamirLoan-Info.plist</code></td></tr><tr><td><strong>Interface Style</strong></td><td>Light Mode Only (<code>UIUserInterfaceStyle = Light</code>)</td><td><code>IDSamirLoan-Info.plist</code></td></tr></tbody></table></div>
@@ -167,7 +167,7 @@
 </ul>
 </section>
 <section id="sec-why" class="doc-section">
-<h3>⚖️ F. Why It Matters (Trade-Offs &amp; Implikasi Teknis)</h3>
+<h3>⚖️ F. Why It Matters (Trade-Offs & Implikasi Teknis)</h3>
 <ul>
 <li><strong>Mengapa Portrait & Light Mode Only?</strong></li>
 </ul>
@@ -182,7 +182,7 @@
 <p>Ketika seorang user membuka aplikasi di simulator atau perangkat fisik, kode pertama yang memeriksa identitas aplikasi adalah <code>CZEnvironmentManager</code>. Nilai <code>appleId</code> (<code>6475002606</code>) dan <code>apiBaseUrl</code> (<code>https://domain-loansapp-test.samir.co.id/</code> di mode TEST) langsung diinjeksikan ke dalam singleton jaringan <code>IDNetworkManager</code>.</p>
 </section>
 <section id="sec-mistakes" class="doc-section">
-<h3>⚠️ H. Common Mistakes &amp; Debugging</h3>
+<h3>⚠️ H. Common Mistakes & Debugging</h3>
 <ul>
 <li><strong>Kesalahan Umum</strong>: Mencoba menjalankan aplikasi dengan simulator ber-iOS 13.</li>
 <li><strong>Efek</strong>: Xcode akan menampilkan error build / deploy <code>The run destination is not valid for running the scheme</code>.</li>

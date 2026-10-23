@@ -178,7 +178,7 @@ graph TD
   </div>
 </div>
 <div id="sub-1-pola-single-prewarmed-engine-flutterenginemanager" class="doc-subsection">
-<h4>1. Pola Single Prewarmed Engine (`FlutterEngineManager`)</h4>
+<h4>1. Pola Single Prewarmed Engine (<code>FlutterEngineManager</code>)</h4>
 </div>
 <p>Path: <a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/learn/iOS-Arch/ios/IDSamirLoan/Application/SamirCommonModule/Classes/FChannel/FlutterEngineManager.swift" target="_blank" rel="noopener noreferrer">🦊 ios/IDSamirLoan/Application/SamirCommonModule/Classes/FChannel/FlutterEngineManager.swift <span class="branch-tag">learn/iOS-Arch</span> ↗</a></p>
 <p>Daripada membuat instance <code>FlutterEngine</code> baru setiap kali layar dibuka (yang memakan ~30 MB RAM per instance), aplikasi menggunakan <strong>satu engine singleton tunggal</strong>:</p>
@@ -209,7 +209,7 @@ graph TD
 <li><code>GeneratedPluginRegistrant.register(with: engine)</code> mendaftarkan seluruh plugin Flutter (seperti path_provider, shared_preferences, dll).</li>
 </ul>
 <div id="sub-2-teknik-persistent-host-container-idmaintabbarcontroller" class="doc-subsection">
-<h4>2. Teknik Persistent Host Container (`IDMainTabBarController`)</h4>
+<h4>2. Teknik Persistent Host Container (<code>IDMainTabBarController</code>)</h4>
 </div>
 <p>Path: <a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/learn/iOS-Arch/ios/IDSamirLoan/Application/SamirMainModule/Classes/IDController/IDMainTabBarController.swift:L68-85" target="_blank" rel="noopener noreferrer">🦊 ios/IDSamirLoan/Application/SamirMainModule/Classes/IDController/IDMainTabBarController.swift <span class="branch-tag">learn/iOS-Arch</span> ↗</a></p>
 <p>Tantangan arsitektur terbesar: <code>UITabBarController</code> memperlakukan setiap child ViewController sebagai satu tab fisik. Jika kita menambahkan <code>FlutterViewController</code> langsung ke array <code>viewControllers</code>, akan muncul tab ke-4 yang tidak diinginkan di layar!</p>
@@ -232,7 +232,7 @@ graph TD
 }</code></pre>
 <p>Ketika user memilih Tab 1 (<code>IDRepayViewController</code>) atau Tab 2 (<code>IDMineViewController</code>), controller native tersebut hanyalah "shell kosong" 50 baris yang bertugas menyalakan visibilitas <code>flutterContainerView</code>!</p>
 <div id="sub-3-struktur-routing-flutter-indexedstack" class="doc-subsection">
-<h4>3. Struktur Routing Flutter (`IndexedStack`)</h4>
+<h4>3. Struktur Routing Flutter (<code>IndexedStack</code>)</h4>
 </div>
 <p>Path: <a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/learn/iOS-Arch/flutter/lib/pages/root/flutter_root_page.dart" target="_blank" rel="noopener noreferrer">🦊 flutter/lib/pages/root/flutter_root_page.dart <span class="branch-tag">learn/iOS-Arch</span> ↗</a></p>
 <p>Di sisi Dart, <code>FlutterRootPage</code> menggunakan <code>IndexedStack</code> untuk menjaga state kedua halaman tetap hidup di memori:</p>
@@ -260,7 +260,7 @@ graph TD
 }</code></pre>
 <p>Ketika native memanggil <code>showFlutterRoute(&quot;/repay&quot;)</code>, Dart cukup mengganti index <code>IndexedStack</code> dari 0 ke 1 tanpa melakukan rebuild widget dari nol!</p>
 <div id="sub-4-katalog-platform-channels-samir-native-channel" class="doc-subsection">
-<h4>4. Katalog Platform Channels (`samir_native_channel`)</h4>
+<h4>4. Katalog Platform Channels (<code>samir_native_channel</code>)</h4>
 </div>
 <p>Path: <a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/learn/iOS-Arch/ios/IDSamirLoan/Application/SamirCommonModule/Classes/FChannel/FlutterNativeChannel.swift" target="_blank" rel="noopener noreferrer">🦊 ios/IDSamirLoan/Application/SamirCommonModule/Classes/FChannel/FlutterNativeChannel.swift <span class="branch-tag">learn/iOS-Arch</span> ↗</a></p>
 <p>Tersedia dua channel komunikasi:</p>
@@ -271,7 +271,7 @@ graph TD
 <h5 id="item-daftar-method-yang-dilayani-native">Daftar Method yang Dilayani Native:</h5>
 <div class="table-container"><table class="data-table"><thead><tr><th>Nama Method</th><th>Parameter</th><th>Fungsi & Deskripsi</th></tr></thead><tbody><tr><td><code>getNativeAppEnv</code></td><td>—</td><td>Mengambil <code>environment</code>, <code>apiBaseUrl</code>, <code>webBaseUrl</code>, <code>clientId</code> dari <code>CZEnvironmentManager</code>.</td></tr><tr><td><code>getNativeRequestParams</code></td><td>—</td><td>Mengambil 18 parameter umum dari <code>ApiParamsHelper</code> plus <code>staticKey</code> agar request Dio Flutter memiliki format identik dengan request native.</td></tr><tr><td><code>getRootPageData</code></td><td>—</td><td>Mengambil status <code>isLogin</code>, <code>mobile</code>, dan <code>showSocialMedia</code>.</td></tr><tr><td><code>openNativeRoute</code></td><td><code>{ url: String, params: Map }</code></td><td>Memerintahkan native mengeksekusi URL Router (misal: <code>samir://auth/identity</code> atau link media sosial).</td></tr><tr><td><code>closeFlutterPage</code></td><td>—</td><td>Memerintahkan native melakukan <code>popViewController</code> atau <code>dismiss</code>.</td></tr><tr><td><code>setNativeTabBarHidden</code></td><td><code>{ hidden: Bool }</code></td><td>Menyembunyikan tab bar native saat Flutter membuka halaman sekunder (<code>/mine/personal</code>).</td></tr><tr><td><code>requestRepayBenefitPopup</code></td><td><code>{ scene: String }</code></td><td>Meminta koordinator popup native (<code>IDRepayBenefitPopupCoordinator</code>) menampilkan banner kupon.</td></tr><tr><td><code>goToSystemAppDetailSettings</code></td><td>—</td><td>Membuka layar pengaturan aplikasi di Settings iOS (<code>UIApplication.openSettingsURLString</code>).</td></tr></tbody></table></div>
 <div id="sub-5-sinkronisasi-safe-area-dynamic-island" class="doc-subsection">
-<h4>5. Sinkronisasi Safe Area &amp; Dynamic Island</h4>
+<h4>5. Sinkronisasi Safe Area & Dynamic Island</h4>
 </div>
 <p>Path: <a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/learn/iOS-Arch/ios/IDSamirLoan/Application/SamirCommonModule/Classes/FChannel/FlutterEngineManager.swift:L180-192" target="_blank" rel="noopener noreferrer">🦊 ios/IDSamirLoan/Application/SamirCommonModule/Classes/FChannel/FlutterEngineManager.swift <span class="branch-tag">learn/iOS-Arch</span> ↗</a></p>
 <p>Tampilan Flutter berada di bawah <code>UITabBar</code> native, sehingga insets safe area harus dihitung secara manual oleh native:</p>
@@ -325,7 +325,7 @@ graph TD
 <div class="table-container"><table class="data-table"><thead><tr><th>Pendekatan</th><th>Multiple Flutter ViewControllers</th><th>Single Prewarmed Engine (SAMIR)</th></tr></thead><tbody><tr><td><strong>Konsumsi Memori RAM</strong></td><td><strong>Boros</strong> (~30 MB per layar Flutter baru).</td><td><strong>Hemat</strong> (~35 MB tetap untuk seluruh tab).</td></tr><tr><td><strong>Kecepatan Pindah Tab</strong></td><td><strong>Lambat</strong> (Ada jeda render 100–300ms setiap tap tab).</td><td><strong>Instan</strong> (Hanya mengganti index <code>IndexedStack</code>).</td></tr><tr><td><strong>Manajemen TabBar</strong></td><td>Rumit, tab bar sering tertutup atau flickering.</td><td>Tab bar native tetap stabil di posisi bawah.</td></tr></tbody></table></div>
 </section>
 <section id="sec-example" class="doc-section">
-<h3>🔬 G. Practical Example: Navigasi ke Halaman Sekunder Flutter (`/mine/personal`)</h3>
+<h3>🔬 G. Practical Example: Navigasi ke Halaman Sekunder Flutter (<code>/mine/personal</code>)</h3>
 <p>Ketika nasabah mengklik kartu identitas di halaman profil Flutter:</p>
 <ol>
 <li>Flutter memanggil <code>Routers.push(RoutePaths.minePersonal)</code>.</li>
@@ -336,7 +336,7 @@ graph TD
 </ol>
 </section>
 <section id="sec-mistakes" class="doc-section">
-<h3>⚠️ H. Common Mistakes &amp; Debugging</h3>
+<h3>⚠️ H. Common Mistakes & Debugging</h3>
 <ul>
 <li><strong>Lupa Menambahkan Plugin ke GeneratedPluginRegistrant</strong>:</li>
 <li>Jika Anda menambahkan package Flutter baru di <code>pubspec.yaml</code> yang membutuhkan native plugin (misal: image_picker), jalankan <code>pod install</code> di folder <code>ios/</code> agar hook CocoaPods mendaftarkan plugin tersebut ke proyek Xcode.</li>
@@ -533,19 +533,19 @@ public final class AppSessionManager: SessionProvider {
             <div class="toc-branch">
               <div class="toc-node-row">
                 <span class="toc-leaf-dot"></span>
-                <a class="toc-tree-link" href="#sub-1-pola-single-prewarmed-engine-flutterenginemanager">1. Pola Single Prewarmed Engine (`FlutterEngineManager`)</a>
+                <a class="toc-tree-link" href="#sub-1-pola-single-prewarmed-engine-flutterenginemanager">1. Pola Single Prewarmed Engine (<span class="toc-code">FlutterEngineManager</span>)</a>
               </div>
               <div class="toc-node-row">
                 <span class="toc-leaf-dot"></span>
-                <a class="toc-tree-link" href="#sub-2-teknik-persistent-host-container-idmaintabbarcontroller">2. Teknik Persistent Host Container (`IDMainTabBarController`)</a>
+                <a class="toc-tree-link" href="#sub-2-teknik-persistent-host-container-idmaintabbarcontroller">2. Teknik Persistent Host Container (<span class="toc-code">IDMainTabBarController</span>)</a>
               </div>
               <div class="toc-node-row">
                 <span class="toc-leaf-dot"></span>
-                <a class="toc-tree-link" href="#sub-3-struktur-routing-flutter-indexedstack">3. Struktur Routing Flutter (`IndexedStack`)</a>
+                <a class="toc-tree-link" href="#sub-3-struktur-routing-flutter-indexedstack">3. Struktur Routing Flutter (<span class="toc-code">IndexedStack</span>)</a>
               </div>
               <div class="toc-node-row">
                 <span class="toc-leaf-dot"></span>
-                <a class="toc-tree-link" href="#sub-4-katalog-platform-channels-samir-native-channel">4. Katalog Platform Channels (`samir_native_channel`)</a>
+                <a class="toc-tree-link" href="#sub-4-katalog-platform-channels-samir-native-channel">4. Katalog Platform Channels (<span class="toc-code">samir_native_channel</span>)</a>
               </div>
               <div class="toc-node-row">
                 <span class="toc-leaf-dot"></span>
@@ -563,7 +563,7 @@ public final class AppSessionManager: SessionProvider {
           </div>
           <div class="toc-node-row">
             <span class="toc-leaf-dot"></span>
-            <a class="toc-tree-link" href="#sec-example">G. Practical Example: Navigasi ke Halaman Sekunder Flutter (`/mine/personal`)</a>
+            <a class="toc-tree-link" href="#sec-example">G. Practical Example: Navigasi ke Halaman Sekunder Flutter (<span class="toc-code">/mine/personal</span>)</a>
           </div>
           <div class="toc-node-row">
             <span class="toc-leaf-dot"></span>
@@ -645,19 +645,19 @@ public final class AppSessionManager: SessionProvider {
           <div class="toc-branch">
             <div class="toc-node-row">
               <span class="toc-leaf-dot"></span>
-              <a class="toc-tree-link" href="#sub-1-pola-single-prewarmed-engine-flutterenginemanager" onclick="toggleMobileToc()">1. Pola Single Prewarmed Engine (`FlutterEngineManager`)</a>
+              <a class="toc-tree-link" href="#sub-1-pola-single-prewarmed-engine-flutterenginemanager" onclick="toggleMobileToc()">1. Pola Single Prewarmed Engine (<span class="toc-code">FlutterEngineManager</span>)</a>
             </div>
             <div class="toc-node-row">
               <span class="toc-leaf-dot"></span>
-              <a class="toc-tree-link" href="#sub-2-teknik-persistent-host-container-idmaintabbarcontroller" onclick="toggleMobileToc()">2. Teknik Persistent Host Container (`IDMainTabBarController`)</a>
+              <a class="toc-tree-link" href="#sub-2-teknik-persistent-host-container-idmaintabbarcontroller" onclick="toggleMobileToc()">2. Teknik Persistent Host Container (<span class="toc-code">IDMainTabBarController</span>)</a>
             </div>
             <div class="toc-node-row">
               <span class="toc-leaf-dot"></span>
-              <a class="toc-tree-link" href="#sub-3-struktur-routing-flutter-indexedstack" onclick="toggleMobileToc()">3. Struktur Routing Flutter (`IndexedStack`)</a>
+              <a class="toc-tree-link" href="#sub-3-struktur-routing-flutter-indexedstack" onclick="toggleMobileToc()">3. Struktur Routing Flutter (<span class="toc-code">IndexedStack</span>)</a>
             </div>
             <div class="toc-node-row">
               <span class="toc-leaf-dot"></span>
-              <a class="toc-tree-link" href="#sub-4-katalog-platform-channels-samir-native-channel" onclick="toggleMobileToc()">4. Katalog Platform Channels (`samir_native_channel`)</a>
+              <a class="toc-tree-link" href="#sub-4-katalog-platform-channels-samir-native-channel" onclick="toggleMobileToc()">4. Katalog Platform Channels (<span class="toc-code">samir_native_channel</span>)</a>
             </div>
             <div class="toc-node-row">
               <span class="toc-leaf-dot"></span>
@@ -675,7 +675,7 @@ public final class AppSessionManager: SessionProvider {
         </div>
         <div class="toc-node-row">
           <span class="toc-leaf-dot"></span>
-          <a class="toc-tree-link" href="#sec-example" onclick="toggleMobileToc()">G. Practical Example: Navigasi ke Halaman Sekunder Flutter (`/mine/personal`)</a>
+          <a class="toc-tree-link" href="#sec-example" onclick="toggleMobileToc()">G. Practical Example: Navigasi ke Halaman Sekunder Flutter (<span class="toc-code">/mine/personal</span>)</a>
         </div>
         <div class="toc-node-row">
           <span class="toc-leaf-dot"></span>

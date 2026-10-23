@@ -117,7 +117,7 @@
 <p>Telah membaca <a href="../04-understanding-navigation/03-complete-navigation-map.html">03-complete-navigation-map.md</a> dan <a href="../05-learning-business-flows/02-authentication-and-session-sync.html">02-authentication-and-session-sync.md</a>.</p>
 </section>
 <section id="sec-simple" class="doc-section">
-<h3>💡 C. Simple Explanation (Analogi &amp; Konsep Sederhana)</h3>
+<h3>💡 C. Simple Explanation (Analogi & Konsep Sederhana)</h3>
 <p>Bayangkan saluran pipa komunikasi telegraf antara dua stasiun:</p>
 <ul>
 <li><strong>Pipa 1: Saluran Operasional (<code>samir_native_channel</code>)</strong>: Saluran utama untuk perintah taktis (buka pintu rute baru, sembunyikan bilah navigasi, ambil kunci otentikasi sesi).</li>
@@ -128,7 +128,7 @@
 <section id="sec-actual" class="doc-section">
 <h3>💻 D. Actual Implementation (Bukti di Kode Sumber)</h3>
 <div id="sub-1-deklarasi-saluran-kanal-methodchannel" class="doc-subsection">
-<h4>1. Deklarasi Saluran Kanal (`MethodChannel`)</h4>
+<h4>1. Deklarasi Saluran Kanal (<code>MethodChannel</code>)</h4>
 </div>
 <p>Pada <a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/learn/Flutter-Arch/flutter/lib/common/platform/flutter_native_channel.dart" target="_blank" rel="noopener noreferrer">🦊 flutter/lib/common/platform/flutter_native_channel.dart <span class="branch-tag">learn/Flutter-Arch</span> ↗</a> (baris 12–18):</p>
 <pre><code class="language-dart">abstract final class FlutterNativeChannel {
@@ -145,14 +145,14 @@
 }</code></pre>
 </section>
 <section id="sec-walkthrough" class="doc-section">
-<h3>📌 E. Matriks Method Lengkap: Arah Outbound (Flutter -&gt; Native)</h3>
+<h3>📌 E. Matriks Method Lengkap: Arah Outbound (Flutter -> Native)</h3>
 <p>Saluran: <strong><code>samir_native_channel</code></strong></p>
 <div class="table-container"><table class="data-table"><thead><tr><th>Nama Method</th><th>Argumen Input</th><th>Tipe Nilai Kembali</th><th>Deskripsi & Implementasi di Host Native</th></tr></thead><tbody><tr><td><strong><code>getNativeAppEnv</code></strong></td><td><code>null</code></td><td><code>Map&lt;dynamic, dynamic&gt;?</code></td><td>Mengambil konfigurasi environment host: <code>environment</code>, <code>apiBaseUrl</code>, <code>webBaseUrl</code>, <code>trackBaseUrl</code>, <code>appId</code>.</td></tr><tr><td><strong><code>getNativeRequestParams</code></strong></td><td><code>null</code></td><td><code>Map&lt;dynamic, dynamic&gt;?</code></td><td>Mengambil parameter perangkat: <code>clientId</code>, <code>timestamp</code>, <code>version</code>, <code>channel</code>, <code>source</code>, <code>userNo</code>, <code>mid</code>, <code>staticKey</code>.</td></tr><tr><td><strong><code>getRootPageData</code></strong></td><td><code>null</code></td><td><code>Map&lt;dynamic, dynamic&gt;?</code></td><td>Mengambil data sesi pengguna dari Keychain native: <code>isLogin</code>, <code>mid</code>, <code>userNo</code>, <code>custId</code>, <code>dynamicSignKey</code>, <code>showSocialMedia</code>.</td></tr><tr><td><strong><code>requestRepayBenefitPopup</code></strong></td><td><code>Map: {&#x27;scene&#x27;: String}</code></td><td><code>bool</code></td><td>Meminta host native memeriksa dan memunculkan pop-up diskon pembayaran. Nilai balik menandakan apakah pop-up dijadwalkan.</td></tr><tr><td><strong><code>goToSystemAppDetailSettings</code></strong></td><td><code>null</code></td><td><code>void</code></td><td>Membuka layar Pengaturan Aplikasi di sistem operasi (iOS Settings / Android App Info).</td></tr><tr><td><strong><code>openNativeRoute</code></strong></td><td><code>Map: {&#x27;url&#x27;: String, &#x27;params&#x27;: Map?}</code></td><td><code>void</code></td><td>Meminta native membuka URL internal (<code>samir://...</code>), deep link, atau WebView.</td></tr><tr><td><strong><code>closeFlutterPage</code></strong></td><td><code>null</code></td><td><code>void</code></td><td>Menutup UIViewController / Activity Flutter host dan kembali ke layar native sebelumnya.</td></tr><tr><td><strong><code>setNativeTabBarHidden</code></strong></td><td><code>Map: {&#x27;hidden&#x27;: bool}</code></td><td><code>void</code></td><td>Menyembunyikan (<code>true</code>) atau menampilkan (<code>false</code>) UITabBar native di bawah layar.</td></tr><tr><td><strong><code>flutterReady</code></strong></td><td><code>null</code></td><td><code>void</code></td><td>Sinyal bahwa rendering visual frame pertama Flutter telah selesai.</td></tr><tr><td><strong><code>getSystemProxy</code></strong> <em>(Nexus)</em></td><td><code>null</code></td><td><code>String?</code></td><td>Mengambil IP dan port proxy sistem operasi di environment debug/testing.</td></tr></tbody></table></div>
 <p>Saluran: <strong><code>samir_tracking_channel</code></strong></p>
 <div class="table-container"><table class="data-table"><thead><tr><th>Nama Method</th><th>Argumen Input</th><th>Tipe Nilai Kembali</th><th>Deskripsi</th></tr></thead><tbody><tr><td><strong><code>trackEvent</code></strong></td><td><code>Map: {&#x27;event&#x27;: String, &#x27;params&#x27;: Map}</code></td><td><code>void</code></td><td>Meneruskan event analitik pengguna ke SDK analitik host native.</td></tr></tbody></table></div>
 </section>
 <section id="sec-why" class="doc-section">
-<h3>📌 F. Matriks Method Lengkap: Arah Inbound (Native -&gt; Flutter)</h3>
+<h3>📌 F. Matriks Method Lengkap: Arah Inbound (Native -> Flutter)</h3>
 <p>Saluran: <strong><code>samir_native_channel</code></strong></p>
 <p>Handler: Didaftarkan melalui <code>FlutterNativeChannel.commonChannel.setMethodCallHandler(_handleNativeCall)</code> pada <a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/learn/Flutter-Arch/flutter/lib/common/platform/flutter_native_route_dispatcher.dart" target="_blank" rel="noopener noreferrer">🦊 flutter_native_route_dispatcher.dart <span class="branch-tag">learn/Flutter-Arch</span> ↗</a>.</p>
 <div class="table-container"><table class="data-table"><thead><tr><th>Nama Method</th><th>Argumen Input dari Native</th><th>Nilai Balasan ke Native</th><th>Tindakan di Sisi Flutter</th></tr></thead><tbody><tr><td><strong><code>showFlutterRoute</code></strong></td><td><code>Map</code>: `{ 'route': String, 'presentation': 'push'\</td><td>'replace', 'requestId': int? }`</td><td><code>Map</code>: <code>{ &#x27;requestId&#x27;: int, &#x27;frameReady&#x27;: bool }</code></td><td>Menampilkan rute yang diminta. Jika rute adalah root tab (<code>/mine</code> atau <code>/repay</code>), ubah index <code>IndexedStack</code> dan tunggu <code>endOfFrame</code>.</td></tr><tr><td><strong><code>refreshMineHome</code></strong></td><td><code>null</code></td><td><code>null</code></td><td>Memancarkan event pada stream <code>FlutterNativePageSignal.onMineHomeRefresh</code> untuk memicu refresh profil.</td></tr><tr><td><strong><code>refreshRepayHome</code></strong></td><td><code>null</code></td><td><code>null</code></td><td>Memancarkan event pada stream <code>FlutterNativePageSignal.onRepayHomeRefresh</code> untuk memicu refresh daftar tagihan.</td></tr></tbody></table></div>
@@ -203,7 +203,7 @@ sequenceDiagram
 </div>
 </section>
 <section id="sec-mistakes" class="doc-section">
-<h3>📌 H. Penanganan Kesalahan &amp; Ketahanan Jembatan (*Resilience*)</h3>
+<h3>📌 H. Penanganan Kesalahan & Ketahanan Jembatan (<em>Resilience</em>)</h3>
 <p>Pada <a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/learn/Flutter-Arch/flutter/lib/common/platform/flutter_native_channel.dart" target="_blank" rel="noopener noreferrer">🦊 flutter_native_channel.dart <span class="branch-tag">learn/Flutter-Arch</span> ↗</a> (baris 39–48):</p>
 <pre><code class="language-dart">try {
   return await channel.invokeMethod&lt;T&gt;(method, arguments);
@@ -221,7 +221,7 @@ sequenceDiagram
 </ol>
 </section>
 <section id="sec-check" class="doc-section">
-<h3>⚠️ I. Common Mistakes &amp; Debugging</h3>
+<h3>⚠️ I. Common Mistakes & Debugging</h3>
 <ul>
 <li><strong>Mengirim Nilai Non-Primitive di Parameter <code>openNativeRoute</code></strong>:</li>
 <li><code>MethodChannel</code> hanya mendukung serialisasi objek JSON primitif. Mengirimkan objek kompleks Dart yang belum diubah ke <code>Map&lt;String, dynamic&gt;</code> akan memicu crash fatal.</li>
@@ -421,7 +421,7 @@ class GlobalSessionManager implements SessionContract {
             <div class="toc-branch">
               <div class="toc-node-row">
                 <span class="toc-leaf-dot"></span>
-                <a class="toc-tree-link" href="#sub-1-deklarasi-saluran-kanal-methodchannel">1. Deklarasi Saluran Kanal (`MethodChannel`)</a>
+                <a class="toc-tree-link" href="#sub-1-deklarasi-saluran-kanal-methodchannel">1. Deklarasi Saluran Kanal (<span class="toc-code">MethodChannel</span>)</a>
               </div>
             </div>
           </div>
@@ -521,7 +521,7 @@ class GlobalSessionManager implements SessionContract {
           <div class="toc-branch">
             <div class="toc-node-row">
               <span class="toc-leaf-dot"></span>
-              <a class="toc-tree-link" href="#sub-1-deklarasi-saluran-kanal-methodchannel" onclick="toggleMobileToc()">1. Deklarasi Saluran Kanal (`MethodChannel`)</a>
+              <a class="toc-tree-link" href="#sub-1-deklarasi-saluran-kanal-methodchannel" onclick="toggleMobileToc()">1. Deklarasi Saluran Kanal (<span class="toc-code">MethodChannel</span>)</a>
             </div>
           </div>
         </div>

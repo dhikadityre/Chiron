@@ -126,7 +126,7 @@
 <section id="sec-actual" class="doc-section">
 <h3>💻 D. Actual Implementation: Analisis Kasus Ekstrem</h3>
 <div id="sub-1-skenario-token-sesi-kedaluwarsa-error-code-10006" class="doc-subsection">
-<h4>1. Skenario Token Sesi Kedaluwarsa (Error Code `10006`)</h4>
+<h4>1. Skenario Token Sesi Kedaluwarsa (Error Code <code>10006</code>)</h4>
 </div>
 <p>Path: <a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/learn/iOS-Arch/ios/IDSamirLoan/Application/SamirNetworkModule/Classes/Common/IDNetworkRequest.swift" target="_blank" rel="noopener noreferrer">🦊 ios/IDSamirLoan/Application/SamirNetworkModule/Classes/Common/IDNetworkRequest.swift <span class="branch-tag">learn/iOS-Arch</span> ↗</a> dan <a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/learn/iOS-Arch/ios/IDSamirLoan/Application/SamirLoginModule/Classes/IDPresenter/IDLoginModuleServiceHandler.swift" target="_blank" rel="noopener noreferrer">🦊 SamirLoginModule/Classes/IDPresenter/IDLoginModuleServiceHandler.swift <span class="branch-tag">learn/iOS-Arch</span> ↗</a></p>
 <p>Ketika sebuah request API backend mengembalikan status <code>code == &quot;10006&quot;</code>:</p>
@@ -165,7 +165,7 @@ sequenceDiagram
 <li><code>loginAction()</code> dipanggil seketika untuk memunculkan modal login agar pengguna cukup memasukkan OTP tanpa harus menutup paksa aplikasi.</li>
 </ul>
 <div id="sub-2-skenario-resolusi-deep-link-appsflyer-push-notification" class="doc-subsection">
-<h4>2. Skenario Resolusi Deep Link (AppsFlyer &amp; Push Notification)</h4>
+<h4>2. Skenario Resolusi Deep Link (AppsFlyer & Push Notification)</h4>
 </div>
 <p>Path: <a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/learn/iOS-Arch/ios/IDSamirLoan/Application/SamirMainModule/Classes/IDModule/IDSamirMainModule.swift:L250-320" target="_blank" rel="noopener noreferrer">🦊 ios/IDSamirLoan/Application/SamirMainModule/Classes/IDModule/IDSamirMainModule.swift <span class="branch-tag">learn/iOS-Arch</span> ↗</a></p>
 <p>Aplikasi menerima deep link dari dua saluran utama:</p>
@@ -188,7 +188,7 @@ sequenceDiagram
 <li>Fungsi <code>clearPushCache()</code> dipanggil untuk memastikan deep link yang sama tidak dieksekusi dua kali.</li>
 </ul>
 <div id="sub-3-skenario-rute-ditolak-tidak-ditemukan-notfound" class="doc-subsection">
-<h4>3. Skenario Rute Ditolak / Tidak Ditemukan (`NotFound`)</h4>
+<h4>3. Skenario Rute Ditolak / Tidak Ditemukan (<code>NotFound</code>)</h4>
 </div>
 <p>Ketika server mengirimkan rute URL baru yang belum dikenal oleh aplikasi native yang sedang berjalan:</p>
 <ol>
@@ -269,7 +269,7 @@ sequenceDiagram
 <p>Jika seorang tamu mencoba membuka pengaturan atau data pribadi dari tab Flutter, native runtime akan mencegat navigasi tersebut dan menyajikan dialog login terlebih dahulu.</p>
 </section>
 <section id="sec-mistakes" class="doc-section">
-<h3>⚠️ H. Common Mistakes &amp; Debugging</h3>
+<h3>⚠️ H. Common Mistakes & Debugging</h3>
 <ul>
 <li><strong>Bahaya Penggunaan Kode <code>10006</code> Sembarangan di Backend</strong>:</li>
 <li>Jika backend engineer membuat endpoint baru dan menggunakan kode <code>10006</code> untuk error selain sesi kedaluwarsa (misal: "Saldo tidak mencukupi"), aplikasi iOS akan <strong>OTOMATIS ME-LOGOUT PENGGUNA DAN MERESET KE BERANDA</strong>!</li>
@@ -472,7 +472,7 @@ public final class RepayFlowCoordinator: Coordinator {
             <div class="toc-branch">
               <div class="toc-node-row">
                 <span class="toc-leaf-dot"></span>
-                <a class="toc-tree-link" href="#sub-1-skenario-token-sesi-kedaluwarsa-error-code-10006">1. Skenario Token Sesi Kedaluwarsa (Error Code `10006`)</a>
+                <a class="toc-tree-link" href="#sub-1-skenario-token-sesi-kedaluwarsa-error-code-10006">1. Skenario Token Sesi Kedaluwarsa (Error Code <span class="toc-code">10006</span>)</a>
               </div>
               <div class="toc-node-row">
                 <span class="toc-leaf-dot"></span>
@@ -480,7 +480,7 @@ public final class RepayFlowCoordinator: Coordinator {
               </div>
               <div class="toc-node-row">
                 <span class="toc-leaf-dot"></span>
-                <a class="toc-tree-link" href="#sub-3-skenario-rute-ditolak-tidak-ditemukan-notfound">3. Skenario Rute Ditolak / Tidak Ditemukan (`NotFound`)</a>
+                <a class="toc-tree-link" href="#sub-3-skenario-rute-ditolak-tidak-ditemukan-notfound">3. Skenario Rute Ditolak / Tidak Ditemukan (<span class="toc-code">NotFound</span>)</a>
               </div>
             </div>
           </div>
@@ -576,7 +576,7 @@ public final class RepayFlowCoordinator: Coordinator {
           <div class="toc-branch">
             <div class="toc-node-row">
               <span class="toc-leaf-dot"></span>
-              <a class="toc-tree-link" href="#sub-1-skenario-token-sesi-kedaluwarsa-error-code-10006" onclick="toggleMobileToc()">1. Skenario Token Sesi Kedaluwarsa (Error Code `10006`)</a>
+              <a class="toc-tree-link" href="#sub-1-skenario-token-sesi-kedaluwarsa-error-code-10006" onclick="toggleMobileToc()">1. Skenario Token Sesi Kedaluwarsa (Error Code <span class="toc-code">10006</span>)</a>
             </div>
             <div class="toc-node-row">
               <span class="toc-leaf-dot"></span>
@@ -584,7 +584,7 @@ public final class RepayFlowCoordinator: Coordinator {
             </div>
             <div class="toc-node-row">
               <span class="toc-leaf-dot"></span>
-              <a class="toc-tree-link" href="#sub-3-skenario-rute-ditolak-tidak-ditemukan-notfound" onclick="toggleMobileToc()">3. Skenario Rute Ditolak / Tidak Ditemukan (`NotFound`)</a>
+              <a class="toc-tree-link" href="#sub-3-skenario-rute-ditolak-tidak-ditemukan-notfound" onclick="toggleMobileToc()">3. Skenario Rute Ditolak / Tidak Ditemukan (<span class="toc-code">NotFound</span>)</a>
             </div>
           </div>
         </div>

@@ -118,7 +118,7 @@
 </ul>
 </section>
 <section id="sec-simple" class="doc-section">
-<h3>📌 C. Definisi &amp; Konsep Kunci</h3>
+<h3>📌 C. Definisi & Konsep Kunci</h3>
 <div id="sub-1-apa-itu-cold-start" class="doc-subsection">
 <h4>1. Apa itu Cold Start?</h4>
 </div>
@@ -148,7 +148,7 @@
 <section id="sec-actual" class="doc-section">
 <h3>📌 D. Proses di Balik Layar di Production (Under the Hood)</h3>
 <div id="sub-1-bootstrapping-awal-mainswift---czmodulehandler" class="doc-subsection">
-<h4>1. Bootstrapping Awal (`main.swift` -&gt; `CZModuleHandler`)</h4>
+<h4>1. Bootstrapping Awal (<code>main.swift</code> -> <code>CZModuleHandler</code>)</h4>
 </div>
 <p>Eksekusi aplikasi dimulai dari <a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/learn/iOS-Arch/ios/IDSamirLoan/main.swift#L39" target="_blank" rel="noopener noreferrer">🦊 main.swift <span class="branch-tag">learn/iOS-Arch</span> ↗</a>:</p>
 <pre><code class="language-swift">let _ = CZModuleHandler.ModuleManagerApplicationMain(
@@ -165,7 +165,7 @@
 <li><code>registerAllServices(&quot;IDServiceList&quot;)</code></li>
 </ol>
 <div id="sub-2-pembedahan-registerallmodules-modulename-vs-bundlename" class="doc-subsection">
-<h4>2. Pembedahan `registerAllModules`: `moduleName` vs `bundleName`</h4>
+<h4>2. Pembedahan <code>registerAllModules</code>: <code>moduleName</code> vs <code>bundleName</code></h4>
 </div>
 <p>Pada <a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/learn/iOS-Arch/ios/IDSamirLoan/Application/CZSwiftModuleLib/Classes/CZModuleManager.swift#L62-L77" target="_blank" rel="noopener noreferrer">🦊 CZModuleManager.swift:L62-L77 <span class="branch-tag">learn/iOS-Arch</span> ↗</a>:</p>
 <pre><code class="language-swift">if let contents = NSDictionary(contentsOf: url!) as? [String: String] {
@@ -175,7 +175,7 @@
         }
     }
 }</code></pre>
-<h5 id="item-a-apakah-secara-flow-ia-mendaftarkan-modulename-atau-bundlename">A. Apakah secara flow ia mendaftarkan `moduleName` atau `bundleName`?</h5>
+<h5 id="item-a-apakah-secara-flow-ia-mendaftarkan-modulename-atau-bundlename">A. Apakah secara flow ia mendaftarkan <code>moduleName</code> atau <code>bundleName</code>?</h5>
 <div class="callout best-practice"><p>[!IMPORTANT] <strong>Secara flow aktual di Production, yang berhasil didaftarkan selalu <code>bundleName</code> (<code>IDSamirLoan.&lt;ClassName&gt;</code>)!</strong></p></div>
 <p>Mari telusuri penyebab teknisnya:</p>
 <ol>
@@ -194,7 +194,7 @@
 <ol>
 <li>Properti <a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/learn/iOS-Arch/ios/IDSamirLoan/Application/CZSwiftUtils/Classes/CZExtension/Bundle+CZExtension.swift#L95" target="_blank" rel="noopener noreferrer">🦊 Bundle.cz.bundleName <span class="branch-tag">learn/iOS-Arch</span> ↗</a> mengambil <code>CFBundleName</code> dari <code>Bundle.main</code>, yang menghasilkan string <code>&quot;IDSamirLoan&quot;</code>.</li>
 </ol>
-<h5 id="item-b-pembedahan-nsclassfromstring-dan-kondisi-moduleobject-bernilai-false">B. Pembedahan `NSClassFromString` dan Kondisi `moduleObject` Bernilai `false`</h5>
+<h5 id="item-b-pembedahan-nsclassfromstring-dan-kondisi-moduleobject-bernilai-false">B. Pembedahan <code>NSClassFromString</code> dan Kondisi <code>moduleObject</code> Bernilai <code>false</code></h5>
 <pre><code class="language-swift">// CZModuleManager.swift:L80-L86
 guard let moduleClass: AnyClass = NSClassFromString(moduleName) else {
     return false
@@ -238,7 +238,7 @@ guard let moduleObject: CZModuleProtocol = (moduleClass as! CZModuleProtocol.Typ
 <li><strong>Dukungan Monolitik Flat (Saat Ini):</strong> Mengingat seluruh file modul saat ini masih tergabung dalam satu target biner aplikasi (<code>IDSamirLoan</code>), fallback <code>Bundle.cz.bundleName</code> menjamin dynamic loading tetap berjalan mulus tanpa runtime error.</li>
 </ol>
 <div id="sub-3-pendaftaran-router-filter-router-czroutercenter" class="doc-subsection">
-<h4>3. Pendaftaran Router &amp; Filter Router (`CZRouterCenter`)</h4>
+<h4>3. Pendaftaran Router & Filter Router (<code>CZRouterCenter</code>)</h4>
 </div>
 <p>Setiap kali modul berhasil dibuat (<code>registerModule</code>), <code>CZModuleManager</code> mendaftarkan routing modul ke <a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/learn/iOS-Arch/ios/IDSamirLoan/Application/CZSwiftRouterLib/Classes/CZRouterCenter.swift#L10" target="_blank" rel="noopener noreferrer">🦊 CZRouterCenter.shared <span class="branch-tag">learn/iOS-Arch</span> ↗</a>:</p>
 <pre><code class="language-swift">// CZModuleManager.swift:L131-L141
@@ -254,7 +254,7 @@ private func registerFilterRouter(_ module: CZModuleProtocol) {
     }
 }</code></pre>
 <div id="sub-4-contoh-nyata-penggunaan-routers-di-production-end-to-end-flow" class="doc-subsection">
-<h4>4. Contoh Nyata Penggunaan `routers` di Production (End-to-End Flow)</h4>
+<h4>4. Contoh Nyata Penggunaan <code>routers</code> di Production (End-to-End Flow)</h4>
 </div>
 <p>Mari ambil contoh nyata: <strong>Pengguna menyelesaikan login OTP di Modul Login, lalu diarahkan ke Form Foto KTP di Modul Auth dengan membawa data, kemudian menekan tombol kembali (back).</strong></p>
 <h5 id="item-langkah-1-modul-tujuan-mendaftarkan-rute">Langkah 1: Modul Tujuan Mendaftarkan Rute</h5>
@@ -269,7 +269,7 @@ private func registerFilterRouter(_ module: CZModuleProtocol) {
     router?.addRouterTable(routerTable)
     return [router!]
 }</code></pre>
-<h5 id="item-langkah-2-modul-pemanggil-memicu-navigasi-membawa-data-passing-parameters">Langkah 2: Modul Pemanggil Memicu Navigasi + Membawa Data (*Passing Parameters*)</h5>
+<h5 id="item-langkah-2-modul-pemanggil-memicu-navigasi-membawa-data-passing-parameters">Langkah 2: Modul Pemanggil Memicu Navigasi + Membawa Data (<em>Passing Parameters</em>)</h5>
 <p>Di <a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/learn/iOS-Arch/ios/IDSamirLoan/Application/SamirLoginModule/Classes/IDViewcontroller/IDCodeViewController.swift#L450" target="_blank" rel="noopener noreferrer">🦊 IDCodeViewController.swift:L450 <span class="branch-tag">learn/iOS-Arch</span> ↗</a> (<code>SamirLoginModule</code>), aplikasi memanggil tanpa perlu mengimpor <code>SamirAuthModule</code>:</p>
 <pre><code class="language-swift">let routerUrl = &quot;samir://auth/identity&quot;
 let routerParams: [String: Any] = [
@@ -278,7 +278,7 @@ let routerParams: [String: Any] = [
 ]
 
 IDRouterManager.id_perfromWithURLString(routerUrl, params: routerParams)</code></pre>
-<h5 id="item-langkah-3-ekstraksi-parameter-unpacking-menampilkan-layar">Langkah 3: Ekstraksi Parameter (*Unpacking*) &amp; Menampilkan Layar</h5>
+<h5 id="item-langkah-3-ekstraksi-parameter-unpacking-menampilkan-layar">Langkah 3: Ekstraksi Parameter (<em>Unpacking</em>) & Menampilkan Layar</h5>
 <p>Di <a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/learn/iOS-Arch/ios/IDSamirLoan/Application/SamirAuthModule/Classes/IDRouter/IDSamirAuthModuleRouterHandler.swift#L54-L68" target="_blank" rel="noopener noreferrer">🦊 IDSamirAuthModuleRouterHandler.swift:L54-L68 <span class="branch-tag">learn/iOS-Arch</span> ↗</a>:</p>
 <pre><code class="language-swift">func openIdentityPage(_ params: [String: Any]?) {
     let vc = IDNewOCRViewController()
@@ -299,14 +299,14 @@ func openVC(_ vc: UIViewController) {
         nav.pushViewController(vc, animated: true)
     }
 }</code></pre>
-<h5 id="item-langkah-4-navigasi-kembali-back-navigation">Langkah 4: Navigasi Kembali (*Back Navigation*)</h5>
+<h5 id="item-langkah-4-navigasi-kembali-back-navigation">Langkah 4: Navigasi Kembali (<em>Back Navigation</em>)</h5>
 <p>Ketika user selesai atau membatalkan foto KTP, tombol back di navigation bar memicu selector di <a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/learn/iOS-Arch/ios/IDSamirLoan/Application/SamirCommonModule/Classes/IDBase/IDBaseViewController.swift#L166" target="_blank" rel="noopener noreferrer">🦊 IDBaseViewController.swift <span class="branch-tag">learn/iOS-Arch</span> ↗</a>:</p>
 <pre><code class="language-swift">@objc func clickLeftItem() {
     self.navigationController?.popViewController(animated: true)
 }</code></pre>
 <p>Layar <code>IDNewOCRViewController</code> di-pop dari navigation stack dan memorinya dibersihkan tanpa meninggalkan jejak kopling antarmodul.</p>
 <div id="sub-5-routerfilters-mekanisme-aliasing-usecase-di-production" class="doc-subsection">
-<h4>5. `routerFilters`: Mekanisme Aliasing &amp; Usecase di Production</h4>
+<h4>5. <code>routerFilters</code>: Mekanisme Aliasing & Usecase di Production</h4>
 </div>
 <p>Method <a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/learn/iOS-Arch/ios/IDSamirLoan/Application/CZSwiftRouterLib/Classes/CZRouterCenter.swift#L113-L137" target="_blank" rel="noopener noreferrer">🦊 filterRouterUrl <span class="branch-tag">learn/iOS-Arch</span> ↗</a> menjalankan <strong>URL Rewriting / Aliasing</strong>:</p>
 <ol>
@@ -363,7 +363,7 @@ func openVC(_ vc: UIViewController) {
        }
    }</code></pre>
 <div id="sub-7-mengapa-serviceforprotocol-dibuat-dan-seberapa-penting" class="doc-subsection">
-<h4>7. Mengapa `serviceForProtocol` Dibuat dan Seberapa Penting?</h4>
+<h4>7. Mengapa <code>serviceForProtocol</code> Dibuat dan Seberapa Penting?</h4>
 </div>
 <h5 id="item-a-kenapa-router-saja-tidak-cukup">A. Kenapa Router Saja Tidak Cukup?</h5>
 <p>Router sangat ideal untuk <strong>navigasi visual antarlayar</strong> (membuka ViewController). Namun, router <strong>tidak dapat digunakan</strong> untuk meminta data balikan bertipe kuat (<em>strong-typed</em>) tanpa UI:</p>
@@ -399,7 +399,7 @@ func openVC(_ vc: UIViewController) {
 </ul>
 </section>
 <section id="sec-walkthrough" class="doc-section">
-<h3>📌 E. Mermaid Sequence Diagram Lengkap (Production Startup &amp; Deeplink Flow)</h3>
+<h3>📌 E. Mermaid Sequence Diagram Lengkap (Production Startup & Deeplink Flow)</h3>
 
 <div class="mermaid-interactive-card">
   <div class="mermaid-card-toolbar">
@@ -668,23 +668,23 @@ public final class AppStartupCoordinator {
             <div class="toc-branch">
               <div class="toc-node-row">
                 <span class="toc-leaf-dot"></span>
-                <a class="toc-tree-link" href="#sub-1-bootstrapping-awal-mainswift---czmodulehandler">1. Bootstrapping Awal (`main.swift` -&gt; `CZModuleHandler`)</a>
+                <a class="toc-tree-link" href="#sub-1-bootstrapping-awal-mainswift---czmodulehandler">1. Bootstrapping Awal (<span class="toc-code">main.swift</span> -&gt; <span class="toc-code">CZModuleHandler</span>)</a>
               </div>
               <div class="toc-node-row">
                 <span class="toc-leaf-dot"></span>
-                <a class="toc-tree-link" href="#sub-2-pembedahan-registerallmodules-modulename-vs-bundlename">2. Pembedahan `registerAllModules`: `moduleName` vs `bundleName`</a>
+                <a class="toc-tree-link" href="#sub-2-pembedahan-registerallmodules-modulename-vs-bundlename">2. Pembedahan <span class="toc-code">registerAllModules</span>: <span class="toc-code">moduleName</span> vs <span class="toc-code">bundleName</span></a>
               </div>
               <div class="toc-node-row">
                 <span class="toc-leaf-dot"></span>
-                <a class="toc-tree-link" href="#sub-3-pendaftaran-router-filter-router-czroutercenter">3. Pendaftaran Router &amp; Filter Router (`CZRouterCenter`)</a>
+                <a class="toc-tree-link" href="#sub-3-pendaftaran-router-filter-router-czroutercenter">3. Pendaftaran Router &amp; Filter Router (<span class="toc-code">CZRouterCenter</span>)</a>
               </div>
               <div class="toc-node-row">
                 <span class="toc-leaf-dot"></span>
-                <a class="toc-tree-link" href="#sub-4-contoh-nyata-penggunaan-routers-di-production-end-to-end-flow">4. Contoh Nyata Penggunaan `routers` di Production (End-to-End Flow)</a>
+                <a class="toc-tree-link" href="#sub-4-contoh-nyata-penggunaan-routers-di-production-end-to-end-flow">4. Contoh Nyata Penggunaan <span class="toc-code">routers</span> di Production (End-to-End Flow)</a>
               </div>
               <div class="toc-node-row">
                 <span class="toc-leaf-dot"></span>
-                <a class="toc-tree-link" href="#sub-5-routerfilters-mekanisme-aliasing-usecase-di-production">5. `routerFilters`: Mekanisme Aliasing &amp; Usecase di Production</a>
+                <a class="toc-tree-link" href="#sub-5-routerfilters-mekanisme-aliasing-usecase-di-production">5. <span class="toc-code">routerFilters</span>: Mekanisme Aliasing &amp; Usecase di Production</a>
               </div>
               <div class="toc-node-row">
                 <span class="toc-leaf-dot"></span>
@@ -692,7 +692,7 @@ public final class AppStartupCoordinator {
               </div>
               <div class="toc-node-row">
                 <span class="toc-leaf-dot"></span>
-                <a class="toc-tree-link" href="#sub-7-mengapa-serviceforprotocol-dibuat-dan-seberapa-penting">7. Mengapa `serviceForProtocol` Dibuat dan Seberapa Penting?</a>
+                <a class="toc-tree-link" href="#sub-7-mengapa-serviceforprotocol-dibuat-dan-seberapa-penting">7. Mengapa <span class="toc-code">serviceForProtocol</span> Dibuat dan Seberapa Penting?</a>
               </div>
             </div>
           </div>
@@ -792,23 +792,23 @@ public final class AppStartupCoordinator {
           <div class="toc-branch">
             <div class="toc-node-row">
               <span class="toc-leaf-dot"></span>
-              <a class="toc-tree-link" href="#sub-1-bootstrapping-awal-mainswift---czmodulehandler" onclick="toggleMobileToc()">1. Bootstrapping Awal (`main.swift` -&gt; `CZModuleHandler`)</a>
+              <a class="toc-tree-link" href="#sub-1-bootstrapping-awal-mainswift---czmodulehandler" onclick="toggleMobileToc()">1. Bootstrapping Awal (<span class="toc-code">main.swift</span> -&gt; <span class="toc-code">CZModuleHandler</span>)</a>
             </div>
             <div class="toc-node-row">
               <span class="toc-leaf-dot"></span>
-              <a class="toc-tree-link" href="#sub-2-pembedahan-registerallmodules-modulename-vs-bundlename" onclick="toggleMobileToc()">2. Pembedahan `registerAllModules`: `moduleName` vs `bundleName`</a>
+              <a class="toc-tree-link" href="#sub-2-pembedahan-registerallmodules-modulename-vs-bundlename" onclick="toggleMobileToc()">2. Pembedahan <span class="toc-code">registerAllModules</span>: <span class="toc-code">moduleName</span> vs <span class="toc-code">bundleName</span></a>
             </div>
             <div class="toc-node-row">
               <span class="toc-leaf-dot"></span>
-              <a class="toc-tree-link" href="#sub-3-pendaftaran-router-filter-router-czroutercenter" onclick="toggleMobileToc()">3. Pendaftaran Router &amp; Filter Router (`CZRouterCenter`)</a>
+              <a class="toc-tree-link" href="#sub-3-pendaftaran-router-filter-router-czroutercenter" onclick="toggleMobileToc()">3. Pendaftaran Router &amp; Filter Router (<span class="toc-code">CZRouterCenter</span>)</a>
             </div>
             <div class="toc-node-row">
               <span class="toc-leaf-dot"></span>
-              <a class="toc-tree-link" href="#sub-4-contoh-nyata-penggunaan-routers-di-production-end-to-end-flow" onclick="toggleMobileToc()">4. Contoh Nyata Penggunaan `routers` di Production (End-to-End Flow)</a>
+              <a class="toc-tree-link" href="#sub-4-contoh-nyata-penggunaan-routers-di-production-end-to-end-flow" onclick="toggleMobileToc()">4. Contoh Nyata Penggunaan <span class="toc-code">routers</span> di Production (End-to-End Flow)</a>
             </div>
             <div class="toc-node-row">
               <span class="toc-leaf-dot"></span>
-              <a class="toc-tree-link" href="#sub-5-routerfilters-mekanisme-aliasing-usecase-di-production" onclick="toggleMobileToc()">5. `routerFilters`: Mekanisme Aliasing &amp; Usecase di Production</a>
+              <a class="toc-tree-link" href="#sub-5-routerfilters-mekanisme-aliasing-usecase-di-production" onclick="toggleMobileToc()">5. <span class="toc-code">routerFilters</span>: Mekanisme Aliasing &amp; Usecase di Production</a>
             </div>
             <div class="toc-node-row">
               <span class="toc-leaf-dot"></span>
@@ -816,7 +816,7 @@ public final class AppStartupCoordinator {
             </div>
             <div class="toc-node-row">
               <span class="toc-leaf-dot"></span>
-              <a class="toc-tree-link" href="#sub-7-mengapa-serviceforprotocol-dibuat-dan-seberapa-penting" onclick="toggleMobileToc()">7. Mengapa `serviceForProtocol` Dibuat dan Seberapa Penting?</a>
+              <a class="toc-tree-link" href="#sub-7-mengapa-serviceforprotocol-dibuat-dan-seberapa-penting" onclick="toggleMobileToc()">7. Mengapa <span class="toc-code">serviceForProtocol</span> Dibuat dan Seberapa Penting?</a>
             </div>
           </div>
         </div>

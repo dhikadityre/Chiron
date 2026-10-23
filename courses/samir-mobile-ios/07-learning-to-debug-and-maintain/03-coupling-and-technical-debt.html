@@ -118,7 +118,7 @@
 </ul>
 </section>
 <section id="sec-simple" class="doc-section">
-<h3>💡 C. Simple Explanation: &quot;Peta Ranjau di Dalam Kode&quot;</h3>
+<h3>💡 C. Simple Explanation: "Peta Ranjau di Dalam Kode"</h3>
 <p>Bayangkan Anda pindah ke rumah tua yang baru direnovasi sebagian. Ruang tamu tampak modern, tetapi di balik dinding terdapat sambungan kabel tanpa isolator (force unwraps), kunci pintu utama tersimpan di bawah keset (hardcoded secret), dan pipa air dari dapur tersambung langsung ke pipa pembuangan tanpa katup pengaman (tight coupling).</p>
 <p>Di SAMIR:</p>
 <ul>
@@ -149,9 +149,9 @@
 |  11. Stub kosong pada IDSamirRepayRouterHandler pasca-migrasi Flutter                 |
 +---------------------------------------------------------------------------------------+</code></pre>
 <div id="sub-1-kategori-risiko-tinggi-high-risk-verified" class="doc-subsection">
-<h4>1. Kategori Risiko Tinggi (High Risk) `[Verified]`</h4>
+<h4>1. Kategori Risiko Tinggi (High Risk) <code>[Verified]</code></h4>
 </div>
-<h5 id="item-a-1488-force-unwraps-force-casts-as">A. 1.488 Force Unwraps &amp; Force Casts (`!` / `as!`)</h5>
+<h5 id="item-a-1488-force-unwraps-force-casts-as">A. 1.488 Force Unwraps & Force Casts (<code>!</code> / <code>as!</code>)</h5>
 <p>Pemeriksaan kode dengan ripgrep menemukan sekitar <strong>1.488 baris</strong> yang menggunakan tanda seru paksa tanpa <code>guard let</code> atau <code>if let</code> defensif.</p>
 <ul>
 <li><strong>Bukti Sampel:</strong></li>
@@ -160,7 +160,7 @@
 <li>Presenter Auth & KTP: Akses paksa image picker result dan parsing tanggal lahir.</li>
 <li><strong>Dampak:</strong> Backend yang mengirimkan field <code>null</code> tak terduga akan langsung menyebabkan crash fatal SIGABRT di runtime pengguna.</li>
 </ul>
-<h5 id="item-b-kredensial-kunci-rahasia-hardcoded">B. Kredensial &amp; Kunci Rahasia Hardcoded</h5>
+<h5 id="item-b-kredensial-kunci-rahasia-hardcoded">B. Kredensial & Kunci Rahasia Hardcoded</h5>
 <p>Kunci rahasia third-party dan enkripsi disimpan langsung sebagai string literal di dalam kode sumber:</p>
 <ul>
 <li><strong>AppsFlyer Dev Key:</strong></li>
@@ -171,7 +171,7 @@
 <li>Bukti: <code>static let staticKey = SymmetricKey(data: &quot;samir-ios-secure-key-2024&quot;.data(using: .utf8)!)</code></li>
 <li><strong>Dampak:</strong> Siapa pun yang melakukan dekompilasi IPA dapat mengekstraksi kunci analitik dan kunci enkripsi file sesi pengguna lokal.</li>
 </ul>
-<h5 id="item-c-penonaktifan-ats-global-nsallowsarbitraryloads-true">C. Penonaktifan ATS Global (`NSAllowsArbitraryLoads = true`)</h5>
+<h5 id="item-c-penonaktifan-ats-global-nsallowsarbitraryloads-true">C. Penonaktifan ATS Global (<code>NSAllowsArbitraryLoads = true</code>)</h5>
 <ul>
 <li><strong>File:</strong> <code>ios/IDSamirLoan/Application/IDSamirLoan-Info.plist:L93-97</code></li>
 </ul>
@@ -189,12 +189,12 @@
 <li><strong>Dampak:</strong> Tim tidak memiliki safety net otomatis saat melakukan refactoring atau pembaruan dependensi.</li>
 </ul>
 <div id="sub-2-kategori-risiko-menengah-medium-risk-verified" class="doc-subsection">
-<h4>2. Kategori Risiko Menengah (Medium Risk) `[Verified]`</h4>
+<h4>2. Kategori Risiko Menengah (Medium Risk) <code>[Verified]</code></h4>
 </div>
-<h5 id="item-a-massive-viewcontrollers-god-objects">A. Massive ViewControllers &amp; God Objects</h5>
+<h5 id="item-a-massive-viewcontrollers-god-objects">A. Massive ViewControllers & God Objects</h5>
 <p>Terdapat file-file raksasa yang menggabungkan presentation logic, view layouting, validasi input, dan network orchestration:</p>
 <div class="table-container"><table class="data-table"><thead><tr><th>File Sumber</th><th>Baris Kode</th><th>Peran & Masalah Arsitektur</th></tr></thead><tbody><tr><td><code>LoanConfirmViewController_Rx.swift</code></td><td><strong>2.250 baris</strong></td><td>Form konfirmasi pinjaman raksasa: kalkulasi bunga, agreement checkbox, OTP trigger, dan dynamic fee breakdown.</td></tr><tr><td><code>LoanConfirmService.swift</code></td><td><strong>1.541 baris</strong></td><td>Service pinjaman mengelola puluhan state request dan model mapping.</td></tr><tr><td><code>LoanConfirmAmountView.swift</code></td><td><strong>1.465 baris</strong></td><td>View pemilihan nominal dan tenor pinjaman dengan animasi slider dan label formatting.</td></tr><tr><td><code>IDNetworkRequest.swift</code></td><td><strong>1.428 baris</strong></td><td>God-class networking: signature generation, parameter injection, header assembly, error parsing, dan DebugUI bridge.</td></tr><tr><td><code>LoanConfirmViewModel.swift</code></td><td><strong>1.396 baris</strong></td><td>State store pinjaman dengan puluhan <code>BehaviorRelay</code> dan <code>PublishSubject</code>.</td></tr><tr><td><code>IDNewAuthPresenter.swift</code></td><td><strong>1.251 baris</strong></td><td>Presenter e-KYC 6 langkah dengan logika parsing respon OCR, Liveness, dan Advance AI.</td></tr><tr><td><code>IDHomeViewController.swift</code></td><td><strong>1.212 baris</strong></td><td>Dashboard tab pertama: polling status aplikasi, dynamic banner, dialog popups, dan rating prompt.</td></tr></tbody></table></div>
-<h5 id="item-b-isolasi-reaktif-rxswift-the-reactive-island">B. Isolasi Reaktif RxSwift (&quot;The Reactive Island&quot;)</h5>
+<h5 id="item-b-isolasi-reaktif-rxswift-the-reactive-island">B. Isolasi Reaktif RxSwift ("The Reactive Island")</h5>
 <p>Modul <code>SamirLoanConfirmModule</code> ditulis menggunakan arsitektur MVVM berbasis <strong>RxSwift & RxCocoa</strong> (<code>BehaviorRelay</code>, <code>DisposeBag</code>, <code>Observable.combineLatest</code>), sementara seluruh modul lainnya (<code>SamirAuthModule</code>, <code>SamirMainModule</code>, <code>SamirLoginModule</code>) menggunakan pola imperatif <strong>MVP + Delegates/Closures</strong>.</p>
 <ul>
 <li><strong>Dampak:</strong> Developer harus menguasai dua paradigma mental yang saling bertolak belakang dalam satu aplikasi. Terjadi fragmentasi standar penulisan kode.</li>
@@ -219,7 +219,7 @@ self.moduleList.sort { $0.modulePriority &gt; $1.modulePriority }</code></pre>
 <ul>
 <li><strong>Dampak:</strong> Properti <code>loadPriority</code> di <code>IDModuleList.plist</code> sama sekali tidak berfungsi. Urutan inisialisasi modul murni mengikuti urutan iterasi dictionary di dalam file plist.</li>
 </ul>
-<h5 id="item-e-salah-ketik-pada-api-protokol-publik-reapyservice">E. Salah Ketik pada API Protokol Publik: `reapyService()`</h5>
+<h5 id="item-e-salah-ketik-pada-api-protokol-publik-reapyservice">E. Salah Ketik pada API Protokol Publik: <code>reapyService()</code></h5>
 <ul>
 <li><strong>File:</strong> <code>ios/IDSamirLoan/Application/SamirServiceModule/Classes/IDServiceManager.swift:L25</code></li>
 </ul>
@@ -228,7 +228,7 @@ self.moduleList.sort { $0.modulePriority &gt; $1.modulePriority }</code></pre>
 <li><strong>Dampak:</strong> Typo huruf 'p' dan 'a' tertukar (<code>reapy</code> alih-alih <code>repay</code>). Karena sudah tersebar di puluhan call site, perbaikan typo ini memerlukan refactoring massal lintas modul.</li>
 </ul>
 <div id="sub-3-kategori-risiko-rendah-kode-mati-low-risk-dead-code-verified" class="doc-subsection">
-<h4>3. Kategori Risiko Rendah &amp; Kode Mati (Low Risk / Dead Code) `[Verified]`</h4>
+<h4>3. Kategori Risiko Rendah & Kode Mati (Low Risk / Dead Code) <code>[Verified]</code></h4>
 </div>
 <ol>
 <li><strong>File <code>main.m</code> (Objective-C):</strong></li>
@@ -250,7 +250,7 @@ self.moduleList.sort { $0.modulePriority &gt; $1.modulePriority }</code></pre>
 </ul>
 </section>
 <section id="sec-walkthrough" class="doc-section">
-<h3>🪜 E. Step-by-Step Walkthrough: Analisis Bahaya Modifikasi pada `IDHomeViewController`</h3>
+<h3>🪜 E. Step-by-Step Walkthrough: Analisis Bahaya Modifikasi pada <code>IDHomeViewController</code></h3>
 <p>Jika Anda diminta untuk menambahkan banner promosi baru di tab Home:</p>
 <ol>
 <li><strong>Buka file:</strong> <code>ios/IDSamirLoan/Application/SamirLoanModule/Classes/IDController/IDHomeViewController.swift</code>.</li>
@@ -504,21 +504,21 @@ public final class AppSessionManager: SessionProvider {
             <div class="toc-branch">
               <div class="toc-node-row">
                 <span class="toc-leaf-dot"></span>
-                <a class="toc-tree-link" href="#sub-1-kategori-risiko-tinggi-high-risk-verified">1. Kategori Risiko Tinggi (High Risk) `[Verified]`</a>
+                <a class="toc-tree-link" href="#sub-1-kategori-risiko-tinggi-high-risk-verified">1. Kategori Risiko Tinggi (High Risk) <span class="toc-code">[Verified]</span></a>
               </div>
               <div class="toc-node-row">
                 <span class="toc-leaf-dot"></span>
-                <a class="toc-tree-link" href="#sub-2-kategori-risiko-menengah-medium-risk-verified">2. Kategori Risiko Menengah (Medium Risk) `[Verified]`</a>
+                <a class="toc-tree-link" href="#sub-2-kategori-risiko-menengah-medium-risk-verified">2. Kategori Risiko Menengah (Medium Risk) <span class="toc-code">[Verified]</span></a>
               </div>
               <div class="toc-node-row">
                 <span class="toc-leaf-dot"></span>
-                <a class="toc-tree-link" href="#sub-3-kategori-risiko-rendah-kode-mati-low-risk-dead-code-verified">3. Kategori Risiko Rendah &amp; Kode Mati (Low Risk / Dead Code) `[Verified]`</a>
+                <a class="toc-tree-link" href="#sub-3-kategori-risiko-rendah-kode-mati-low-risk-dead-code-verified">3. Kategori Risiko Rendah &amp; Kode Mati (Low Risk / Dead Code) <span class="toc-code">[Verified]</span></a>
               </div>
             </div>
           </div>
           <div class="toc-node-row">
             <span class="toc-leaf-dot"></span>
-            <a class="toc-tree-link" href="#sec-walkthrough">E. Step-by-Step Walkthrough: Analisis Bahaya Modifikasi pada `IDHomeViewController`</a>
+            <a class="toc-tree-link" href="#sec-walkthrough">E. Step-by-Step Walkthrough: Analisis Bahaya Modifikasi pada <span class="toc-code">IDHomeViewController</span></a>
           </div>
           <div class="toc-node-row">
             <span class="toc-leaf-dot"></span>
@@ -620,21 +620,21 @@ public final class AppSessionManager: SessionProvider {
           <div class="toc-branch">
             <div class="toc-node-row">
               <span class="toc-leaf-dot"></span>
-              <a class="toc-tree-link" href="#sub-1-kategori-risiko-tinggi-high-risk-verified" onclick="toggleMobileToc()">1. Kategori Risiko Tinggi (High Risk) `[Verified]`</a>
+              <a class="toc-tree-link" href="#sub-1-kategori-risiko-tinggi-high-risk-verified" onclick="toggleMobileToc()">1. Kategori Risiko Tinggi (High Risk) <span class="toc-code">[Verified]</span></a>
             </div>
             <div class="toc-node-row">
               <span class="toc-leaf-dot"></span>
-              <a class="toc-tree-link" href="#sub-2-kategori-risiko-menengah-medium-risk-verified" onclick="toggleMobileToc()">2. Kategori Risiko Menengah (Medium Risk) `[Verified]`</a>
+              <a class="toc-tree-link" href="#sub-2-kategori-risiko-menengah-medium-risk-verified" onclick="toggleMobileToc()">2. Kategori Risiko Menengah (Medium Risk) <span class="toc-code">[Verified]</span></a>
             </div>
             <div class="toc-node-row">
               <span class="toc-leaf-dot"></span>
-              <a class="toc-tree-link" href="#sub-3-kategori-risiko-rendah-kode-mati-low-risk-dead-code-verified" onclick="toggleMobileToc()">3. Kategori Risiko Rendah &amp; Kode Mati (Low Risk / Dead Code) `[Verified]`</a>
+              <a class="toc-tree-link" href="#sub-3-kategori-risiko-rendah-kode-mati-low-risk-dead-code-verified" onclick="toggleMobileToc()">3. Kategori Risiko Rendah &amp; Kode Mati (Low Risk / Dead Code) <span class="toc-code">[Verified]</span></a>
             </div>
           </div>
         </div>
         <div class="toc-node-row">
           <span class="toc-leaf-dot"></span>
-          <a class="toc-tree-link" href="#sec-walkthrough" onclick="toggleMobileToc()">E. Step-by-Step Walkthrough: Analisis Bahaya Modifikasi pada `IDHomeViewController`</a>
+          <a class="toc-tree-link" href="#sec-walkthrough" onclick="toggleMobileToc()">E. Step-by-Step Walkthrough: Analisis Bahaya Modifikasi pada <span class="toc-code">IDHomeViewController</span></a>
         </div>
         <div class="toc-node-row">
           <span class="toc-leaf-dot"></span>

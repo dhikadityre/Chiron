@@ -117,7 +117,7 @@
 </ul>
 </section>
 <section id="sec-simple" class="doc-section">
-<h3>💡 C. Simple Explanation: &quot;Kotak Perkakas Lapangan Tanpa Lab Otomatis&quot;</h3>
+<h3>💡 C. Simple Explanation: "Kotak Perkakas Lapangan Tanpa Lab Otomatis"</h3>
 <p>Bayangkan sebuah pesawat yang tidak memiliki simulasi uji coba otomatis di hanggar sebelum terbang (tidak ada unit test). Namun, teknisi memasang dashboard monitor portabel ekstra di kokpit (floating debug tool) yang menampilkan setiap kabel yang dialiri listrik dan setiap sensor yang mengirim sinyal saat pesawat sedang diterbangkan di udara.</p>
 <p>Di SAMIR iOS:</p>
 <ol>
@@ -129,7 +129,7 @@
 <section id="sec-actual" class="doc-section">
 <h3>💻 D. Actual Implementation</h3>
 <div id="sub-1-status-automated-testing-zero-test-target-verified" class="doc-subsection">
-<h4>1. Status Automated Testing: Zero Test Target `[Verified]`</h4>
+<h4>1. Status Automated Testing: Zero Test Target <code>[Verified]</code></h4>
 </div>
 <p>Pemeriksaan pada <code>IDSamirLoan.xcodeproj/project.pbxproj</code> dan pencarian simbol <code>XCTest</code> membuktikan temuan penting:</p>
 <ul>
@@ -138,7 +138,7 @@
 <li><strong>Konsekuensi:</strong> Kualitas rilis bergantung 100% pada Manual QA testing, exploratory testing, dan regression testing manual di lingkungan staging.</li>
 </ul>
 <div id="sub-2-in-app-debug-console-modul-debug-debugui-verified" class="doc-subsection">
-<h4>2. In-App Debug Console: Modul `Debug` &amp; `DebugUI` `[Verified]`</h4>
+<h4>2. In-App Debug Console: Modul <code>Debug</code> & <code>DebugUI</code> <code>[Verified]</code></h4>
 </div>
 <p>Sistem debugging in-app terletak di direktori <a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/learn/iOS-Arch/ios/IDSamirLoan/Application/Debug/" target="_blank" rel="noopener noreferrer">🦊 ios/IDSamirLoan/Application/Debug/ <span class="branch-tag">learn/iOS-Arch</span> ↗</a>:</p>
 <ul>
@@ -171,7 +171,7 @@
 <li><code>debugListFloatWindow.windowLevel = .alert + 1</code> (ketinggian setengah layar: <code>UIScreen.main.bounds.height / 2</code>).</li>
 </ul>
 <div id="sub-3-kategori-log-yang-dicegat-datacollecttype-verified" class="doc-subsection">
-<h4>3. Kategori Log yang Dicegat (`DataCollectType`) `[Verified]`</h4>
+<h4>3. Kategori Log yang Dicegat (<code>DataCollectType</code>) <code>[Verified]</code></h4>
 </div>
 <p>Saat <code>DebugUI.setup()</code> dipanggil, tiga tipe log didaftarkan:</p>
 <ol>
@@ -232,7 +232,7 @@ sequenceDiagram
 <section id="sec-walkthrough" class="doc-section">
 <h3>🪜 E. Step-by-Step Walkthrough: Alur Melakukan Debugging di Lingkungan Nyata</h3>
 <div id="sub-skenario-menemukan-penyebab-gagal-mengambil-kuota-pinjaman-pada-akun-test" class="doc-subsection">
-<h4>Skenario: Menemukan Penyebab &quot;Gagal Mengambil Kuota Pinjaman&quot; pada Akun Test</h4>
+<h4>Skenario: Menemukan Penyebab "Gagal Mengambil Kuota Pinjaman" pada Akun Test</h4>
 </div>
 <ol>
 <li><strong>Langkah 1 — Jalankan Scheme <code>TEST</code> di Simulator atau Device Fisik:</strong></li>
@@ -280,11 +280,11 @@ sequenceDiagram
 </ul>
 </section>
 <section id="sec-why" class="doc-section">
-<h3>⚖️ F. Why It Matters: Kelebihan, Keterbatasan, &amp; Trade-Off</h3>
+<h3>⚖️ F. Why It Matters: Kelebihan, Keterbatasan, & Trade-Off</h3>
 <div class="table-container"><table class="data-table"><thead><tr><th>Aspek</th><th>Implementasi Lapangan</th><th>Dampak & Trade-off</th></tr></thead><tbody><tr><td><strong>Ketiadaan XCTest</strong></td><td>Tidak ada automated regression testing.</td><td><strong>High Risk:</strong> Setiap perubahan modul inti berpotensi memicu regresi tersembunyi yang baru terdeteksi saat rilis QA atau production.</td></tr><tr><td><strong><code>DebugUI</code> In-App</strong></td><td>Logger mandiri tanpa ketergantungan Mac/Xcode.</td><td><strong>High Value:</strong> Tim QA lapangan dan Product Manager dapat melakukan inspeksi payload jaringan langsung di device tanpa memasang Mac developer.</td></tr><tr><td><strong>Memory Footprint</strong></td><td>Log disimpan di memori RAM via array <code>logDataSource</code>.</td><td><strong>Perhatian:</strong> Jika aplikasi berjalan berjam-jam pada sesi testing yang panjang, memori dapat membengkak jika tidak sering menekan tombol <code>Clear</code>.</td></tr><tr><td><strong>Security Leak Guard</strong></td><td>Dibungkus <code>#if</code> macro <code>CZPreBuildMacro.cz_buildTest()</code>.</td><td><strong>Aman:</strong> Tidak ada celah kebocoran konsol log di App Store Release (<code>PROD</code>).</td></tr></tbody></table></div>
 </section>
 <section id="sec-example" class="doc-section">
-<h3>🔬 G. Practical Example: Menelusuri Signature Mismatch Error (`code: 10004`)</h3>
+<h3>🔬 G. Practical Example: Menelusuri Signature Mismatch Error (<code>code: 10004</code>)</h3>
 <p>Jika backend menolak permintaan dengan pesan error signature tidak valid:</p>
 <ol>
 <li>Pasang breakpoint di <code>ios/IDSamirLoan/Application/SamirNetworkModule/Classes/Common/IDNetworkRequest.swift:L480</code> (sebelum pemanggilan generator signature).</li>
@@ -316,7 +316,7 @@ sequenceDiagram
 <li><strong>Solusi:</strong> Pastikan skema aktif adalah <code>TEST</code>. Jika tertutup modal khusus, selesaikan alur modal terlebih dahulu agar window level kembali normal.</li>
 </ul>
 <div id="sub-2-traffic-flutter-tidak-muncul-di-debugui" class="doc-subsection">
-<h4>2. Traffic Flutter Tidak Muncul di `DebugUI`</h4>
+<h4>2. Traffic Flutter Tidak Muncul di <code>DebugUI</code></h4>
 </div>
 <ul>
 <li><strong>Gejala:</strong> Saat membuka Tab "Bayar" (Repay) atau Tab "Saya" (Mine), aktivitas API tidak muncul di tab <code>request</code> <code>DebugUI</code>.</li>
@@ -528,15 +528,15 @@ public final class AppSessionManager: SessionProvider {
             <div class="toc-branch">
               <div class="toc-node-row">
                 <span class="toc-leaf-dot"></span>
-                <a class="toc-tree-link" href="#sub-1-status-automated-testing-zero-test-target-verified">1. Status Automated Testing: Zero Test Target `[Verified]`</a>
+                <a class="toc-tree-link" href="#sub-1-status-automated-testing-zero-test-target-verified">1. Status Automated Testing: Zero Test Target <span class="toc-code">[Verified]</span></a>
               </div>
               <div class="toc-node-row">
                 <span class="toc-leaf-dot"></span>
-                <a class="toc-tree-link" href="#sub-2-in-app-debug-console-modul-debug-debugui-verified">2. In-App Debug Console: Modul `Debug` &amp; `DebugUI` `[Verified]`</a>
+                <a class="toc-tree-link" href="#sub-2-in-app-debug-console-modul-debug-debugui-verified">2. In-App Debug Console: Modul <span class="toc-code">Debug</span> &amp; <span class="toc-code">DebugUI</span> <span class="toc-code">[Verified]</span></a>
               </div>
               <div class="toc-node-row">
                 <span class="toc-leaf-dot"></span>
-                <a class="toc-tree-link" href="#sub-3-kategori-log-yang-dicegat-datacollecttype-verified">3. Kategori Log yang Dicegat (`DataCollectType`) `[Verified]`</a>
+                <a class="toc-tree-link" href="#sub-3-kategori-log-yang-dicegat-datacollecttype-verified">3. Kategori Log yang Dicegat (<span class="toc-code">DataCollectType</span>) <span class="toc-code">[Verified]</span></a>
               </div>
             </div>
           </div>
@@ -558,7 +558,7 @@ public final class AppSessionManager: SessionProvider {
           </div>
           <div class="toc-node-row">
             <span class="toc-leaf-dot"></span>
-            <a class="toc-tree-link" href="#sec-example">G. Practical Example: Menelusuri Signature Mismatch Error (`code: 10004`)</a>
+            <a class="toc-tree-link" href="#sec-example">G. Practical Example: Menelusuri Signature Mismatch Error (<span class="toc-code">code: 10004</span>)</a>
           </div>
           <div class="toc-tree-node" id="toc-node-sec-mistakes">
             <div class="toc-node-row">
@@ -572,7 +572,7 @@ public final class AppSessionManager: SessionProvider {
               </div>
               <div class="toc-node-row">
                 <span class="toc-leaf-dot"></span>
-                <a class="toc-tree-link" href="#sub-2-traffic-flutter-tidak-muncul-di-debugui">2. Traffic Flutter Tidak Muncul di `DebugUI`</a>
+                <a class="toc-tree-link" href="#sub-2-traffic-flutter-tidak-muncul-di-debugui">2. Traffic Flutter Tidak Muncul di <span class="toc-code">DebugUI</span></a>
               </div>
               <div class="toc-node-row">
                 <span class="toc-leaf-dot"></span>
@@ -656,15 +656,15 @@ public final class AppSessionManager: SessionProvider {
           <div class="toc-branch">
             <div class="toc-node-row">
               <span class="toc-leaf-dot"></span>
-              <a class="toc-tree-link" href="#sub-1-status-automated-testing-zero-test-target-verified" onclick="toggleMobileToc()">1. Status Automated Testing: Zero Test Target `[Verified]`</a>
+              <a class="toc-tree-link" href="#sub-1-status-automated-testing-zero-test-target-verified" onclick="toggleMobileToc()">1. Status Automated Testing: Zero Test Target <span class="toc-code">[Verified]</span></a>
             </div>
             <div class="toc-node-row">
               <span class="toc-leaf-dot"></span>
-              <a class="toc-tree-link" href="#sub-2-in-app-debug-console-modul-debug-debugui-verified" onclick="toggleMobileToc()">2. In-App Debug Console: Modul `Debug` &amp; `DebugUI` `[Verified]`</a>
+              <a class="toc-tree-link" href="#sub-2-in-app-debug-console-modul-debug-debugui-verified" onclick="toggleMobileToc()">2. In-App Debug Console: Modul <span class="toc-code">Debug</span> &amp; <span class="toc-code">DebugUI</span> <span class="toc-code">[Verified]</span></a>
             </div>
             <div class="toc-node-row">
               <span class="toc-leaf-dot"></span>
-              <a class="toc-tree-link" href="#sub-3-kategori-log-yang-dicegat-datacollecttype-verified" onclick="toggleMobileToc()">3. Kategori Log yang Dicegat (`DataCollectType`) `[Verified]`</a>
+              <a class="toc-tree-link" href="#sub-3-kategori-log-yang-dicegat-datacollecttype-verified" onclick="toggleMobileToc()">3. Kategori Log yang Dicegat (<span class="toc-code">DataCollectType</span>) <span class="toc-code">[Verified]</span></a>
             </div>
           </div>
         </div>
@@ -686,7 +686,7 @@ public final class AppSessionManager: SessionProvider {
         </div>
         <div class="toc-node-row">
           <span class="toc-leaf-dot"></span>
-          <a class="toc-tree-link" href="#sec-example" onclick="toggleMobileToc()">G. Practical Example: Menelusuri Signature Mismatch Error (`code: 10004`)</a>
+          <a class="toc-tree-link" href="#sec-example" onclick="toggleMobileToc()">G. Practical Example: Menelusuri Signature Mismatch Error (<span class="toc-code">code: 10004</span>)</a>
         </div>
         <div class="toc-tree-node" id="mob-toc-node-sec-mistakes">
           <div class="toc-node-row">
@@ -700,7 +700,7 @@ public final class AppSessionManager: SessionProvider {
             </div>
             <div class="toc-node-row">
               <span class="toc-leaf-dot"></span>
-              <a class="toc-tree-link" href="#sub-2-traffic-flutter-tidak-muncul-di-debugui" onclick="toggleMobileToc()">2. Traffic Flutter Tidak Muncul di `DebugUI`</a>
+              <a class="toc-tree-link" href="#sub-2-traffic-flutter-tidak-muncul-di-debugui" onclick="toggleMobileToc()">2. Traffic Flutter Tidak Muncul di <span class="toc-code">DebugUI</span></a>
             </div>
             <div class="toc-node-row">
               <span class="toc-leaf-dot"></span>

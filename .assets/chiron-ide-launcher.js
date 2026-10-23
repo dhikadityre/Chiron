@@ -401,13 +401,576 @@
     }
   }
 
+  // Supported IDEs registry & metadata
+  const SUPPORTED_IDES = [
+    { id: 'gitlab', label: 'GitLab', icon: '🦊', title: 'Buka di GitLab Web Browser', desc: 'Web viewer & cloud diff' },
+    { id: 'antigravity', label: 'Antigravity IDE', icon: '🪐', title: 'Buka di Google Antigravity IDE (Lokal)', desc: 'IDE utama dengan Google Agent' },
+    { id: 'cursor', label: 'Cursor', icon: '⚡', title: 'Buka di Cursor IDE (Lokal)', desc: 'AI code editor lokal' },
+    { id: 'vscode', label: 'VS Code', icon: '💻', title: 'Buka di VS Code (Lokal)', desc: 'Visual Studio Code lokal' },
+    { id: 'xcode', label: 'Xcode', icon: '🛠️', title: 'Buka di Apple Xcode (Lokal)', desc: 'Apple Xcode IDE via xed' }
+  ];
+
+  // User Preferences Management
+  const PREFS_STORAGE_KEY = 'chiron_ide_preferences';
+  const DEFAULT_PREFERENCES = {
+    displayMode: 'popover', // 'popover' (responsive default) | 'fullbar' (cara lama)
+    enabledIdes: ['gitlab', 'antigravity', 'cursor', 'vscode', 'xcode']
+  };
+
+  let inMemoryPreferences = null;
+
+  function getPreferences() {
+    if (inMemoryPreferences) {
+      return Object.assign({}, inMemoryPreferences);
+    }
+    if (typeof localStorage !== 'undefined') {
+      try {
+        const stored = localStorage.getItem(PREFS_STORAGE_KEY);
+        if (stored) {
+          const parsed = JSON.parse(stored);
+          inMemoryPreferences = {
+            displayMode: parsed.displayMode === 'fullbar' ? 'fullbar' : 'popover',
+            enabledIdes: Array.isArray(parsed.enabledIdes) && parsed.enabledIdes.length > 0
+              ? parsed.enabledIdes
+              : DEFAULT_PREFERENCES.enabledIdes.slice()
+          };
+          return Object.assign({}, inMemoryPreferences);
+        }
+      } catch (e) {
+        // Fallback to default
+      }
+    }
+    inMemoryPreferences = Object.assign({}, DEFAULT_PREFERENCES);
+    return Object.assign({}, inMemoryPreferences);
+  }
+
+  function savePreferences(newPrefs) {
+    const current = getPreferences();
+    const updated = Object.assign({}, current, newPrefs);
+    inMemoryPreferences = updated;
+
+    if (typeof localStorage !== 'undefined') {
+      try {
+        localStorage.setItem(PREFS_STORAGE_KEY, JSON.stringify(updated));
+      } catch (e) {
+        console.warn('[ChironLauncher] Error saving preferences:', e);
+      }
+    }
+
+    // Notify document and re-render action bars
+    refreshAllCodeNavBars();
+    if (typeof window !== 'undefined') {
+      window.dispatchEvent(new CustomEvent('chiron:ide-prefs-changed', { detail: updated }));
+    }
+    return updated;
+  }
+
+  /**
+   * Detects whether an element sits inline within a running paragraph or list item,
+   * versus being a standalone block link.
+   */
+  function isInlineContext(link) {
+    const parent = link.parentNode;
+    if (!parent) return false;
+    const parentTag = (parent.tagName || '').toLowerCase();
+    if (['p', 'li', 'td', 'th', 'blockquote', 'span', 'em', 'strong'].includes(parentTag)) {
+      const fullText = (parent.textContent || '').trim();
+      const linkText = (link.textContent || '').trim();
+      const nonLinkText = fullText.replace(linkText, '').replace(/[\s\n\r\t]+/g, ' ').trim();
+      // If there is significant text besides "Path:" or whitespace, treat as inline sentence
+      if (nonLinkText && !/^path\s*:\s*$/i.test(nonLinkText)) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  // Active popover references & debounce timers
+  let activeTrigger = null;
+  let popoverHideTimer = null;
+  let popoverShowTimer = null;
+  const registryNodes = [];
+
+  /**
+   * Returns or creates the singleton Popover Dialog element in the document.
+   */
+  function getOrCreatePopoverDialog() {
+    if (typeof document === 'undefined') return null;
+
+    let popover = document.getElementById('chiron-ide-popover-dialog');
+    let backdrop = document.getElementById('chiron-popover-backdrop');
+
+    if (!backdrop && document.body) {
+      backdrop = document.createElement('div');
+      backdrop.id = 'chiron-popover-backdrop';
+      backdrop.className = 'chiron-popover-backdrop';
+      backdrop.addEventListener('click', () => hidePopover(true));
+      document.body.appendChild(backdrop);
+    }
+
+    if (!popover && document.body) {
+      popover = document.createElement('div');
+      popover.id = 'chiron-ide-popover-dialog';
+      popover.className = 'chiron-popover-dialog';
+      popover.setAttribute('role', 'dialog');
+      popover.setAttribute('aria-label', 'Pilih IDE untuk navigasi');
+
+      popover.addEventListener('mouseenter', () => {
+        if (popoverHideTimer) {
+          clearTimeout(popoverHideTimer);
+          popoverHideTimer = null;
+        }
+      });
+
+      popover.addEventListener('mouseleave', () => {
+        scheduleHidePopover(250);
+      });
+
+      document.body.appendChild(popover);
+
+      // Dismiss on Escape
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') {
+          hidePopover(true);
+        }
+      });
+
+      // Dismiss on outside click
+      document.addEventListener('click', (e) => {
+        if (popover && popover.classList.contains('show')) {
+          if (!popover.contains(e.target) && (!activeTrigger || !activeTrigger.contains(e.target))) {
+            hidePopover(true);
+          }
+        }
+      });
+    }
+
+    return popover;
+  }
+
+  function scheduleShowPopover(triggerEl, parsed, delayMs = 120) {
+    if (popoverHideTimer) {
+      clearTimeout(popoverHideTimer);
+      popoverHideTimer = null;
+    }
+    if (popoverShowTimer) {
+      clearTimeout(popoverShowTimer);
+    }
+    popoverShowTimer = setTimeout(() => {
+      showPopover(triggerEl, parsed);
+    }, delayMs);
+  }
+
+  function scheduleHidePopover(delayMs = 200) {
+    if (popoverShowTimer) {
+      clearTimeout(popoverShowTimer);
+      popoverShowTimer = null;
+    }
+    if (popoverHideTimer) {
+      clearTimeout(popoverHideTimer);
+    }
+    popoverHideTimer = setTimeout(() => {
+      hidePopover();
+    }, delayMs);
+  }
+
+  function hidePopover(immediate = false) {
+    if (popoverShowTimer) {
+      clearTimeout(popoverShowTimer);
+      popoverShowTimer = null;
+    }
+    if (popoverHideTimer) {
+      clearTimeout(popoverHideTimer);
+      popoverHideTimer = null;
+    }
+    const popover = typeof document !== 'undefined' ? document.getElementById('chiron-ide-popover-dialog') : null;
+    const backdrop = typeof document !== 'undefined' ? document.getElementById('chiron-popover-backdrop') : null;
+
+    if (popover) {
+      popover.classList.remove('show');
+    }
+    if (backdrop) {
+      backdrop.classList.remove('show');
+    }
+    if (activeTrigger) {
+      activeTrigger.classList.remove('active');
+      activeTrigger = null;
+    }
+  }
+
+  /**
+   * Displays the Smart Popover anchored to the trigger element.
+   */
+  function showPopover(triggerEl, parsed, options = {}) {
+    const popover = getOrCreatePopoverDialog();
+    if (!popover) return;
+
+    if (popoverHideTimer) {
+      clearTimeout(popoverHideTimer);
+      popoverHideTimer = null;
+    }
+
+    if (activeTrigger && activeTrigger !== triggerEl) {
+      activeTrigger.classList.remove('active');
+    }
+    activeTrigger = triggerEl;
+    activeTrigger.classList.add('active');
+
+    const prefs = getPreferences();
+    const cleanFileName = (parsed.filePath || '').split('/').pop() || 'Code';
+    const lineLabel = parsed.startLine ? (parsed.endLine ? `L${parsed.startLine}-${parsed.endLine}` : `L${parsed.startLine}`) : '';
+
+    // Build popover internal DOM
+    popover.innerHTML = '';
+
+    // 1. Header
+    const header = document.createElement('div');
+    header.className = 'chiron-popover-header';
+
+    const fileMeta = document.createElement('div');
+    fileMeta.className = 'chiron-popover-file';
+    fileMeta.innerHTML = `<span class="nav-icon">📂</span><strong>${cleanFileName}</strong>${lineLabel ? ` <span class="chiron-nav-line">${lineLabel}</span>` : ''}`;
+
+    const tools = document.createElement('div');
+    tools.className = 'chiron-popover-tools';
+
+    const settingsBtn = document.createElement('button');
+    settingsBtn.type = 'button';
+    settingsBtn.className = 'chiron-popover-tool-btn';
+    settingsBtn.title = 'Pengaturan IDE & Mode Tampilan';
+    settingsBtn.innerHTML = '⚙️';
+
+    tools.appendChild(settingsBtn);
+    header.appendChild(fileMeta);
+    header.appendChild(tools);
+    popover.appendChild(header);
+
+    // 2. Subtitle / branch info
+    if (parsed.branch) {
+      const sub = document.createElement('div');
+      sub.className = 'chiron-popover-sub';
+      sub.innerHTML = `<span class="branch-pill">🌿 ${parsed.branch}</span><span class="path-pill">${parsed.filePath}</span>`;
+      popover.appendChild(sub);
+    }
+
+    // 3. Quick Settings Panel (Toggleable)
+    const settingsPanel = document.createElement('div');
+    settingsPanel.className = 'chiron-popover-settings';
+    settingsPanel.innerHTML = `
+      <div class="chiron-settings-title">
+        <span>Pengaturan Navigasi</span>
+        <span style="font-size: 0.8em; color: #94a3b8;">Preferensi Lokal</span>
+      </div>
+      <div class="chiron-settings-group">
+        <label class="chiron-settings-label">Mode Tampilan:</label>
+        <div class="chiron-settings-modes">
+          <button type="button" class="chiron-mode-btn ${prefs.displayMode === 'popover' ? 'active' : ''}" data-mode="popover">⚡ Smart Popover</button>
+          <button type="button" class="chiron-mode-btn ${prefs.displayMode === 'fullbar' ? 'active' : ''}" data-mode="fullbar">🖥️ Full Bar</button>
+        </div>
+      </div>
+      <div class="chiron-settings-group">
+        <label class="chiron-settings-label">Pilihan IDE Aktif:</label>
+        <div class="chiron-checkbox-list">
+          ${SUPPORTED_IDES.map(item => `
+            <label class="chiron-checkbox-item">
+              <input type="checkbox" data-ide="${item.id}" ${prefs.enabledIdes.includes(item.id) ? 'checked' : ''} />
+              <span>${item.icon} ${item.label}</span>
+            </label>
+          `).join('')}
+        </div>
+      </div>
+    `;
+
+    settingsBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      settingsPanel.classList.toggle('open');
+    });
+
+    // Wire settings panel interactions
+    const modeBtns = settingsPanel.querySelectorAll('.chiron-mode-btn');
+    modeBtns.forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const mode = btn.getAttribute('data-mode');
+        savePreferences({ displayMode: mode });
+        modeBtns.forEach(b => b.classList.toggle('active', b === btn));
+      });
+    });
+
+    const checkboxes = settingsPanel.querySelectorAll('input[type="checkbox"]');
+    checkboxes.forEach(cb => {
+      cb.addEventListener('change', (e) => {
+        e.stopPropagation();
+        const activeIds = Array.from(checkboxes).filter(c => c.checked).map(c => c.getAttribute('data-ide'));
+        if (activeIds.length === 0) {
+          // Keep at least 1 enabled
+          cb.checked = true;
+          showToast('Minimal satu IDE harus tetap aktif.', 'warning');
+          return;
+        }
+        savePreferences({ enabledIdes: activeIds });
+      });
+    });
+
+    popover.appendChild(settingsPanel);
+
+    // 4. Action buttons list (Filtered by user preferences)
+    const list = document.createElement('div');
+    list.className = 'chiron-popover-list';
+
+    const enabledList = SUPPORTED_IDES.filter(item => prefs.enabledIdes.includes(item.id));
+    if (enabledList.length === 0) {
+      enabledList.push(SUPPORTED_IDES[0]); // Fallback GitLab
+    }
+
+    enabledList.forEach(item => {
+      const row = document.createElement('a');
+      row.href = '#';
+      row.className = `chiron-popover-item cab-${item.id}`;
+      row.setAttribute('role', 'button');
+      row.innerHTML = `
+        <div class="chiron-popover-item-left">
+          <span class="chiron-popover-item-icon">${item.icon}</span>
+          <div>
+            <div class="chiron-popover-item-title">${item.label}</div>
+            <div class="chiron-popover-item-desc">${item.desc}</div>
+          </div>
+        </div>
+        <span class="chiron-popover-item-arrow">↗</span>
+      `;
+      row.addEventListener('click', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        hidePopover(true);
+        openInIde(item.id, parsed, { line: parsed.startLine });
+      });
+      list.appendChild(row);
+    });
+
+    popover.appendChild(list);
+
+    // 5. Positioning logic
+    const isMobile = typeof window !== 'undefined' && window.innerWidth <= 520;
+    const backdrop = document.getElementById('chiron-popover-backdrop');
+
+    if (isMobile) {
+      popover.style.left = '';
+      popover.style.top = '';
+      if (backdrop) backdrop.classList.add('show');
+    } else if (typeof triggerEl.getBoundingClientRect === 'function') {
+      const rect = triggerEl.getBoundingClientRect();
+      const scrollY = window.pageYOffset || document.documentElement.scrollTop;
+      const scrollX = window.pageXOffset || document.documentElement.scrollLeft;
+      const popoverWidth = 330;
+      const popoverEstimatedHeight = 240;
+
+      // Horizontal alignment: align with trigger left, clamp within window
+      let targetLeft = rect.left + scrollX;
+      if (targetLeft + popoverWidth > window.innerWidth - 16) {
+        targetLeft = Math.max(16, window.innerWidth - popoverWidth - 16);
+      }
+
+      // Vertical alignment: prefer below trigger, flip to top if close to bottom
+      let targetTop = rect.bottom + scrollY + 8;
+      if (rect.bottom + popoverEstimatedHeight > window.innerHeight && rect.top > popoverEstimatedHeight) {
+        targetTop = rect.top + scrollY - popoverEstimatedHeight - 8;
+      }
+
+      popover.style.left = `${Math.round(targetLeft)}px`;
+      popover.style.top = `${Math.round(targetTop)}px`;
+    }
+
+    popover.classList.add('show');
+  }
+
+  /**
+   * Re-renders all registered code navigation elements on preference changes.
+   */
+  function refreshAllCodeNavBars() {
+    registryNodes.forEach(reg => {
+      if (reg.container && reg.container.parentNode) {
+        renderNavigationElement(reg.container, reg.parsed, reg.titleText, reg.isInline);
+      }
+    });
+  }
+
+  /**
+   * Renders either the inline Pill Badge, Compact Bar, or Full Action Bar into a container node.
+   */
+  function renderNavigationElement(container, parsed, titleText, isInline) {
+    const prefs = getPreferences();
+    container.innerHTML = '';
+
+    const cleanFileName = (parsed.filePath || '').split('/').pop() || 'Code';
+    const lineLabel = parsed.startLine ? (parsed.endLine ? `L${parsed.startLine}-${parsed.endLine}` : `L${parsed.startLine}`) : '';
+
+    if (prefs.displayMode === 'popover') {
+      if (isInline) {
+        // Mode A: Inline Capsule Pill ([📂 filename :Lxx ▾])
+        container.className = 'chiron-nav-pill chiron-nav-code';
+        container.title = `Navigasi Kode: ${parsed.filePath}${lineLabel ? ` (${lineLabel})` : ''} - Tap/Hover untuk pilihan IDE`;
+        container.innerHTML = `<span class="nav-icon">📂</span><span class="nav-title">${cleanFileName}</span>${lineLabel ? `<span class="nav-line">${lineLabel}</span>` : ''}<span class="nav-caret">▾</span>`;
+
+        container.onclick = (e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          showPopover(container, parsed);
+        };
+        container.onmouseenter = () => scheduleShowPopover(container, parsed, 120);
+        container.onmouseleave = () => scheduleHidePopover(220);
+      } else {
+        // Mode B: Standalone Compact Action Bar with [🚀 Buka di IDE ▾]
+        container.className = 'chiron-code-action-bar chiron-cab-compact';
+
+        const meta = document.createElement('div');
+        meta.className = 'chiron-cab-meta';
+
+        const titleSpan = document.createElement('span');
+        titleSpan.className = 'chiron-cab-title chiron-nav-code';
+        titleSpan.innerHTML = `<span class="nav-icon">📂</span><strong>${cleanFileName}</strong>${titleText ? ` <span class="chiron-cab-sub">${titleText}</span>` : ''}`;
+        meta.appendChild(titleSpan);
+
+        if (parsed.branch) {
+          const branchBadge = document.createElement('span');
+          branchBadge.className = 'chiron-cab-branch';
+          branchBadge.textContent = parsed.branch;
+          meta.appendChild(branchBadge);
+        }
+
+        if (parsed.startLine) {
+          const lineBadge = document.createElement('span');
+          lineBadge.className = 'chiron-cab-line';
+          lineBadge.textContent = lineLabel;
+          meta.appendChild(lineBadge);
+        }
+
+        const actions = document.createElement('div');
+        actions.className = 'chiron-cab-actions';
+
+        const triggerBtn = document.createElement('button');
+        triggerBtn.type = 'button';
+        triggerBtn.className = 'chiron-cab-btn chiron-cab-trigger';
+        triggerBtn.title = 'Pilih IDE untuk navigasi';
+        triggerBtn.innerHTML = `<span class="cab-icon">🚀</span><span class="cab-label">Buka di IDE</span> <span class="nav-caret">▾</span>`;
+
+        triggerBtn.onclick = (e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          showPopover(triggerBtn, parsed);
+        };
+        triggerBtn.onmouseenter = () => scheduleShowPopover(triggerBtn, parsed, 120);
+        triggerBtn.onmouseleave = () => scheduleHidePopover(220);
+
+        const settingsBtn = document.createElement('button');
+        settingsBtn.type = 'button';
+        settingsBtn.className = 'chiron-cab-btn chiron-cab-settings-btn';
+        settingsBtn.title = 'Pengaturan IDE';
+        settingsBtn.innerHTML = `<span class="cab-icon">⚙️</span>`;
+        settingsBtn.onclick = (e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          showPopover(settingsBtn, parsed);
+          // Auto open settings tab inside popover
+          setTimeout(() => {
+            const p = document.getElementById('chiron-ide-popover-dialog');
+            if (p) {
+              const sp = p.querySelector('.chiron-popover-settings');
+              if (sp) sp.classList.add('open');
+            }
+          }, 50);
+        };
+
+        actions.appendChild(triggerBtn);
+        actions.appendChild(settingsBtn);
+
+        container.appendChild(meta);
+        container.appendChild(actions);
+      }
+    } else {
+      // Mode C: Full Action Bar (Cara lama, dengan filter pilihan IDE pengguna)
+      container.className = 'chiron-code-action-bar chiron-cab-full';
+
+      const meta = document.createElement('div');
+      meta.className = 'chiron-cab-meta';
+
+      const titleSpan = document.createElement('span');
+      titleSpan.className = 'chiron-cab-title chiron-nav-code';
+      titleSpan.innerHTML = `<span class="nav-icon">📂</span><strong>${cleanFileName}</strong>${titleText ? ` <span class="chiron-cab-sub">${titleText}</span>` : ''}`;
+      meta.appendChild(titleSpan);
+
+      if (parsed.branch) {
+        const branchBadge = document.createElement('span');
+        branchBadge.className = 'chiron-cab-branch';
+        branchBadge.textContent = parsed.branch;
+        meta.appendChild(branchBadge);
+      }
+
+      if (parsed.startLine) {
+        const lineBadge = document.createElement('span');
+        lineBadge.className = 'chiron-cab-line';
+        lineBadge.textContent = lineLabel;
+        meta.appendChild(lineBadge);
+      }
+
+      const actions = document.createElement('div');
+      actions.className = 'chiron-cab-actions';
+
+      const enabledList = SUPPORTED_IDES.filter(item => prefs.enabledIdes.includes(item.id));
+      if (enabledList.length === 0) {
+        enabledList.push(SUPPORTED_IDES[0]);
+      }
+
+      enabledList.forEach(item => {
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = `chiron-cab-btn cab-${item.id}`;
+        btn.title = item.title;
+        btn.setAttribute('aria-label', item.title);
+        btn.innerHTML = `<span class="cab-icon">${item.icon}</span><span class="cab-label">${item.label}</span>`;
+        btn.onclick = (e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          openInIde(item.id, parsed, { line: parsed.startLine });
+        };
+        actions.appendChild(btn);
+      });
+
+      // Quick settings button on full bar
+      const settingsBtn = document.createElement('button');
+      settingsBtn.type = 'button';
+      settingsBtn.className = 'chiron-cab-btn chiron-cab-settings-btn';
+      settingsBtn.title = 'Pengaturan IDE & Mode Tampilan';
+      settingsBtn.innerHTML = `<span class="cab-icon">⚙️</span>`;
+      settingsBtn.onclick = (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        showPopover(settingsBtn, parsed);
+        setTimeout(() => {
+          const p = document.getElementById('chiron-ide-popover-dialog');
+          if (p) {
+            const sp = p.querySelector('.chiron-popover-settings');
+            if (sp) sp.classList.add('open');
+          }
+        }, 50);
+      };
+      actions.appendChild(settingsBtn);
+
+      container.appendChild(meta);
+      container.appendChild(actions);
+    }
+  }
+
   /**
    * Scans document for 'a.gitlab-code-link' elements and transforms them into
-   * the modern Compact Action Bar with [GitLab, Antigravity, Cursor, VS Code, Xcode] buttons.
+   * responsive navigation elements according to user preferences.
    */
-  async function initCodeActionBars(containerElement = null) {
+  async function initCodeActionBars(containerElement = null, options = {}) {
     if (typeof document === 'undefined') {
       return;
+    }
+
+    if (options.forceMode) {
+      savePreferences({ displayMode: options.forceMode });
     }
 
     const root = containerElement || document;
@@ -429,71 +992,27 @@
       // Clean title text from original link
       let titleText = link.textContent || '';
       titleText = titleText.replace(/[🦊↗\n\r]/g, '').trim();
-      // Remove trailing branch badge text if present in textContent
       if (parsed.branch && titleText.includes(parsed.branch)) {
         titleText = titleText.replace(parsed.branch, '').trim();
       }
 
-      const bar = document.createElement('div');
-      bar.className = 'chiron-code-action-bar';
+      const inline = isInlineContext(link);
+      const container = document.createElement(inline ? 'span' : 'div');
 
-      // Meta section (filename, branch, line)
-      const meta = document.createElement('div');
-      meta.className = 'chiron-cab-meta';
+      renderNavigationElement(container, parsed, titleText, inline);
 
-      const titleSpan = document.createElement('span');
-      titleSpan.className = 'chiron-cab-title';
-      const cleanFileName = parsed.filePath.split('/').pop() || 'Code';
-      titleSpan.innerHTML = `<strong>${cleanFileName}</strong>${titleText ? ` <span class="chiron-cab-sub">${titleText}</span>` : ''}`;
-      meta.appendChild(titleSpan);
-
-      if (parsed.branch) {
-        const branchBadge = document.createElement('span');
-        branchBadge.className = 'chiron-cab-branch';
-        branchBadge.textContent = parsed.branch;
-        meta.appendChild(branchBadge);
-      }
-
-      if (parsed.startLine) {
-        const lineBadge = document.createElement('span');
-        lineBadge.className = 'chiron-cab-line';
-        lineBadge.textContent = parsed.endLine ? `L${parsed.startLine}-${parsed.endLine}` : `L${parsed.startLine}`;
-        meta.appendChild(lineBadge);
-      }
-
-      // Actions section (GitLab + Local IDE pills)
-      const actions = document.createElement('div');
-      actions.className = 'chiron-cab-actions';
-
-      const ideList = [
-        { id: 'gitlab', label: 'GitLab', icon: '🦊', title: 'Buka di GitLab Web Browser' },
-        { id: 'antigravity', label: 'Antigravity IDE', icon: '🪐', title: 'Buka di Google Antigravity IDE (Lokal)' },
-        { id: 'cursor', label: 'Cursor', icon: '⚡', title: 'Buka di Cursor IDE (Lokal)' },
-        { id: 'vscode', label: 'VS Code', icon: '💻', title: 'Buka di VS Code (Lokal)' },
-        { id: 'xcode', label: 'Xcode', icon: '🛠️', title: 'Buka di Apple Xcode (Lokal)' }
-      ];
-
-      ideList.forEach((item) => {
-        const btn = document.createElement('button');
-        btn.type = 'button';
-        btn.className = `chiron-cab-btn cab-${item.id}`;
-        btn.title = item.title;
-        btn.setAttribute('aria-label', item.title);
-        btn.innerHTML = `<span class="cab-icon">${item.icon}</span><span class="cab-label">${item.label}</span>`;
-        btn.addEventListener('click', (e) => {
-          e.preventDefault();
-          e.stopPropagation();
-          openInIde(item.id, parsed, { line: parsed.startLine });
-        });
-        actions.appendChild(btn);
+      // Register for preference dynamic updates
+      registryNodes.push({
+        container: container,
+        parsed: parsed,
+        titleText: titleText,
+        isInline: inline,
+        originalLink: link
       });
 
-      bar.appendChild(meta);
-      bar.appendChild(actions);
-
-      // Gracefully replace or attach inside parent
+      // Replace anchor in DOM
       if (link.parentNode) {
-        link.parentNode.replaceChild(bar, link);
+        link.parentNode.replaceChild(container, link);
       }
     });
   }
@@ -515,6 +1034,13 @@
     fetchConfig,
     openInIde,
     initCodeActionBars,
+    getPreferences,
+    savePreferences,
+    SUPPORTED_IDES,
+    isInlineContext,
+    showPopover,
+    hidePopover,
+    refreshAllCodeNavBars,
     DAEMON_BASE_URL
   };
 });

@@ -180,7 +180,7 @@ sequenceDiagram
   </div>
 </div>
 <div id="sub-1-inisiasi-login-ab-testing-tampilan" class="doc-subsection">
-<h4>1. Inisiasi Login &amp; A/B Testing Tampilan</h4>
+<h4>1. Inisiasi Login & A/B Testing Tampilan</h4>
 </div>
 <p>Path: <a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/learn/iOS-Arch/ios/IDSamirLoan/Application/SamirLoginModule/Classes/IDPresenter/IDLoginManager.swift:L48-71" target="_blank" rel="noopener noreferrer">🦊 ios/IDSamirLoan/Application/SamirLoginModule/Classes/IDPresenter/IDLoginManager.swift <span class="branch-tag">learn/iOS-Arch</span> ↗</a></p>
 <p>Aplikasi memiliki konfigurasi A/B testing dinamis untuk halaman login dari endpoint <code>app/config/abtest/loginPage</code>:</p>
@@ -199,7 +199,7 @@ sequenceDiagram
     }
 }</code></pre>
 <div id="sub-2-request-otp-penanganan-multi-channel" class="doc-subsection">
-<h4>2. Request OTP &amp; Penanganan Multi-Channel</h4>
+<h4>2. Request OTP & Penanganan Multi-Channel</h4>
 </div>
 <p>User dapat meminta OTP melalui 3 channel:</p>
 <ul>
@@ -209,7 +209,7 @@ sequenceDiagram
 </ul>
 <p>Setelah OTP dikirim, presenter mencatat timestamp cooldown di <code>getCodeTimerStamp</code> untuk mencegah user melakukan spam tombol OTP sebelum 60 detik berlalu.</p>
 <div id="sub-3-struktur-model-sesi-idlogincodemodel" class="doc-subsection">
-<h4>3. Struktur Model Sesi (`IDLoginCodeModel`)</h4>
+<h4>3. Struktur Model Sesi (<code>IDLoginCodeModel</code>)</h4>
 </div>
 <p>Setelah verifikasi sukses, backend mengembalikan objek sesi penting:</p>
 <ul>
@@ -219,7 +219,7 @@ sequenceDiagram
 <li><strong><code>staticKey</code></strong>: Kunci rahasia dinamis yang <strong>wajib digunakan sebagai seed untuk menandatangani semua request HTTP berikutnya</strong>!</li>
 </ul>
 <div id="sub-4-penyimpanan-sesi-aman-cryptokitaesgcm" class="doc-subsection">
-<h4>4. Penyimpanan Sesi Aman (`CryptoKit.AES.GCM`)</h4>
+<h4>4. Penyimpanan Sesi Aman (<code>CryptoKit.AES.GCM</code>)</h4>
 </div>
 <p>Path: <a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/learn/iOS-Arch/ios/IDSamirLoan/Application/SamirLoginModule/Classes/IDPresenter/IDLoginManager.swift:L81-97, L182-206" target="_blank" rel="noopener noreferrer">🦊 ios/IDSamirLoan/Application/SamirLoginModule/Classes/IDPresenter/IDLoginManager.swift <span class="branch-tag">learn/iOS-Arch</span> ↗</a></p>
 <p>Alih-alih menyimpan token di <code>UserDefaults</code> (yang rentan diintip di perangkat yang ter-jailbreak), aplikasi mengenkripsi seluruh model data menggunakan <strong>AES-GCM 256-bit</strong>:</p>
@@ -277,7 +277,7 @@ private func userModelEncryptionKey() -&gt; SymmetricKey {
 <li>Seluruh tab (termasuk Flutter Mine dan Repay) mendengarkan notifikasi ini dan mereset tampilannya ke mode Tamu.</li>
 </ol>
 <div id="sub-6-investigasi-modul-kyc-samirauthmodule-v1-vs-v2-mana-yang-digunakan" class="doc-subsection">
-<h4>6. Investigasi Modul KYC: `SamirAuthModule` V1 vs V2 — Mana yang Digunakan?</h4>
+<h4>6. Investigasi Modul KYC: <code>SamirAuthModule</code> V1 vs V2 — Mana yang Digunakan?</h4>
 </div>
 <p>Di dalam direktori <a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/learn/iOS-Arch/ios/IDSamirLoan/Application/SamirAuthModule/Classes/" target="_blank" rel="noopener noreferrer">🦊 ios/IDSamirLoan/Application/SamirAuthModule/Classes/ <span class="branch-tag">learn/iOS-Arch</span> ↗</a>, ditemukan struktur folder ganda yang membingungkan:</p>
 <ul>
@@ -344,7 +344,7 @@ func openBankcardPage(_ params: [String: Any]?) {
 </ol>
 </section>
 <section id="sec-why" class="doc-section">
-<h3>⚖️ F. Why It Matters: Peran Sentral `staticKey`</h3>
+<h3>⚖️ F. Why It Matters: Peran Sentral <code>staticKey</code></h3>
 <p>Senior engineer harus memahami bahwa <code>staticKey</code> adalah <strong>jantung dari seluruh komunikasi backend SAMIR</strong>:</p>
 <ul>
 <li>Setiap kali Anda memanggil API apa pun di modul Pinjaman, Auth, atau Repay, pustaka <code>IDNetworkSignatureHandler</code> mengambil:</li>
@@ -367,7 +367,7 @@ func openBankcardPage(_ params: [String: Any]?) {
 <p><code>FlutterEngineManager</code> mengirim event <code>refreshMineHome</code> melalui MethodChannel ke Dart, dan widget Flutter otomatis melakukan query ulang data pengguna!</p>
 </section>
 <section id="sec-mistakes" class="doc-section">
-<h3>⚠️ H. Common Mistakes &amp; Debugging</h3>
+<h3>⚠️ H. Common Mistakes & Debugging</h3>
 <ul>
 <li><strong>Kunci Sesi Hilang Setelah Aplikasi Di-Kill</strong>:</li>
 <li><em>Penyebab</em>: <code>saveUserModel</code> gagal menulis file karena folder <code>Application Support</code> belum dibuat. Di <code>IDLoginManager.swift</code> baris 174, pastikan <code>FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)</code> selalu dipanggil sebelum penulisan.</li>
@@ -572,11 +572,11 @@ public final class DefaultCalculateRepaymentUseCase: CalculateRepaymentUseCase {
               </div>
               <div class="toc-node-row">
                 <span class="toc-leaf-dot"></span>
-                <a class="toc-tree-link" href="#sub-3-struktur-model-sesi-idlogincodemodel">3. Struktur Model Sesi (`IDLoginCodeModel`)</a>
+                <a class="toc-tree-link" href="#sub-3-struktur-model-sesi-idlogincodemodel">3. Struktur Model Sesi (<span class="toc-code">IDLoginCodeModel</span>)</a>
               </div>
               <div class="toc-node-row">
                 <span class="toc-leaf-dot"></span>
-                <a class="toc-tree-link" href="#sub-4-penyimpanan-sesi-aman-cryptokitaesgcm">4. Penyimpanan Sesi Aman (`CryptoKit.AES.GCM`)</a>
+                <a class="toc-tree-link" href="#sub-4-penyimpanan-sesi-aman-cryptokitaesgcm">4. Penyimpanan Sesi Aman (<span class="toc-code">CryptoKit.AES.GCM</span>)</a>
               </div>
               <div class="toc-node-row">
                 <span class="toc-leaf-dot"></span>
@@ -584,7 +584,7 @@ public final class DefaultCalculateRepaymentUseCase: CalculateRepaymentUseCase {
               </div>
               <div class="toc-node-row">
                 <span class="toc-leaf-dot"></span>
-                <a class="toc-tree-link" href="#sub-6-investigasi-modul-kyc-samirauthmodule-v1-vs-v2-mana-yang-digunakan">6. Investigasi Modul KYC: `SamirAuthModule` V1 vs V2 — Mana yang Digunakan?</a>
+                <a class="toc-tree-link" href="#sub-6-investigasi-modul-kyc-samirauthmodule-v1-vs-v2-mana-yang-digunakan">6. Investigasi Modul KYC: <span class="toc-code">SamirAuthModule</span> V1 vs V2 — Mana yang Digunakan?</a>
               </div>
             </div>
           </div>
@@ -594,7 +594,7 @@ public final class DefaultCalculateRepaymentUseCase: CalculateRepaymentUseCase {
           </div>
           <div class="toc-node-row">
             <span class="toc-leaf-dot"></span>
-            <a class="toc-tree-link" href="#sec-why">F. Why It Matters: Peran Sentral `staticKey`</a>
+            <a class="toc-tree-link" href="#sec-why">F. Why It Matters: Peran Sentral <span class="toc-code">staticKey</span></a>
           </div>
           <div class="toc-node-row">
             <span class="toc-leaf-dot"></span>
@@ -688,11 +688,11 @@ public final class DefaultCalculateRepaymentUseCase: CalculateRepaymentUseCase {
             </div>
             <div class="toc-node-row">
               <span class="toc-leaf-dot"></span>
-              <a class="toc-tree-link" href="#sub-3-struktur-model-sesi-idlogincodemodel" onclick="toggleMobileToc()">3. Struktur Model Sesi (`IDLoginCodeModel`)</a>
+              <a class="toc-tree-link" href="#sub-3-struktur-model-sesi-idlogincodemodel" onclick="toggleMobileToc()">3. Struktur Model Sesi (<span class="toc-code">IDLoginCodeModel</span>)</a>
             </div>
             <div class="toc-node-row">
               <span class="toc-leaf-dot"></span>
-              <a class="toc-tree-link" href="#sub-4-penyimpanan-sesi-aman-cryptokitaesgcm" onclick="toggleMobileToc()">4. Penyimpanan Sesi Aman (`CryptoKit.AES.GCM`)</a>
+              <a class="toc-tree-link" href="#sub-4-penyimpanan-sesi-aman-cryptokitaesgcm" onclick="toggleMobileToc()">4. Penyimpanan Sesi Aman (<span class="toc-code">CryptoKit.AES.GCM</span>)</a>
             </div>
             <div class="toc-node-row">
               <span class="toc-leaf-dot"></span>
@@ -700,7 +700,7 @@ public final class DefaultCalculateRepaymentUseCase: CalculateRepaymentUseCase {
             </div>
             <div class="toc-node-row">
               <span class="toc-leaf-dot"></span>
-              <a class="toc-tree-link" href="#sub-6-investigasi-modul-kyc-samirauthmodule-v1-vs-v2-mana-yang-digunakan" onclick="toggleMobileToc()">6. Investigasi Modul KYC: `SamirAuthModule` V1 vs V2 — Mana yang Digunakan?</a>
+              <a class="toc-tree-link" href="#sub-6-investigasi-modul-kyc-samirauthmodule-v1-vs-v2-mana-yang-digunakan" onclick="toggleMobileToc()">6. Investigasi Modul KYC: <span class="toc-code">SamirAuthModule</span> V1 vs V2 — Mana yang Digunakan?</a>
             </div>
           </div>
         </div>
@@ -710,7 +710,7 @@ public final class DefaultCalculateRepaymentUseCase: CalculateRepaymentUseCase {
         </div>
         <div class="toc-node-row">
           <span class="toc-leaf-dot"></span>
-          <a class="toc-tree-link" href="#sec-why" onclick="toggleMobileToc()">F. Why It Matters: Peran Sentral `staticKey`</a>
+          <a class="toc-tree-link" href="#sec-why" onclick="toggleMobileToc()">F. Why It Matters: Peran Sentral <span class="toc-code">staticKey</span></a>
         </div>
         <div class="toc-node-row">
           <span class="toc-leaf-dot"></span>

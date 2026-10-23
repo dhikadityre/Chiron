@@ -116,7 +116,7 @@
 <p>Telah membaca <a href="02-authentication-and-session-sync.html">02-authentication-and-session-sync.md</a> dan <a href="03-repayment-feature-flows.html">03-repayment-feature-flows.md</a>.</p>
 </section>
 <section id="sec-simple" class="doc-section">
-<h3>💡 C. Simple Explanation (Analogi &amp; Konsep Sederhana)</h3>
+<h3>💡 C. Simple Explanation (Analogi & Konsep Sederhana)</h3>
 <p>Bayangkan kartu keanggotaan klub eksklusif dan buku paspor Anda:</p>
 <ul>
 <li><strong>Halaman Dasbor Profil (<code>MineHomePage</code>)</strong>: Seperti kartu keanggotaan yang menampilkan foto profil, nomor telepon, status keaktifan keanggotaan, serta deretan tombol fasilitas klub (kolam renang, restoran, pusat kebugaran).</li>
@@ -126,7 +126,7 @@
 <section id="sec-actual" class="doc-section">
 <h3>💻 D. Actual Implementation (Bukti di Kode Sumber)</h3>
 <div id="sub-1-skema-pengambilan-data-minehomeservice" class="doc-subsection">
-<h4>1. Skema Pengambilan Data: `MineHomeService`</h4>
+<h4>1. Skema Pengambilan Data: <code>MineHomeService</code></h4>
 </div>
 <p>Diimplementasikan pada <a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/learn/Flutter-Arch/flutter/lib/pages/mine/home/services/mine_home_service.dart" target="_blank" rel="noopener noreferrer">🦊 flutter/lib/pages/mine/home/services/mine_home_service.dart <span class="branch-tag">learn/Flutter-Arch</span> ↗</a>:</p>
 <pre><code class="language-dart">class MineHomeService {
@@ -171,7 +171,7 @@
   }
 }</code></pre>
 <div id="sub-2-komponen-header-profil-minehomeheader" class="doc-subsection">
-<h4>2. Komponen Header Profil: `MineHomeHeader`</h4>
+<h4>2. Komponen Header Profil: <code>MineHomeHeader</code></h4>
 </div>
 <p>File <a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/learn/Flutter-Arch/flutter/lib/pages/mine/home/widgets/mine_home_header.dart" target="_blank" rel="noopener noreferrer">🦊 flutter/lib/pages/mine/home/widgets/mine_home_header.dart <span class="branch-tag">learn/Flutter-Arch</span> ↗</a> merender bagian atas halaman profil:</p>
 <ul>
@@ -179,7 +179,7 @@
 <li><strong>Status Guest</strong>: Menampilkan teks <em>"Masuk / Daftar"</em> dengan tombol ajakan registrasi akun baru.</li>
 </ul>
 <div id="sub-3-grid-menu-dinamis-minehomemenu" class="doc-subsection">
-<h4>3. Grid Menu Dinamis: `MineHomeMenu`</h4>
+<h4>3. Grid Menu Dinamis: <code>MineHomeMenu</code></h4>
 </div>
 <p>File <a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/learn/Flutter-Arch/flutter/lib/pages/mine/home/widgets/mine_home_menu.dart" target="_blank" rel="noopener noreferrer">🦊 flutter/lib/pages/mine/home/widgets/mine_home_menu.dart <span class="branch-tag">learn/Flutter-Arch</span> ↗</a> merender menu dalam tata letak kartu grid:</p>
 <ul>
@@ -187,7 +187,7 @@
 <li>Ketika menu ditekan, fungsi router melakukan pencocokan skema rute (apakah internal GoRouter atau delegasi <code>openNativeRoute</code>).</li>
 </ul>
 <div id="sub-4-halaman-verifikasi-dokumen-minepersonalpage" class="doc-subsection">
-<h4>4. Halaman Verifikasi Dokumen: `MinePersonalPage`</h4>
+<h4>4. Halaman Verifikasi Dokumen: <code>MinePersonalPage</code></h4>
 </div>
 <p>Pada <a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/learn/Flutter-Arch/flutter/lib/pages/mine/personal/mine_personal_page.dart" target="_blank" rel="noopener noreferrer">🦊 flutter/lib/pages/mine/personal/mine_personal_page.dart <span class="branch-tag">learn/Flutter-Arch</span> ↗</a>:</p>
 <ul>
@@ -203,7 +203,7 @@
 <li>Menggunakan <code>BasePage</code> dengan tombol back yang menyinkronkan status tab bar native kembali ke <code>hidden: false</code>.</li>
 </ul>
 <div id="sub-5-pintu-rahasia-pengujian-jaringan-easter-egg" class="doc-subsection">
-<h4>5. Pintu Rahasia Pengujian Jaringan (*Easter Egg*)</h4>
+<h4>5. Pintu Rahasia Pengujian Jaringan (<em>Easter Egg</em>)</h4>
 </div>
 <p>Pada <code>MinePersonalPage</code> (baris 80–92):</p>
 <pre><code class="language-dart">int _debugTapCount = 0;
@@ -262,7 +262,7 @@ sequenceDiagram
 </div>
 </section>
 <section id="sec-why" class="doc-section">
-<h3>⚖️ F. Why It Matters (Trade-Offs &amp; Implikasi Teknis)</h3>
+<h3>⚖️ F. Why It Matters (Trade-Offs & Implikasi Teknis)</h3>
 <ul>
 <li><strong>Skema Menu Berbasis Backend (Dynamic Server-Driven UI)</strong>:</li>
 </ul>
@@ -282,7 +282,7 @@ sequenceDiagram
 </ul>
 </section>
 <section id="sec-mistakes" class="doc-section">
-<h3>⚠️ H. Common Mistakes &amp; Debugging</h3>
+<h3>⚠️ H. Common Mistakes & Debugging</h3>
 <ul>
 <li><strong>Lupa Mereset Counter Ketukan Versi</strong>:</li>
 <li>Variabel <code>_debugTapCount</code> harus di-reset ke <code>0</code> setelah membuka halaman debug untuk mencegah terpicunya navigasi ganda yang tidak diinginkan.</li>
@@ -480,19 +480,19 @@ class DefaultGetLoanStatusUseCase implements GetLoanStatusUseCase {
             <div class="toc-branch">
               <div class="toc-node-row">
                 <span class="toc-leaf-dot"></span>
-                <a class="toc-tree-link" href="#sub-1-skema-pengambilan-data-minehomeservice">1. Skema Pengambilan Data: `MineHomeService`</a>
+                <a class="toc-tree-link" href="#sub-1-skema-pengambilan-data-minehomeservice">1. Skema Pengambilan Data: <span class="toc-code">MineHomeService</span></a>
               </div>
               <div class="toc-node-row">
                 <span class="toc-leaf-dot"></span>
-                <a class="toc-tree-link" href="#sub-2-komponen-header-profil-minehomeheader">2. Komponen Header Profil: `MineHomeHeader`</a>
+                <a class="toc-tree-link" href="#sub-2-komponen-header-profil-minehomeheader">2. Komponen Header Profil: <span class="toc-code">MineHomeHeader</span></a>
               </div>
               <div class="toc-node-row">
                 <span class="toc-leaf-dot"></span>
-                <a class="toc-tree-link" href="#sub-3-grid-menu-dinamis-minehomemenu">3. Grid Menu Dinamis: `MineHomeMenu`</a>
+                <a class="toc-tree-link" href="#sub-3-grid-menu-dinamis-minehomemenu">3. Grid Menu Dinamis: <span class="toc-code">MineHomeMenu</span></a>
               </div>
               <div class="toc-node-row">
                 <span class="toc-leaf-dot"></span>
-                <a class="toc-tree-link" href="#sub-4-halaman-verifikasi-dokumen-minepersonalpage">4. Halaman Verifikasi Dokumen: `MinePersonalPage`</a>
+                <a class="toc-tree-link" href="#sub-4-halaman-verifikasi-dokumen-minepersonalpage">4. Halaman Verifikasi Dokumen: <span class="toc-code">MinePersonalPage</span></a>
               </div>
               <div class="toc-node-row">
                 <span class="toc-leaf-dot"></span>
@@ -592,19 +592,19 @@ class DefaultGetLoanStatusUseCase implements GetLoanStatusUseCase {
           <div class="toc-branch">
             <div class="toc-node-row">
               <span class="toc-leaf-dot"></span>
-              <a class="toc-tree-link" href="#sub-1-skema-pengambilan-data-minehomeservice" onclick="toggleMobileToc()">1. Skema Pengambilan Data: `MineHomeService`</a>
+              <a class="toc-tree-link" href="#sub-1-skema-pengambilan-data-minehomeservice" onclick="toggleMobileToc()">1. Skema Pengambilan Data: <span class="toc-code">MineHomeService</span></a>
             </div>
             <div class="toc-node-row">
               <span class="toc-leaf-dot"></span>
-              <a class="toc-tree-link" href="#sub-2-komponen-header-profil-minehomeheader" onclick="toggleMobileToc()">2. Komponen Header Profil: `MineHomeHeader`</a>
+              <a class="toc-tree-link" href="#sub-2-komponen-header-profil-minehomeheader" onclick="toggleMobileToc()">2. Komponen Header Profil: <span class="toc-code">MineHomeHeader</span></a>
             </div>
             <div class="toc-node-row">
               <span class="toc-leaf-dot"></span>
-              <a class="toc-tree-link" href="#sub-3-grid-menu-dinamis-minehomemenu" onclick="toggleMobileToc()">3. Grid Menu Dinamis: `MineHomeMenu`</a>
+              <a class="toc-tree-link" href="#sub-3-grid-menu-dinamis-minehomemenu" onclick="toggleMobileToc()">3. Grid Menu Dinamis: <span class="toc-code">MineHomeMenu</span></a>
             </div>
             <div class="toc-node-row">
               <span class="toc-leaf-dot"></span>
-              <a class="toc-tree-link" href="#sub-4-halaman-verifikasi-dokumen-minepersonalpage" onclick="toggleMobileToc()">4. Halaman Verifikasi Dokumen: `MinePersonalPage`</a>
+              <a class="toc-tree-link" href="#sub-4-halaman-verifikasi-dokumen-minepersonalpage" onclick="toggleMobileToc()">4. Halaman Verifikasi Dokumen: <span class="toc-code">MinePersonalPage</span></a>
             </div>
             <div class="toc-node-row">
               <span class="toc-leaf-dot"></span>

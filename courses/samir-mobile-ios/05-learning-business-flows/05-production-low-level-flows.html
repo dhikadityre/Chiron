@@ -111,9 +111,9 @@
 </ol>
 </section>
 <section id="sec-alur-1-pipeline-request-jaringan-penandatanganan-kriptografis-envelope-handling" class="doc-section">
-<h3>📌 Alur 1: Pipeline Request Jaringan, Penandatanganan Kriptografis, &amp; Envelope Handling</h3>
+<h3>📌 Alur 1: Pipeline Request Jaringan, Penandatanganan Kriptografis, & Envelope Handling</h3>
 <div id="sub-1-the-why-arsitektur-motivasi" class="doc-subsection">
-<h4>1. THE &quot;WHY&quot; (Arsitektur &amp; Motivasi)</h4>
+<h4>1. THE "WHY" (Arsitektur & Motivasi)</h4>
 </div>
 <ul>
 <li><strong>Pola Arsitektur</strong>: Layered Client-Adapter Architecture (<code>BusinessService</code> -> <code>IDNetworkRequest</code> Facade -> <code>IDNetworkSignatureHandler</code> -> <code>LibNetSignGenerator</code> C-Wrapper -> <code>CZNetworkCenter</code> -> <code>CZAlamofireBridge</code> -> <code>Alamofire.Session</code>).</li>
@@ -125,7 +125,7 @@
 <li><strong>Centralized Envelope & Session Interception</strong>: Pembongkaran format <code>{code, msg, result}</code> serta penanganan sesi kadaluarsa (<code>code == &quot;10006&quot;</code>) dilakukan secara terpusat di <code>IDNetworkRequest</code>, mengeliminasi boilerplate kode error handling di ratusan controller.</li>
 </ol>
 <div id="sub-2-the-trigger-chain-reaction-alur-eksekusi" class="doc-subsection">
-<h4>2. THE TRIGGER &amp; CHAIN REACTION (Alur Eksekusi)</h4>
+<h4>2. THE TRIGGER & CHAIN REACTION (Alur Eksekusi)</h4>
 </div>
 <ul>
 <li><strong>Entry Point</strong>: Pemanggilan service bisnis oleh presenter atau viewModel, contoh: <code>IDLoanService.requestProductDetail(...)</code> yang mengeksekusi <code>IDNetworkRequest.id_startPOSTRequest(...)</code>.</li>
@@ -198,9 +198,9 @@ sequenceDiagram
 </div>
 </section>
 <section id="sec-alur-2-konfirmasi-pinjaman-perhitungan-biaya-realtime-rx-pengajuan-order-formal" class="doc-section">
-<h3>📌 Alur 2: Konfirmasi Pinjaman, Perhitungan Biaya Realtime (Rx), &amp; Pengajuan Order Formal</h3>
+<h3>📌 Alur 2: Konfirmasi Pinjaman, Perhitungan Biaya Realtime (Rx), & Pengajuan Order Formal</h3>
 <div id="sub-1-the-why-arsitektur-motivasi" class="doc-subsection">
-<h4>1. THE &quot;WHY&quot; (Arsitektur &amp; Motivasi)</h4>
+<h4>1. THE "WHY" (Arsitektur & Motivasi)</h4>
 </div>
 <ul>
 <li><strong>Pola Arsitektur</strong>: Clean MVVM-Rx (Model-View-ViewModel with Reactive Extensions & Unidirectional Data Flow).</li>
@@ -212,7 +212,7 @@ sequenceDiagram
 <li><strong>Decoupled Pricing Engine</strong>: Logika perhitungan bunga, diskon kupon, dan breakdown biaya pinjaman diisolasi di <code>LoanConfirmServiceProtocol</code>, memungkinkan unit testing kalkulasi kredit tanpa instansiasi view.</li>
 </ol>
 <div id="sub-2-the-trigger-chain-reaction-alur-eksekusi" class="doc-subsection">
-<h4>2. THE TRIGGER &amp; CHAIN REACTION (Alur Eksekusi)</h4>
+<h4>2. THE TRIGGER & CHAIN REACTION (Alur Eksekusi)</h4>
 </div>
 <ul>
 <li><strong>Entry Point</strong>: Pengguna membuka halaman konfirmasi pinjaman, memilih kartu tenor produk, memilih voucher kupon, mencentang persetujuan akad, atau menekan tombol konfirmasi pencairan.</li>
@@ -298,9 +298,9 @@ sequenceDiagram
 </div>
 </section>
 <section id="sec-alur-3-navigasi-antar-modul-resolusi-deep-link-ter-decouple-czrouter" class="doc-section">
-<h3>📌 Alur 3: Navigasi Antar-Modul &amp; Resolusi Deep-Link Ter-decouple (CZRouter)</h3>
+<h3>📌 Alur 3: Navigasi Antar-Modul & Resolusi Deep-Link Ter-decouple (CZRouter)</h3>
 <div id="sub-1-the-why-arsitektur-motivasi" class="doc-subsection">
-<h4>1. THE &quot;WHY&quot; (Arsitektur &amp; Motivasi)</h4>
+<h4>1. THE "WHY" (Arsitektur & Motivasi)</h4>
 </div>
 <ul>
 <li><strong>Pola Arsitektur</strong>: Mediator / URL-Based Dynamic Router Pattern (<code>CZSwiftRouterLib</code>).</li>
@@ -312,7 +312,7 @@ sequenceDiagram
 <li><strong>Decentralized Route Handlers</strong>: Setiap modul mendaftarkan domain jalurnya sendiri (<code>IDSamirAuthModuleRouterHandler</code>) ke tabel rute saat bootstrap modul tanpa memodifikasi registry sentral.</li>
 </ol>
 <div id="sub-2-the-trigger-chain-reaction-alur-eksekusi" class="doc-subsection">
-<h4>2. THE TRIGGER &amp; CHAIN REACTION (Alur Eksekusi)</h4>
+<h4>2. THE TRIGGER & CHAIN REACTION (Alur Eksekusi)</h4>
 </div>
 <ul>
 <li><strong>Entry Point</strong>: Pemanggilan in-app via <code>IDRouterManager.open(routerUrl)</code> atau penanganan deep link sistem di <code>AppDelegate.application(_:open:options:)</code>.</li>
@@ -369,9 +369,9 @@ sequenceDiagram
 </div>
 </section>
 <section id="sec-alur-4-transisi-layar-native-ke-persistent-flutter-container-shared-session-bridge" class="doc-section">
-<h3>📌 Alur 4: Transisi Layar Native ke Persistent Flutter Container &amp; Shared Session Bridge</h3>
+<h3>📌 Alur 4: Transisi Layar Native ke Persistent Flutter Container & Shared Session Bridge</h3>
 <div id="sub-1-the-why-arsitektur-motivasi" class="doc-subsection">
-<h4>1. THE &quot;WHY&quot; (Arsitektur &amp; Motivasi)</h4>
+<h4>1. THE "WHY" (Arsitektur & Motivasi)</h4>
 </div>
 <ul>
 <li><strong>Pola Arsitektur</strong>: Prewarmed Single-Engine Persistent Host Bridge (<code>FlutterEngineManager</code> + <code>FlutterNativeChannel</code> + MethodChannel RPC).</li>
@@ -383,7 +383,7 @@ sequenceDiagram
 <li><strong>Single Source of Truth (SSOT) Session</strong>: Flutter tidak mengelola token otentikasi atau hashing tanda tangan sendiri; seluruh parameter perangkat dan <code>staticKey</code> dipinjam dari Native via method channel <code>getNativeRequestParams</code>.</li>
 </ol>
 <div id="sub-2-the-trigger-chain-reaction-alur-eksekusi" class="doc-subsection">
-<h4>2. THE TRIGGER &amp; CHAIN REACTION (Alur Eksekusi)</h4>
+<h4>2. THE TRIGGER & CHAIN REACTION (Alur Eksekusi)</h4>
 </div>
 <ul>
 <li><strong>Entry Point</strong>: Pengguna mengetuk Tab 1 ("Tagihan" / <code>IDRepayViewController</code>) atau Tab 2 ("Akun Saya" / <code>IDMineViewController</code>) pada native bottom TabBar.</li>

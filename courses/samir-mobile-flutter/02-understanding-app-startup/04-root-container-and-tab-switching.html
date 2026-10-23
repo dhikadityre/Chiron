@@ -112,7 +112,7 @@
 <p>Telah membaca <a href="03-startup-sequence-and-initial-routing.html">03-startup-sequence-and-initial-routing.md</a>.</p>
 </section>
 <section id="sec-simple" class="doc-section">
-<h3>💡 C. Simple Explanation (Analogi &amp; Konsep Sederhana)</h3>
+<h3>💡 C. Simple Explanation (Analogi & Konsep Sederhana)</h3>
 <p>Bayangkan sebuah proyektor film dengan dua slide transparan yang terpasang di atas rel bergeser:</p>
 <ul>
 <li>Slide 1 adalah <strong>Halaman Profil (Mine)</strong>.</li>
@@ -125,7 +125,7 @@
 <section id="sec-actual" class="doc-section">
 <h3>💻 D. Actual Implementation (Bukti di Kode Sumber)</h3>
 <div id="sub-1-bedah-flutterrootcontroller" class="doc-subsection">
-<h4>1. Bedah `FlutterRootController`</h4>
+<h4>1. Bedah <code>FlutterRootController</code></h4>
 </div>
 <p>File <a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/learn/Flutter-Arch/flutter/lib/common/router/flutter_root_controller.dart" target="_blank" rel="noopener noreferrer">🦊 flutter/lib/common/router/flutter_root_controller.dart <span class="branch-tag">learn/Flutter-Arch</span> ↗</a> bertindak sebagai State Store reaktif murni tanpa dependensi eksternal:</p>
 <pre><code class="language-dart">abstract final class FlutterRootController {
@@ -156,7 +156,7 @@
 <li>Idempoten: Jika path yang dipilih sama dengan path saat ini (<code>selectedPath.value == path</code>), notifikasi diabaikan untuk mencegah siklus render sia-sia.</li>
 </ul>
 <div id="sub-2-bedah-flutterrootpage" class="doc-subsection">
-<h4>2. Bedah `FlutterRootPage`</h4>
+<h4>2. Bedah <code>FlutterRootPage</code></h4>
 </div>
 <p>File <a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/learn/Flutter-Arch/flutter/lib/pages/root/flutter_root_page.dart" target="_blank" rel="noopener noreferrer">🦊 flutter/lib/pages/root/flutter_root_page.dart <span class="branch-tag">learn/Flutter-Arch</span> ↗</a>:</p>
 <pre><code class="language-dart">class FlutterRootPage extends StatefulWidget {
@@ -259,7 +259,7 @@ class _FlutterRootPageState extends State&lt;FlutterRootPage&gt; {
 </ul>
 </section>
 <section id="sec-why" class="doc-section">
-<h3>⚖️ F. Why It Matters (Trade-Offs &amp; Implikasi Teknis)</h3>
+<h3>⚖️ F. Why It Matters (Trade-Offs & Implikasi Teknis)</h3>
 <ul>
 <li><strong>Menghilangkan Tab Switching Latency</strong>:</li>
 </ul>
@@ -278,7 +278,7 @@ class _FlutterRootPageState extends State&lt;FlutterRootPage&gt; {
 </ul>
 </section>
 <section id="sec-mistakes" class="doc-section">
-<h3>⚠️ H. Common Mistakes &amp; Debugging</h3>
+<h3>⚠️ H. Common Mistakes & Debugging</h3>
 <ul>
 <li><strong>Lupa Melepas Listener pada <code>dispose()</code></strong>:</li>
 <li><code>FlutterRootController.selectedPath.removeListener(_handleSelectionChanged)</code> wajib dipanggil di fungsi <code>dispose()</code> untuk mencegah memory leak.</li>
@@ -482,11 +482,11 @@ class StartupTaskCoordinator {
             <div class="toc-branch">
               <div class="toc-node-row">
                 <span class="toc-leaf-dot"></span>
-                <a class="toc-tree-link" href="#sub-1-bedah-flutterrootcontroller">1. Bedah `FlutterRootController`</a>
+                <a class="toc-tree-link" href="#sub-1-bedah-flutterrootcontroller">1. Bedah <span class="toc-code">FlutterRootController</span></a>
               </div>
               <div class="toc-node-row">
                 <span class="toc-leaf-dot"></span>
-                <a class="toc-tree-link" href="#sub-2-bedah-flutterrootpage">2. Bedah `FlutterRootPage`</a>
+                <a class="toc-tree-link" href="#sub-2-bedah-flutterrootpage">2. Bedah <span class="toc-code">FlutterRootPage</span></a>
               </div>
               <div class="toc-node-row">
                 <span class="toc-leaf-dot"></span>
@@ -586,11 +586,11 @@ class StartupTaskCoordinator {
           <div class="toc-branch">
             <div class="toc-node-row">
               <span class="toc-leaf-dot"></span>
-              <a class="toc-tree-link" href="#sub-1-bedah-flutterrootcontroller" onclick="toggleMobileToc()">1. Bedah `FlutterRootController`</a>
+              <a class="toc-tree-link" href="#sub-1-bedah-flutterrootcontroller" onclick="toggleMobileToc()">1. Bedah <span class="toc-code">FlutterRootController</span></a>
             </div>
             <div class="toc-node-row">
               <span class="toc-leaf-dot"></span>
-              <a class="toc-tree-link" href="#sub-2-bedah-flutterrootpage" onclick="toggleMobileToc()">2. Bedah `FlutterRootPage`</a>
+              <a class="toc-tree-link" href="#sub-2-bedah-flutterrootpage" onclick="toggleMobileToc()">2. Bedah <span class="toc-code">FlutterRootPage</span></a>
             </div>
             <div class="toc-node-row">
               <span class="toc-leaf-dot"></span>

@@ -85,7 +85,7 @@ def resolve_local_file_path(gitlab_project: str, branch: str, rel_file_path: str
     if not local_path_str:
         raise ValueError(f"No local path configured for repository '{target_repo_key}'")
 
-    repo_root = Path(local_path_str).resolve()
+    repo_root = Path(os.path.expanduser(local_path_str)).resolve()
     clean_rel = rel_file_path.strip().lstrip("/")
     full_path = (repo_root / clean_rel).resolve()
 

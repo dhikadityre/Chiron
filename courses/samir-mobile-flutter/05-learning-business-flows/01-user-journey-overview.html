@@ -116,7 +116,7 @@
 <p>Telah membaca <a href="../04-understanding-navigation/01-feature-inventory.html">Level 4: GoRouter &amp; Native Chrome Sync</a>.</p>
 </section>
 <section id="sec-simple" class="doc-section">
-<h3>💡 C. Simple Explanation (Analogi &amp; Konsep Sederhana)</h3>
+<h3>💡 C. Simple Explanation (Analogi & Konsep Sederhana)</h3>
 <p>Bayangkan seorang pelanggan yang menyewa kendaraan di perusahaan rental mobil:</p>
 <ol>
 <li><strong>Fase Pengenalan</strong>: Calon pelanggan melihat etalase layanan dan membaca syarat ketentuan di loket informasi (Tab Saya - Status Guest).</li>
@@ -163,7 +163,7 @@ journey
 <section id="sec-walkthrough" class="doc-section">
 <h3>📌 E. Rincian Fase Perjalanan</h3>
 <div id="sub-fase-1-tamu-pengguna-belum-login-guest-state" class="doc-subsection">
-<h4>Fase 1: Tamu / Pengguna Belum Login (*Guest State*)</h4>
+<h4>Fase 1: Tamu / Pengguna Belum Login (<em>Guest State</em>)</h4>
 </div>
 <ul>
 <li><strong>Kondisi Data</strong>: <code>Global.isLogin == false</code>, <code>Global.mid == null</code>.</li>
@@ -175,7 +175,7 @@ journey
 <li>Seluruh menu umum (Pusat Bantuan, Tentang Kami) tetap dapat diakses, namun menu khusus akun (Kupon, Riwayat) akan memicu guard otentikasi.</li>
 </ul>
 <div id="sub-fase-2-pemantauan-pinjaman-aktif-active-loan-monitoring" class="doc-subsection">
-<h4>Fase 2: Pemantauan Pinjaman Aktif (*Active Loan Monitoring*)</h4>
+<h4>Fase 2: Pemantauan Pinjaman Aktif (<em>Active Loan Monitoring</em>)</h4>
 </div>
 <ul>
 <li><strong>Kondisi Data</strong>: Nasabah telah disetujui pinjamannya di Beranda Native (Tab 0) dan dana telah dicairkan ke rekening bank nasabah.</li>
@@ -187,7 +187,7 @@ journey
 <li>Jika tanggal pembayaran sudah dekat, Flutter meminta native untuk menampilkan pop-up insentif: <code>requestRepayBenefitPopup(&#x27;repay_home&#x27;)</code>.</li>
 </ul>
 <div id="sub-fase-3-pengambilan-kode-bayar-payment-execution" class="doc-subsection">
-<h4>Fase 3: Pengambilan Kode Bayar (*Payment Execution*)</h4>
+<h4>Fase 3: Pengambilan Kode Bayar (<em>Payment Execution</em>)</h4>
 </div>
 <ul>
 <li>Nasabah menekan tombol <em>"Bayar Sekarang"</em>.</li>
@@ -195,7 +195,7 @@ journey
 <li>Nasabah menyalin nomor kode bayar dengan sekali ketuk untuk dimasukkan ke aplikasi Mobile Banking atau diserahkan ke kasir minimarket.</li>
 </ul>
 <div id="sub-fase-4-pasca-pelunasan-siklus-berulang-settled-state" class="doc-subsection">
-<h4>Fase 4: Pasca-Pelunasan &amp; Siklus Berulang (*Settled State*)</h4>
+<h4>Fase 4: Pasca-Pelunasan & Siklus Berulang (<em>Settled State</em>)</h4>
 </div>
 <ul>
 <li>Begitu transfer pembayaran diverifikasi oleh sistem backend:</li>
@@ -206,7 +206,7 @@ journey
 </ul>
 </section>
 <section id="sec-why" class="doc-section">
-<h3>⚖️ F. Why It Matters (Trade-Offs &amp; Implikasi Teknis)</h3>
+<h3>⚖️ F. Why It Matters (Trade-Offs & Implikasi Teknis)</h3>
 <ul>
 <li><strong>Mengurangi Beban Kognitif Pengguna</strong>:</li>
 </ul>
@@ -221,7 +221,7 @@ journey
 </ul>
 </section>
 <section id="sec-mistakes" class="doc-section">
-<h3>⚠️ H. Common Mistakes &amp; Debugging</h3>
+<h3>⚠️ H. Common Mistakes & Debugging</h3>
 <ul>
 <li><strong>Berasumsi Pengguna Selalu Terotentikasi di Flutter</strong>:</li>
 <li>Jangan pernah memanggil API <code>repayment/repayOrderList</code> sebelum memastikan <code>_nativeState.isLogin == true</code>. Mengirimkan request tanpa token akan menghasilkan error respon <code>10006</code> yang memicu pembersihan sesi secara paksa.</li>

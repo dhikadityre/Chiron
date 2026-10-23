@@ -118,7 +118,7 @@
 </ul>
 </section>
 <section id="sec-simple" class="doc-section">
-<h3>💡 C. Simple Explanation: &quot;Mengetahui Kabel Mana yang Menyetrum Sebelum Memotong&quot;</h3>
+<h3>💡 C. Simple Explanation: "Mengetahui Kabel Mana yang Menyetrum Sebelum Memotong"</h3>
 <p>Bayangkan Anda sedang merenovasi sirkuit kelistrikan di gedung bertingkat. Jika Anda memotong kabel lampu di koridor lantai 3, hanya lampu koridor yang padam. Namun, jika Anda mencabut sekring utama di ruang genset bawah tanah, seluruh gedung akan gelap gulita dan lift akan berhenti mendadak.</p>
 <p>Di SAMIR:</p>
 <ul>
@@ -158,7 +158,7 @@ graph TD
   </div>
 </div>
 <div id="sub-1-zona-berbahaya-1-networking-headers-signature-verified" class="doc-subsection">
-<h4>1. Zona Berbahaya 1: Networking, Headers, &amp; Signature `[Verified]`</h4>
+<h4>1. Zona Berbahaya 1: Networking, Headers, & Signature <code>[Verified]</code></h4>
 </div>
 <ul>
 <li><strong>File Kunci:</strong></li>
@@ -172,7 +172,7 @@ graph TD
 <li><strong>Akibat:</strong> Seluruh panggilan API di aplikasi (Login, Home, KYC, Konfirmasi Pinjaman, Repayment) akan serentak ditolak oleh server gateway dengan respons error <code>code: 10004 (Signature verification failed)</code>.</li>
 </ul>
 <div id="sub-2-zona-berbahaya-2-router-tables-url-schemes-verified" class="doc-subsection">
-<h4>2. Zona Berbahaya 2: Router Tables &amp; URL Schemes `[Verified]`</h4>
+<h4>2. Zona Berbahaya 2: Router Tables & URL Schemes <code>[Verified]</code></h4>
 </div>
 <ul>
 <li><strong>File Kunci:</strong></li>
@@ -195,7 +195,7 @@ graph TD
 <li>Jika Anda mendaftarkan handler baru dengan nama host yang sudah ada, aplikasi akan crash saat diluncurkan: <code>assertionFailure(&quot;Host already exists&quot;)</code>.</li>
 </ul>
 <div id="sub-3-zona-berbahaya-3-saluran-hybrid-flutter-samir-native-channel-verified" class="doc-subsection">
-<h4>3. Zona Berbahaya 3: Saluran Hybrid Flutter (`samir_native_channel`) `[Verified]`</h4>
+<h4>3. Zona Berbahaya 3: Saluran Hybrid Flutter (<code>samir_native_channel</code>) <code>[Verified]</code></h4>
 </div>
 <ul>
 <li><strong>File Kunci:</strong></li>
@@ -211,7 +211,7 @@ graph TD
 <li><strong>Skenario Bencana:</strong> Mengubah tipe payload dictionary atau nama method channel di sisi Swift tanpa memperbarui kode Dart di repository <code>flutter/</code> akan mengakibatkan halaman Repay dan Mine menampilkan layar putih (blank screen) atau sesi token tidak sinkron.</li>
 </ul>
 <div id="sub-4-zona-berbahaya-4-penyimpanan-sesi-pengguna-lokal-idlogincodemodel-verified" class="doc-subsection">
-<h4>4. Zona Berbahaya 4: Penyimpanan Sesi Pengguna Lokal (`IDLoginCodeModel`) `[Verified]`</h4>
+<h4>4. Zona Berbahaya 4: Penyimpanan Sesi Pengguna Lokal (<code>IDLoginCodeModel</code>) <code>[Verified]</code></h4>
 </div>
 <ul>
 <li><strong>File Kunci:</strong></li>
@@ -227,7 +227,7 @@ graph TD
 <h3>📌 E. Pre-PR Verification Checklist: Standar Wajib Sebelum Merge Kode</h3>
 <p>Gunakan checklist ini setiap kali Anda atau anggota tim hendak mengajukan Pull Request (PR):</p>
 <div id="sub-1-build-configuration-verification" class="doc-subsection">
-<h4>1. Build &amp; Configuration Verification</h4>
+<h4>1. Build & Configuration Verification</h4>
 </div>
 <ul>
 <li>[ ] Proyek berhasil dicompile di bawah keempat build scheme:</li>
@@ -239,7 +239,7 @@ graph TD
 <li>[ ] File konfigurasi build (<code>IDSamirLoan.xcodeproj/project.pbxproj</code>) tidak mengalami modifikasi bundle identifier, provisioning profile, atau deployment target tanpa persetujuan tim lead.</li>
 </ul>
 <div id="sub-2-networking-routing-verification" class="doc-subsection">
-<h4>2. Networking &amp; Routing Verification</h4>
+<h4>2. Networking & Routing Verification</h4>
 </div>
 <ul>
 <li>[ ] Tidak ada perubahan nama key pada <code>ApiParamsHelper.swift</code>.</li>
@@ -249,7 +249,7 @@ graph TD
 <li>[ ] Format skema URL baru telah didokumentasikan di katalog rute dan divalidasi terhadap event H5 JSBridge.</li>
 </ul>
 <div id="sub-3-memory-safety-verification" class="doc-subsection">
-<h4>3. Memory &amp; Safety Verification</h4>
+<h4>3. Memory & Safety Verification</h4>
 </div>
 <ul>
 <li>[ ] Tidak ada penambahan <em>force unwrap</em> (<code>!</code>) atau <em>force cast</em> (<code>as!</code>) baru pada model decoding dan parsing respons API. Gunakan <code>guard let</code> defensif.</li>
@@ -266,7 +266,7 @@ graph TD
 </ul>
 </section>
 <section id="sec-why" class="doc-section">
-<h3>⚖️ F. Why It Matters: Stabilitas Finansial &amp; Kepercayaan Pengguna</h3>
+<h3>⚖️ F. Why It Matters: Stabilitas Finansial & Kepercayaan Pengguna</h3>
 <p>Sebagai aplikasi pinjaman online berlisensi OJK, kestabilan aplikasi memiliki korelasi langsung dengan reputasi dan finansial perusahaan:</p>
 <ul>
 <li><strong>Kegagalan Signature (10004):</strong> Menghentikan 100% penyaluran pinjaman (disbursement) dan pelunasan angsuran. Kerugian finansial terjadi setiap menit sistem offline.</li>
@@ -291,7 +291,7 @@ params[&quot;deviceModel&quot;] = UIDevice.current.model
 <section id="sec-mistakes" class="doc-section">
 <h3>⚠️ H. Common Mistakes and Debugging</h3>
 <div id="sub-1-menguji-perubahan-hanya-di-skema-test" class="doc-subsection">
-<h4>1. Menguji Perubahan Hanya di Skema `TEST`</h4>
+<h4>1. Menguji Perubahan Hanya di Skema <code>TEST</code></h4>
 </div>
 <ul>
 <li><strong>Kesalahan:</strong> Lupa menguji di skema <code>PROD</code>.</li>
@@ -502,19 +502,19 @@ public final class AppSessionManager: SessionProvider {
             <div class="toc-branch">
               <div class="toc-node-row">
                 <span class="toc-leaf-dot"></span>
-                <a class="toc-tree-link" href="#sub-1-zona-berbahaya-1-networking-headers-signature-verified">1. Zona Berbahaya 1: Networking, Headers, &amp; Signature `[Verified]`</a>
+                <a class="toc-tree-link" href="#sub-1-zona-berbahaya-1-networking-headers-signature-verified">1. Zona Berbahaya 1: Networking, Headers, &amp; Signature <span class="toc-code">[Verified]</span></a>
               </div>
               <div class="toc-node-row">
                 <span class="toc-leaf-dot"></span>
-                <a class="toc-tree-link" href="#sub-2-zona-berbahaya-2-router-tables-url-schemes-verified">2. Zona Berbahaya 2: Router Tables &amp; URL Schemes `[Verified]`</a>
+                <a class="toc-tree-link" href="#sub-2-zona-berbahaya-2-router-tables-url-schemes-verified">2. Zona Berbahaya 2: Router Tables &amp; URL Schemes <span class="toc-code">[Verified]</span></a>
               </div>
               <div class="toc-node-row">
                 <span class="toc-leaf-dot"></span>
-                <a class="toc-tree-link" href="#sub-3-zona-berbahaya-3-saluran-hybrid-flutter-samir-native-channel-verified">3. Zona Berbahaya 3: Saluran Hybrid Flutter (`samir_native_channel`) `[Verified]`</a>
+                <a class="toc-tree-link" href="#sub-3-zona-berbahaya-3-saluran-hybrid-flutter-samir-native-channel-verified">3. Zona Berbahaya 3: Saluran Hybrid Flutter (<span class="toc-code">samir_native_channel</span>) <span class="toc-code">[Verified]</span></a>
               </div>
               <div class="toc-node-row">
                 <span class="toc-leaf-dot"></span>
-                <a class="toc-tree-link" href="#sub-4-zona-berbahaya-4-penyimpanan-sesi-pengguna-lokal-idlogincodemodel-verified">4. Zona Berbahaya 4: Penyimpanan Sesi Pengguna Lokal (`IDLoginCodeModel`) `[Verified]`</a>
+                <a class="toc-tree-link" href="#sub-4-zona-berbahaya-4-penyimpanan-sesi-pengguna-lokal-idlogincodemodel-verified">4. Zona Berbahaya 4: Penyimpanan Sesi Pengguna Lokal (<span class="toc-code">IDLoginCodeModel</span>) <span class="toc-code">[Verified]</span></a>
               </div>
             </div>
           </div>
@@ -558,7 +558,7 @@ public final class AppSessionManager: SessionProvider {
             <div class="toc-branch">
               <div class="toc-node-row">
                 <span class="toc-leaf-dot"></span>
-                <a class="toc-tree-link" href="#sub-1-menguji-perubahan-hanya-di-skema-test">1. Menguji Perubahan Hanya di Skema `TEST`</a>
+                <a class="toc-tree-link" href="#sub-1-menguji-perubahan-hanya-di-skema-test">1. Menguji Perubahan Hanya di Skema <span class="toc-code">TEST</span></a>
               </div>
               <div class="toc-node-row">
                 <span class="toc-leaf-dot"></span>
@@ -642,19 +642,19 @@ public final class AppSessionManager: SessionProvider {
           <div class="toc-branch">
             <div class="toc-node-row">
               <span class="toc-leaf-dot"></span>
-              <a class="toc-tree-link" href="#sub-1-zona-berbahaya-1-networking-headers-signature-verified" onclick="toggleMobileToc()">1. Zona Berbahaya 1: Networking, Headers, &amp; Signature `[Verified]`</a>
+              <a class="toc-tree-link" href="#sub-1-zona-berbahaya-1-networking-headers-signature-verified" onclick="toggleMobileToc()">1. Zona Berbahaya 1: Networking, Headers, &amp; Signature <span class="toc-code">[Verified]</span></a>
             </div>
             <div class="toc-node-row">
               <span class="toc-leaf-dot"></span>
-              <a class="toc-tree-link" href="#sub-2-zona-berbahaya-2-router-tables-url-schemes-verified" onclick="toggleMobileToc()">2. Zona Berbahaya 2: Router Tables &amp; URL Schemes `[Verified]`</a>
+              <a class="toc-tree-link" href="#sub-2-zona-berbahaya-2-router-tables-url-schemes-verified" onclick="toggleMobileToc()">2. Zona Berbahaya 2: Router Tables &amp; URL Schemes <span class="toc-code">[Verified]</span></a>
             </div>
             <div class="toc-node-row">
               <span class="toc-leaf-dot"></span>
-              <a class="toc-tree-link" href="#sub-3-zona-berbahaya-3-saluran-hybrid-flutter-samir-native-channel-verified" onclick="toggleMobileToc()">3. Zona Berbahaya 3: Saluran Hybrid Flutter (`samir_native_channel`) `[Verified]`</a>
+              <a class="toc-tree-link" href="#sub-3-zona-berbahaya-3-saluran-hybrid-flutter-samir-native-channel-verified" onclick="toggleMobileToc()">3. Zona Berbahaya 3: Saluran Hybrid Flutter (<span class="toc-code">samir_native_channel</span>) <span class="toc-code">[Verified]</span></a>
             </div>
             <div class="toc-node-row">
               <span class="toc-leaf-dot"></span>
-              <a class="toc-tree-link" href="#sub-4-zona-berbahaya-4-penyimpanan-sesi-pengguna-lokal-idlogincodemodel-verified" onclick="toggleMobileToc()">4. Zona Berbahaya 4: Penyimpanan Sesi Pengguna Lokal (`IDLoginCodeModel`) `[Verified]`</a>
+              <a class="toc-tree-link" href="#sub-4-zona-berbahaya-4-penyimpanan-sesi-pengguna-lokal-idlogincodemodel-verified" onclick="toggleMobileToc()">4. Zona Berbahaya 4: Penyimpanan Sesi Pengguna Lokal (<span class="toc-code">IDLoginCodeModel</span>) <span class="toc-code">[Verified]</span></a>
             </div>
           </div>
         </div>
@@ -698,7 +698,7 @@ public final class AppSessionManager: SessionProvider {
           <div class="toc-branch">
             <div class="toc-node-row">
               <span class="toc-leaf-dot"></span>
-              <a class="toc-tree-link" href="#sub-1-menguji-perubahan-hanya-di-skema-test" onclick="toggleMobileToc()">1. Menguji Perubahan Hanya di Skema `TEST`</a>
+              <a class="toc-tree-link" href="#sub-1-menguji-perubahan-hanya-di-skema-test" onclick="toggleMobileToc()">1. Menguji Perubahan Hanya di Skema <span class="toc-code">TEST</span></a>
             </div>
             <div class="toc-node-row">
               <span class="toc-leaf-dot"></span>

@@ -112,7 +112,7 @@
 <p>Telah membaca <a href="../01-project-foundation/01-application-overview.html">01-application-overview.md</a> dan <a href="02-source-code-index.html">02-source-code-index.md</a>.</p>
 </section>
 <section id="sec-simple" class="doc-section">
-<h3>💡 C. Simple Explanation (Analogi &amp; Konsep Sederhana)</h3>
+<h3>💡 C. Simple Explanation (Analogi & Konsep Sederhana)</h3>
 <p>Bayangkan denah cetak biru (<em>blueprint</em>) awal sebuah rumah yang digambar oleh arsitek 2 tahun lalu:</p>
 <ul>
 <li>Denah tersebut mencatat rencana pembangunan 4 lantai dengan lift hidrolik.</li>
@@ -125,7 +125,7 @@
 <div class="table-container"><table class="data-table"><thead><tr><th>Aspek / Klaim Dokumentasi Lama</th><th>Bunyi di Dokumen Historis (<code>flutter-migration.md</code>)</th><th>Realitas Aktual di Kode Sumber Saat Ini</th><th>Status Audit</th></tr></thead><tbody><tr><td><strong>Asal Repositori Sumber</strong></td><td>Android dari <code>id-samir-android</code>, iOS dari <code>id-samir-ios</code>.</td><td>Kode digabungkan menjadi monorepo <code>samir-mobile</code> dengan 3 folder: <code>android/</code>, <code>ios/</code>, dan <code>flutter/</code>.</td><td><code>[Verified]</code> Sesuai</td></tr><tr><td><strong>Versi Runtime Flutter/Dart</strong></td><td>Flutter <code>3.41.9</code> dan Dart <code>3.11.5</code>.</td><td>Dikonfirmasi di <code>pubspec.yaml</code> (baris 21–24) versi SDK tetap terkunci ke 3.41.9 / 3.11.5.</td><td><code>[Verified]</code> Sesuai</td></tr><tr><td><strong>Cakupan Halaman Migrasi</strong></td><td><em>"Migrate new pages with fewer dependencies first..."</em></td><td>Halaman Tagihan (<code>RepayHomePage</code>) dan Profil Akun (<code>MineHomePage</code> + <code>MinePersonalPage</code>) telah selesai 100% dimigrasi ke Flutter. Modul Beranda & KYC tetap di Native.</td><td><code>[Verified]</code> Sesuai</td></tr><tr><td><strong>Penggunaan Pigeon untuk Bridge</strong></td><td><em>"Wrap login state, device capabilities... through MethodChannel or Pigeon"</em></td><td><strong>Pigeon TIDAK DIGUNAKAN</strong>. Kode aktif 100% menggunakan <code>MethodChannel</code> standar (<code>samir_native_channel</code>) dengan parsing Dictionary manual di Swift/Dart.</td><td><code>[Inferred]</code> Tidak Diadopsi</td></tr><tr><td><strong>Penghapusan Kode Native Lama</strong></td><td><em>"Remove corresponding native implementations only after each migrated page is stable..."</em></td><td>Di sisi iOS, modul lama seperti <code>IDSamirRepayModule</code> telah disederhanakan menjadi host wrapper <code>IDRepayViewController</code> yang memuat Flutter Engine.</td><td><code>[Verified]</code> Sesuai</td></tr><tr><td><strong>Mekanisme Setup Lokal</strong></td><td><code>flutter pub get</code> -> <code>cd ../ios &amp;&amp; pod install</code>.</td><td>Tetap menjadi alur wajib untuk menghasilkan folder <code>.ios/</code> dan <code>podhelper.rb</code>.</td><td><code>[Verified]</code> Sesuai</td></tr></tbody></table></div>
 </section>
 <section id="sec-walkthrough" class="doc-section">
-<h3>📌 E. Analisis Rencana yang Tertunda &amp; Kompromi Arsitektur</h3>
+<h3>📌 E. Analisis Rencana yang Tertunda & Kompromi Arsitektur</h3>
 <div id="sub-1-mengapa-pigeon-tidak-digunakan" class="doc-subsection">
 <h4>1. Mengapa Pigeon Tidak Digunakan?</h4>
 </div>
@@ -145,7 +145,7 @@
 </ul>
 </section>
 <section id="sec-why" class="doc-section">
-<h3>⚖️ F. Why It Matters (Trade-Offs &amp; Implikasi Teknis)</h3>
+<h3>⚖️ F. Why It Matters (Trade-Offs & Implikasi Teknis)</h3>
 <ul>
 <li>Memahami konteks migrasi mencegah developer baru melakukan <em>reinventing the wheel</em> atau menganggap ketiadaan Pigeon sebagai kekurangan kritis. Arsitektur saat ini stabil, berkinerja tinggi, dan telah melayani jutaan transaksi nasabah SAMIR tanpa isu komunikasi platform channel.</li>
 </ul>

@@ -113,7 +113,7 @@
 <p>Telah membaca <a href="../01-project-foundation/01-application-overview.html">Level 1: Pondasi Proyek</a>.</p>
 </section>
 <section id="sec-simple" class="doc-section">
-<h3>💡 C. Simple Explanation (Analogi &amp; Konsep Sederhana)</h3>
+<h3>💡 C. Simple Explanation (Analogi & Konsep Sederhana)</h3>
 <p>Bayangkan Anda membuka sebuah restoran siap saji di dalam stasiun kereta:</p>
 <ol>
 <li><strong>Langkah 1</strong>: Anda menyalakan listrik dan mengecek daftar menu dari kantor pusat (<code>Global.init()</code>).</li>
@@ -126,7 +126,7 @@
 <section id="sec-actual" class="doc-section">
 <h3>💻 D. Actual Implementation (Bukti di Kode Sumber)</h3>
 <div id="sub-1-bedah-fungsi-main" class="doc-subsection">
-<h4>1. Bedah Fungsi `main()`</h4>
+<h4>1. Bedah Fungsi <code>main()</code></h4>
 </div>
 <p>Fungsi <code>main()</code> di <a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/learn/Flutter-Arch/flutter/lib/main.dart" target="_blank" rel="noopener noreferrer">🦊 flutter/lib/main.dart <span class="branch-tag">learn/Flutter-Arch</span> ↗</a> (baris 11–19):</p>
 <pre><code class="language-dart">Future&lt;void&gt; main() async {
@@ -141,7 +141,7 @@
 <p>Urutan 5 langkah eksekusi:</p>
 <div class="table-container"><table class="data-table"><thead><tr><th>Langkah</th><th>Pemanggilan Kode</th><th>Tujuan Teknis</th></tr></thead><tbody><tr><td><strong>1</strong></td><td><code>await Global.init()</code></td><td>Menginisialisasi <code>WidgetsFlutterBinding.ensureInitialized()</code> dan mengambil konfigurasi environment dari host via MethodChannel <code>getNativeAppEnv</code>.</td></tr><tr><td><strong>2</strong></td><td><code>httpClient.init()</code></td><td>Menginisialisasi instance singleton <code>Dio</code> dengan <code>baseUrl</code> yang telah ditentukan dari step 1, serta memasang interceptor loading & log.</td></tr><tr><td><strong>3</strong></td><td><code>FlutterNativeRouteDispatcher.setup()</code></td><td>Memasang listener <code>FlutterNativeChannel.commonChannel.setMethodCallHandler</code> untuk menerima pesan routing dari native (<code>showFlutterRoute</code>, refresh signals).</td></tr><tr><td><strong>4</strong></td><td><code>runApp(const MyApp())</code></td><td>Memulai rendering tree widget Flutter di bawah kendali <code>MaterialApp.router</code>.</td></tr><tr><td><strong>5</strong></td><td><code>await endOfFrame</code> & <code>notifyNativeReady()</code></td><td>Menunggu GPU dan engine Flutter selesai merender frame visual pertama, lalu memanggil method channel <code>flutterReady</code> ke host native.</td></tr></tbody></table></div>
 <div id="sub-2-bedah-widget-myapp" class="doc-subsection">
-<h4>2. Bedah Widget `MyApp`</h4>
+<h4>2. Bedah Widget <code>MyApp</code></h4>
 </div>
 <p>Widget <code>MyApp</code> di <a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/learn/Flutter-Arch/flutter/lib/main.dart" target="_blank" rel="noopener noreferrer">🦊 flutter/lib/main.dart <span class="branch-tag">learn/Flutter-Arch</span> ↗</a> (baris 21–50) bertindak sebagai root aplikasi:</p>
 <pre><code class="language-dart">class MyApp extends StatelessWidget {
@@ -187,7 +187,7 @@
 </ul>
 </section>
 <section id="sec-walkthrough" class="doc-section">
-<h3>🪜 E. Step-by-Step Walkthrough: Handshake `flutterReady`</h3>
+<h3>🪜 E. Step-by-Step Walkthrough: Handshake <code>flutterReady</code></h3>
 
 <div class="mermaid-interactive-card">
   <div class="mermaid-card-toolbar">
@@ -220,7 +220,7 @@ sequenceDiagram
 </div>
 </section>
 <section id="sec-why" class="doc-section">
-<h3>⚖️ F. Why It Matters (Trade-Offs &amp; Implikasi Teknis)</h3>
+<h3>⚖️ F. Why It Matters (Trade-Offs & Implikasi Teknis)</h3>
 <ul>
 <li><strong>Mengapa Wajib Menunggu <code>endOfFrame</code> Sebelum Memanggil <code>flutterReady</code>?</strong></li>
 </ul>
@@ -239,7 +239,7 @@ sequenceDiagram
 </ul>
 </section>
 <section id="sec-mistakes" class="doc-section">
-<h3>⚠️ H. Common Mistakes &amp; Debugging</h3>
+<h3>⚠️ H. Common Mistakes & Debugging</h3>
 <ul>
 <li><strong>Memanggil Panggilan Jaringan Sebelum <code>Global.init()</code> Selesai</strong>:</li>
 <li>Request akan dikirimkan tanpa parameter <code>appId</code> atau dengan baseUrl default yang salah (mengarah ke domain test secara tidak sengaja).</li>
@@ -443,17 +443,17 @@ class StartupTaskCoordinator {
             <div class="toc-branch">
               <div class="toc-node-row">
                 <span class="toc-leaf-dot"></span>
-                <a class="toc-tree-link" href="#sub-1-bedah-fungsi-main">1. Bedah Fungsi `main()`</a>
+                <a class="toc-tree-link" href="#sub-1-bedah-fungsi-main">1. Bedah Fungsi <span class="toc-code">main()</span></a>
               </div>
               <div class="toc-node-row">
                 <span class="toc-leaf-dot"></span>
-                <a class="toc-tree-link" href="#sub-2-bedah-widget-myapp">2. Bedah Widget `MyApp`</a>
+                <a class="toc-tree-link" href="#sub-2-bedah-widget-myapp">2. Bedah Widget <span class="toc-code">MyApp</span></a>
               </div>
             </div>
           </div>
           <div class="toc-node-row">
             <span class="toc-leaf-dot"></span>
-            <a class="toc-tree-link" href="#sec-walkthrough">E. Step-by-Step Walkthrough: Handshake `flutterReady`</a>
+            <a class="toc-tree-link" href="#sec-walkthrough">E. Step-by-Step Walkthrough: Handshake <span class="toc-code">flutterReady</span></a>
           </div>
           <div class="toc-node-row">
             <span class="toc-leaf-dot"></span>
@@ -543,17 +543,17 @@ class StartupTaskCoordinator {
           <div class="toc-branch">
             <div class="toc-node-row">
               <span class="toc-leaf-dot"></span>
-              <a class="toc-tree-link" href="#sub-1-bedah-fungsi-main" onclick="toggleMobileToc()">1. Bedah Fungsi `main()`</a>
+              <a class="toc-tree-link" href="#sub-1-bedah-fungsi-main" onclick="toggleMobileToc()">1. Bedah Fungsi <span class="toc-code">main()</span></a>
             </div>
             <div class="toc-node-row">
               <span class="toc-leaf-dot"></span>
-              <a class="toc-tree-link" href="#sub-2-bedah-widget-myapp" onclick="toggleMobileToc()">2. Bedah Widget `MyApp`</a>
+              <a class="toc-tree-link" href="#sub-2-bedah-widget-myapp" onclick="toggleMobileToc()">2. Bedah Widget <span class="toc-code">MyApp</span></a>
             </div>
           </div>
         </div>
         <div class="toc-node-row">
           <span class="toc-leaf-dot"></span>
-          <a class="toc-tree-link" href="#sec-walkthrough" onclick="toggleMobileToc()">E. Step-by-Step Walkthrough: Handshake `flutterReady`</a>
+          <a class="toc-tree-link" href="#sec-walkthrough" onclick="toggleMobileToc()">E. Step-by-Step Walkthrough: Handshake <span class="toc-code">flutterReady</span></a>
         </div>
         <div class="toc-node-row">
           <span class="toc-leaf-dot"></span>

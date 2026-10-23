@@ -112,7 +112,7 @@
 <p>Telah membaca <a href="01-flutter-entry-point.html">01-flutter-entry-point.md</a>.</p>
 </section>
 <section id="sec-simple" class="doc-section">
-<h3>💡 C. Simple Explanation (Analogi &amp; Konsep Sederhana)</h3>
+<h3>💡 C. Simple Explanation (Analogi & Konsep Sederhana)</h3>
 <p>Bayangkan sebuah panggung teater dengan dua set dekorasi yang sudah terpasang berdampingan: <strong>Set A (Tagihan)</strong> dan <strong>Set B (Profil)</strong>:</p>
 <ul>
 <li>Lampu sorot hanya menyala di satu set pada satu waktu.</li>
@@ -123,7 +123,7 @@
 <section id="sec-actual" class="doc-section">
 <h3>💻 D. Actual Implementation (Bukti di Kode Sumber)</h3>
 <div id="sub-1-masalah-bawaan-indexedstack-dan-solusi-pagelifecyclevisibility" class="doc-subsection">
-<h4>1. Masalah Bawaan `IndexedStack` dan Solusi `PageLifecycleVisibility`</h4>
+<h4>1. Masalah Bawaan <code>IndexedStack</code> dan Solusi <code>PageLifecycleVisibility</code></h4>
 </div>
 <p>Dalam framework Flutter standar, widget <code>IndexedStack</code> menjaga seluruh child-nya tetap di-mount di element tree. Konsekuensinya:</p>
 <ul>
@@ -143,7 +143,7 @@
 <li><strong><code>PageLifecycleVisibility(visible: visible)</code></strong>: Mendistribusikan status <code>visible</code> ke bawah widget tree sehingga State yang menggunakan <code>PageLifecycleMixin</code> tahu kapan harus memulai atau menghentikan refresh data.</li>
 </ol>
 <div id="sub-2-kelas-pagelifecyclemixin" class="doc-subsection">
-<h4>2. Kelas `PageLifecycleMixin`</h4>
+<h4>2. Kelas <code>PageLifecycleMixin</code></h4>
 </div>
 <p>File <a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/learn/Flutter-Arch/flutter/lib/common/lifecycle/page_lifecycle.dart" target="_blank" rel="noopener noreferrer">🦊 flutter/lib/common/lifecycle/page_lifecycle.dart <span class="branch-tag">learn/Flutter-Arch</span> ↗</a> menyediakan mixin untuk State widget:</p>
 <pre><code class="language-dart">mixin PageLifecycleMixin&lt;T extends StatefulWidget&gt; on State&lt;T&gt; {
@@ -162,7 +162,7 @@
 <li>Halaman memicu <code>TrackPageViewMixin</code> untuk mengirimkan log analytics page view (<code>me</code> untuk Mine, <code>repayment</code> untuk Repay) ke host native.</li>
 </ul>
 <div id="sub-3-sinyal-refresh-dari-host-native-flutternativepagesignal" class="doc-subsection">
-<h4>3. Sinyal Refresh dari Host Native (`FlutterNativePageSignal`)</h4>
+<h4>3. Sinyal Refresh dari Host Native (<code>FlutterNativePageSignal</code>)</h4>
 </div>
 <p>File <a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/learn/Flutter-Arch/flutter/lib/common/platform/flutter_native_page_signal.dart" target="_blank" rel="noopener noreferrer">🦊 flutter/lib/common/platform/flutter_native_page_signal.dart <span class="branch-tag">learn/Flutter-Arch</span> ↗</a> menyediakan mekanisme event stream tanpa dependensi yang rumit:</p>
 <pre><code class="language-dart">class FlutterNativePageSignal {
@@ -225,7 +225,7 @@ sequenceDiagram
 </div>
 </section>
 <section id="sec-why" class="doc-section">
-<h3>⚖️ F. Why It Matters (Trade-Offs &amp; Implikasi Teknis)</h3>
+<h3>⚖️ F. Why It Matters (Trade-Offs & Implikasi Teknis)</h3>
 <ul>
 <li><strong>Mengapa Menggunakan Broadcast Stream Controller Alih-Alih Callback Statis?</strong></li>
 </ul>
@@ -246,7 +246,7 @@ sequenceDiagram
 </ol>
 </section>
 <section id="sec-mistakes" class="doc-section">
-<h3>⚠️ H. Common Mistakes &amp; Debugging</h3>
+<h3>⚠️ H. Common Mistakes & Debugging</h3>
 <ul>
 <li><strong>Lupa Melakukan <code>cancel()</code> pada StreamSubscription di <code>dispose()</code></strong>:</li>
 <li>Jika listener <code>FlutterNativePageSignal.onMineHomeRefresh</code> tidak dibatalkan saat widget di-dispose, memory leak akan terjadi dan callback dapat dipicu pada widget yang sudah unmounted (<code>setState() called after dispose()</code>).</li>
@@ -450,15 +450,15 @@ class StartupTaskCoordinator {
             <div class="toc-branch">
               <div class="toc-node-row">
                 <span class="toc-leaf-dot"></span>
-                <a class="toc-tree-link" href="#sub-1-masalah-bawaan-indexedstack-dan-solusi-pagelifecyclevisibility">1. Masalah Bawaan `IndexedStack` dan Solusi `PageLifecycleVisibility`</a>
+                <a class="toc-tree-link" href="#sub-1-masalah-bawaan-indexedstack-dan-solusi-pagelifecyclevisibility">1. Masalah Bawaan <span class="toc-code">IndexedStack</span> dan Solusi <span class="toc-code">PageLifecycleVisibility</span></a>
               </div>
               <div class="toc-node-row">
                 <span class="toc-leaf-dot"></span>
-                <a class="toc-tree-link" href="#sub-2-kelas-pagelifecyclemixin">2. Kelas `PageLifecycleMixin`</a>
+                <a class="toc-tree-link" href="#sub-2-kelas-pagelifecyclemixin">2. Kelas <span class="toc-code">PageLifecycleMixin</span></a>
               </div>
               <div class="toc-node-row">
                 <span class="toc-leaf-dot"></span>
-                <a class="toc-tree-link" href="#sub-3-sinyal-refresh-dari-host-native-flutternativepagesignal">3. Sinyal Refresh dari Host Native (`FlutterNativePageSignal`)</a>
+                <a class="toc-tree-link" href="#sub-3-sinyal-refresh-dari-host-native-flutternativepagesignal">3. Sinyal Refresh dari Host Native (<span class="toc-code">FlutterNativePageSignal</span>)</a>
               </div>
             </div>
           </div>
@@ -554,15 +554,15 @@ class StartupTaskCoordinator {
           <div class="toc-branch">
             <div class="toc-node-row">
               <span class="toc-leaf-dot"></span>
-              <a class="toc-tree-link" href="#sub-1-masalah-bawaan-indexedstack-dan-solusi-pagelifecyclevisibility" onclick="toggleMobileToc()">1. Masalah Bawaan `IndexedStack` dan Solusi `PageLifecycleVisibility`</a>
+              <a class="toc-tree-link" href="#sub-1-masalah-bawaan-indexedstack-dan-solusi-pagelifecyclevisibility" onclick="toggleMobileToc()">1. Masalah Bawaan <span class="toc-code">IndexedStack</span> dan Solusi <span class="toc-code">PageLifecycleVisibility</span></a>
             </div>
             <div class="toc-node-row">
               <span class="toc-leaf-dot"></span>
-              <a class="toc-tree-link" href="#sub-2-kelas-pagelifecyclemixin" onclick="toggleMobileToc()">2. Kelas `PageLifecycleMixin`</a>
+              <a class="toc-tree-link" href="#sub-2-kelas-pagelifecyclemixin" onclick="toggleMobileToc()">2. Kelas <span class="toc-code">PageLifecycleMixin</span></a>
             </div>
             <div class="toc-node-row">
               <span class="toc-leaf-dot"></span>
-              <a class="toc-tree-link" href="#sub-3-sinyal-refresh-dari-host-native-flutternativepagesignal" onclick="toggleMobileToc()">3. Sinyal Refresh dari Host Native (`FlutterNativePageSignal`)</a>
+              <a class="toc-tree-link" href="#sub-3-sinyal-refresh-dari-host-native-flutternativepagesignal" onclick="toggleMobileToc()">3. Sinyal Refresh dari Host Native (<span class="toc-code">FlutterNativePageSignal</span>)</a>
             </div>
           </div>
         </div>

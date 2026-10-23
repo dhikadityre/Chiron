@@ -114,7 +114,7 @@
 </ul>
 </section>
 <section id="sec-simple" class="doc-section">
-<h3>💡 C. Simple Explanation (Analogi Mall &amp; Toko-Toko Terpisah)</h3>
+<h3>💡 C. Simple Explanation (Analogi Mall & Toko-Toko Terpisah)</h3>
 <p>Bayangkan sebuah pusat perbelanjaan (Mall):</p>
 <ul>
 <li><strong>Mall (Monolit)</strong>: Semua berada dalam satu gedung fisik yang sama (satu binary aplikasi target <code>IDSamirLoan</code>).</li>
@@ -191,7 +191,7 @@ graph TD
   </div>
 </div>
 <div id="sub-1-pilar-1-kerangka-modul-runtime-czswiftmodulelib" class="doc-subsection">
-<h4>1. Pilar 1: Kerangka Modul Runtime (`CZSwiftModuleLib`)</h4>
+<h4>1. Pilar 1: Kerangka Modul Runtime (<code>CZSwiftModuleLib</code>)</h4>
 </div>
 <p>Modul-modul bisnis tidak di-import secara eksplisit oleh <code>AppDelegate</code>. Sebaliknya:</p>
 <ul>
@@ -201,7 +201,7 @@ graph TD
 <li>Hasil: Modul tidak memiliki dependensi kompilasi terhadap <code>AppDelegate</code>!</li>
 </ul>
 <div id="sub-2-pilar-2-pertukaran-data-lintas-modul-samirservicemodule" class="doc-subsection">
-<h4>2. Pilar 2: Pertukaran Data Lintas Modul (`SamirServiceModule`)</h4>
+<h4>2. Pilar 2: Pertukaran Data Lintas Modul (<code>SamirServiceModule</code>)</h4>
 </div>
 <p>Jika modul A membutuhkan data atau aksi dari modul B (contoh: modul Pinjaman butuh info sesi login), modul A <strong>dilarang keras</strong> meng-import <code>SamirLoginModule</code>.</p>
 <ul>
@@ -213,7 +213,7 @@ graph TD
 <li><code>CZModuleManager</code> menginstansiasi handler tersebut secara lazy dan thread-safe (menggunakan antrean serial <code>serviceCacheQueue</code>).</li>
 </ul>
 <div id="sub-3-pilar-3-navigasi-bebas-ketergantungan-samirroutermodule" class="doc-subsection">
-<h4>3. Pilar 3: Navigasi Bebas Ketergantungan (`SamirRouterModule`)</h4>
+<h4>3. Pilar 3: Navigasi Bebas Ketergantungan (<code>SamirRouterModule</code>)</h4>
 </div>
 <p>Ketika user berada di halaman Beranda dan ingin membuka verifikasi identitas:</p>
 <ul>
@@ -270,7 +270,7 @@ graph TD
 <p><em>Pengecualian:</em> <code>LoanConfirmModule</code> menggunakan pola <strong>MVVM-Rx</strong> dengan <code>LoanConfirmViewController_Rx</code> dan <code>LoanConfirmViewModel</code> (didukung oleh driver reaktif RxCocoa).</p>
 </section>
 <section id="sec-mistakes" class="doc-section">
-<h3>⚠️ H. Common Mistakes &amp; Debugging</h3>
+<h3>⚠️ H. Common Mistakes & Debugging</h3>
 <ul>
 <li><strong>Melakukan Import Antarmodul Secara Ilegal</strong>:</li>
 <li><em>Kesalahan</em>: Menulis <code>import SamirLoginModule</code> di dalam file milik <code>SamirLoanModule</code>.</li>
@@ -472,15 +472,15 @@ public final class AppSessionManager: SessionProvider {
             <div class="toc-branch">
               <div class="toc-node-row">
                 <span class="toc-leaf-dot"></span>
-                <a class="toc-tree-link" href="#sub-1-pilar-1-kerangka-modul-runtime-czswiftmodulelib">1. Pilar 1: Kerangka Modul Runtime (`CZSwiftModuleLib`)</a>
+                <a class="toc-tree-link" href="#sub-1-pilar-1-kerangka-modul-runtime-czswiftmodulelib">1. Pilar 1: Kerangka Modul Runtime (<span class="toc-code">CZSwiftModuleLib</span>)</a>
               </div>
               <div class="toc-node-row">
                 <span class="toc-leaf-dot"></span>
-                <a class="toc-tree-link" href="#sub-2-pilar-2-pertukaran-data-lintas-modul-samirservicemodule">2. Pilar 2: Pertukaran Data Lintas Modul (`SamirServiceModule`)</a>
+                <a class="toc-tree-link" href="#sub-2-pilar-2-pertukaran-data-lintas-modul-samirservicemodule">2. Pilar 2: Pertukaran Data Lintas Modul (<span class="toc-code">SamirServiceModule</span>)</a>
               </div>
               <div class="toc-node-row">
                 <span class="toc-leaf-dot"></span>
-                <a class="toc-tree-link" href="#sub-3-pilar-3-navigasi-bebas-ketergantungan-samirroutermodule">3. Pilar 3: Navigasi Bebas Ketergantungan (`SamirRouterModule`)</a>
+                <a class="toc-tree-link" href="#sub-3-pilar-3-navigasi-bebas-ketergantungan-samirroutermodule">3. Pilar 3: Navigasi Bebas Ketergantungan (<span class="toc-code">SamirRouterModule</span>)</a>
               </div>
             </div>
           </div>
@@ -576,15 +576,15 @@ public final class AppSessionManager: SessionProvider {
           <div class="toc-branch">
             <div class="toc-node-row">
               <span class="toc-leaf-dot"></span>
-              <a class="toc-tree-link" href="#sub-1-pilar-1-kerangka-modul-runtime-czswiftmodulelib" onclick="toggleMobileToc()">1. Pilar 1: Kerangka Modul Runtime (`CZSwiftModuleLib`)</a>
+              <a class="toc-tree-link" href="#sub-1-pilar-1-kerangka-modul-runtime-czswiftmodulelib" onclick="toggleMobileToc()">1. Pilar 1: Kerangka Modul Runtime (<span class="toc-code">CZSwiftModuleLib</span>)</a>
             </div>
             <div class="toc-node-row">
               <span class="toc-leaf-dot"></span>
-              <a class="toc-tree-link" href="#sub-2-pilar-2-pertukaran-data-lintas-modul-samirservicemodule" onclick="toggleMobileToc()">2. Pilar 2: Pertukaran Data Lintas Modul (`SamirServiceModule`)</a>
+              <a class="toc-tree-link" href="#sub-2-pilar-2-pertukaran-data-lintas-modul-samirservicemodule" onclick="toggleMobileToc()">2. Pilar 2: Pertukaran Data Lintas Modul (<span class="toc-code">SamirServiceModule</span>)</a>
             </div>
             <div class="toc-node-row">
               <span class="toc-leaf-dot"></span>
-              <a class="toc-tree-link" href="#sub-3-pilar-3-navigasi-bebas-ketergantungan-samirroutermodule" onclick="toggleMobileToc()">3. Pilar 3: Navigasi Bebas Ketergantungan (`SamirRouterModule`)</a>
+              <a class="toc-tree-link" href="#sub-3-pilar-3-navigasi-bebas-ketergantungan-samirroutermodule" onclick="toggleMobileToc()">3. Pilar 3: Navigasi Bebas Ketergantungan (<span class="toc-code">SamirRouterModule</span>)</a>
             </div>
           </div>
         </div>

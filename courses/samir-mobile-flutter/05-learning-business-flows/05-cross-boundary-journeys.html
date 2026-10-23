@@ -116,7 +116,7 @@
 <p>Telah membaca <a href="02-authentication-and-session-sync.html">02-authentication-and-session-sync.md</a> hingga <a href="04-mine-and-personal-flows.html">04-mine-and-personal-flows.md</a>.</p>
 </section>
 <section id="sec-simple" class="doc-section">
-<h3>💡 C. Simple Explanation (Analogi &amp; Konsep Sederhana)</h3>
+<h3>💡 C. Simple Explanation (Analogi & Konsep Sederhana)</h3>
 <p>Bayangkan perjalanan antar-negara di Uni Eropa:</p>
 <ul>
 <li>Anda dapat berkendara bebas di dalam wilayah satu negara tanpa paspor (Navigasi internal GoRouter di modul Flutter).</li>
@@ -163,7 +163,7 @@ sequenceDiagram
   </div>
 </div>
 <div id="sub-2-skenario-2-transisi-ke-modul-verifikasi-e-kyc-kamera-native" class="doc-subsection">
-<h4>2. Skenario 2: Transisi ke Modul Verifikasi e-KYC &amp; Kamera Native</h4>
+<h4>2. Skenario 2: Transisi ke Modul Verifikasi e-KYC & Kamera Native</h4>
 </div>
 <p>Ketika nasabah di <code>MineHomePage</code> menekan menu <em>"Sertifikasi Informasi"</em>:</p>
 <ol>
@@ -220,7 +220,7 @@ sequenceDiagram
 </ul>
 </section>
 <section id="sec-walkthrough" class="doc-section">
-<h3>⚖️ E. Why It Matters (Trade-Offs &amp; Implikasi Teknis)</h3>
+<h3>⚖️ E. Why It Matters (Trade-Offs & Implikasi Teknis)</h3>
 <ul>
 <li><strong>Menghindari Duplikasi SDK Berat</strong>:</li>
 </ul>
@@ -242,7 +242,7 @@ sequenceDiagram
 </ol>
 </section>
 <section id="sec-example" class="doc-section">
-<h3>⚠️ G. Common Mistakes &amp; Debugging</h3>
+<h3>⚠️ G. Common Mistakes & Debugging</h3>
 <ul>
 <li><strong>Mengirim String Parameter Native Tanpa Serialisasi yang Valid</strong>:</li>
 <li>Saat memanggil <code>openNativeRoute(url, params: {...})</code>, seluruh nilai di dalam map harus bertipe tipe primitif Dart (<code>String</code>, <code>int</code>, <code>double</code>, <code>bool</code>). Mengirim objek custom akan memicu crash <code>PlatformException: Unsupported value</code>.</li>

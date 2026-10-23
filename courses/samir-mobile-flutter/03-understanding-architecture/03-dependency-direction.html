@@ -112,7 +112,7 @@
 <p>Telah membaca <a href="02-layers-and-responsibilities.html">02-layers-and-responsibilities.md</a>.</p>
 </section>
 <section id="sec-simple" class="doc-section">
-<h3>💡 C. Simple Explanation (Analogi &amp; Konsep Sederhana)</h3>
+<h3>💡 C. Simple Explanation (Analogi & Konsep Sederhana)</h3>
 <p>Bayangkan sebuah sistem saluran air di gedung pencakar langit:</p>
 <ul>
 <li>Air selalu mengalir <strong>dari atas ke bawah</strong> mengikuti gravitasi: dari tandon atap (Presentation), melalui filter penyaring (Business Service), ke pompa distribusi utama (Network/Bridge).</li>
@@ -172,7 +172,7 @@
 </ol>
 <p>Folder <code>common/</code> bertindak sebagai pustaka bersama dan <strong>tidak boleh mengetahui keberadaan halaman bisnis apapun</strong>, kecuali file <a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/learn/Flutter-Arch/flutter/lib/common/router/routers.dart" target="_blank" rel="noopener noreferrer">🦊 routers.dart <span class="branch-tag">learn/Flutter-Arch</span> ↗</a> yang bertindak sebagai Composition Root (pabrik rute utama).</p>
 <div id="sub-3-pemanfaatan-part-dan-part-of-untuk-membatasi-scope" class="doc-subsection">
-<h4>3. Pemanfaatan `part` dan `part of` untuk Membatasi Scope</h4>
+<h4>3. Pemanfaatan <code>part</code> dan <code>part of</code> untuk Membatasi Scope</h4>
 </div>
 <p>Untuk mencegah kebocoran class sub-widget ke scope modul yang lebih luas, widget privat fitur SAMIR dikelompokkan dengan arahan library <code>part</code>:</p>
 <p>Di <a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/learn/Flutter-Arch/flutter/lib/pages/repay/home/repay_home_page.dart" target="_blank" rel="noopener noreferrer">🦊 flutter/lib/pages/repay/home/repay_home_page.dart <span class="branch-tag">learn/Flutter-Arch</span> ↗</a>:</p>
@@ -204,7 +204,7 @@ part &#x27;widgets/repay_theme.dart&#x27;;</code></pre>
 <p><code>Routers</code> menginstruksikan <code>FlutterRootController.select(&#x27;/repay&#x27;)</code> tanpa membuat keterikatan kode langsung antara kedua halaman.</p>
 </section>
 <section id="sec-why" class="doc-section">
-<h3>⚖️ F. Why It Matters (Trade-Offs &amp; Implikasi Teknis)</h3>
+<h3>⚖️ F. Why It Matters (Trade-Offs & Implikasi Teknis)</h3>
 <ul>
 <li><strong>Kecepatan Kompilasi & Hot Reload</strong>:</li>
 </ul>
@@ -223,7 +223,7 @@ part &#x27;widgets/repay_theme.dart&#x27;;</code></pre>
 </ul>
 </section>
 <section id="sec-mistakes" class="doc-section">
-<h3>⚠️ H. Common Mistakes &amp; Debugging</h3>
+<h3>⚠️ H. Common Mistakes & Debugging</h3>
 <ul>
 <li><strong>Mengimpor <code>package:flutter_app_project/pages/...</code> di dalam folder <code>common/</code></strong>:</li>
 <li>Ini adalah anti-pattern terbesar yang merusak integritas arsitektur. Satu-satunya perkecualian adalah <code>common/router/routers.dart</code>.</li>
@@ -431,7 +431,7 @@ class GlobalSessionManager implements SessionContract {
               </div>
               <div class="toc-node-row">
                 <span class="toc-leaf-dot"></span>
-                <a class="toc-tree-link" href="#sub-3-pemanfaatan-part-dan-part-of-untuk-membatasi-scope">3. Pemanfaatan `part` dan `part of` untuk Membatasi Scope</a>
+                <a class="toc-tree-link" href="#sub-3-pemanfaatan-part-dan-part-of-untuk-membatasi-scope">3. Pemanfaatan <span class="toc-code">part</span> dan <span class="toc-code">part of</span> untuk Membatasi Scope</a>
               </div>
             </div>
           </div>
@@ -535,7 +535,7 @@ class GlobalSessionManager implements SessionContract {
             </div>
             <div class="toc-node-row">
               <span class="toc-leaf-dot"></span>
-              <a class="toc-tree-link" href="#sub-3-pemanfaatan-part-dan-part-of-untuk-membatasi-scope" onclick="toggleMobileToc()">3. Pemanfaatan `part` dan `part of` untuk Membatasi Scope</a>
+              <a class="toc-tree-link" href="#sub-3-pemanfaatan-part-dan-part-of-untuk-membatasi-scope" onclick="toggleMobileToc()">3. Pemanfaatan <span class="toc-code">part</span> dan <span class="toc-code">part of</span> untuk Membatasi Scope</a>
             </div>
           </div>
         </div>

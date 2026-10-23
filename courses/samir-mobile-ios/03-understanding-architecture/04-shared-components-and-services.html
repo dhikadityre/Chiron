@@ -123,9 +123,9 @@
 <p>Dengan meletakkan alat-alat ini di tempat bersama, mekanik tidak perlu membuat obeng atau tang baru untuk pekerjaannya sendiri.</p>
 </section>
 <section id="sec-actual" class="doc-section">
-<h3>💻 D. Actual Implementation (Katalog Layanan &amp; Komponen)</h3>
+<h3>💻 D. Actual Implementation (Katalog Layanan & Komponen)</h3>
 <div id="sub-1-katalog-protokol-layanan-samirservicemodule" class="doc-subsection">
-<h4>1. Katalog Protokol Layanan (`SamirServiceModule`)</h4>
+<h4>1. Katalog Protokol Layanan (<code>SamirServiceModule</code>)</h4>
 </div>
 <p>Path: <a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/learn/iOS-Arch/ios/IDSamirLoan/Application/SamirServiceModule/Classes/IDServiceManager.swift" target="_blank" rel="noopener noreferrer">🦊 ios/IDSamirLoan/Application/SamirServiceModule/Classes/IDServiceManager.swift <span class="branch-tag">learn/iOS-Arch</span> ↗</a></p>
 <p>Tersedia fasad singleton <code>IDServiceManager</code> untuk mengakses 4 protokol utama:</p>
@@ -140,11 +140,11 @@ public class IDServiceManager: NSObject {
 <div class="table-container"><table class="data-table"><thead><tr><th>Protokol</th><th>Class Handler Konkret</th><th>Method Kunci & Kemampuan</th></tr></thead><tbody><tr><td><strong><code>IDLoginModuleServiceProtocol</code></strong></td><td><code>IDLoginModuleServiceHandler</code></td><td>- <code>isLogin() -&gt; Bool</code>: Memeriksa status login.<br/>- <code>loginInfo() -&gt; IDLoginCodeModel?</code>: Data sesi user (mid, userNo, staticKey).<br/>- <code>loginAction()</code>: Memunculkan modal popup login.<br/>- <code>reloginWhenRequestError()</code>: Reset sesi saat token kedaluwarsa (error <code>10006</code>).<br/>- <code>postLoginOutRequest(...)</code>: Logout server & lokal.</td></tr><tr><td><strong><code>IDMainModuleServiceProtocol</code></strong></td><td><code>IDMainModuleServiceHandler</code></td><td>- <code>getAppConfig() -&gt; IDAppConfigModel?</code>: Konfigurasi global dari server.<br/>- <code>requstAppConfig()</code>: Mengambil konfigurasi server terbaru secara async.</td></tr><tr><td><strong><code>IDLoanModuleServiceProtocol</code></strong></td><td><code>IDLoanModuleServiceHandler</code></td><td>- <code>jumpLoanAssess(params)</code>: Memicu navigasi ke halaman penilaian limit kuota kredit.<br/>- <code>jumpLoanConfirm(params)</code>: Memicu navigasi ke halaman konfirmasi pencairan pinjaman.</td></tr><tr><td><strong><code>IDRepayModuleServiceProtocol</code></strong></td><td><code>IDRepayModuleServiceHandler</code></td><td>- <code>jumpRepay(params)</code>: Memicu navigasi ke halaman tagihan/pelunasan.</td></tr></tbody></table></div>
 <div class="callout best-practice"><p>[!NOTE] <strong>Typo Unik di Kode Sumber</strong>: Pada <code>IDServiceManager.swift</code> baris 33, method pengakses layanan tagihan bernama <code>reapyService()</code> (bukan <code>repayService</code>). Typo ini sudah menyebar di berbagai modul sehingga harus tetap digunakan sesuai aslinya untuk menjaga kompatibilitas kompilasi.</p></div>
 <div id="sub-2-pustaka-komponen-ui-bersama-czswiftuikit" class="doc-subsection">
-<h4>2. Pustaka Komponen UI Bersama (`CZSwiftUIKit`)</h4>
+<h4>2. Pustaka Komponen UI Bersama (<code>CZSwiftUIKit</code>)</h4>
 </div>
 <p>Path: <a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/learn/iOS-Arch/ios/IDSamirLoan/Application/CZSwiftUIKit/" target="_blank" rel="noopener noreferrer">🦊 ios/IDSamirLoan/Application/CZSwiftUIKit/ <span class="branch-tag">learn/iOS-Arch</span> ↗</a></p>
 <p>Folder ini berisi fondasi antarmuka in-house yang sangat kaya:</p>
-<h5 id="item-a-komponen-ui-classesczcommon">A. Komponen UI (`Classes/CZCommon/`)</h5>
+<h5 id="item-a-komponen-ui-classesczcommon">A. Komponen UI (<code>Classes/CZCommon/</code>)</h5>
 <ul>
 <li><strong><code>CZDrawSignatureView</code></strong>: Canvas interaktif berbasis CoreGraphics/Touch tracking untuk tanda tangan digital nasabah secara langsung di layar smartphone.</li>
 <li><strong><code>CZRollingNoticeView</code></strong>: Ticker vertikal animasi berjalan untuk pengumuman atau daftar pencairan nasabah terbaru (<em>live disbursement banner</em>).</li>
@@ -155,14 +155,14 @@ public class IDServiceManager: NSObject {
 <li><strong><code>IDEmptyView</code></strong>: Tampilan state kosong (<em>empty data</em> / <em>network error</em>) dengan tombol reload <code>id_clickEmptyBlock</code>.</li>
 <li><strong>Custom Font</strong>: <code>MosnDigitBoldFont.otf</code> (di folder <code>Assets/</code>) khusus untuk merender angka nominal pinjaman dan suku bunga dengan tipografi tebal khas finansial.</li>
 </ul>
-<h5 id="item-b-pustaka-tooling-ui-classescztools">B. Pustaka Tooling UI (`Classes/CZTools/`)</h5>
+<h5 id="item-b-pustaka-tooling-ui-classescztools">B. Pustaka Tooling UI (<code>Classes/CZTools/</code>)</h5>
 <ul>
 <li><strong><code>CZWeakTimer</code></strong>: Pembungkus <code>Timer</code> / <code>CADisplayLink</code> dengan target lemah (<em>weak reference proxy</em>) untuk mencegah <em>retain cycle</em> dan memory leak saat polling.</li>
 <li><strong><code>CZDarkModeUtil</code> & <code>CZThemeProvider</code></strong>: Abstraksi pendeteksian mode gelap (<em>Dark Mode</em>) iOS 13+ dan penyedia palet warna dinamis.</li>
 <li><strong><code>CZWaterFallLayout</code></strong>: Layout custom <code>UICollectionView</code> berbasis grid air terjun (<em>waterfall grid</em>).</li>
 <li><strong><code>CZPhotoAlbumUtil</code></strong>: Utilitas seleksi foto galeri dan kamera dengan penanganan izin privasi runtime.</li>
 </ul>
-<h5 id="item-c-ekstensi-uikit-classesczextension">C. Ekstensi UIKit (`Classes/CZExtension/`)</h5>
+<h5 id="item-c-ekstensi-uikit-classesczextension">C. Ekstensi UIKit (<code>Classes/CZExtension/</code>)</h5>
 <p>Seluruh utilitas UIKit SAMIR dibungkus dalam namespace khusus <strong><code>.cz.</code></strong>:</p>
 <ul>
 <li><strong><code>UIViewController.cz.topViewController()</code></strong>: Mencari ViewController teratas yang sedang aktif di layar secara rekursif (sangat vital untuk router dan dialog modal).</li>
@@ -171,7 +171,7 @@ public class IDServiceManager: NSObject {
 <li><strong><code>UIBarButtonItem.createCustomItem(...)</code></strong>: Membuat tombol navigasi bar kustom dengan hit area (<em>touch extend inset</em>) yang nyaman disentuh.</li>
 </ul>
 <div id="sub-3-audit-arsitektur-apakah-idnpopupconfig-sudah-best-practice" class="doc-subsection">
-<h4>3. Audit Arsitektur: Apakah `IDNPopupConfig` Sudah Best Practice?</h4>
+<h4>3. Audit Arsitektur: Apakah <code>IDNPopupConfig</code> Sudah Best Practice?</h4>
 </div>
 <p>Struktur konfigurasi popup terletak di <a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/learn/iOS-Arch/ios/IDSamirLoan/Application/SamirCommonModule/Classes/IDCommon/IDCore/IDNPopup.swift" target="_blank" rel="noopener noreferrer">🦊 IDNPopup.swift:L113-142 <span class="branch-tag">learn/iOS-Arch</span> ↗</a>:</p>
 <pre><code class="language-swift">public struct IDNPopupConfig {
@@ -219,7 +219,7 @@ public class IDServiceManager: NSObject {
     public static func makeDefault() -&gt; IDNPopupConfig { ... }
 }</code></pre>
 <div id="sub-4-bedah-arsitektur-czswiftantifraudlib-mengapa-pakai-objective-c" class="doc-subsection">
-<h4>4. Bedah Arsitektur `CZSwiftAntiFraudLib`: Mengapa Pakai Objective-C?</h4>
+<h4>4. Bedah Arsitektur <code>CZSwiftAntiFraudLib</code>: Mengapa Pakai Objective-C?</h4>
 </div>
 <p>Path: <a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/learn/iOS-Arch/ios/IDSamirLoan/Application/CZSwiftAntiFraudLib/" target="_blank" rel="noopener noreferrer">🦊 ios/IDSamirLoan/Application/CZSwiftAntiFraudLib/ <span class="branch-tag">learn/iOS-Arch</span> ↗</a></p>
 <p>Modul ini merupakan pustaka hybrid (gabungan <strong>Swift</strong> dan <strong>Objective-C</strong>):</p>
@@ -247,7 +247,7 @@ public class IDServiceManager: NSObject {
 <ul>
 <li>Modul deteksi anti-fraud perangkat fintech sering kali merupakan biner atau source code battle-tested yang diwarisi dari library C/ObjC lama.</li>
 </ul>
-<h5 id="item-b-cara-kerja-czswiftantifraudlib">B. Cara Kerja `CZSwiftAntiFraudLib`:</h5>
+<h5 id="item-b-cara-kerja-czswiftantifraudlib">B. Cara Kerja <code>CZSwiftAntiFraudLib</code>:</h5>
 <ol>
 <li>*<em>Pengumpulan Sinyal (</em>Telemetry Harvesting<em>)</em>*: Mengukur persentase sisa memori RAM, kapasitas disk (<code>czGetTotalDiskSpace</code>), status baterai (<code>UIDeviceBatteryState</code>), waktu boot mesin (<code>bootTime</code>), dan kecerahan layar.</li>
 <li><strong>Deteksi Root / Jailbreak (<code>CZJailbroken.swift</code>)</strong>: Memeriksa keberadaan file mencurigakan (<code>/Applications/Cydia.app</code>, <code>/bin/bash</code>), permission menulis ke direktori terlarang <code>/private</code>, dan symbolic links.</li>
@@ -274,7 +274,7 @@ public class IDServiceManager: NSObject {
 <li>Aktifkan <strong><code>Defines Module = YES</code></strong> agar class ObjC dapat dipanggil dari Swift via <code>import YourModule</code> atau langsung dikenali di satu target yang sama.</li>
 </ol>
 <div id="sub-3-pustaka-utilitas-bersama-czswiftutils" class="doc-subsection">
-<h4>3. Pustaka Utilitas Bersama (`CZSwiftUtils`)</h4>
+<h4>3. Pustaka Utilitas Bersama (<code>CZSwiftUtils</code>)</h4>
 </div>
 <p>Path: <a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/learn/iOS-Arch/ios/IDSamirLoan/Application/CZSwiftUtils/" target="_blank" rel="noopener noreferrer">🦊 ios/IDSamirLoan/Application/CZSwiftUtils/ <span class="branch-tag">learn/iOS-Arch</span> ↗</a></p>
 <ul>
@@ -285,7 +285,7 @@ public class IDServiceManager: NSObject {
 </ul>
 </section>
 <section id="sec-walkthrough" class="doc-section">
-<h3>🪜 E. Step-by-Step Walkthrough: Cara Menggunakan `IDServiceManager` di Fitur Baru</h3>
+<h3>🪜 E. Step-by-Step Walkthrough: Cara Menggunakan <code>IDServiceManager</code> di Fitur Baru</h3>
 <p>Jika Anda sedang membuat fitur di <code>SamirMineModule</code> dan ingin memeriksa apakah user sudah login sebelum membuka halaman pengaturan rekening:</p>
 <pre><code class="language-swift">// 1. Import SamirServiceModule
 import SamirServiceModule
@@ -327,7 +327,7 @@ private let debouncer = CZDebouncer(delay: 0.5)
 }</code></pre>
 </section>
 <section id="sec-mistakes" class="doc-section">
-<h3>⚠️ H. Common Mistakes &amp; Debugging</h3>
+<h3>⚠️ H. Common Mistakes & Debugging</h3>
 <ul>
 <li><strong>Lupa Menangani Kasus Handler <code>nil</code></strong>:</li>
 <li><em>Kesalahan</em>: Menggunakan force-unwrap pada service: <code>IDServiceManager.loginService()!.isLogin()</code>.</li>
@@ -527,29 +527,29 @@ public final class AppSessionManager: SessionProvider {
             <div class="toc-branch">
               <div class="toc-node-row">
                 <span class="toc-leaf-dot"></span>
-                <a class="toc-tree-link" href="#sub-1-katalog-protokol-layanan-samirservicemodule">1. Katalog Protokol Layanan (`SamirServiceModule`)</a>
+                <a class="toc-tree-link" href="#sub-1-katalog-protokol-layanan-samirservicemodule">1. Katalog Protokol Layanan (<span class="toc-code">SamirServiceModule</span>)</a>
               </div>
               <div class="toc-node-row">
                 <span class="toc-leaf-dot"></span>
-                <a class="toc-tree-link" href="#sub-2-pustaka-komponen-ui-bersama-czswiftuikit">2. Pustaka Komponen UI Bersama (`CZSwiftUIKit`)</a>
+                <a class="toc-tree-link" href="#sub-2-pustaka-komponen-ui-bersama-czswiftuikit">2. Pustaka Komponen UI Bersama (<span class="toc-code">CZSwiftUIKit</span>)</a>
               </div>
               <div class="toc-node-row">
                 <span class="toc-leaf-dot"></span>
-                <a class="toc-tree-link" href="#sub-3-audit-arsitektur-apakah-idnpopupconfig-sudah-best-practice">3. Audit Arsitektur: Apakah `IDNPopupConfig` Sudah Best Practice?</a>
+                <a class="toc-tree-link" href="#sub-3-audit-arsitektur-apakah-idnpopupconfig-sudah-best-practice">3. Audit Arsitektur: Apakah <span class="toc-code">IDNPopupConfig</span> Sudah Best Practice?</a>
               </div>
               <div class="toc-node-row">
                 <span class="toc-leaf-dot"></span>
-                <a class="toc-tree-link" href="#sub-4-bedah-arsitektur-czswiftantifraudlib-mengapa-pakai-objective-c">4. Bedah Arsitektur `CZSwiftAntiFraudLib`: Mengapa Pakai Objective-C?</a>
+                <a class="toc-tree-link" href="#sub-4-bedah-arsitektur-czswiftantifraudlib-mengapa-pakai-objective-c">4. Bedah Arsitektur <span class="toc-code">CZSwiftAntiFraudLib</span>: Mengapa Pakai Objective-C?</a>
               </div>
               <div class="toc-node-row">
                 <span class="toc-leaf-dot"></span>
-                <a class="toc-tree-link" href="#sub-3-pustaka-utilitas-bersama-czswiftutils">3. Pustaka Utilitas Bersama (`CZSwiftUtils`)</a>
+                <a class="toc-tree-link" href="#sub-3-pustaka-utilitas-bersama-czswiftutils">3. Pustaka Utilitas Bersama (<span class="toc-code">CZSwiftUtils</span>)</a>
               </div>
             </div>
           </div>
           <div class="toc-node-row">
             <span class="toc-leaf-dot"></span>
-            <a class="toc-tree-link" href="#sec-walkthrough">E. Step-by-Step Walkthrough: Cara Menggunakan `IDServiceManager` di Fitur Baru</a>
+            <a class="toc-tree-link" href="#sec-walkthrough">E. Step-by-Step Walkthrough: Cara Menggunakan <span class="toc-code">IDServiceManager</span> di Fitur Baru</a>
           </div>
           <div class="toc-node-row">
             <span class="toc-leaf-dot"></span>
@@ -639,29 +639,29 @@ public final class AppSessionManager: SessionProvider {
           <div class="toc-branch">
             <div class="toc-node-row">
               <span class="toc-leaf-dot"></span>
-              <a class="toc-tree-link" href="#sub-1-katalog-protokol-layanan-samirservicemodule" onclick="toggleMobileToc()">1. Katalog Protokol Layanan (`SamirServiceModule`)</a>
+              <a class="toc-tree-link" href="#sub-1-katalog-protokol-layanan-samirservicemodule" onclick="toggleMobileToc()">1. Katalog Protokol Layanan (<span class="toc-code">SamirServiceModule</span>)</a>
             </div>
             <div class="toc-node-row">
               <span class="toc-leaf-dot"></span>
-              <a class="toc-tree-link" href="#sub-2-pustaka-komponen-ui-bersama-czswiftuikit" onclick="toggleMobileToc()">2. Pustaka Komponen UI Bersama (`CZSwiftUIKit`)</a>
+              <a class="toc-tree-link" href="#sub-2-pustaka-komponen-ui-bersama-czswiftuikit" onclick="toggleMobileToc()">2. Pustaka Komponen UI Bersama (<span class="toc-code">CZSwiftUIKit</span>)</a>
             </div>
             <div class="toc-node-row">
               <span class="toc-leaf-dot"></span>
-              <a class="toc-tree-link" href="#sub-3-audit-arsitektur-apakah-idnpopupconfig-sudah-best-practice" onclick="toggleMobileToc()">3. Audit Arsitektur: Apakah `IDNPopupConfig` Sudah Best Practice?</a>
+              <a class="toc-tree-link" href="#sub-3-audit-arsitektur-apakah-idnpopupconfig-sudah-best-practice" onclick="toggleMobileToc()">3. Audit Arsitektur: Apakah <span class="toc-code">IDNPopupConfig</span> Sudah Best Practice?</a>
             </div>
             <div class="toc-node-row">
               <span class="toc-leaf-dot"></span>
-              <a class="toc-tree-link" href="#sub-4-bedah-arsitektur-czswiftantifraudlib-mengapa-pakai-objective-c" onclick="toggleMobileToc()">4. Bedah Arsitektur `CZSwiftAntiFraudLib`: Mengapa Pakai Objective-C?</a>
+              <a class="toc-tree-link" href="#sub-4-bedah-arsitektur-czswiftantifraudlib-mengapa-pakai-objective-c" onclick="toggleMobileToc()">4. Bedah Arsitektur <span class="toc-code">CZSwiftAntiFraudLib</span>: Mengapa Pakai Objective-C?</a>
             </div>
             <div class="toc-node-row">
               <span class="toc-leaf-dot"></span>
-              <a class="toc-tree-link" href="#sub-3-pustaka-utilitas-bersama-czswiftutils" onclick="toggleMobileToc()">3. Pustaka Utilitas Bersama (`CZSwiftUtils`)</a>
+              <a class="toc-tree-link" href="#sub-3-pustaka-utilitas-bersama-czswiftutils" onclick="toggleMobileToc()">3. Pustaka Utilitas Bersama (<span class="toc-code">CZSwiftUtils</span>)</a>
             </div>
           </div>
         </div>
         <div class="toc-node-row">
           <span class="toc-leaf-dot"></span>
-          <a class="toc-tree-link" href="#sec-walkthrough" onclick="toggleMobileToc()">E. Step-by-Step Walkthrough: Cara Menggunakan `IDServiceManager` di Fitur Baru</a>
+          <a class="toc-tree-link" href="#sec-walkthrough" onclick="toggleMobileToc()">E. Step-by-Step Walkthrough: Cara Menggunakan <span class="toc-code">IDServiceManager</span> di Fitur Baru</a>
         </div>
         <div class="toc-node-row">
           <span class="toc-leaf-dot"></span>

@@ -130,6 +130,26 @@ def extract_title_and_subtitle(md_content, filename):
     return title, subtitle, intro
 
 
+def format_toc_title(raw_title: str) -> str:
+    """Formats TOC node title cleanly, stripping bold markers and rendering backticks with .toc-code."""
+    if not raw_title:
+        return ""
+    # Strip bold markers ** or __
+    t = re.sub(r'\*\*(.*?)\*\*', r'\1', raw_title)
+    t = re.sub(r'__(.*?)__', r'\1', t)
+    t = t.replace('**', '')
+    
+    # Render inline code spans `...` using .toc-code
+    parts = []
+    last_end = 0
+    for m in re.finditer(r'`([^`]+)`', t):
+        parts.append(html.escape(t[last_end:m.start()]))
+        parts.append(f'<span class="toc-code">{html.escape(m.group(1))}</span>')
+        last_end = m.end()
+    parts.append(html.escape(t[last_end:]))
+    return "".join(parts)
+
+
 def canonicalize_code_link(href, branch):
     """
     Normalizes local file links and relative repo paths into canonical GitLab URLs
@@ -456,10 +476,12 @@ def parse_markdown_to_chiron_html(md_content, track_key, lesson_item):
                     html_parts.append('</section>')
                     section_open = False
                     
+                clean_h2 = re.sub(r'^\*\*(.*?)\*\*$', r'\1', h_text).strip().replace('**', '')
+                
                 # Determine standard id for A-J sections
                 sec_id = None
-                if re.match(r'^[A-J]\.', h_text):
-                    code_letter = h_text[0].upper()
+                if re.match(r'^[A-J]\.', clean_h2):
+                    code_letter = clean_h2[0].upper()
                     id_map = {
                         'A': 'sec-obj',
                         'B': 'sec-prereq',
@@ -474,7 +496,7 @@ def parse_markdown_to_chiron_html(md_content, track_key, lesson_item):
                     }
                     sec_id = id_map.get(code_letter, f"sec-{code_letter.lower()}")
                 else:
-                    sec_id = f"sec-{sanitize_id(h_text)}"
+                    sec_id = f"sec-{sanitize_id(clean_h2)}"
                     
                 current_section_id = sec_id
                 section_open = True
@@ -482,44 +504,46 @@ def parse_markdown_to_chiron_html(md_content, track_key, lesson_item):
                 # Register in TOC
                 toc_tree.append({
                     "id": sec_id,
-                    "title": h_text,
+                    "title": clean_h2,
                     "level": 2,
                     "children": []
                 })
                 
                 # Prepend icon based on section type
                 icon = "📌"
-                if "Objective" in h_text: icon = "🎯"
-                elif "Prerequisites" in h_text: icon = "📋"
-                elif "Simple Explanation" in h_text: icon = "💡"
-                elif "Actual Implementation" in h_text: icon = "💻"
-                elif "Step-by-Step" in h_text: icon = "🪜"
-                elif "Why It Matters" in h_text: icon = "⚖️"
-                elif "Practical Example" in h_text: icon = "🔬"
-                elif "Common Mistakes" in h_text: icon = "⚠️"
-                elif "Knowledge Check" in h_text: icon = "🧠"
-                elif "Completion Criteria" in h_text: icon = "🏁"
+                if "Objective" in clean_h2: icon = "🎯"
+                elif "Prerequisites" in clean_h2: icon = "📋"
+                elif "Simple Explanation" in clean_h2: icon = "💡"
+                elif "Actual Implementation" in clean_h2: icon = "💻"
+                elif "Step-by-Step" in clean_h2: icon = "🪜"
+                elif "Why It Matters" in clean_h2: icon = "⚖️"
+                elif "Practical Example" in clean_h2: icon = "🔬"
+                elif "Common Mistakes" in clean_h2: icon = "⚠️"
+                elif "Knowledge Check" in clean_h2: icon = "🧠"
+                elif "Completion Criteria" in clean_h2: icon = "🏁"
                 
                 html_parts.append(f'<section id="{sec_id}" class="doc-section">')
-                html_parts.append(f'<h3>{icon} {html.escape(h_text)}</h3>')
+                html_parts.append(f'<h3>{icon} {inline_markdown(clean_h2)}</h3>')
                 continue
                 
             elif h_level == 3:
-                sub_id = f"sub-{sanitize_id(h_text)}"
+                clean_h3 = re.sub(r'^\*\*(.*?)\*\*$', r'\1', h_text).strip().replace('**', '')
+                sub_id = f"sub-{sanitize_id(clean_h3)}"
                 if toc_tree and toc_tree[-1]["level"] == 2:
                     toc_tree[-1]["children"].append({
                         "id": sub_id,
-                        "title": h_text,
+                        "title": clean_h3,
                         "level": 3
                     })
                 html_parts.append(f'<div id="{sub_id}" class="doc-subsection">')
-                html_parts.append(f'<h4>{html.escape(h_text)}</h4>')
+                html_parts.append(f'<h4>{inline_markdown(clean_h3)}</h4>')
                 html_parts.append('</div>')
                 continue
                 
             elif h_level >= 4:
-                sub_id = f"item-{sanitize_id(h_text)}"
-                html_parts.append(f'<h5 id="{sub_id}">{html.escape(h_text)}</h5>')
+                clean_h4 = re.sub(r'^\*\*(.*?)\*\*$', r'\1', h_text).strip().replace('**', '')
+                sub_id = f"item-{sanitize_id(clean_h4)}"
+                html_parts.append(f'<h5 id="{sub_id}">{inline_markdown(clean_h4)}</h5>')
                 continue
                 
         # 6. Lists
@@ -979,34 +1003,34 @@ def compile_lesson_to_html(lesson_item, catalog, flat_lessons, track_key):
             toc_nodes_html.append(f'''          <div class="toc-tree-node" id="{nid}">
             <div class="toc-node-row">
               <span class="toc-caret" onclick="toggleTocBranch(this)">▾</span>
-              <a class="toc-tree-link" href="#{node['id']}">{html.escape(node['title'])}</a>
+              <a class="toc-tree-link" href="#{node['id']}">{format_toc_title(node['title'])}</a>
             </div>
             <div class="toc-branch">''')
             mob_toc_nodes_html.append(f'''        <div class="toc-tree-node" id="{mob_nid}">
           <div class="toc-node-row">
             <span class="toc-caret" onclick="toggleTocBranch(this)">▾</span>
-            <a class="toc-tree-link" href="#{node['id']}" onclick="toggleMobileToc()">{html.escape(node['title'])}</a>
+            <a class="toc-tree-link" href="#{node['id']}" onclick="toggleMobileToc()">{format_toc_title(node['title'])}</a>
           </div>
           <div class="toc-branch">''')
             for child in node["children"]:
                 toc_nodes_html.append(f'''              <div class="toc-node-row">
                 <span class="toc-leaf-dot"></span>
-                <a class="toc-tree-link" href="#{child['id']}">{html.escape(child['title'])}</a>
+                <a class="toc-tree-link" href="#{child['id']}">{format_toc_title(child['title'])}</a>
               </div>''')
                 mob_toc_nodes_html.append(f'''            <div class="toc-node-row">
               <span class="toc-leaf-dot"></span>
-              <a class="toc-tree-link" href="#{child['id']}" onclick="toggleMobileToc()">{html.escape(child['title'])}</a>
+              <a class="toc-tree-link" href="#{child['id']}" onclick="toggleMobileToc()">{format_toc_title(child['title'])}</a>
             </div>''')
             toc_nodes_html.append('            </div>\n          </div>')
             mob_toc_nodes_html.append('          </div>\n        </div>')
         else:
             toc_nodes_html.append(f'''          <div class="toc-node-row">
             <span class="toc-leaf-dot"></span>
-            <a class="toc-tree-link" href="#{node['id']}">{html.escape(node['title'])}</a>
+            <a class="toc-tree-link" href="#{node['id']}">{format_toc_title(node['title'])}</a>
           </div>''')
             mob_toc_nodes_html.append(f'''        <div class="toc-node-row">
           <span class="toc-leaf-dot"></span>
-          <a class="toc-tree-link" href="#{node['id']}" onclick="toggleMobileToc()">{html.escape(node['title'])}</a>
+          <a class="toc-tree-link" href="#{node['id']}" onclick="toggleMobileToc()">{format_toc_title(node['title'])}</a>
         </div>''')
 
     # Append Architecture Lab to TOC

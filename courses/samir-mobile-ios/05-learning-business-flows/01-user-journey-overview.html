@@ -185,7 +185,7 @@ flowchart TD
 <section id="sec-walkthrough" class="doc-section">
 <h3>🪜 E. Step-by-Step Walkthrough: 8 Fase Perjalanan Pengguna</h3>
 <div id="sub-fase-1-discovery-onboarding-eksplorasi" class="doc-subsection">
-<h4>Fase 1: Discovery &amp; Onboarding (Eksplorasi)</h4>
+<h4>Fase 1: Discovery & Onboarding (Eksplorasi)</h4>
 </div>
 <ul>
 <li>Pengguna membuka aplikasi SAMIR iOS.</li>
@@ -193,7 +193,7 @@ flowchart TD
 <li>Pengguna tiba di <code>IDHomeViewController</code> (Tab 0) dalam mode Tamu (<em>Guest Mode</em>). Layar menampilkan kalkulator simulasi pinjaman dengan nilai default dan tombol ajukan.</li>
 </ul>
 <div id="sub-fase-2-authentication-registration-registrasi-akun" class="doc-subsection">
-<h4>Fase 2: Authentication &amp; Registration (Registrasi Akun)</h4>
+<h4>Fase 2: Authentication & Registration (Registrasi Akun)</h4>
 </div>
 <ul>
 <li>Pengguna menekan tombol "Ajukan Pinjaman".</li>
@@ -217,7 +217,7 @@ flowchart TD
 <li><strong>Liveness Detection (<code>IDAuthLiveViewController</code>)</strong>: Menggunakan SDK AAILiveness / TrustDecision untuk memastikan pemohon adalah manusia hidup dan bukan foto/video palsu.</li>
 </ol>
 <div id="sub-fase-4-credit-risk-assessment-quota-decision-penilaian-kuota" class="doc-subsection">
-<h4>Fase 4: Credit Risk Assessment &amp; Quota Decision (Penilaian Kuota)</h4>
+<h4>Fase 4: Credit Risk Assessment & Quota Decision (Penilaian Kuota)</h4>
 </div>
 <ul>
 <li>Pengguna diarahkan ke <code>IDQuatoAssessViewController</code> (<code>samir://loan/creditAssess</code>).</li>
@@ -228,7 +228,7 @@ flowchart TD
 <li><strong>Ditolak</strong>: Pengguna diberitahu tanggal kapan mereka dapat mengajukan kembali (cooling-off period).</li>
 </ul>
 <div id="sub-fase-5-loan-product-selection-confirmation-akad-pinjaman-digital" class="doc-subsection">
-<h4>Fase 5: Loan Product Selection &amp; Confirmation (Akad Pinjaman Digital)</h4>
+<h4>Fase 5: Loan Product Selection & Confirmation (Akad Pinjaman Digital)</h4>
 </div>
 <ul>
 <li>Pengguna masuk ke layar reaktif <code>LoanConfirmViewController_Rx</code> (<code>samir://loan/confirm</code>).</li>
@@ -246,7 +246,7 @@ flowchart TD
 <li>Pengguna menerima notifikasi push keberhasilan pencairan.</li>
 </ul>
 <div id="sub-fase-7-servicing-repayment-pemantauan-pembayaran-tagihan" class="doc-subsection">
-<h4>Fase 7: Servicing &amp; Repayment (Pemantauan &amp; Pembayaran Tagihan)</h4>
+<h4>Fase 7: Servicing & Repayment (Pemantauan & Pembayaran Tagihan)</h4>
 </div>
 <ul>
 <li>Pengguna memantau jadwal cicilan di Tab 1 (Tagihan / Repay Home yang di-host di Flutter).</li>
@@ -255,7 +255,7 @@ flowchart TD
 <li>Setelah pembayaran diterima, backend mengirim konfirmasi pelunasan secara realtime.</li>
 </ul>
 <div id="sub-fase-8-retention-repeat-borrowing-pinjaman-berulang-cycle-loan" class="doc-subsection">
-<h4>Fase 8: Retention &amp; Repeat Borrowing (Pinjaman Berulang / Cycle Loan)</h4>
+<h4>Fase 8: Retention & Repeat Borrowing (Pinjaman Berulang / Cycle Loan)</h4>
 </div>
 <ul>
 <li>Setelah pinjaman pertama lunas dengan riwayat kredit yang baik, limit kuota pengguna otomatis dinaikkan.</li>
@@ -288,7 +288,7 @@ if !isLogin {
 }</code></pre>
 </section>
 <section id="sec-mistakes" class="doc-section">
-<h3>⚠️ H. Common Mistakes &amp; Debugging</h3>
+<h3>⚠️ H. Common Mistakes & Debugging</h3>
 <ul>
 <li><strong>Mengabaikan Kegagalan Liveness Detection</strong>:</li>
 <li>Jika liveness gagal karena pencahayaan redup, SDK akan mengembalikan error score. Jangan pernah membypass pemeriksaan liveness di sisi klien karena backend akan selalu memverifikasi ulang hash gambar wajah (<em>face comparison score</em>).</li>

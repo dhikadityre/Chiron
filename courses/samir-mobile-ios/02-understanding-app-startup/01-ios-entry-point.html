@@ -127,7 +127,7 @@
 <section id="sec-actual" class="doc-section">
 <h3>💻 D. Actual Implementation (Bukti Kode Sumber)</h3>
 <div id="sub-1-struktur-file-mainswift" class="doc-subsection">
-<h4>1. Struktur File `main.swift`</h4>
+<h4>1. Struktur File <code>main.swift</code></h4>
 </div>
 <p>Path: <a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/learn/iOS-Arch/ios/IDSamirLoan/main.swift" target="_blank" rel="noopener noreferrer">🦊 ios/IDSamirLoan/main.swift <span class="branch-tag">learn/iOS-Arch</span> ↗</a></p>
 <pre><code class="language-swift">// ios/IDSamirLoan/main.swift:L18-40
@@ -166,7 +166,7 @@ let _ = CZModuleHandler.ModuleManagerApplicationMain(
     serviceConfigurationFileName: &quot;IDServiceList&quot;
 )</code></pre>
 <div id="sub-2-implementasi-czmodulehandler" class="doc-subsection">
-<h4>2. Implementasi `CZModuleHandler`</h4>
+<h4>2. Implementasi <code>CZModuleHandler</code></h4>
 </div>
 <p>Path: <a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/learn/iOS-Arch/ios/IDSamirLoan/Application/CZSwiftModuleLib/Classes/CZModuleHandler.swift:L11-20" target="_blank" rel="noopener noreferrer">🦊 ios/IDSamirLoan/Application/CZSwiftModuleLib/Classes/CZModuleHandler.swift <span class="branch-tag">learn/iOS-Arch</span> ↗</a></p>
 <pre><code class="language-swift">public class CZModuleHandler: NSObject {
@@ -187,7 +187,7 @@ let _ = CZModuleHandler.ModuleManagerApplicationMain(
     }
 }</code></pre>
 <div id="sub-3-mengapa-mainswift-dibaca-pertama-kali-oleh-xcode-pertanyaan-kritis" class="doc-subsection">
-<h4>3. Mengapa `main.swift` Dibaca Pertama Kali oleh Xcode? (Pertanyaan Kritis)</h4>
+<h4>3. Mengapa <code>main.swift</code> Dibaca Pertama Kali oleh Xcode? (Pertanyaan Kritis)</h4>
 </div>
 <p>Banyak developer terbiasa dengan atribut <code>@main</code> atau <code>@UIApplicationMain</code> pada <code>AppDelegate.swift</code>. Mengapa di proyek ini file <code>main.swift</code> dieksekusi pertama kali?</p>
 <ol>
@@ -216,7 +216,7 @@ let _ = CZModuleHandler.ModuleManagerApplicationMain(
    let _ = CZModuleHandler.ModuleManagerApplicationMain(...)</code></pre>
 <p>Ini terjadi <strong>sebelum</strong> <code>UIApplicationMain</code> hidup dan <strong>sebelum</strong> <code>CZAppDelegate.application(_:didFinishLaunchingWithOptions:)</code> dipanggil!</p>
 <div id="sub-4-dari-mana-nilai-list-idmodulelist-diambil-mekanisme-parse-plist" class="doc-subsection">
-<h4>4. Dari Mana Nilai List `IDModuleList` Diambil? (Mekanisme Parse Plist)</h4>
+<h4>4. Dari Mana Nilai List <code>IDModuleList</code> Diambil? (Mekanisme Parse Plist)</h4>
 </div>
 <p>Parameter <code>&quot;IDModuleList&quot;</code> dioper dari <code>main.swift</code> ke <code>CZModuleManager.shared.setup(...)</code>:</p>
 <ol>
@@ -265,7 +265,7 @@ let _ = CZModuleHandler.ModuleManagerApplicationMain(
 <li>Objek modul kemudian diinstansiasi secara dinamis menggunakan <code>(moduleClass as! CZModuleProtocol.Type).create()</code>.</li>
 </ul>
 <div id="sub-5-file-warisan-mati-applicationmainm" class="doc-subsection">
-<h4>5. File Warisan Mati: `Application/main.m`</h4>
+<h4>5. File Warisan Mati: <code>Application/main.m</code></h4>
 </div>
 <p>Path: <a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/learn/iOS-Arch/ios/IDSamirLoan/Application/main.m" target="_blank" rel="noopener noreferrer">🦊 ios/IDSamirLoan/Application/main.m <span class="branch-tag">learn/iOS-Arch</span> ↗</a></p>
 <p>File ini berisi kode Objective-C masa lalu yang <strong>seluruhnya telah dikomentari</strong> (<code>//</code>). Proyek ini murni menggunakan <code>main.swift</code> sebagai satu-satunya entry point. Jangan terkecoh jika melihat file <code>main.m</code> di direktori!</p>
@@ -309,7 +309,7 @@ sequenceDiagram
 </ol>
 </section>
 <section id="sec-why" class="doc-section">
-<h3>⚖️ F. Why It Matters (Trade-Offs &amp; Catatan Arsitektur)</h3>
+<h3>⚖️ F. Why It Matters (Trade-Offs & Catatan Arsitektur)</h3>
 <ul>
 <li><strong>Mengapa Modul Harus Terdaftar Sebelum <code>UIApplicationMain</code>?</strong></li>
 </ul>
@@ -324,7 +324,7 @@ sequenceDiagram
 <p>Jika seorang developer ingin menambahkan tracking performa baru yang harus berjalan sebelum tampilan apa pun dimuat, lokasi yang tepat untuk meletakkannya adalah di <code>ApplicationLauncher.performLaunchSetup()</code> di dalam <code>main.swift</code>. Namun, developer <strong>tidak boleh</strong> melakukan operasi berat (seperti request jaringan synchronous) di file ini karena sistem operasi iOS akan mematikan aplikasi (watchdog timeout) jika proses startup memakan waktu lebih dari beberapa detik.</p>
 </section>
 <section id="sec-mistakes" class="doc-section">
-<h3>⚠️ H. Common Mistakes &amp; Debugging</h3>
+<h3>⚠️ H. Common Mistakes & Debugging</h3>
 <ul>
 <li><strong>Crash Fatal Saat Boot</strong>:</li>
 <li><em>Gejala</em>: Aplikasi langsung crash sesaat setelah splash screen muncul (sebelum UI sempat dirender).</li>
@@ -529,23 +529,23 @@ public final class AppStartupCoordinator {
             <div class="toc-branch">
               <div class="toc-node-row">
                 <span class="toc-leaf-dot"></span>
-                <a class="toc-tree-link" href="#sub-1-struktur-file-mainswift">1. Struktur File `main.swift`</a>
+                <a class="toc-tree-link" href="#sub-1-struktur-file-mainswift">1. Struktur File <span class="toc-code">main.swift</span></a>
               </div>
               <div class="toc-node-row">
                 <span class="toc-leaf-dot"></span>
-                <a class="toc-tree-link" href="#sub-2-implementasi-czmodulehandler">2. Implementasi `CZModuleHandler`</a>
+                <a class="toc-tree-link" href="#sub-2-implementasi-czmodulehandler">2. Implementasi <span class="toc-code">CZModuleHandler</span></a>
               </div>
               <div class="toc-node-row">
                 <span class="toc-leaf-dot"></span>
-                <a class="toc-tree-link" href="#sub-3-mengapa-mainswift-dibaca-pertama-kali-oleh-xcode-pertanyaan-kritis">3. Mengapa `main.swift` Dibaca Pertama Kali oleh Xcode? (Pertanyaan Kritis)</a>
+                <a class="toc-tree-link" href="#sub-3-mengapa-mainswift-dibaca-pertama-kali-oleh-xcode-pertanyaan-kritis">3. Mengapa <span class="toc-code">main.swift</span> Dibaca Pertama Kali oleh Xcode? (Pertanyaan Kritis)</a>
               </div>
               <div class="toc-node-row">
                 <span class="toc-leaf-dot"></span>
-                <a class="toc-tree-link" href="#sub-4-dari-mana-nilai-list-idmodulelist-diambil-mekanisme-parse-plist">4. Dari Mana Nilai List `IDModuleList` Diambil? (Mekanisme Parse Plist)</a>
+                <a class="toc-tree-link" href="#sub-4-dari-mana-nilai-list-idmodulelist-diambil-mekanisme-parse-plist">4. Dari Mana Nilai List <span class="toc-code">IDModuleList</span> Diambil? (Mekanisme Parse Plist)</a>
               </div>
               <div class="toc-node-row">
                 <span class="toc-leaf-dot"></span>
-                <a class="toc-tree-link" href="#sub-5-file-warisan-mati-applicationmainm">5. File Warisan Mati: `Application/main.m`</a>
+                <a class="toc-tree-link" href="#sub-5-file-warisan-mati-applicationmainm">5. File Warisan Mati: <span class="toc-code">Application/main.m</span></a>
               </div>
             </div>
           </div>
@@ -641,23 +641,23 @@ public final class AppStartupCoordinator {
           <div class="toc-branch">
             <div class="toc-node-row">
               <span class="toc-leaf-dot"></span>
-              <a class="toc-tree-link" href="#sub-1-struktur-file-mainswift" onclick="toggleMobileToc()">1. Struktur File `main.swift`</a>
+              <a class="toc-tree-link" href="#sub-1-struktur-file-mainswift" onclick="toggleMobileToc()">1. Struktur File <span class="toc-code">main.swift</span></a>
             </div>
             <div class="toc-node-row">
               <span class="toc-leaf-dot"></span>
-              <a class="toc-tree-link" href="#sub-2-implementasi-czmodulehandler" onclick="toggleMobileToc()">2. Implementasi `CZModuleHandler`</a>
+              <a class="toc-tree-link" href="#sub-2-implementasi-czmodulehandler" onclick="toggleMobileToc()">2. Implementasi <span class="toc-code">CZModuleHandler</span></a>
             </div>
             <div class="toc-node-row">
               <span class="toc-leaf-dot"></span>
-              <a class="toc-tree-link" href="#sub-3-mengapa-mainswift-dibaca-pertama-kali-oleh-xcode-pertanyaan-kritis" onclick="toggleMobileToc()">3. Mengapa `main.swift` Dibaca Pertama Kali oleh Xcode? (Pertanyaan Kritis)</a>
+              <a class="toc-tree-link" href="#sub-3-mengapa-mainswift-dibaca-pertama-kali-oleh-xcode-pertanyaan-kritis" onclick="toggleMobileToc()">3. Mengapa <span class="toc-code">main.swift</span> Dibaca Pertama Kali oleh Xcode? (Pertanyaan Kritis)</a>
             </div>
             <div class="toc-node-row">
               <span class="toc-leaf-dot"></span>
-              <a class="toc-tree-link" href="#sub-4-dari-mana-nilai-list-idmodulelist-diambil-mekanisme-parse-plist" onclick="toggleMobileToc()">4. Dari Mana Nilai List `IDModuleList` Diambil? (Mekanisme Parse Plist)</a>
+              <a class="toc-tree-link" href="#sub-4-dari-mana-nilai-list-idmodulelist-diambil-mekanisme-parse-plist" onclick="toggleMobileToc()">4. Dari Mana Nilai List <span class="toc-code">IDModuleList</span> Diambil? (Mekanisme Parse Plist)</a>
             </div>
             <div class="toc-node-row">
               <span class="toc-leaf-dot"></span>
-              <a class="toc-tree-link" href="#sub-5-file-warisan-mati-applicationmainm" onclick="toggleMobileToc()">5. File Warisan Mati: `Application/main.m`</a>
+              <a class="toc-tree-link" href="#sub-5-file-warisan-mati-applicationmainm" onclick="toggleMobileToc()">5. File Warisan Mati: <span class="toc-code">Application/main.m</span></a>
             </div>
           </div>
         </div>

@@ -183,13 +183,13 @@ sequenceDiagram
   </div>
 </div>
 <div id="sub-1-injeksi-parameter-umum-apiparamshelper" class="doc-subsection">
-<h4>1. Injeksi Parameter Umum (`ApiParamsHelper`)</h4>
+<h4>1. Injeksi Parameter Umum (<code>ApiParamsHelper</code>)</h4>
 </div>
 <p>Path: <a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/learn/iOS-Arch/ios/IDSamirLoan/Application/SamirNetworkModule/Classes/Helper/ApiParamsHelper.swift" target="_blank" rel="noopener noreferrer">🦊 ios/IDSamirLoan/Application/SamirNetworkModule/Classes/Helper/ApiParamsHelper.swift <span class="branch-tag">learn/iOS-Arch</span> ↗</a></p>
 <p>Setiap request in-house otomatis membawa 18 parameter perangkat dan sesi:</p>
 <div class="table-container"><table class="data-table"><thead><tr><th>Kunci Parameter</th><th>Sumber Nilai</th><th>Deskripsi</th></tr></thead><tbody><tr><td><code>clientId</code></td><td><code>AppEnv.default.config[&quot;clientId&quot;]</code></td><td>UUID unik klien per environment.</td></tr><tr><td><code>account_id</code></td><td><code>IDNetworkManager.shared.accountId</code></td><td>Nomor akun nasabah.</td></tr><tr><td><code>userNo</code> / <code>user_id</code></td><td><code>IDNetworkManager.shared.userNo</code></td><td>ID pengguna unik di database backend.</td></tr><tr><td><code>mid</code></td><td><code>IDNetworkManager.shared.mid</code></td><td>Master Identifier sesi aktif.</td></tr><tr><td><code>analyticsId</code></td><td><code>IDNetworkManager.shared.analyticsId</code></td><td>ID instalasi analitik Firebase.</td></tr><tr><td><code>appsflyer_device_id</code></td><td><code>IDNetworkManager.shared.appsflyerDeviceId</code></td><td>UID perangkat dari AppsFlyer SDK.</td></tr><tr><td><code>timestamp</code></td><td><code>Date().cz_milliStamp</code></td><td>Waktu pengiriman request dalam milidetik.</td></tr><tr><td><code>version</code></td><td><code>Bundle.cz.appVersion</code></td><td>Versi aplikasi (misal: <code>2.4.0</code>).</td></tr><tr><td><code>channel</code></td><td><code>&quot;AppStore&quot;</code></td><td>Saluran distribusi biner.</td></tr><tr><td><code>source</code></td><td><code>&quot;iOS&quot;</code></td><td>Nama platform.</td></tr><tr><td><code>androidIos</code></td><td><code>1</code></td><td>Integer penanda platform (<code>1</code> = iOS, <code>0</code> = Android).</td></tr><tr><td><code>uuid</code></td><td><code>IDNetworkManager.shared.uuid</code></td><td>UUID perangkat (IDFV/Keychain).</td></tr><tr><td><code>osVersion</code></td><td><code>UIDevice.current.systemVersion</code></td><td>Versi iOS perangkat (misal: <code>17.5</code>).</td></tr><tr><td><code>language</code></td><td><code>&quot;id_ID&quot;</code></td><td>Bahasa lokal default (Bahasa Indonesia).</td></tr><tr><td><code>regFrom</code></td><td><code>&quot;998&quot;</code></td><td>Kode registrasi asal aplikasi.</td></tr></tbody></table></div>
 <div id="sub-2-mekanisme-penandatanganan-kriptografis-idnetworksignaturehandler" class="doc-subsection">
-<h4>2. Mekanisme Penandatanganan Kriptografis (`IDNetworkSignatureHandler`)</h4>
+<h4>2. Mekanisme Penandatanganan Kriptografis (<code>IDNetworkSignatureHandler</code>)</h4>
 </div>
 <p>Path: <a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/learn/iOS-Arch/ios/IDSamirLoan/Application/SamirNetworkModule/Classes/Signature/IDNetworkSignatureHandler.swift" target="_blank" rel="noopener noreferrer">🦊 ios/IDSamirLoan/Application/SamirNetworkModule/Classes/Signature/IDNetworkSignatureHandler.swift <span class="branch-tag">learn/iOS-Arch</span> ↗</a></p>
 <p>Tersedia 3 varian tanda tangan:</p>
@@ -218,7 +218,7 @@ sequenceDiagram
 </ul>
 <div class="callout best-practice"><p>[!CRITICAL] <strong>Larangan Keras Developer</strong>: Menambah, mengubah nama, atau menghapus salah satu field di <code>ApiParamsHelper</code> <strong>AKAN MERUSAK PERHITUNGAN <code>sign</code></strong>! Backend akan langsung menolak request dengan error tanda tangan tidak valid. Setiap perubahan parameter wajib disinkronkan dengan tim backend.</p></div>
 <div id="sub-3-envelope-respon-backend-status-code" class="doc-subsection">
-<h4>3. Envelope Respon Backend &amp; Status Code</h4>
+<h4>3. Envelope Respon Backend & Status Code</h4>
 </div>
 <p>Seluruh API in-house mengembalikan format envelope standar:</p>
 <pre><code class="language-json">{
@@ -246,7 +246,7 @@ sequenceDiagram
 <li>Helper ini sengaja <strong>melewati penandatanganan <code>sign</code></strong>, tidak menyuntikkan parameter umum SAMIR, dan tidak memeriksa envelope <code>{code, msg, result}</code>.</li>
 </ul>
 <div id="sub-5-evaluasi-keamanan-tls-reachability" class="doc-subsection">
-<h4>5. Evaluasi Keamanan TLS &amp; Reachability</h4>
+<h4>5. Evaluasi Keamanan TLS & Reachability</h4>
 </div>
 <ul>
 <li><strong>Dynamic Server Trust (<code>CZDynamicServerTrustManager</code>)</strong>:</li>
@@ -262,7 +262,7 @@ sequenceDiagram
 </ul>
 <p>Memantau koneksi internet secara realtime. Properti <code>IDNetworkManager.shared.networkEnable</code> dapat diperiksa kapan saja sebelum melakukan request.</p>
 <div id="sub-6-audit-arsitektur-apakah-cznetworklib-masih-digunakan" class="doc-subsection">
-<h4>6. Audit Arsitektur: Apakah `CZNetworkLib` Masih Digunakan?</h4>
+<h4>6. Audit Arsitektur: Apakah <code>CZNetworkLib</code> Masih Digunakan?</h4>
 </div>
 <p>Di dalam direktori proyek masih ditemukan folder <a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/learn/iOS-Arch/ios/IDSamirLoan/Application/CZNetworkLib/" target="_blank" rel="noopener noreferrer">🦊 ios/IDSamirLoan/Application/CZNetworkLib/ <span class="branch-tag">learn/iOS-Arch</span> ↗</a>. Apakah library ini masih aktif?</p>
 <h5 id="item-a-bukti-penelusuran-code-truth">A. Bukti Penelusuran (Code Truth):</h5>
@@ -334,7 +334,7 @@ DefaultTimeout = 90</code></pre>
 <p>sehingga pengguna tidak melihat pesan teknis bahasa Inggris yang membingungkan.</p>
 </section>
 <section id="sec-mistakes" class="doc-section">
-<h3>⚠️ H. Common Mistakes &amp; Debugging</h3>
+<h3>⚠️ H. Common Mistakes & Debugging</h3>
 <ul>
 <li><strong>Mengirim Nilai <code>nil</code> di Dictionary Parameter</strong>:</li>
 <li>Menyertakan nilai <code>nil</code> di dalam dictionary Swift dapat memicu crash atau menghilangkan kunci saat dikonversi ke JSON, yang mengakibatkan perbedaan tanda tangan antara klien dan server.</li>
@@ -531,11 +531,11 @@ public final class AppSessionManager: SessionProvider {
             <div class="toc-branch">
               <div class="toc-node-row">
                 <span class="toc-leaf-dot"></span>
-                <a class="toc-tree-link" href="#sub-1-injeksi-parameter-umum-apiparamshelper">1. Injeksi Parameter Umum (`ApiParamsHelper`)</a>
+                <a class="toc-tree-link" href="#sub-1-injeksi-parameter-umum-apiparamshelper">1. Injeksi Parameter Umum (<span class="toc-code">ApiParamsHelper</span>)</a>
               </div>
               <div class="toc-node-row">
                 <span class="toc-leaf-dot"></span>
-                <a class="toc-tree-link" href="#sub-2-mekanisme-penandatanganan-kriptografis-idnetworksignaturehandler">2. Mekanisme Penandatanganan Kriptografis (`IDNetworkSignatureHandler`)</a>
+                <a class="toc-tree-link" href="#sub-2-mekanisme-penandatanganan-kriptografis-idnetworksignaturehandler">2. Mekanisme Penandatanganan Kriptografis (<span class="toc-code">IDNetworkSignatureHandler</span>)</a>
               </div>
               <div class="toc-node-row">
                 <span class="toc-leaf-dot"></span>
@@ -551,7 +551,7 @@ public final class AppSessionManager: SessionProvider {
               </div>
               <div class="toc-node-row">
                 <span class="toc-leaf-dot"></span>
-                <a class="toc-tree-link" href="#sub-6-audit-arsitektur-apakah-cznetworklib-masih-digunakan">6. Audit Arsitektur: Apakah `CZNetworkLib` Masih Digunakan?</a>
+                <a class="toc-tree-link" href="#sub-6-audit-arsitektur-apakah-cznetworklib-masih-digunakan">6. Audit Arsitektur: Apakah <span class="toc-code">CZNetworkLib</span> Masih Digunakan?</a>
               </div>
             </div>
           </div>
@@ -647,11 +647,11 @@ public final class AppSessionManager: SessionProvider {
           <div class="toc-branch">
             <div class="toc-node-row">
               <span class="toc-leaf-dot"></span>
-              <a class="toc-tree-link" href="#sub-1-injeksi-parameter-umum-apiparamshelper" onclick="toggleMobileToc()">1. Injeksi Parameter Umum (`ApiParamsHelper`)</a>
+              <a class="toc-tree-link" href="#sub-1-injeksi-parameter-umum-apiparamshelper" onclick="toggleMobileToc()">1. Injeksi Parameter Umum (<span class="toc-code">ApiParamsHelper</span>)</a>
             </div>
             <div class="toc-node-row">
               <span class="toc-leaf-dot"></span>
-              <a class="toc-tree-link" href="#sub-2-mekanisme-penandatanganan-kriptografis-idnetworksignaturehandler" onclick="toggleMobileToc()">2. Mekanisme Penandatanganan Kriptografis (`IDNetworkSignatureHandler`)</a>
+              <a class="toc-tree-link" href="#sub-2-mekanisme-penandatanganan-kriptografis-idnetworksignaturehandler" onclick="toggleMobileToc()">2. Mekanisme Penandatanganan Kriptografis (<span class="toc-code">IDNetworkSignatureHandler</span>)</a>
             </div>
             <div class="toc-node-row">
               <span class="toc-leaf-dot"></span>
@@ -667,7 +667,7 @@ public final class AppSessionManager: SessionProvider {
             </div>
             <div class="toc-node-row">
               <span class="toc-leaf-dot"></span>
-              <a class="toc-tree-link" href="#sub-6-audit-arsitektur-apakah-cznetworklib-masih-digunakan" onclick="toggleMobileToc()">6. Audit Arsitektur: Apakah `CZNetworkLib` Masih Digunakan?</a>
+              <a class="toc-tree-link" href="#sub-6-audit-arsitektur-apakah-cznetworklib-masih-digunakan" onclick="toggleMobileToc()">6. Audit Arsitektur: Apakah <span class="toc-code">CZNetworkLib</span> Masih Digunakan?</a>
             </div>
           </div>
         </div>

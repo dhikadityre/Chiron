@@ -116,7 +116,7 @@
 <p>Telah membaca <a href="../01-project-foundation/03-technology-stack-and-build.html">Level 1: Pondasi Proyek</a>.</p>
 </section>
 <section id="sec-simple" class="doc-section">
-<h3>💡 C. Simple Explanation (Analogi &amp; Konsep Sederhana)</h3>
+<h3>💡 C. Simple Explanation (Analogi & Konsep Sederhana)</h3>
 <p>Bayangkan sebuah kotak perkakas seorang montir mobil spesialis:</p>
 <ul>
 <li>Montir tidak membuat kunci pas, kompresor udara, atau obeng dari bijih besi mentah; ia memilih perkakas standar industri berlabel resmi (<strong>pub.dev packages</strong>).</li>
@@ -132,7 +132,7 @@
 <p>Berdasarkan deklarasi resmi pada <a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/learn/Flutter-Arch/flutter/pubspec.yaml" target="_blank" rel="noopener noreferrer">🦊 flutter/pubspec.yaml <span class="branch-tag">learn/Flutter-Arch</span> ↗</a> (baris 31–47):</p>
 <div class="table-container"><table class="data-table"><thead><tr><th>Nama Paket</th><th>Versi Terkunci</th><th>Kategori / Domain</th><th>Justifikasi Arsitektural & Kegunaan</th></tr></thead><tbody><tr><td><strong><code>dio</code></strong></td><td><code>^5.9.0</code></td><td>Networking (HTTP/HTTPS)</td><td>Client HTTP berkinerja tinggi yang mendukung custom interceptor (logging, auto-loading), penyesuaian adapter proxy, dan bypass SSL certificate.</td></tr><tr><td><strong><code>crypto</code></strong></td><td><code>^3.0.6</code></td><td>Security & Cryptography</td><td>Utilitas enkripsi standar Dart murni untuk hashing MD5 tanda tangan request (<code>signParamMap</code>) dua tahap.</td></tr><tr><td><strong><code>go_router</code></strong></td><td><code>^16.0.0</code></td><td>Navigation & Routing</td><td>Routing deklaratif berbasis URI path semantik yang mempermudah sinkronisasi rute dari host native dan deep-linking.</td></tr><tr><td><strong><code>lottie</code></strong></td><td><code>^3.3.3</code></td><td>Animation & Vector Graphics</td><td>Merender file animasi JSON vektor Adobe After Effects untuk animasi loading spinner dan status kosong (<em>empty state</em>).</td></tr><tr><td><strong><code>cupertino_icons</code></strong></td><td><code>^1.0.8</code></td><td>UI Assets / Icons</td><td>Kumpulan glif ikon bergaya iOS untuk tombol kembali dan navigasi standar.</td></tr></tbody></table></div>
 <div id="sub-2-dependensi-pengujian-linting-dev-dependencies" class="doc-subsection">
-<h4>2. Dependensi Pengujian &amp; Linting (*Dev Dependencies*)</h4>
+<h4>2. Dependensi Pengujian & Linting (<em>Dev Dependencies</em>)</h4>
 </div>
 <div class="table-container"><table class="data-table"><thead><tr><th>Nama Paket</th><th>Versi Terkunci</th><th>Kategori</th><th>Kegunaan</th></tr></thead><tbody><tr><td><strong><code>flutter_test</code></strong></td><td><code>sdk: flutter</code></td><td>Testing Framework</td><td>Pustaka pengujian unit test dan widget test bawaan Flutter SDK.</td></tr><tr><td><strong><code>flutter_lints</code></strong></td><td><code>^6.0.0</code></td><td>Static Code Analysis</td><td>Kumpulan aturan rekomendasi resmi Google untuk menjamin kualitas, keamanan, dan konsistensi penulisan kode Dart.</td></tr></tbody></table></div>
 <div id="sub-3-pustaka-pengujian-jaringan-branch-testing-nexus" class="doc-subsection">
@@ -146,7 +146,7 @@
 </ul>
 </section>
 <section id="sec-walkthrough" class="doc-section">
-<h3>📌 E. Analisis Dependency Tree &amp; Ukuran Biner</h3>
+<h3>📌 E. Analisis Dependency Tree & Ukuran Biner</h3>
 <p>Prinsip utama modul Flutter SAMIR adalah <strong>Minimalist Dependency Footprint</strong>:</p>
 <ul>
 <li>Total dependensi pihak ketiga hanya 4 pustaka utama (<code>dio</code>, <code>crypto</code>, <code>go_router</code>, <code>lottie</code>).</li>
@@ -161,7 +161,7 @@
 </ol>
 </section>
 <section id="sec-why" class="doc-section">
-<h3>⚖️ F. Why It Matters (Trade-Offs &amp; Implikasi Teknis)</h3>
+<h3>⚖️ F. Why It Matters (Trade-Offs & Implikasi Teknis)</h3>
 <ul>
 <li><strong>Mengapa Memilih <code>crypto</code> Murni Dart dan Bukan Plugin Native?</strong></li>
 </ul>
@@ -180,7 +180,7 @@
 </ul>
 </section>
 <section id="sec-mistakes" class="doc-section">
-<h3>⚠️ H. Common Mistakes &amp; Debugging</h3>
+<h3>⚠️ H. Common Mistakes & Debugging</h3>
 <ul>
 <li><strong>Mengupgrade Versi <code>go_router</code> Sembarangan</strong>:</li>
 <li><code>go_router</code> sering merilis breaking changes pada versi mayor (misalnya perubahan dari v12 ke v16 pada signature <code>GoRouterDelegate</code> dan <code>GoRouterState</code>). Selalu verifikasi kompatibilitas <code>routers.dart</code> sebelum menaikkan versi paket ini.</li>

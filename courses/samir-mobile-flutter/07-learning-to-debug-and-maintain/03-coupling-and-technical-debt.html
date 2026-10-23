@@ -112,7 +112,7 @@
 <p>Telah membaca <a href="../03-understanding-architecture/01-architecture-overview.html">01-architecture-overview.md</a> dan <a href="../06-understanding-data-and-dependencies/03-parameter-signing-and-security.html">03-parameter-signing-and-security.md</a>.</p>
 </section>
 <section id="sec-simple" class="doc-section">
-<h3>💡 C. Simple Explanation (Analogi &amp; Konsep Sederhana)</h3>
+<h3>💡 C. Simple Explanation (Analogi & Konsep Sederhana)</h3>
 <p>Bayangkan sebuah jembatan gantung yang dibangun dengan cepat untuk membuka akses jalan:</p>
 <ul>
 <li>Jembatan tersebut berfungsi dengan sangat baik dan berhasil dilalui ribuan kendaraan setiap hari.</li>
@@ -150,7 +150,7 @@
     return !AppEnv.isProd; // Hanya izinkan bypass pada mode non-PROD!
   };</code></pre>
 <div id="sub-2-temuan-2-mutable-static-singleton-pada-global-tingkat-risiko-sedang" class="doc-subsection">
-<h4>2. Temuan 2: Mutable Static Singleton pada `Global` (Tingkat Risiko: SEDANG)</h4>
+<h4>2. Temuan 2: Mutable Static Singleton pada <code>Global</code> (Tingkat Risiko: SEDANG)</h4>
 </div>
 <ul>
 <li><strong>Lokasi Kode</strong>: <a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/learn/Flutter-Arch/flutter/lib/common/global.dart" target="_blank" rel="noopener noreferrer">🦊 flutter/lib/common/global.dart <span class="branch-tag">learn/Flutter-Arch</span> ↗</a>.</li>
@@ -181,7 +181,7 @@
 </ul>
 <p>Simpan salt rahasia di dalam biner terenkripsi C++ di sisi Native (via NDK / Obfuscated C helper), lalu ambil nilainya melalui MethodChannel yang dilindungi enkripsi memori.</p>
 <div id="sub-4-temuan-4-ketiadaan-offline-cache-penanganan-jaringan-lemah-tingkat-risiko-rendah" class="doc-subsection">
-<h4>4. Temuan 4: Ketiadaan Offline Cache &amp; Penanganan Jaringan Lemah (Tingkat Risiko: RENDAH)</h4>
+<h4>4. Temuan 4: Ketiadaan Offline Cache & Penanganan Jaringan Lemah (Tingkat Risiko: RENDAH)</h4>
 </div>
 <ul>
 <li><strong>Implementasi Saat Ini</strong>:</li>
@@ -196,7 +196,7 @@
 </ul>
 <p>Sediakan cache ringan in-memory atau disk terenkripsi untuk menyimpan respon terakhir daftar tagihan aktif selama 15 menit.</p>
 <div id="sub-5-temuan-5-kesenjangan-cakupan-pengujian-otomatis-test-coverage-gap" class="doc-subsection">
-<h4>5. Temuan 5: Kesenjangan Cakupan Pengujian Otomatis (*Test Coverage Gap*)</h4>
+<h4>5. Temuan 5: Kesenjangan Cakupan Pengujian Otomatis (<em>Test Coverage Gap</em>)</h4>
 </div>
 <ul>
 <li><strong>Lokasi</strong>: <a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/learn/Flutter-Arch/flutter/test" target="_blank" rel="noopener noreferrer">🦊 flutter/test/ <span class="branch-tag">learn/Flutter-Arch</span> ↗</a>.</li>
@@ -215,7 +215,7 @@
 <div class="table-container"><table class="data-table"><thead><tr><th>ID</th><th>Komponen Terkait</th><th>Dampak Bisnis / Keamanan</th><th>Biaya Upaya (Effort)</th><th>Target Rekomendasi</th></tr></thead><tbody><tr><td><strong>SEC-01</strong></td><td><code>badCertificateCallback</code> guard di <code>http_client.dart</code></td><td><strong>Sangat Kritis</strong></td><td>Sangat Rendah (< 1 jam)</td><td>Rilis Patch Berikutnya</td></tr><tr><td><strong>SEC-02</strong></td><td>Obfuscation kunci salt di <code>sign_utils.dart</code></td><td>Sedang</td><td>Sedang (1-2 hari)</td><td>Kuartal Depan</td></tr><tr><td><strong>ARC-01</strong></td><td>Encapsulated State pada <code>Global</code></td><td>Sedang</td><td>Rendah (0.5 hari)</td><td>Refactoring Minor</td></tr><tr><td><strong>TST-01</strong></td><td>Unit test untuk <code>sign_utils</code> & parser model</td><td>Rendah</td><td>Rendah (1 hari)</td><td>Sprint Saat Ini</td></tr><tr><td><strong>UX-01</strong></td><td>In-memory cache nomor Virtual Account</td><td>Rendah</td><td>Sedang (2 hari)</td><td>Backlog Fitur</td></tr></tbody></table></div>
 </section>
 <section id="sec-why" class="doc-section">
-<h3>⚖️ F. Why It Matters (Trade-Offs &amp; Implikasi Teknis)</h3>
+<h3>⚖️ F. Why It Matters (Trade-Offs & Implikasi Teknis)</h3>
 <ul>
 <li>Mengaudit utang teknis bukan berarti kode saat ini buruk; sebagian besar kompromi di atas diambil untuk mempercepat rilis awal produk (<em>time-to-market</em>). Namun, seiring bertambahnya jumlah nasabah aktif dan meningkatnya audit kepatuhan OJK, memperbaiki celah keamanan seperti <code>SEC-01</code> menjadi kewajiban mutlak sebelum audit eksternal perbankan.</li>
 </ul>
@@ -416,7 +416,7 @@ class GlobalSessionManager implements SessionContract {
               </div>
               <div class="toc-node-row">
                 <span class="toc-leaf-dot"></span>
-                <a class="toc-tree-link" href="#sub-2-temuan-2-mutable-static-singleton-pada-global-tingkat-risiko-sedang">2. Temuan 2: Mutable Static Singleton pada `Global` (Tingkat Risiko: SEDANG)</a>
+                <a class="toc-tree-link" href="#sub-2-temuan-2-mutable-static-singleton-pada-global-tingkat-risiko-sedang">2. Temuan 2: Mutable Static Singleton pada <span class="toc-code">Global</span> (Tingkat Risiko: SEDANG)</a>
               </div>
               <div class="toc-node-row">
                 <span class="toc-leaf-dot"></span>
@@ -520,7 +520,7 @@ class GlobalSessionManager implements SessionContract {
             </div>
             <div class="toc-node-row">
               <span class="toc-leaf-dot"></span>
-              <a class="toc-tree-link" href="#sub-2-temuan-2-mutable-static-singleton-pada-global-tingkat-risiko-sedang" onclick="toggleMobileToc()">2. Temuan 2: Mutable Static Singleton pada `Global` (Tingkat Risiko: SEDANG)</a>
+              <a class="toc-tree-link" href="#sub-2-temuan-2-mutable-static-singleton-pada-global-tingkat-risiko-sedang" onclick="toggleMobileToc()">2. Temuan 2: Mutable Static Singleton pada <span class="toc-code">Global</span> (Tingkat Risiko: SEDANG)</a>
             </div>
             <div class="toc-node-row">
               <span class="toc-leaf-dot"></span>

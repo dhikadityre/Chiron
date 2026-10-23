@@ -121,19 +121,19 @@
 </ul>
 </section>
 <section id="sec-actual" class="doc-section">
-<h3>💻 D. Actual Implementation (Daftar Stack &amp; Konfigurasi)</h3>
+<h3>💻 D. Actual Implementation (Daftar Stack & Konfigurasi)</h3>
 <div id="sub-1-technology-stack-dependency-catalog" class="doc-subsection">
-<h4>1. Technology Stack &amp; Dependency Catalog</h4>
+<h4>1. Technology Stack & Dependency Catalog</h4>
 </div>
 <p>Berdasarkan file <a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/learn/iOS-Arch/ios/Podfile" target="_blank" rel="noopener noreferrer">🦊 ios/Podfile <span class="branch-tag">learn/iOS-Arch</span> ↗</a>:</p>
-<h5 id="item-a-foundation-ui-engineering-open-source">A. Foundation &amp; UI Engineering (Open-Source)</h5>
+<h5 id="item-a-foundation-ui-engineering-open-source">A. Foundation & UI Engineering (Open-Source)</h5>
 <div class="table-container"><table class="data-table"><thead><tr><th>Pustaka</th><th>Versi</th><th>Peran Teknis di Proyek</th></tr></thead><tbody><tr><td><strong>SnapKit</strong></td><td><code>5.6.0</code></td><td>DSL Auto Layout deklaratif programatik di seluruh ViewController native.</td></tr><tr><td><strong>Kingfisher</strong></td><td><code>8.6.2</code></td><td>Pemuatan dan caching gambar web asynchronous.</td></tr><tr><td><strong>KakaJSON</strong></td><td><code>~&gt; 1.1.2</code></td><td>Serialisasi dan deserialisasi JSON ke struct/model (<code>kj.model</code>).</td></tr><tr><td><strong>IQKeyboardManagerSwift</strong></td><td><code>7.0.2</code></td><td>Pengelolaan otomatis scroll view agar form input tidak tertutup keyboard.</td></tr><tr><td><strong>R.swift</strong></td><td>Latest</td><td>Kode otomatis strongly-typed untuk aset gambar (<code>R.image.*</code>) dan string.</td></tr><tr><td><strong>MJRefresh</strong></td><td>Latest</td><td>Komponen pull-to-refresh pada tabel dan scroll view.</td></tr><tr><td><strong>lottie-ios</strong></td><td>Latest</td><td>Rendering animasi vektor JSON untuk loading indicator (<code>IDAnimationJson</code>).</td></tr><tr><td><strong>MarqueeLabel</strong></td><td>Latest</td><td>Label teks berjalan untuk pengumuman atau ticker running text.</td></tr><tr><td><strong>FSPagerView</strong></td><td>Latest</td><td>Komponen banner berputar (carousel paging) di halaman Beranda.</td></tr><tr><td><strong>MBProgressHUD</strong></td><td><code>1.2.0</code></td><td>Dialog popup loading (HUD) dan toast pesan singkat.</td></tr><tr><td><strong>Then</strong></td><td><code>2.7.0</code></td><td>Syntactic sugar untuk inisialisasi properti objek secara clean.</td></tr><tr><td><strong>CryptoSwift</strong></td><td><code>1.4.2</code></td><td>Utilitas hashing & kriptografi legacy di beberapa modul pendukung.</td></tr><tr><td><strong>RxSwift & RxCocoa</strong></td><td><code>6.9.0</code></td><td>Pemrograman reaktif fungsional (<strong>khusus digunakan di <code>LoanConfirmModule</code></strong>).</td></tr></tbody></table></div>
-<h5 id="item-b-networking-core-foundation">B. Networking &amp; Core Foundation</h5>
+<h5 id="item-b-networking-core-foundation">B. Networking & Core Foundation</h5>
 <div class="table-container"><table class="data-table"><thead><tr><th>Pustaka</th><th>Versi</th><th>Peran Teknis di Proyek</th></tr></thead><tbody><tr><td><strong>Alamofire</strong></td><td>Latest</td><td>Core HTTP network networking client yang di-wrap oleh <code>CZAlamofireBridge</code>.</td></tr><tr><td><strong>KeychainAccess</strong></td><td><code>4.2.2</code></td><td>Pembungkus aman iOS Keychain Services API untuk token sesi.</td></tr><tr><td><strong>XCGLogger</strong></td><td><code>7.0.1</code></td><td>Pustaka logging multi-level (Verbose, Debug, Info, Error).</td></tr></tbody></table></div>
-<h5 id="item-c-vendor-sdks-anti-fraud-closed-source-binary">C. Vendor SDKs &amp; Anti-Fraud (Closed-Source / Binary)</h5>
+<h5 id="item-c-vendor-sdks-anti-fraud-closed-source-binary">C. Vendor SDKs & Anti-Fraud (Closed-Source / Binary)</h5>
 <div class="table-container"><table class="data-table"><thead><tr><th>SDK / Framework</th><th>Versi / Sumber</th><th>Peran Kritis</th></tr></thead><tbody><tr><td><strong>LibNetSignGenerator</strong></td><td>Binary <code>.framework</code> lokal di <code>SamirNetworkModule/Frameworks/</code></td><td><strong>Kritis Keamanan</strong>: Menghasilkan tanda tangan request HTTP (<code>sign</code>) menggunakan <code>staticKey</code>.</td></tr><tr><td><strong>TrustDecisionPro</strong></td><td><code>4.3.1.3</code></td><td>Risk profiling & fraud scoring (<code>blackBox</code>).</td></tr><tr><td><strong>TrustDecisionLiveness-Lite</strong></td><td><code>2.5.1</code></td><td>SDK verifikasi gerakan wajah liveness.</td></tr><tr><td><strong>AAILiveness & AAINetwork</strong></td><td>Remote tarball Aliyun OSS (V3.0.7)</td><td>Deteksi liveness & perbandingan wajah Advance AI KYC.</td></tr><tr><td><strong>AppsFlyerFramework</strong></td><td><code>6.17.7</code></td><td>Atribusi pemasaran, instalasi, dan resolusi deep link.</td></tr><tr><td><strong>FirebaseAnalytics & Messaging</strong></td><td><code>11.14.0</code></td><td>Analitik perilaku user dan push notification token (FCM).</td></tr><tr><td><strong>FBSDKCoreKit</strong></td><td><code>18.0.0</code></td><td>SDK Facebook untuk atribusi event & iklan.</td></tr><tr><td><strong>TikTokBusinessSDK</strong></td><td>Latest</td><td>SDK atribusi event instalasi dari iklan TikTok.</td></tr><tr><td><strong>tingyunApp</strong></td><td><code>2.17.7</code></td><td>Application Performance Monitoring (APM) & crash reporting.</td></tr></tbody></table></div>
 <div id="sub-2-xcode-schemes-build-configurations" class="doc-subsection">
-<h4>2. Xcode Schemes &amp; Build Configurations</h4>
+<h4>2. Xcode Schemes & Build Configurations</h4>
 </div>
 <p>Tersedia 4 scheme bersama (shared schemes) di dalam <a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/learn/iOS-Arch/ios/IDSamirLoan.xcodeproj/xcshareddata/xcschemes" target="_blank" rel="noopener noreferrer">🦊 ios/IDSamirLoan.xcodeproj/xcshareddata/xcschemes/ <span class="branch-tag">learn/iOS-Arch</span> ↗</a>:</p>
 
@@ -204,16 +204,16 @@ graph TD
 <li>Hubungkan dependensi: Pada target aplikasi utama (<code>IDSamirLoan</code>), buka tab <strong>"Build Phases"</strong> -> bagian <strong>"Dependencies"</strong> -> klik <code>+</code> dan tambahkan target agregat <code>IDSamirEnvironment</code>. Dengan ini, skrip selalu dijalankan sebelum target utama dikompilasi.</li>
 </ol>
 <div id="sub-3-build-phases-custom-shell-scripts" class="doc-subsection">
-<h4>3. Build Phases &amp; Custom Shell Scripts</h4>
+<h4>3. Build Phases & Custom Shell Scripts</h4>
 </div>
 <p>Proyek Xcode <code>IDSamirLoan</code> mengeksekusi 4 skrip otomatis saat proses kompilasi berlangsung:</p>
-<h5 id="item-fase-1-pra-proses-environment-app-environmentsh">Fase 1: Pra-proses Environment (`app_environment.sh`)</h5>
+<h5 id="item-fase-1-pra-proses-environment-app-environmentsh">Fase 1: Pra-proses Environment (<code>app_environment.sh</code>)</h5>
 <ul>
 <li><strong>Lokasi file</strong>: <a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/learn/iOS-Arch/ios/IDSamirLoan/Application/Configuration/Environment/app_environment.sh" target="_blank" rel="noopener noreferrer">🦊 ios/IDSamirLoan/Application/Configuration/Environment/app_environment.sh <span class="branch-tag">learn/iOS-Arch</span> ↗</a></li>
 <li><strong>Fungsi</strong>: Menghitung jumlah commit git (<code>git rev-list HEAD | wc -l</code>), mengambil tanggal saat ini, dan menghasilkan file header <a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/learn/iOS-Arch/ios/IDSamirLoan/Application/environment_preprocess.h" target="_blank" rel="noopener noreferrer">🦊 ios/IDSamirLoan/Application/environment_preprocess.h <span class="branch-tag">learn/iOS-Arch</span> ↗</a>.</li>
 <li><strong>Hasil</strong>: Jika mode <code>TEST</code>, nama aplikasi diubah dinamis menjadi <code>Samir &lt;tanggal_hari_ini&gt;</code> sehingga tester dapat membedakan build hari ini dengan build kemarin.</li>
 </ul>
-<h5 id="item-fase-2-flutter-tools-build-xcode-backendsh">Fase 2: Flutter Tools Build (`xcode_backend.sh`)</h5>
+<h5 id="item-fase-2-flutter-tools-build-xcode-backendsh">Fase 2: Flutter Tools Build (<code>xcode_backend.sh</code>)</h5>
 <ul>
 <li><strong>Definisi di PBX</strong>: <code>project.pbxproj:L1104</code></li>
 <li><strong>Fungsi</strong>: Mengekspor environment Flutter dari <code>../flutter/.ios/Flutter/flutter_export_environment.sh</code> dan mengompilasi kode Dart ke dalam biner framework native iOS.</li>
@@ -224,7 +224,7 @@ graph TD
 <li><strong>Perintah</strong>: <code>&quot;$PODS_ROOT/R.swift/rswift&quot; generate &quot;$SRCROOT/IDSamirLoan/R.generated.swift&quot;</code></li>
 <li><strong>Fungsi</strong>: Membaca folder <code>Assets.xcassets</code> dan memperbarui file <code>R.generated.swift</code> agar semua gambar dapat diakses secara type-safe (<code>R.image.icon_name()</code>).</li>
 </ul>
-<h5 id="item-fase-4-arsitektur-thinning-libnetsigngenerator-lipo--extract">Fase 4: Arsitektur Thinning LibNetSignGenerator (`lipo -extract`)</h5>
+<h5 id="item-fase-4-arsitektur-thinning-libnetsigngenerator-lipo--extract">Fase 4: Arsitektur Thinning LibNetSignGenerator (<code>lipo -extract</code>)</h5>
 <ul>
 <li><strong>Definisi di PBX</strong>: <code>project.pbxproj:L1153</code></li>
 <li><strong>Fungsi</strong>: Memeriksa framework vendor <code>LibNetSignGenerator.framework</code> di dalam build directory (<code>TARGET_BUILD_DIR</code>), mengekstrak hanya arsitektur yang cocok dengan target kompilasi (<code>$ARCHS</code>), dan menggabungkan kembali (lipo) agar ukuran biner tetap ramping dan tidak ditolak oleh App Store Connect karena arsitektur yang tidak digunakan.</li>
@@ -265,7 +265,7 @@ graph TD
 <li>*<em>Pembersihan (</em>Thinning Replacement<em>)</em>*: Menghapus binary fat asli yang berukuran besar dan menggantinya dengan binary hasil thinning. Hal ini mencegah App Store menolak build karena arsitektur simulator (<code>x86_64</code>) yang tertinggal di dalam binary dinamis.</li>
 </ol>
 <div id="sub-4-vendor-framework-khusus-libnetsigngeneratorframework" class="doc-subsection">
-<h4>4. Vendor Framework Khusus: `LibNetSignGenerator.framework`</h4>
+<h4>4. Vendor Framework Khusus: <code>LibNetSignGenerator.framework</code></h4>
 </div>
 <ul>
 <li><strong>Fungsi</strong>: Pustaka biner dinamis closed-source (C++/ObjC) yang bertugas menghitung tanda tangan enkripsi (<code>sign</code>) pada setiap request jaringan HTTP (normal request, upload gambar, hingga config request). Tanda tangan ini menggunakan formula hashing yang dikombinasikan dengan <code>staticKey</code> sesi user untuk melindungi API dari request tampering, replay attacks, dan sniffing.</li>
@@ -290,9 +290,9 @@ graph TD
 <li>Untuk modul ObjC / Bridging Header, disertakan baris <code>#import &lt;LibNetSignGenerator/LibNetSignGenerator.h&gt;</code>.</li>
 </ul>
 <div id="sub-5-konfigurasi-khusus-podfile-build-library-for-distribution-xcode-16-synchronized-groups" class="doc-subsection">
-<h4>5. Konfigurasi Khusus Podfile (`BUILD_LIBRARY_FOR_DISTRIBUTION` &amp; `Xcode 16 Synchronized Groups`)</h4>
+<h4>5. Konfigurasi Khusus Podfile (<code>BUILD_LIBRARY_FOR_DISTRIBUTION</code> & <code>Xcode 16 Synchronized Groups</code>)</h4>
 </div>
-<h5 id="item-a-mengapa-kingfisher-disetel-build-library-for-distribution-no">A. Mengapa Kingfisher Disetel `BUILD_LIBRARY_FOR_DISTRIBUTION = &#x27;NO&#x27;`?</h5>
+<h5 id="item-a-mengapa-kingfisher-disetel-build-library-for-distribution-no">A. Mengapa Kingfisher Disetel <code>BUILD_LIBRARY_FOR_DISTRIBUTION = &#x27;NO&#x27;</code>?</h5>
 <p>Di baris 91-95 <a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/learn/iOS-Arch/ios/Podfile" target="_blank" rel="noopener noreferrer">🦊 ios/Podfile <span class="branch-tag">learn/iOS-Arch</span> ↗</a>:</p>
 <pre><code class="language-ruby">if target.name == &#x27;Kingfisher&#x27;
   target.build_configurations.each do |config|
@@ -356,7 +356,7 @@ end</code></pre>
 </ul>
 </section>
 <section id="sec-why" class="doc-section">
-<h3>⚖️ F. Why It Matters (Trade-Offs &amp; Catatan Arsitektur)</h3>
+<h3>⚖️ F. Why It Matters (Trade-Offs & Catatan Arsitektur)</h3>
 <ul>
 <li><strong>Mengapa Podfile.lock di-ignore di Git?</strong></li>
 </ul>
@@ -395,7 +395,7 @@ end</code></pre>
 <p>Ketika developer berpindah scheme antara <code>TEST</code> dan <code>PROD</code>, compiler Swift secara instan mengganti konfigurasi URL dasar dan ID klien tanpa perlu melakukan dekripsi file tambahan saat runtime!</p>
 </section>
 <section id="sec-mistakes" class="doc-section">
-<h3>⚠️ H. Common Mistakes &amp; Debugging</h3>
+<h3>⚠️ H. Common Mistakes & Debugging</h3>
 <ul>
 <li><strong>Lupa Menjalankan CocoaPods dari Folder iOS</strong>:</li>
 <li>Menjalankan <code>pod install</code> di root repo atau di folder <code>flutter/</code> akan gagal. <code>Podfile</code> berada di <code>ios/</code>.</li>
@@ -608,11 +608,11 @@ public final class AppSessionManager: SessionProvider {
               </div>
               <div class="toc-node-row">
                 <span class="toc-leaf-dot"></span>
-                <a class="toc-tree-link" href="#sub-4-vendor-framework-khusus-libnetsigngeneratorframework">4. Vendor Framework Khusus: `LibNetSignGenerator.framework`</a>
+                <a class="toc-tree-link" href="#sub-4-vendor-framework-khusus-libnetsigngeneratorframework">4. Vendor Framework Khusus: <span class="toc-code">LibNetSignGenerator.framework</span></a>
               </div>
               <div class="toc-node-row">
                 <span class="toc-leaf-dot"></span>
-                <a class="toc-tree-link" href="#sub-5-konfigurasi-khusus-podfile-build-library-for-distribution-xcode-16-synchronized-groups">5. Konfigurasi Khusus Podfile (`BUILD_LIBRARY_FOR_DISTRIBUTION` &amp; `Xcode 16 Synchronized Groups`)</a>
+                <a class="toc-tree-link" href="#sub-5-konfigurasi-khusus-podfile-build-library-for-distribution-xcode-16-synchronized-groups">5. Konfigurasi Khusus Podfile (<span class="toc-code">BUILD_LIBRARY_FOR_DISTRIBUTION</span> &amp; <span class="toc-code">Xcode 16 Synchronized Groups</span>)</a>
               </div>
             </div>
           </div>
@@ -720,11 +720,11 @@ public final class AppSessionManager: SessionProvider {
             </div>
             <div class="toc-node-row">
               <span class="toc-leaf-dot"></span>
-              <a class="toc-tree-link" href="#sub-4-vendor-framework-khusus-libnetsigngeneratorframework" onclick="toggleMobileToc()">4. Vendor Framework Khusus: `LibNetSignGenerator.framework`</a>
+              <a class="toc-tree-link" href="#sub-4-vendor-framework-khusus-libnetsigngeneratorframework" onclick="toggleMobileToc()">4. Vendor Framework Khusus: <span class="toc-code">LibNetSignGenerator.framework</span></a>
             </div>
             <div class="toc-node-row">
               <span class="toc-leaf-dot"></span>
-              <a class="toc-tree-link" href="#sub-5-konfigurasi-khusus-podfile-build-library-for-distribution-xcode-16-synchronized-groups" onclick="toggleMobileToc()">5. Konfigurasi Khusus Podfile (`BUILD_LIBRARY_FOR_DISTRIBUTION` &amp; `Xcode 16 Synchronized Groups`)</a>
+              <a class="toc-tree-link" href="#sub-5-konfigurasi-khusus-podfile-build-library-for-distribution-xcode-16-synchronized-groups" onclick="toggleMobileToc()">5. Konfigurasi Khusus Podfile (<span class="toc-code">BUILD_LIBRARY_FOR_DISTRIBUTION</span> &amp; <span class="toc-code">Xcode 16 Synchronized Groups</span>)</a>
             </div>
           </div>
         </div>

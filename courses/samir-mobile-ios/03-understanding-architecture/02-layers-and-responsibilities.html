@@ -177,7 +177,7 @@ classDiagram
   </div>
 </div>
 <div id="sub-1-presentation-layer-viewcontroller-idbaseviewcontroller" class="doc-subsection">
-<h4>1. Presentation Layer (`ViewController` &amp; `IDBaseViewController`)</h4>
+<h4>1. Presentation Layer (<code>ViewController</code> & <code>IDBaseViewController</code>)</h4>
 </div>
 <p>Semua controller mewarisi base class <a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/learn/iOS-Arch/ios/IDSamirLoan/Application/SamirCommonModule/Classes/IDBase/IDBaseViewController.swift" target="_blank" rel="noopener noreferrer">🦊 ios/IDSamirLoan/Application/SamirCommonModule/Classes/IDBase/IDBaseViewController.swift <span class="branch-tag">learn/iOS-Arch</span> ↗</a>.</p>
 <p>Fitur standar yang disediakan otomatis oleh base controller:</p>
@@ -188,7 +188,7 @@ classDiagram
 <li><strong>Empty & Error State</strong>: Callback <code>id_clickEmptyBlock</code> untuk reload saat jaringan bermasalah.</li>
 </ul>
 <div id="sub-2-presenter-layer-presenter" class="doc-subsection">
-<h4>2. Presenter Layer (`Presenter`)</h4>
+<h4>2. Presenter Layer (<code>Presenter</code>)</h4>
 </div>
 <p>Presenter di SAMIR bertindak sebagai koordinator logika presentasi:</p>
 <ul>
@@ -196,7 +196,7 @@ classDiagram
 <li><strong>State Machine & Polling</strong>: Mengelola status berkala (contoh: polling keputusan analisa kuota di <code>IDAssessPresenter.startPolling</code>).</li>
 <li><strong>Pelaporan Analitik</strong>: Memicu event klik tombol atau impresi layar ke <code>IDCustomPointManager</code> atau <code>IDDataReportUtils</code>.</li>
 </ul>
-<h5 id="item-pola-komposisi-presenter-mengapa-di-idnewauthpresenter-terdapat-2-presenter-lain">Pola Komposisi Presenter: Mengapa di `IDNewAuthPresenter` Terdapat 2 Presenter Lain?</h5>
+<h5 id="item-pola-komposisi-presenter-mengapa-di-idnewauthpresenter-terdapat-2-presenter-lain">Pola Komposisi Presenter: Mengapa di <code>IDNewAuthPresenter</code> Terdapat 2 Presenter Lain?</h5>
 <p>Di dalam <a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/learn/iOS-Arch/ios/IDSamirLoan/Application/SamirAuthModule/Classes/IDPresenterV2/IDNewAuthPresenter.swift" target="_blank" rel="noopener noreferrer">🦊 IDNewAuthPresenter.swift:L33-43 <span class="branch-tag">learn/iOS-Arch</span> ↗</a>, didefinisikan dua child presenter:</p>
 <pre><code class="language-swift">lazy var resourcePresenter: IDAuthResourcePresenter = { [unowned self] in
     let presenter = IDAuthResourcePresenter()
@@ -228,7 +228,7 @@ lazy var bankPresenter: IDAuthBankPresenter = { [unowned self] in
 <li><strong>Reusability</strong>: <code>IDAuthResourcePresenter</code> dan <code>IDAuthBankPresenter</code> merupakan modul independen yang sudah matang dan dapat digunakan ulang di luar layar KYC tanpa menduplikasi kode.</li>
 </ol>
 <div id="sub-3-service-layer-service" class="doc-subsection">
-<h4>3. Service Layer (`Service`)</h4>
+<h4>3. Service Layer (<code>Service</code>)</h4>
 </div>
 <p>Service murni bertanggung jawab atas interaksi I/O jaringan:</p>
 <ul>
@@ -243,7 +243,7 @@ lazy var bankPresenter: IDAuthBankPresenter = { [unowned self] in
 <li>Menangani pemetaan error jaringan ke format yang dimengerti Presenter.</li>
 </ul>
 <div id="sub-4-model-layer-model" class="doc-subsection">
-<h4>4. Model Layer (`Model`)</h4>
+<h4>4. Model Layer (<code>Model</code>)</h4>
 </div>
 <p>Struct atau Class yang mengadopsi protokol <code>Convertible</code> dari KakaJSON:</p>
 <ul>
@@ -251,11 +251,11 @@ lazy var bankPresenter: IDAuthBankPresenter = { [unowned self] in
 <li>Mendukung mapping custom key jika nama properti JSON berbeda dari nama properti Swift.</li>
 </ul>
 <div id="sub-5-kasus-khusus-loanconfirmmodule-arsitektur-reaktif-mvvm-rx" class="doc-subsection">
-<h4>5. Kasus Khusus: `LoanConfirmModule` (Arsitektur Reaktif MVVM-Rx)</h4>
+<h4>5. Kasus Khusus: <code>LoanConfirmModule</code> (Arsitektur Reaktif MVVM-Rx)</h4>
 </div>
 <p>Path: <a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/learn/iOS-Arch/ios/IDSamirLoan/Application/SamirLoanModule/Classes/LoanConfirmModule/" target="_blank" rel="noopener noreferrer">🦊 ios/IDSamirLoan/Application/SamirLoanModule/Classes/LoanConfirmModule/ <span class="branch-tag">learn/iOS-Arch</span> ↗</a></p>
 <p>Di modul ini, alur data tidak menggunakan delegate Presenter, melainkan stream reaktif berbasis Clean MVVM + RxSwift:</p>
-<h5 id="item-a-kontrak-input-output-loanconfirmviewmodeltype">A. Kontrak Input-Output (`LoanConfirmViewModelType`)</h5>
+<h5 id="item-a-kontrak-input-output-loanconfirmviewmodeltype">A. Kontrak Input-Output (<code>LoanConfirmViewModelType</code>)</h5>
 <p>Arsitektur ViewModel memisahkan secara tegas antara aksi pengguna (<em>Input</em>) dan state UI (<em>Output</em>):</p>
 <ul>
 <li><strong><code>LoanConfirmViewModelInput</code></strong>:</li>
@@ -265,14 +265,14 @@ lazy var bankPresenter: IDAuthBankPresenter = { [unowned self] in
 <li><strong><code>LoanConfirmViewModelOutput</code></strong>:</li>
 </ul>
 <p>Menggunakan <strong><code>Driver&lt;T&gt;</code></strong> untuk aliran data yang diobservasi oleh View: <code>isLoading</code>, <code>error</code>, <code>loanData</code>, <code>selectedCoupon</code>, <code>trialResult</code>, <code>canSubmit</code>, <code>showIncomeUpdate</code>.</p>
-<h5 id="item-b-kapan-memakai-subscribe-dan-kapan-memakai-drive">B. Kapan Memakai `subscribe` dan Kapan Memakai `drive`?</h5>
+<h5 id="item-b-kapan-memakai-subscribe-dan-kapan-memakai-drive">B. Kapan Memakai <code>subscribe</code> dan Kapan Memakai <code>drive</code>?</h5>
 <div class="table-container"><table class="data-table"><thead><tr><th>Skenario Penggunaan</th><th>Rekomendasi</th><th>Alasan Teknis</th></tr></thead><tbody><tr><td><strong>Binding ke Elemen UI</strong> (<code>UILabel</code>, <code>UIButton</code>, <code>HUD</code>, <code>TableView</code>)</td><td><strong><code>drive</code></strong></td><td>1. <strong>Pasti dieksekusi di Main Thread</strong> (<code>MainScheduler</code>). Tidak perlu menulis <code>.observe(on: MainScheduler.instance)</code>.<br/>2. <strong>Tidak Pernah Error</strong>: <code>Driver</code> menjamin stream tidak akan putus akibat error uncaught, sehingga UI tidak membeku.<br/>3. <strong>Sharing Replay Otomatis</strong>: Memiliki sifat <code>share(replay: 1, scope: .whileConnected)</code> sehingga multiple binding ke label/tombol tidak memicu duplicate network request.</td></tr><tr><td><strong>Logika Data, Domain, Service, & Network API</strong></td><td><strong><code>subscribe</code></strong></td><td>1. <strong>Dapat Berjalan di Background</strong>: Operasi I/O, parsing JSON, atau komputasi berat membutuhkan background thread (<code>ConcurrentDispatchQueueScheduler</code>).<br/>2. <strong>Penanganan Error Alami</strong>: Perlu menangkap event <code>.error(Error)</code> dari HTTP request untuk retry atau logging.<br/>3. <strong>Menerima Input di ViewModel</strong>: Observasi event <code>PublishSubject</code> di level internal ViewModel.</td></tr></tbody></table></div>
 <p><em>Aturan Praktis (Rule of Thumb)</em>:</p>
 <ul>
 <li>Di dalam <strong><code>ViewController</code></strong>: Gunakan <code>viewModel.output.someData.drive(...)</code> saat memperbarui tampilan.</li>
 <li>Di dalam <strong><code>Service</code> / Internal <code>ViewModel</code></strong>: Gunakan <code>.subscribe(...)</code> saat menangani pipeline asinkron dan error.</li>
 </ul>
-<h5 id="item-c-inventaris-arsitektur-codebase-mana-yang-menggunakan-viewmodel-vs-presenter">C. Inventaris Arsitektur Codebase: Mana yang Menggunakan `viewModel` vs `presenter`?</h5>
+<h5 id="item-c-inventaris-arsitektur-codebase-mana-yang-menggunakan-viewmodel-vs-presenter">C. Inventaris Arsitektur Codebase: Mana yang Menggunakan <code>viewModel</code> vs <code>presenter</code>?</h5>
 <p>Berdasarkan audit komprehensif di seluruh direktori <code>IDSamirLoan</code>:</p>
 <ol>
 <li><strong>Menggunakan <code>ViewModel</code> (MVVM + RxSwift)</strong>:</li>
@@ -313,7 +313,7 @@ lazy var bankPresenter: IDAuthBankPresenter = { [unowned self] in
 </ul>
 </section>
 <section id="sec-why" class="doc-section">
-<h3>⚖️ F. Why It Matters (Trade-Offs &amp; Analisis Desain)</h3>
+<h3>⚖️ F. Why It Matters (Trade-Offs & Analisis Desain)</h3>
 <ul>
 <li><strong>Mengapa Pola Presenter Dipilih daripada MVVM Standar?</strong></li>
 </ul>
@@ -346,7 +346,7 @@ override func setupViews() {
 }</code></pre>
 </section>
 <section id="sec-mistakes" class="doc-section">
-<h3>⚠️ H. Common Mistakes &amp; Debugging</h3>
+<h3>⚠️ H. Common Mistakes & Debugging</h3>
 <ul>
 <li><strong>Memory Leak pada Presenter / Closure</strong>:</li>
 <li><em>Kesalahan</em>: Presenter memegang referensi kuat (<em>strong reference</em>) ke ViewController, atau closure callback tidak menggunakan <code>[weak self]</code>.</li>
@@ -547,23 +547,23 @@ public final class AppSessionManager: SessionProvider {
             <div class="toc-branch">
               <div class="toc-node-row">
                 <span class="toc-leaf-dot"></span>
-                <a class="toc-tree-link" href="#sub-1-presentation-layer-viewcontroller-idbaseviewcontroller">1. Presentation Layer (`ViewController` &amp; `IDBaseViewController`)</a>
+                <a class="toc-tree-link" href="#sub-1-presentation-layer-viewcontroller-idbaseviewcontroller">1. Presentation Layer (<span class="toc-code">ViewController</span> &amp; <span class="toc-code">IDBaseViewController</span>)</a>
               </div>
               <div class="toc-node-row">
                 <span class="toc-leaf-dot"></span>
-                <a class="toc-tree-link" href="#sub-2-presenter-layer-presenter">2. Presenter Layer (`Presenter`)</a>
+                <a class="toc-tree-link" href="#sub-2-presenter-layer-presenter">2. Presenter Layer (<span class="toc-code">Presenter</span>)</a>
               </div>
               <div class="toc-node-row">
                 <span class="toc-leaf-dot"></span>
-                <a class="toc-tree-link" href="#sub-3-service-layer-service">3. Service Layer (`Service`)</a>
+                <a class="toc-tree-link" href="#sub-3-service-layer-service">3. Service Layer (<span class="toc-code">Service</span>)</a>
               </div>
               <div class="toc-node-row">
                 <span class="toc-leaf-dot"></span>
-                <a class="toc-tree-link" href="#sub-4-model-layer-model">4. Model Layer (`Model`)</a>
+                <a class="toc-tree-link" href="#sub-4-model-layer-model">4. Model Layer (<span class="toc-code">Model</span>)</a>
               </div>
               <div class="toc-node-row">
                 <span class="toc-leaf-dot"></span>
-                <a class="toc-tree-link" href="#sub-5-kasus-khusus-loanconfirmmodule-arsitektur-reaktif-mvvm-rx">5. Kasus Khusus: `LoanConfirmModule` (Arsitektur Reaktif MVVM-Rx)</a>
+                <a class="toc-tree-link" href="#sub-5-kasus-khusus-loanconfirmmodule-arsitektur-reaktif-mvvm-rx">5. Kasus Khusus: <span class="toc-code">LoanConfirmModule</span> (Arsitektur Reaktif MVVM-Rx)</a>
               </div>
             </div>
           </div>
@@ -659,23 +659,23 @@ public final class AppSessionManager: SessionProvider {
           <div class="toc-branch">
             <div class="toc-node-row">
               <span class="toc-leaf-dot"></span>
-              <a class="toc-tree-link" href="#sub-1-presentation-layer-viewcontroller-idbaseviewcontroller" onclick="toggleMobileToc()">1. Presentation Layer (`ViewController` &amp; `IDBaseViewController`)</a>
+              <a class="toc-tree-link" href="#sub-1-presentation-layer-viewcontroller-idbaseviewcontroller" onclick="toggleMobileToc()">1. Presentation Layer (<span class="toc-code">ViewController</span> &amp; <span class="toc-code">IDBaseViewController</span>)</a>
             </div>
             <div class="toc-node-row">
               <span class="toc-leaf-dot"></span>
-              <a class="toc-tree-link" href="#sub-2-presenter-layer-presenter" onclick="toggleMobileToc()">2. Presenter Layer (`Presenter`)</a>
+              <a class="toc-tree-link" href="#sub-2-presenter-layer-presenter" onclick="toggleMobileToc()">2. Presenter Layer (<span class="toc-code">Presenter</span>)</a>
             </div>
             <div class="toc-node-row">
               <span class="toc-leaf-dot"></span>
-              <a class="toc-tree-link" href="#sub-3-service-layer-service" onclick="toggleMobileToc()">3. Service Layer (`Service`)</a>
+              <a class="toc-tree-link" href="#sub-3-service-layer-service" onclick="toggleMobileToc()">3. Service Layer (<span class="toc-code">Service</span>)</a>
             </div>
             <div class="toc-node-row">
               <span class="toc-leaf-dot"></span>
-              <a class="toc-tree-link" href="#sub-4-model-layer-model" onclick="toggleMobileToc()">4. Model Layer (`Model`)</a>
+              <a class="toc-tree-link" href="#sub-4-model-layer-model" onclick="toggleMobileToc()">4. Model Layer (<span class="toc-code">Model</span>)</a>
             </div>
             <div class="toc-node-row">
               <span class="toc-leaf-dot"></span>
-              <a class="toc-tree-link" href="#sub-5-kasus-khusus-loanconfirmmodule-arsitektur-reaktif-mvvm-rx" onclick="toggleMobileToc()">5. Kasus Khusus: `LoanConfirmModule` (Arsitektur Reaktif MVVM-Rx)</a>
+              <a class="toc-tree-link" href="#sub-5-kasus-khusus-loanconfirmmodule-arsitektur-reaktif-mvvm-rx" onclick="toggleMobileToc()">5. Kasus Khusus: <span class="toc-code">LoanConfirmModule</span> (Arsitektur Reaktif MVVM-Rx)</a>
             </div>
           </div>
         </div>

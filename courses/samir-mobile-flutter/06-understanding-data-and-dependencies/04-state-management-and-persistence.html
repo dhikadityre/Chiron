@@ -116,7 +116,7 @@
 <p>Telah membaca <a href="../05-learning-business-flows/02-authentication-and-session-sync.html">02-authentication-and-session-sync.md</a> dan <a href="../03-understanding-architecture/01-architecture-overview.html">Level 3: Arsitektur Hybrid</a>.</p>
 </section>
 <section id="sec-simple" class="doc-section">
-<h3>💡 C. Simple Explanation (Analogi &amp; Konsep Sederhana)</h3>
+<h3>💡 C. Simple Explanation (Analogi & Konsep Sederhana)</h3>
 <p>Bayangkan sebuah hotel berbintang dengan terminal komputer di setiap kamar:</p>
 <ul>
 <li><strong>Komputer di Kamar (Modul Flutter)</strong>: Memiliki memori RAM cepat untuk menampilkan tagihan minibar dan suhu AC saat tamu berada di kamar.</li>
@@ -150,7 +150,7 @@
 │    - Lingkup: Internal masing-masing halaman           │
 └────────────────────────────────────────────────────────┘</code></pre>
 <div id="sub-2-tingkat-1-in-memory-global-store-global" class="doc-subsection">
-<h4>2. Tingkat 1: In-Memory Global Store (`Global`)</h4>
+<h4>2. Tingkat 1: In-Memory Global Store (<code>Global</code>)</h4>
 </div>
 <p>Pada <a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/learn/Flutter-Arch/flutter/lib/common/global.dart" target="_blank" rel="noopener noreferrer">🦊 flutter/lib/common/global.dart <span class="branch-tag">learn/Flutter-Arch</span> ↗</a>:</p>
 <ul>
@@ -159,7 +159,7 @@
 <li>Siklus hidup: Terikat langsung pada lifecycle proses Dart VM yang dikelola oleh <code>FlutterEngine</code>.</li>
 </ul>
 <div id="sub-3-tingkat-2-reaktivitas-ringan-dengan-valuenotifier" class="doc-subsection">
-<h4>3. Tingkat 2: Reaktivitas Ringan dengan `ValueNotifier`</h4>
+<h4>3. Tingkat 2: Reaktivitas Ringan dengan <code>ValueNotifier</code></h4>
 </div>
 <p>Pada <a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/learn/Flutter-Arch/flutter/lib/common/router/flutter_root_controller.dart" target="_blank" rel="noopener noreferrer">🦊 flutter/lib/common/router/flutter_root_controller.dart <span class="branch-tag">learn/Flutter-Arch</span> ↗</a>:</p>
 <ul>
@@ -168,7 +168,7 @@
 <li>Menghilangkan kebutuhan pustaka seperti <code>Provider</code>, <code>Riverpod</code>, atau <code>Bloc</code> yang memerlukan pembungkus kompleks di widget tree.</li>
 </ul>
 <div id="sub-4-tingkat-3-broadcast-signals-flutternativepagesignal" class="doc-subsection">
-<h4>4. Tingkat 3: Broadcast Signals (`FlutterNativePageSignal`)</h4>
+<h4>4. Tingkat 3: Broadcast Signals (<code>FlutterNativePageSignal</code>)</h4>
 </div>
 <p>Pada <a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/learn/Flutter-Arch/flutter/lib/common/platform/flutter_native_page_signal.dart" target="_blank" rel="noopener noreferrer">🦊 flutter/lib/common/platform/flutter_native_page_signal.dart <span class="branch-tag">learn/Flutter-Arch</span> ↗</a>:</p>
 <ul>
@@ -226,7 +226,7 @@ sequenceDiagram
 </div>
 </section>
 <section id="sec-why" class="doc-section">
-<h3>⚖️ F. Why It Matters (Trade-Offs &amp; Implikasi Teknis)</h3>
+<h3>⚖️ F. Why It Matters (Trade-Offs & Implikasi Teknis)</h3>
 <ul>
 <li><strong>Menghindari Bug "Zombie Session"</strong>:</li>
 </ul>
@@ -245,7 +245,7 @@ sequenceDiagram
 </ul>
 </section>
 <section id="sec-mistakes" class="doc-section">
-<h3>⚠️ H. Common Mistakes &amp; Debugging</h3>
+<h3>⚠️ H. Common Mistakes & Debugging</h3>
 <ul>
 <li><strong>Menambahkan Paket <code>shared_preferences</code> untuk Menyimpan Data Bisnis</strong>:</li>
 <li>Hal ini melanggar prinsip arsitektur SAMIR. Jika data perlu disimpan permanen, kirimkan data tersebut melalui MethodChannel agar disimpan di storage terpusat host native.</li>
@@ -447,15 +447,15 @@ class GlobalSessionManager implements SessionContract {
               </div>
               <div class="toc-node-row">
                 <span class="toc-leaf-dot"></span>
-                <a class="toc-tree-link" href="#sub-2-tingkat-1-in-memory-global-store-global">2. Tingkat 1: In-Memory Global Store (`Global`)</a>
+                <a class="toc-tree-link" href="#sub-2-tingkat-1-in-memory-global-store-global">2. Tingkat 1: In-Memory Global Store (<span class="toc-code">Global</span>)</a>
               </div>
               <div class="toc-node-row">
                 <span class="toc-leaf-dot"></span>
-                <a class="toc-tree-link" href="#sub-3-tingkat-2-reaktivitas-ringan-dengan-valuenotifier">3. Tingkat 2: Reaktivitas Ringan dengan `ValueNotifier`</a>
+                <a class="toc-tree-link" href="#sub-3-tingkat-2-reaktivitas-ringan-dengan-valuenotifier">3. Tingkat 2: Reaktivitas Ringan dengan <span class="toc-code">ValueNotifier</span></a>
               </div>
               <div class="toc-node-row">
                 <span class="toc-leaf-dot"></span>
-                <a class="toc-tree-link" href="#sub-4-tingkat-3-broadcast-signals-flutternativepagesignal">4. Tingkat 3: Broadcast Signals (`FlutterNativePageSignal`)</a>
+                <a class="toc-tree-link" href="#sub-4-tingkat-3-broadcast-signals-flutternativepagesignal">4. Tingkat 3: Broadcast Signals (<span class="toc-code">FlutterNativePageSignal</span>)</a>
               </div>
               <div class="toc-node-row">
                 <span class="toc-leaf-dot"></span>
@@ -559,15 +559,15 @@ class GlobalSessionManager implements SessionContract {
             </div>
             <div class="toc-node-row">
               <span class="toc-leaf-dot"></span>
-              <a class="toc-tree-link" href="#sub-2-tingkat-1-in-memory-global-store-global" onclick="toggleMobileToc()">2. Tingkat 1: In-Memory Global Store (`Global`)</a>
+              <a class="toc-tree-link" href="#sub-2-tingkat-1-in-memory-global-store-global" onclick="toggleMobileToc()">2. Tingkat 1: In-Memory Global Store (<span class="toc-code">Global</span>)</a>
             </div>
             <div class="toc-node-row">
               <span class="toc-leaf-dot"></span>
-              <a class="toc-tree-link" href="#sub-3-tingkat-2-reaktivitas-ringan-dengan-valuenotifier" onclick="toggleMobileToc()">3. Tingkat 2: Reaktivitas Ringan dengan `ValueNotifier`</a>
+              <a class="toc-tree-link" href="#sub-3-tingkat-2-reaktivitas-ringan-dengan-valuenotifier" onclick="toggleMobileToc()">3. Tingkat 2: Reaktivitas Ringan dengan <span class="toc-code">ValueNotifier</span></a>
             </div>
             <div class="toc-node-row">
               <span class="toc-leaf-dot"></span>
-              <a class="toc-tree-link" href="#sub-4-tingkat-3-broadcast-signals-flutternativepagesignal" onclick="toggleMobileToc()">4. Tingkat 3: Broadcast Signals (`FlutterNativePageSignal`)</a>
+              <a class="toc-tree-link" href="#sub-4-tingkat-3-broadcast-signals-flutternativepagesignal" onclick="toggleMobileToc()">4. Tingkat 3: Broadcast Signals (<span class="toc-code">FlutterNativePageSignal</span>)</a>
             </div>
             <div class="toc-node-row">
               <span class="toc-leaf-dot"></span>

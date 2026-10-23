@@ -221,7 +221,7 @@ graph TD
     }
 }</code></pre>
 <div id="sub-4-layer-4-toleransi-parsing-model-kakajson" class="doc-subsection">
-<h4>4. Layer 4: Toleransi Parsing Model (`KakaJSON`)</h4>
+<h4>4. Layer 4: Toleransi Parsing Model (<code>KakaJSON</code>)</h4>
 </div>
 <p>Jika field tertentu hilang dari JSON server (misal: backend lupa mengirim field <code>termDays</code>), <code>KakaJSON</code> tidak memicu exception fatal. Model tetap diinisialisasi dengan nilai default (misal: <code>termDays = 0</code>), sehingga aplikasi tetap dapat berjalan secara <em>graceful</em>.</p>
 <div id="sub-5-layer-5-strategi-penyajian-error-di-ui-error-presentation" class="doc-subsection">
@@ -296,7 +296,7 @@ service.fetchLoanDetail(bizId: bizId) { [weak self] model in
 }</code></pre>
 </section>
 <section id="sec-mistakes" class="doc-section">
-<h3>⚠️ H. Common Mistakes &amp; Debugging</h3>
+<h3>⚠️ H. Common Mistakes & Debugging</h3>
 <ul>
 <li><strong>Crash Karena Force-Unwrap pada <code>req.error!</code></strong>:</li>
 <li>Di blok <code>failure</code>, jangan berasumsi <code>req.error</code> pasti memiliki nilai; selalu gunakan optional binding <code>req.error?.cz_errorMessage ?? &quot;Kendala sistem&quot;</code>.</li>
@@ -505,7 +505,7 @@ public final class AppSessionManager: SessionProvider {
               </div>
               <div class="toc-node-row">
                 <span class="toc-leaf-dot"></span>
-                <a class="toc-tree-link" href="#sub-4-layer-4-toleransi-parsing-model-kakajson">4. Layer 4: Toleransi Parsing Model (`KakaJSON`)</a>
+                <a class="toc-tree-link" href="#sub-4-layer-4-toleransi-parsing-model-kakajson">4. Layer 4: Toleransi Parsing Model (<span class="toc-code">KakaJSON</span>)</a>
               </div>
               <div class="toc-node-row">
                 <span class="toc-leaf-dot"></span>
@@ -617,7 +617,7 @@ public final class AppSessionManager: SessionProvider {
             </div>
             <div class="toc-node-row">
               <span class="toc-leaf-dot"></span>
-              <a class="toc-tree-link" href="#sub-4-layer-4-toleransi-parsing-model-kakajson" onclick="toggleMobileToc()">4. Layer 4: Toleransi Parsing Model (`KakaJSON`)</a>
+              <a class="toc-tree-link" href="#sub-4-layer-4-toleransi-parsing-model-kakajson" onclick="toggleMobileToc()">4. Layer 4: Toleransi Parsing Model (<span class="toc-code">KakaJSON</span>)</a>
             </div>
             <div class="toc-node-row">
               <span class="toc-leaf-dot"></span>

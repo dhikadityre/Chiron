@@ -112,7 +112,7 @@
 <p>Telah membaca <a href="01-feature-inventory.html">01-feature-inventory.md</a> dan <a href="02-navigation-fundamentals.html">02-navigation-fundamentals.md</a>.</p>
 </section>
 <section id="sec-simple" class="doc-section">
-<h3>💡 C. Simple Explanation (Analogi &amp; Konsep Sederhana)</h3>
+<h3>💡 C. Simple Explanation (Analogi & Konsep Sederhana)</h3>
 <p>Bayangkan sebuah bandara internasional:</p>
 <ul>
 <li><strong>Terminal 1 & Terminal 2</strong>: Dikelola oleh otoritas penerbangan lokal (Tab Bar Native).</li>
@@ -194,13 +194,13 @@ graph TD
 </div>
 <div class="table-container"><table class="data-table"><thead><tr><th>Path Rute</th><th>Handler di Kode Sumber</th><th>Tipe Transisi</th><th>Catatan Visibilitas Tab Bar</th></tr></thead><tbody><tr><td><strong><code>/root</code></strong></td><td><code>FlutterRootPage</code></td><td>Root Mount</td><td>Ditentukan oleh child aktif</td></tr><tr><td><strong><code>/mine</code></strong></td><td><code>FlutterRootController.select(&#x27;/mine&#x27;)</code></td><td>In-Memory Switch</td><td><strong>Tampil</strong> (<code>showsNativeTabBar: true</code>)</td></tr><tr><td><strong><code>/repay</code></strong></td><td><code>FlutterRootController.select(&#x27;/repay&#x27;)</code></td><td>In-Memory Switch</td><td><strong>Tampil</strong> (<code>showsNativeTabBar: true</code>)</td></tr><tr><td><strong><code>/mine/personal</code></strong></td><td><code>Routers.push(RoutePaths.minePersonal)</code></td><td>Slide In</td><td><strong>Tersembunyi</strong> (<code>hidden: true</code>)</td></tr><tr><td><strong><code>ProxyDebugPage</code></strong></td><td><code>Navigator.of(context).push(...)</code></td><td>Modal Presentation</td><td><strong>Tersembunyi</strong> (Non-PROD only)</td></tr></tbody></table></div>
 <div id="sub-2-rute-delegasi-dari-flutter-ke-host-native-opennativeroute" class="doc-subsection">
-<h4>2. Rute Delegasi dari Flutter ke Host Native (`openNativeRoute`)</h4>
+<h4>2. Rute Delegasi dari Flutter ke Host Native (<code>openNativeRoute</code>)</h4>
 </div>
 <p>Didefinisikan pada <a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/learn/Flutter-Arch/flutter/lib/pages/mine/home/mine_home_page.dart" target="_blank" rel="noopener noreferrer">🦊 flutter/lib/pages/mine/home/mine_home_page.dart <span class="branch-tag">learn/Flutter-Arch</span> ↗</a> (baris 39–48) dan <a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/learn/Flutter-Arch/flutter/lib/pages/repay/home/repay_home_page.dart" target="_blank" rel="noopener noreferrer">🦊 flutter/lib/pages/repay/home/repay_home_page.dart <span class="branch-tag">learn/Flutter-Arch</span> ↗</a> (baris 38–41):</p>
 <div class="table-container"><table class="data-table"><thead><tr><th>Target Rute / Parameter</th><th>Pemicu di Layar</th><th>Handler di Host Native (iOS/Android)</th></tr></thead><tbody><tr><td><strong><code>samir://mine/infoAuthList</code></strong></td><td>Menu "Sertifikasi Informasi"</td><td>Membuka modul Native <code>SamirAuthModule</code> untuk verifikasi e-KYC.</td></tr><tr><td><strong><code>samir://mine/setting</code></strong></td><td>Menu "Pengaturan"</td><td>Membuka modul Native <code>SamirMineModule</code> pengaturan akun.</td></tr><tr><td><strong><code>samir://mine/aboutUs</code></strong></td><td>Menu "Tentang Kami"</td><td>Membuka layar informasi legalitas OJK dan versi aplikasi.</td></tr><tr><td><strong><code>customerAction</code></strong></td><td>Tombol Layanan Pelanggan</td><td>Membuka modul CS Live Chat SDK di native.</td></tr><tr><td><strong><code>repayLoginAction</code></strong></td><td>Tombol Login di Tab Tagihan</td><td>Membuka <code>SamirLoginModule</code> untuk verifikasi nomor HP & OTP.</td></tr><tr><td><strong><code>repayHomeAction</code></strong></td><td>Tombol "Pinjam Sekarang"</td><td>Memindahkan tab aktif ke Tab 0 (Beranda Native <code>IDHomeViewController</code>).</td></tr><tr><td><strong><code>/samir/loan-record</code></strong></td><td>Menu "Riwayat Pinjaman"</td><td>Membuka browser internal native (<code>IDWebViewController</code>) dengan URL terenkripsi.</td></tr><tr><td><strong><code>/samir/coupon/list</code></strong></td><td>Menu "Kupon Saya"</td><td>Membuka daftar voucher diskon bunga pinjaman di WebView.</td></tr><tr><td><strong><code>/samir/faq</code></strong></td><td>Menu "Pusat Bantuan"</td><td>Membuka halaman panduan FAQ di WebView resmi SAMIR.</td></tr><tr><td><strong><code>/samir/message</code></strong></td><td>Ikon Lonceng Notifikasi</td><td>Membuka pusat pesan dan pengumuman aplikasi.</td></tr><tr><td><strong><code>jumpDisclaimerPopup</code></strong></td><td>Menu "Pernyataan Penolakan"</td><td>Menampilkan pop-up dialog disclaimer perlindungan data di native.</td></tr></tbody></table></div>
 </section>
 <section id="sec-why" class="doc-section">
-<h3>⚖️ F. Why It Matters (Trade-Offs &amp; Implikasi Teknis)</h3>
+<h3>⚖️ F. Why It Matters (Trade-Offs & Implikasi Teknis)</h3>
 <ul>
 <li><strong>Pola Hybrid Router</strong>:</li>
 </ul>
@@ -221,7 +221,7 @@ graph TD
 </ol>
 </section>
 <section id="sec-mistakes" class="doc-section">
-<h3>⚠️ H. Common Mistakes &amp; Debugging</h3>
+<h3>⚠️ H. Common Mistakes & Debugging</h3>
 <ul>
 <li><strong>Salah Menulis Skema Delegasi</strong>:</li>
 <li>Mengirimkan string rute tanpa skema (misal menulis <code>&#x27;mine/setting&#x27;</code> alih-alih <code>&#x27;samir://mine/setting&#x27;</code>) akan menyebabkan router native gagal mencocokkan pola regex URL dan aksi diabaikan tanpa error log.</li>
@@ -434,7 +434,7 @@ class StandardRepayCoordinator implements AppRouteCoordinator {
               </div>
               <div class="toc-node-row">
                 <span class="toc-leaf-dot"></span>
-                <a class="toc-tree-link" href="#sub-2-rute-delegasi-dari-flutter-ke-host-native-opennativeroute">2. Rute Delegasi dari Flutter ke Host Native (`openNativeRoute`)</a>
+                <a class="toc-tree-link" href="#sub-2-rute-delegasi-dari-flutter-ke-host-native-opennativeroute">2. Rute Delegasi dari Flutter ke Host Native (<span class="toc-code">openNativeRoute</span>)</a>
               </div>
             </div>
           </div>
@@ -542,7 +542,7 @@ class StandardRepayCoordinator implements AppRouteCoordinator {
             </div>
             <div class="toc-node-row">
               <span class="toc-leaf-dot"></span>
-              <a class="toc-tree-link" href="#sub-2-rute-delegasi-dari-flutter-ke-host-native-opennativeroute" onclick="toggleMobileToc()">2. Rute Delegasi dari Flutter ke Host Native (`openNativeRoute`)</a>
+              <a class="toc-tree-link" href="#sub-2-rute-delegasi-dari-flutter-ke-host-native-opennativeroute" onclick="toggleMobileToc()">2. Rute Delegasi dari Flutter ke Host Native (<span class="toc-code">openNativeRoute</span>)</a>
             </div>
           </div>
         </div>
