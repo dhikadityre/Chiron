@@ -1,0 +1,1047 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>04 — Shared Components &amp; Services | Chiron Academy</title>
+  
+  <!-- Chiron Base Stylesheet -->
+  <link rel="stylesheet" href="../../../.assets/style.css">
+  
+  <!-- Prism.js Syntax Highlighting Theme (Tomorrow Night) -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css">
+  
+  <!-- Mermaid.js for Dynamic Flow Diagrams -->
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+  <script>mermaid.initialize({ startOnLoad: true, theme: 'dark' });</script>
+</head>
+<body>
+
+<!-- ========================================================================= -->
+<!-- STICKY TOP APPLICATION BAR (CROSSNOTE / VS CODE STYLE)                     -->
+<!-- ========================================================================= -->
+<nav class="app-topbar">
+  <div class="topbar-nav-row">
+    <!-- Browser-like History Navigation -->
+    <div class="nav-history-ctrls">
+      <button class="nav-ctrl-btn" onclick="history.back()" title="Kembali (Back)">◀</button>
+      <button class="nav-ctrl-btn" onclick="history.forward()" title="Maju (Forward)">▶</button>
+      <button class="nav-ctrl-btn" onclick="location.reload()" title="Segarkan (Reload)">↻</button>
+    </div>
+
+    <!-- Document Tabs Strip (Crossnote Style) -->
+    <div class="topbar-tabs-scroll" id="docTabsStrip">
+      <a class="doc-tab" href="01-architecture-overview.html" title="01-architecture-overview.html">
+        <span class="tab-icon">📄</span> 01-architecture-overview.html
+        <span class="tab-close" onclick="event.preventDefault(); this.parentElement.remove();">×</span>
+      </a>
+      <a class="doc-tab" href="02-layers-and-responsibilities.html" title="02-layers-and-responsibilities.html">
+        <span class="tab-icon">📄</span> 02-layers-and-responsibilities.html
+        <span class="tab-close" onclick="event.preventDefault(); this.parentElement.remove();">×</span>
+      </a>
+      <a class="doc-tab" href="03-dependency-direction.html" title="03-dependency-direction.html">
+        <span class="tab-icon">📄</span> 03-dependency-direction.html
+        <span class="tab-close" onclick="event.preventDefault(); this.parentElement.remove();">×</span>
+      </a>
+      <a class="doc-tab active" href="#" title="04-shared-components-and-services.html">
+        <span class="tab-icon">🟢</span> 04-shared-components-and-services.html
+        <span class="tab-close" onclick="event.preventDefault();">×</span>
+      </a>
+    </div>
+
+    <!-- Right Utilities -->
+    <div class="topbar-tools">
+      <button class="tool-btn" onclick="toggleCurriculumDrawer()" title="Buka seluruh daftar modul kurikulum">
+        📚 Semua Modul
+      </button>
+      <button class="tool-btn active" id="topbarTocBtn" onclick="handleTocToggleClick()" title="Buka/Tutup Daftar Isi (Mode Fokus Membaca)">
+        📑 Daftar Isi
+      </button>
+    </div>
+  </div>
+</nav>
+
+<!-- Floating Button to Restore TOC When Dismissed (Focus Mode) -->
+<button class="toc-expand-float-btn" id="tocExpandFloatBtn" onclick="toggleDesktopToc()" title="Tampilkan Kembali Daftar Isi">
+  📑 Buka Daftar Isi
+</button>
+
+<!-- ========================================================================= -->
+<!-- TWO-COLUMN DOCUMENTATION LAYOUT (MAIN CONTENT + STICKY TOC)               -->
+<!-- ========================================================================= -->
+<div class="docs-layout" id="docsLayout">
+
+  <!-- Main Content Column -->
+  <main class="docs-content">
+
+    <!-- Header Section -->
+    <header id="sec-title">
+      <div class="badge">CHIRON CLASSROOM • SAMIR MOBILE FLUTTER</div>
+      <h1>04 — Shared Components &amp; Services</h1>
+      <p style="color: var(--text-muted); font-size: 1.05rem; margin-top: 0.25rem;">
+        Komponen Bersama &amp; Layanan Terpusat
+      </p>
+      <div class="metadata" style="margin-top: 1rem;">
+        <span>📚 Modul: <strong>04-shared-components-and-services</strong></span>
+        <span>🎯 Scope: <strong>SAMIR Mobile (Flutter Add-to-App & MethodChannel)</strong></span>
+        <span>⏱️ Estimasi: <strong>20 Menit</strong></span>
+        <span>🏷️ Git Branch: <strong>learn/Flutter-Arch</strong></span>
+      </div>
+    </header>
+
+    <!-- BAGIAN 1: DOKUMEN PEMBELAJARAN LENGKAP -->
+    <div class="section-banner">
+      <h2>📖 Bagian 1: Dokumen Pembelajaran Lengkap & Alur Nyata</h2>
+      <span class="pill">Core Knowledge</span>
+    </div>
+
+<p>Dokumentasi ini menjelaskan pustaka komponen UI bersama (<em>shared widgets</em>) dan layanan terpusat yang berada di bawah folder <a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/learn/Flutter-Arch/flutter/lib/common/widgets/" target="_blank" rel="noopener noreferrer">🦊 flutter/lib/common/widgets/ <span class="branch-tag">learn/Flutter-Arch</span> ↗</a> dan <a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/learn/Flutter-Arch/flutter/lib/common/router/app_dialog.dart" target="_blank" rel="noopener noreferrer">🦊 flutter/lib/common/router/app_dialog.dart <span class="branch-tag">learn/Flutter-Arch</span> ↗</a>, yang menjadi fondasi konsistensi antarmuka pengguna di seluruh modul SAMIR Flutter.</p>
+<p>Status Verifikasi: <code>[Verified]</code> (diverifikasi langsung dari inspeksi kode <a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/learn/Flutter-Arch/flutter/lib/common/widgets/basePage/base_page.dart" target="_blank" rel="noopener noreferrer">🦊 flutter/lib/common/widgets/basePage/base_page.dart <span class="branch-tag">learn/Flutter-Arch</span> ↗</a>, <a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/learn/Flutter-Arch/flutter/lib/common/widgets/loading/loading.dart" target="_blank" rel="noopener noreferrer">🦊 flutter/lib/common/widgets/loading/loading.dart <span class="branch-tag">learn/Flutter-Arch</span> ↗</a>, dan <a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/learn/Flutter-Arch/flutter/lib/common/router/app_dialog.dart" target="_blank" rel="noopener noreferrer">🦊 flutter/lib/common/router/app_dialog.dart <span class="branch-tag">learn/Flutter-Arch</span> ↗</a>).</p>
+<section id="sec-obj" class="doc-section">
+<h3>🎯 A. Learning Objective</h3>
+<p>Setelah menyelesaikan dokumen ini, pembaca akan mampu:</p>
+<ol>
+<li>Memahami peranan <code>BasePage</code> sebagai Scaffold terstandarisasi untuk semua layar sekunder di Flutter SAMIR.</li>
+<li>Menggunakan <code>NavTitleBar</code> untuk konfigurasi judul, tombol kembali, dan tombol aksi di bilah atas.</li>
+<li>Menjelaskan mekanisme kerja <code>AppLoadingOverlay</code> yang dikendalikan oleh <code>LoadingInterceptor</code> Dio.</li>
+<li>Memahami keunggulan <code>AppDialogHost</code> yang memisahkan dialog bisnis dari tumpukan navigasi GoRouter.</li>
+<li>Menggunakan <code>AppSocialMediaSection</code> untuk standarisasi informasi kanal resmi CS dan media sosial SAMIR.</li>
+</ol>
+</section>
+<section id="sec-prereq" class="doc-section">
+<h3>📋 B. Prerequisites</h3>
+<p>Telah membaca <a href="02-layers-and-responsibilities.html">02-layers-and-responsibilities.md</a>.</p>
+</section>
+<section id="sec-simple" class="doc-section">
+<h3>💡 C. Simple Explanation (Analogi &amp; Konsep Sederhana)</h3>
+<p>Bayangkan merancang seragam dan perlengkapan standar untuk staf bank:</p>
+<ul>
+<li><strong><code>BasePage</code></strong> adalah setelan jas resmi yang sudah dilengkapi name tag dan lencana bank; setiap teller baru cukup mengenakannya tanpa perlu menjahit baju dari nol.</li>
+<li><strong><code>AppLoadingOverlay</code></strong> adalah tirai penutup kaca loket otomatis: ketika teller sedang mengambil uang dari brankas pusat (request API), tirai turun secara halus agar nasabah tahu proses sedang berlangsung.</li>
+<li><strong><code>AppDialogHost</code></strong> adalah ruang konsultasi terpisah: jika ada berkas penting yang perlu ditandatangani nasabah, berkas tersebut diajukan di meja khusus tanpa mengganggu antrean loket utama.</li>
+</ul>
+</section>
+<section id="sec-actual" class="doc-section">
+<h3>💻 D. Actual Implementation (Bukti di Kode Sumber)</h3>
+<div id="sub-1-standarisasi-layar-dengan-basepage" class="doc-subsection">
+<h4>1. Standarisasi Layar dengan `BasePage`</h4>
+</div>
+<p>File <a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/learn/Flutter-Arch/flutter/lib/common/widgets/basePage/base_page.dart" target="_blank" rel="noopener noreferrer">🦊 flutter/lib/common/widgets/basePage/base_page.dart <span class="branch-tag">learn/Flutter-Arch</span> ↗</a> adalah widget Scaffold pembungkus kanonikal:</p>
+<pre><code class="language-dart">class BasePage extends StatefulWidget {
+  const BasePage({
+    super.key,
+    this.title,
+    this.navTitleBar,
+    this.backgroundColor,
+    this.resizeToAvoidBottomInset,
+    this.floatingActionButton,
+    required this.body,
+    this.onBack,
+  });
+
+  final String? title;
+  final PreferredSizeWidget? navTitleBar;
+  final Color? backgroundColor;
+  final bool? resizeToAvoidBottomInset;
+  final Widget? floatingActionButton;
+  final Widget body;
+  final VoidCallback? onBack;
+  // ...
+}</code></pre>
+<p>Keuntungan utama <code>BasePage</code>:</p>
+<ol>
+<li><strong>Otomatisasi Navigation Bar</strong>: Jika properti <code>title</code> diisi teks (misal: <code>&quot;Pengaturan Akun&quot;</code>), <code>BasePage</code> otomatis merakit <code>NavTitleBar</code> lengkap dengan tombol kembali dan style font Lato.</li>
+<li><strong>Status Bar Overlay Konsisten</strong>: Membungkus antarmuka dengan <code>AnnotatedRegion&lt;SystemUiOverlayStyle&gt;</code> agar warna jam dan ikon baterai selalu hitam kontras di atas tema terang.</li>
+<li><strong>Penanganan Back Terpadu</strong>: Callback <code>onBack</code> dapat di-override untuk intercept tombol kembali (misal menampilkan dialog konfirmasi <em>"Batalkan perubahan?"</em> sebelum menutup halaman).</li>
+</ol>
+<div id="sub-2-loading-spinner-global-apploadingoverlay" class="doc-subsection">
+<h4>2. Loading Spinner Global: `AppLoadingOverlay`</h4>
+</div>
+<p>Dikonfigurasi di root <code>MyApp.builder</code> dan diimplementasikan di <a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/learn/Flutter-Arch/flutter/lib/common/widgets/loading/loading.dart" target="_blank" rel="noopener noreferrer">🦊 flutter/lib/common/widgets/loading/loading.dart <span class="branch-tag">learn/Flutter-Arch</span> ↗</a>:</p>
+<pre><code class="language-dart">class AppLoadingOverlay extends StatefulWidget {
+  const AppLoadingOverlay({super.key, required this.child});
+  final Widget child;
+  // ...
+}</code></pre>
+<p>Alur kerja:</p>
+<ul>
+<li>Ketika <code>httpClient.post(..., showLoading: true)</code> dipanggil, <code>LoadingInterceptor</code> otomatis memanggil <code>Loading.show()</code>.</li>
+<li><code>AppLoadingOverlay</code> menampilkan lapisan transparan gelap (<em>modal barrier</em>) dengan indikator loading berputar di tengah layar.</li>
+<li>Lapisan ini mencegah pengguna mengetuk tombol lain secara tidak sengaja (<em>double-click prevention</em>) saat request sedang terbang ke server.</li>
+<li>Begitu response diterima atau timeout terjadi, <code>LoadingInterceptor</code> memanggil <code>Loading.hide()</code> untuk menghapus overlay.</li>
+</ul>
+<div id="sub-3-dialog-terisolasi-appdialoghost-appdialog" class="doc-subsection">
+<h4>3. Dialog Terisolasi: `AppDialogHost` &amp; `AppDialog`</h4>
+</div>
+<p>File <a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/learn/Flutter-Arch/flutter/lib/common/router/app_dialog.dart" target="_blank" rel="noopener noreferrer">🦊 flutter/lib/common/router/app_dialog.dart <span class="branch-tag">learn/Flutter-Arch</span> ↗</a>:</p>
+<pre><code class="language-dart">class AppDialogHost extends StatefulWidget {
+  const AppDialogHost({super.key, required this.child});
+  final Widget child;
+  // ...
+}</code></pre>
+<p>Mengapa ini penting?</p>
+<ul>
+<li>Di Flutter standar, dialog ditampilkan via <code>showDialog()</code>, yang memasukkan dialog sebagai <code>Route</code> baru ke dalam <code>Navigator</code>.</li>
+<li>Jika <code>GoRouter.go(&#x27;/root&#x27;)</code> dipanggil saat dialog masih terbuka, rute dialog bisa menyebabkan bentrok navigasi atau tersangkut di stack.</li>
+<li><code>AppDialogHost</code> membungkus aplikasi di luar GoRouter. Dialog bisnis dapat ditampilkan dan ditutup secara independen tanpa memengaruhi riwayat URL routing.</li>
+</ul>
+<div id="sub-4-kanal-resmi-appsocialmediasection" class="doc-subsection">
+<h4>4. Kanal Resmi: `AppSocialMediaSection`</h4>
+</div>
+<p>File <a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/learn/Flutter-Arch/flutter/lib/common/widgets/contact/app_social_media_section.dart" target="_blank" rel="noopener noreferrer">🦊 flutter/lib/common/widgets/contact/app_social_media_section.dart <span class="branch-tag">learn/Flutter-Arch</span> ↗</a> menyediakan komponen standar untuk menampilkan tautan resmi:</p>
+<ul>
+<li>WhatsApp Customer Care</li>
+<li>Akun Instagram resmi SAMIR (<code>@samir_co_id</code>)</li>
+<li>Halaman Facebook</li>
+<li>Call center / Telepon pengaduan</li>
+</ul>
+<p>Komponen ini digunakan secara seragam di bagian bawah tab Tagihan (<code>RepayHomePage</code>) dan tab Profil (<code>MineHomePage</code>).</p>
+</section>
+<section id="sec-walkthrough" class="doc-section">
+<h3>🪜 E. Step-by-Step Walkthrough: Membuat Halaman Baru Menggunakan `BasePage`</h3>
+<pre><code class="language-dart">import &#x27;package:flutter/material.dart&#x27;;
+import &#x27;package:flutter_app_project/common/widgets/basePage/base_page.dart&#x27;;
+
+class FaqDetailPage extends StatelessWidget {
+  const FaqDetailPage({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return BasePage(
+      title: &#x27;Pusat Bantuan&#x27;,
+      backgroundColor: Colors.white,
+      body: SingleChildScrollView(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          children: const [
+            Text(&#x27;Pertanyaan yang sering diajukan mengenai pembayaran...&#x27;),
+          ],
+        ),
+      ),
+    );
+  }
+}</code></pre>
+<p>Hasil:</p>
+<ul>
+<li>Status bar perangkat otomatis terkonfigurasi.</li>
+<li>Header atas otomatis menampilkan tombol kembali yang memanggil <code>Routers.pop()</code>.</li>
+<li>Latar belakang halaman diwarnai putih bersih sesuai design system SAMIR.</li>
+</ul>
+</section>
+<section id="sec-why" class="doc-section">
+<h3>⚖️ F. Why It Matters (Trade-Offs &amp; Implikasi Teknis)</h3>
+<ul>
+<li><strong>Eliminasi Kode Boilerplate</strong>:</li>
+</ul>
+<p>Tanpa <code>BasePage</code>, setiap engineer harus mendeklarasikan <code>Scaffold</code>, <code>AppBar</code>, <code>AnnotatedRegion</code>, <code>WillPopScope/PopScope</code>, dan penyesuaian padding status bar secara berulang di setiap file halaman. <code>BasePage</code> mereduksi duplikasi kode hingga lebih dari 60 baris per halaman.</p>
+<ul>
+<li><strong>Konsistensi UI Antara iOS & Android</strong>:</li>
+</ul>
+<p>Komponen <code>NavTitleBar</code> memastikan tombol kembali dan penempatan judul berada di koordinat yang estetis dan proporsional di kedua platform, menghindari inkonsistensi layout bawaan <code>AppBar</code> Material yang berbeda antara iOS (tengah) dan Android (kiri).</p>
+</section>
+<section id="sec-example" class="doc-section">
+<h3>🔬 G. Practical Example (Skenario Penggunaan Nyata)</h3>
+<p>Jika desainer UI memutuskan untuk memperbarui warna latar belakang seluruh halaman sekunder dari putih ke abu-abu terang (<code>#F7F8FA</code>):</p>
+<ul>
+<li>Cukup ubah default parameter <code>backgroundColor</code> di dalam <code>BasePage</code>.</li>
+<li>Seluruh halaman sekunder aplikasi seketika mengadopsi warna baru secara serempak.</li>
+</ul>
+</section>
+<section id="sec-mistakes" class="doc-section">
+<h3>⚠️ H. Common Mistakes &amp; Debugging</h3>
+<ul>
+<li><strong>Menggunakan <code>Scaffold</code> Biasa Alih-Alih <code>BasePage</code></strong>:</li>
+<li>Menyebabkan status bar perangkat berubah menjadi putih (ikon tak terlihat) dan tombol back tidak mengikuti aturan navigasi <code>NativeRouteChrome</code>.</li>
+<li><strong>Menampilkan Dialog dengan <code>showDialog()</code> Bawaan Navigator</strong>:</li>
+<li>Dapat memicu konflik stack dengan GoRouter. Selalu gunakan <code>AppDialog.show()</code> yang disediakan modul SAMIR.</li>
+</ul>
+</section>
+<section id="sec-check" class="doc-section">
+<h3>🧠 I. Knowledge Check</h3>
+<ol>
+<li>Apa keuntungan menggunakan <code>AppDialogHost</code> dibandingkan <code>showDialog()</code> standar bawaan Flutter?</li>
+<li>Bagaimana cara kerja otomatisasi loading spinner saat API request dikirim melalui <code>HttpClient</code>?</li>
+<li>Sebutkan dua komponen utama yang dibungkus di dalam <code>MyApp.builder</code> di <code>main.dart</code>!</li>
+</ol>
+<p><strong>Latihan Observasi</strong>:</p>
+<p>Buka file <a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/learn/Flutter-Arch/flutter/lib/pages/mine/personal/mine_personal_page.dart" target="_blank" rel="noopener noreferrer">🦊 flutter/lib/pages/mine/personal/mine_personal_page.dart <span class="branch-tag">learn/Flutter-Arch</span> ↗</a>. Amati bagaimana class ini menggunakan <code>BasePage</code> sebagai root widget-nya.</p>
+</section>
+<section id="sec-completion" class="doc-section">
+<h3>🏁 J. Completion Criteria</h3>
+<p>Anda telah menguasai Level 3: Arsitektur Hybrid & Komponen Bersama SAMIR Flutter.</p>
+<p>Dokumen berikutnya: <a href="../04-understanding-navigation/01-feature-inventory.html">Level 4: GoRouter &amp; Native Chrome Sync</a>.</p>
+</section>
+
+    <!-- BAGIAN 2 & 3: ARCHITECTURAL CRITIQUE & BLUEPRINT -->
+    <div class="section-banner lab" style="margin-top: 4rem;">
+      <h2>🏛️ Bagian 2: Architecture Lab, SOLID Audit & Retention Quizzes</h2>
+      <span class="pill" style="background-color: var(--accent-warning);">Architecture Lab</span>
+    </div>
+
+
+    <!-- SEGMEN 2: ARCHITECTURAL CRITIQUE -->
+    <section class="lesson-segment" id="sub-solid">
+      <h2>🏛️ Audit SOLID & Clean Architecture: Menemukan Titik Lemah pada Implementasi Existing</h2>
+
+      <div class="callout critique">
+        <div class="callout-title">⚠️ Smells 1: Keterikatan Kuat Antar Sub-Modul & Kurangnya Inversi Dependensi</div>
+        <p>Implementasi komponen sering mengasumsikan keberadaan lingkungan runtime tertentu tanpa kontrak antarmuka yang didefinisikan secara tegas.</p>
+      </div>
+
+      <div class="callout critique">
+        <div class="callout-title">⚠️ Smells 2: Risiko Regresi & Minimnya Kontrak Pengujian Terisolasi</div>
+        <p>Perubahan pada satu service atau helper berpotensi merusak fungsionalitas di modul lain karena tingginya kohesi tersembunyi antar file.</p>
+      </div>
+    </section>
+
+    <!-- SEGMEN 3: REFACTORING BLUEPRINT -->
+    <section class="lesson-segment" id="sub-blueprint">
+      <h2>🚀 Blueprint Refactoring Standar Industri: Pola Service Locator & Interface Segregation (SOLID)</h2>
+      <p>Menerapkan prinsip Interface Segregation (ISP) dan Dependency Injection agar setiap service hanya mengekspos metode yang relevan bagi kliennya.</p>
+
+      <div class="callout best-practice">
+        <div class="callout-title">✅ Rekomendasi Solusi Arsitektur Bersih</div>
+        <pre><code class="language-dart">abstract class SessionContract {
+  String? get userToken;
+  bool get isLoggedIn;
+}
+
+class GlobalSessionManager implements SessionContract {
+  @override
+  String? userToken;
+  @override
+  bool get isLoggedIn =&gt; userToken != null &amp;&amp; userToken!.isNotEmpty;
+}</code></pre>
+      </div>
+
+      <h3>Keunggulan Arsitektur Refactoring Ini:</h3>
+      <ul>
+        <li><strong>100% Mockable & Testable:</strong> Memungkinkan pengujian terisolasi tanpa memicu efek samping runtime produksi.</li>
+        <li><strong>Open/Closed Principle (OCP):</strong> Penambahan fitur baru dapat dilakukan tanpa memodifikasi class yang sudah stabil.</li>
+        <li><strong>Decoupled Subsystems:</strong> Membatasi dampak regresi saat terjadi perubahan dependensi eksternal.</li>
+      </ul>
+    </section>
+
+
+    <!-- SEGMEN 4: INTERACTIVE RETENTION QUIZ -->
+    <section class="lesson-segment" id="sub-quiz">
+      <h2>🧠 Interactive Retention & Architectural Quiz</h2>
+      <p>Uji pemahaman alur kode nyata dan keputusan arsitektur Anda:</p>
+
+      <!-- KUIS 1 -->
+      <div class="quiz-card" id="quiz-1">
+        <h4>Kuis 1 (Memory Recall): Berdasarkan standar Clean Architecture, apa peran utama dari domain layer pada modul FLUTTER?</h4>
+        <div class="quiz-options">
+          <button class="quiz-btn" onclick="submitQuiz(1, 'A', true)">
+            A. Mengisolasi aturan bisnis finansial murni agar tidak tercampur dengan UI platform
+          </button>
+          <button class="quiz-btn" onclick="submitQuiz(1, 'B', false)">
+            B. Mengatur tata letak layout dan ukuran tombol di layar aplikasi perangkat nasabah
+          </button>
+          <button class="quiz-btn" onclick="submitQuiz(1, 'C', false)">
+            C. Menyimpan file sertifikat SSL dan kunci enkripsi privat di memori kartu SIM
+          </button>
+          <button class="quiz-btn" onclick="submitQuiz(1, 'D', false)">
+            D. Mengirimkan sinyal detak jantung (heartbeat) ke menara telekomunikasi seluler
+          </button>
+        </div>
+        <div class="quiz-feedback" id="feedback-1"></div>
+      </div>
+      <!-- KUIS 2 -->
+      <div class="quiz-card" id="quiz-2">
+        <h4>Kuis 2 (Architectural Decision): Mengapa penerapan Dependency Inversion Principle (DIP) sangat krusial dalam pembuatan unit test?</h4>
+        <div class="quiz-options">
+          <button class="quiz-btn" onclick="submitQuiz(2, 'A', false)">
+            A. Mengharuskan seluruh kode ditulis menggunakan bahasa pemrograman tingkat rendah C
+          </button>
+          <button class="quiz-btn" onclick="submitQuiz(2, 'B', true)">
+            B. Memungkinkan penyuntikan test double (mock/fake) untuk menguji skenario terisolasi
+          </button>
+          <button class="quiz-btn" onclick="submitQuiz(2, 'C', false)">
+            C. Mengurangi jumlah baris kode hingga setengahnya secara otomatis saat kompilasi
+          </button>
+          <button class="quiz-btn" onclick="submitQuiz(2, 'D', false)">
+            D. Menghilangkan kebutuhan arsitektur modular pada proyek aplikasi berskala besar
+          </button>
+        </div>
+        <div class="quiz-feedback" id="feedback-2"></div>
+      </div>
+      <!-- KUIS 3 -->
+      <div class="quiz-card" id="quiz-3">
+        <h4>Kuis 3 (Debugging & Maintenance): Apa keuntungan utama membatasi dependensi antar modul ke arah satu arah (Unidirectional Dependency)?</h4>
+        <div class="quiz-options">
+          <button class="quiz-btn" onclick="submitQuiz(3, 'A', true)">
+            A. Menghilangkan circular dependency dan mempermudah pelacakan penyebab bug sistem
+          </button>
+          <button class="quiz-btn" onclick="submitQuiz(3, 'B', false)">
+            B. Memaksa seluruh antarmuka aplikasi selalu berjalan dalam orientasi layar lanskap
+          </button>
+          <button class="quiz-btn" onclick="submitQuiz(3, 'C', false)">
+            C. Menghindari kebutuhan update library pihak ketiga selama masa rilis aplikasi
+          </button>
+          <button class="quiz-btn" onclick="submitQuiz(3, 'D', false)">
+            D. Mempercepat koneksi internet pengguna saat melakukan pembayaran virtual account
+          </button>
+        </div>
+        <div class="quiz-feedback" id="feedback-3"></div>
+      </div>
+    </section>
+
+    <!-- Lesson Navigation Footer -->
+    <div class="lesson-nav-footer">
+      <a class="lesson-nav-btn prev" href="../03-understanding-architecture/03-dependency-direction.html">
+  ◀ Modul Sebelumnya: 03 — Dependency Direction
+</a>
+      <a class="lesson-nav-btn next" href="../04-understanding-navigation/01-feature-inventory.html">
+  Modul Selanjutnya: 01 — Feature Inventory ▶
+</a>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+      <div>Chiron Codebase Mastery Academy • SAMIR Mobile Flutter</div>
+      <div>Anchor Branch: <strong>learn/Flutter-Arch</strong></div>
+    </footer>
+
+  </main>
+
+  <!-- ========================================================================= -->
+  <!-- RIGHT-HAND SIDEBAR: ON-PAGE TABLE OF CONTENTS                             -->
+  <!-- ========================================================================= -->
+  <aside class="docs-toc-sidebar" id="desktopTocSidebar">
+    <div class="toc-header-bar">
+      <span class="toc-header-label">📑 DAFTAR ISI</span>
+      <div class="toc-header-actions">
+        <button class="toc-action-btn" id="tocScrollTopBtn" title="Scroll ke Paling Atas" onclick="window.scrollTo({top: 0, behavior: 'smooth'})">▲</button>
+        <button class="toc-action-btn" id="tocToggleAllBtn" title="Buka/Tutup Semua Cabang" onclick="toggleAllTocBranches()">🔄</button>
+        <button class="toc-action-btn" id="tocResetActiveBtn" title="Fokuskan ke Topik Aktif" onclick="focusCurrentTocActive()">📑</button>
+        <button class="toc-action-btn toc-dismiss-btn" id="tocDismissBtn" title="Tutup Daftar Isi (Fokus Mode Membaca)" onclick="toggleDesktopToc()">✕</button>
+      </div>
+    </div>
+
+    <div class="toc-tree-container">
+      <div class="toc-tree-node root-node" id="toc-node-root">
+        <div class="toc-node-row">
+          <span class="toc-caret" onclick="toggleTocBranch(this)">▾</span>
+          <a class="toc-tree-link root-link" href="#sec-title" title="04 — Shared Components &amp; Services">
+            04 — Shared Components &amp; Services
+          </a>
+        </div>
+        <div class="toc-branch">
+          <div class="toc-node-row">
+            <span class="toc-leaf-dot"></span>
+            <a class="toc-tree-link" href="#sec-obj">A. Learning Objective</a>
+          </div>
+          <div class="toc-node-row">
+            <span class="toc-leaf-dot"></span>
+            <a class="toc-tree-link" href="#sec-prereq">B. Prerequisites</a>
+          </div>
+          <div class="toc-node-row">
+            <span class="toc-leaf-dot"></span>
+            <a class="toc-tree-link" href="#sec-simple">C. Simple Explanation (Analogi &amp; Konsep Sederhana)</a>
+          </div>
+          <div class="toc-tree-node" id="toc-node-sec-actual">
+            <div class="toc-node-row">
+              <span class="toc-caret" onclick="toggleTocBranch(this)">▾</span>
+              <a class="toc-tree-link" href="#sec-actual">D. Actual Implementation (Bukti di Kode Sumber)</a>
+            </div>
+            <div class="toc-branch">
+              <div class="toc-node-row">
+                <span class="toc-leaf-dot"></span>
+                <a class="toc-tree-link" href="#sub-1-standarisasi-layar-dengan-basepage">1. Standarisasi Layar dengan `BasePage`</a>
+              </div>
+              <div class="toc-node-row">
+                <span class="toc-leaf-dot"></span>
+                <a class="toc-tree-link" href="#sub-2-loading-spinner-global-apploadingoverlay">2. Loading Spinner Global: `AppLoadingOverlay`</a>
+              </div>
+              <div class="toc-node-row">
+                <span class="toc-leaf-dot"></span>
+                <a class="toc-tree-link" href="#sub-3-dialog-terisolasi-appdialoghost-appdialog">3. Dialog Terisolasi: `AppDialogHost` &amp; `AppDialog`</a>
+              </div>
+              <div class="toc-node-row">
+                <span class="toc-leaf-dot"></span>
+                <a class="toc-tree-link" href="#sub-4-kanal-resmi-appsocialmediasection">4. Kanal Resmi: `AppSocialMediaSection`</a>
+              </div>
+            </div>
+          </div>
+          <div class="toc-node-row">
+            <span class="toc-leaf-dot"></span>
+            <a class="toc-tree-link" href="#sec-walkthrough">E. Step-by-Step Walkthrough: Membuat Halaman Baru Menggunakan `BasePage`</a>
+          </div>
+          <div class="toc-node-row">
+            <span class="toc-leaf-dot"></span>
+            <a class="toc-tree-link" href="#sec-why">F. Why It Matters (Trade-Offs &amp; Implikasi Teknis)</a>
+          </div>
+          <div class="toc-node-row">
+            <span class="toc-leaf-dot"></span>
+            <a class="toc-tree-link" href="#sec-example">G. Practical Example (Skenario Penggunaan Nyata)</a>
+          </div>
+          <div class="toc-node-row">
+            <span class="toc-leaf-dot"></span>
+            <a class="toc-tree-link" href="#sec-mistakes">H. Common Mistakes &amp; Debugging</a>
+          </div>
+          <div class="toc-node-row">
+            <span class="toc-leaf-dot"></span>
+            <a class="toc-tree-link" href="#sec-check">I. Knowledge Check</a>
+          </div>
+          <div class="toc-node-row">
+            <span class="toc-leaf-dot"></span>
+            <a class="toc-tree-link" href="#sec-completion">J. Completion Criteria</a>
+          </div>
+          <!-- Architecture Lab Branches -->
+          <div class="toc-tree-node" id="toc-node-lab" style="margin-top: 0.45rem;">
+            <div class="toc-node-row">
+              <span class="toc-caret" onclick="toggleTocBranch(this)">▾</span>
+              <a class="toc-tree-link" href="#sub-solid" style="font-weight: 700; color: var(--accent-warning);">
+                🏛️ Architecture Lab & Audit
+              </a>
+            </div>
+            <div class="toc-branch">
+              <div class="toc-node-row">
+                <span class="toc-leaf-dot"></span>
+                <a class="toc-tree-link" href="#sub-solid">1. Audit SOLID & Clean Arch</a>
+              </div>
+              <div class="toc-node-row">
+                <span class="toc-leaf-dot"></span>
+                <a class="toc-tree-link" href="#sub-blueprint">2. Refactoring Blueprint</a>
+              </div>
+              <div class="toc-node-row">
+                <span class="toc-leaf-dot"></span>
+                <a class="toc-tree-link" href="#sub-quiz">3. Interactive Retention Quiz</a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </aside>
+
+</div>
+
+<!-- ========================================================================= -->
+<!-- MOBILE / DRAWER TABLE OF CONTENTS OVERLAY                                 -->
+<!-- ========================================================================= -->
+<div class="mobile-toc-overlay" id="mobileTocOverlay" onclick="toggleMobileToc()"></div>
+<div class="mobile-toc-drawer" id="mobileTocDrawer">
+  <div class="toc-header-bar">
+    <span class="toc-header-label">📑 DAFTAR ISI HALAMAN</span>
+    <button class="drawer-close-btn" onclick="toggleMobileToc()">✕</button>
+  </div>
+  <div class="toc-tree-container" style="margin-top: 0.75rem;">
+    <div class="toc-tree-node root-node" id="mob-toc-node-root">
+      <div class="toc-node-row">
+        <span class="toc-caret" onclick="toggleTocBranch(this)">▾</span>
+        <a class="toc-tree-link root-link" href="#sec-title" onclick="toggleMobileToc()">
+          04 — Shared Components &amp; Services
+        </a>
+      </div>
+      <div class="toc-branch">
+        <div class="toc-node-row">
+          <span class="toc-leaf-dot"></span>
+          <a class="toc-tree-link" href="#sec-obj" onclick="toggleMobileToc()">A. Learning Objective</a>
+        </div>
+        <div class="toc-node-row">
+          <span class="toc-leaf-dot"></span>
+          <a class="toc-tree-link" href="#sec-prereq" onclick="toggleMobileToc()">B. Prerequisites</a>
+        </div>
+        <div class="toc-node-row">
+          <span class="toc-leaf-dot"></span>
+          <a class="toc-tree-link" href="#sec-simple" onclick="toggleMobileToc()">C. Simple Explanation (Analogi &amp; Konsep Sederhana)</a>
+        </div>
+        <div class="toc-tree-node" id="mob-toc-node-sec-actual">
+          <div class="toc-node-row">
+            <span class="toc-caret" onclick="toggleTocBranch(this)">▾</span>
+            <a class="toc-tree-link" href="#sec-actual" onclick="toggleMobileToc()">D. Actual Implementation (Bukti di Kode Sumber)</a>
+          </div>
+          <div class="toc-branch">
+            <div class="toc-node-row">
+              <span class="toc-leaf-dot"></span>
+              <a class="toc-tree-link" href="#sub-1-standarisasi-layar-dengan-basepage" onclick="toggleMobileToc()">1. Standarisasi Layar dengan `BasePage`</a>
+            </div>
+            <div class="toc-node-row">
+              <span class="toc-leaf-dot"></span>
+              <a class="toc-tree-link" href="#sub-2-loading-spinner-global-apploadingoverlay" onclick="toggleMobileToc()">2. Loading Spinner Global: `AppLoadingOverlay`</a>
+            </div>
+            <div class="toc-node-row">
+              <span class="toc-leaf-dot"></span>
+              <a class="toc-tree-link" href="#sub-3-dialog-terisolasi-appdialoghost-appdialog" onclick="toggleMobileToc()">3. Dialog Terisolasi: `AppDialogHost` &amp; `AppDialog`</a>
+            </div>
+            <div class="toc-node-row">
+              <span class="toc-leaf-dot"></span>
+              <a class="toc-tree-link" href="#sub-4-kanal-resmi-appsocialmediasection" onclick="toggleMobileToc()">4. Kanal Resmi: `AppSocialMediaSection`</a>
+            </div>
+          </div>
+        </div>
+        <div class="toc-node-row">
+          <span class="toc-leaf-dot"></span>
+          <a class="toc-tree-link" href="#sec-walkthrough" onclick="toggleMobileToc()">E. Step-by-Step Walkthrough: Membuat Halaman Baru Menggunakan `BasePage`</a>
+        </div>
+        <div class="toc-node-row">
+          <span class="toc-leaf-dot"></span>
+          <a class="toc-tree-link" href="#sec-why" onclick="toggleMobileToc()">F. Why It Matters (Trade-Offs &amp; Implikasi Teknis)</a>
+        </div>
+        <div class="toc-node-row">
+          <span class="toc-leaf-dot"></span>
+          <a class="toc-tree-link" href="#sec-example" onclick="toggleMobileToc()">G. Practical Example (Skenario Penggunaan Nyata)</a>
+        </div>
+        <div class="toc-node-row">
+          <span class="toc-leaf-dot"></span>
+          <a class="toc-tree-link" href="#sec-mistakes" onclick="toggleMobileToc()">H. Common Mistakes &amp; Debugging</a>
+        </div>
+        <div class="toc-node-row">
+          <span class="toc-leaf-dot"></span>
+          <a class="toc-tree-link" href="#sec-check" onclick="toggleMobileToc()">I. Knowledge Check</a>
+        </div>
+        <div class="toc-node-row">
+          <span class="toc-leaf-dot"></span>
+          <a class="toc-tree-link" href="#sec-completion" onclick="toggleMobileToc()">J. Completion Criteria</a>
+        </div>
+        <div class="toc-tree-node" id="mob-toc-node-lab" style="margin-top: 0.45rem;">
+          <div class="toc-node-row">
+            <span class="toc-caret" onclick="toggleTocBranch(this)">▾</span>
+            <a class="toc-tree-link" href="#sub-solid" onclick="toggleMobileToc()" style="font-weight: 700; color: var(--accent-warning);">
+              🏛️ Architecture Lab & Audit
+            </a>
+          </div>
+          <div class="toc-branch">
+            <div class="toc-node-row">
+              <span class="toc-leaf-dot"></span>
+              <a class="toc-tree-link" href="#sub-solid" onclick="toggleMobileToc()">1. Audit SOLID & Clean Arch</a>
+            </div>
+            <div class="toc-node-row">
+              <span class="toc-leaf-dot"></span>
+              <a class="toc-tree-link" href="#sub-blueprint" onclick="toggleMobileToc()">2. Refactoring Blueprint</a>
+            </div>
+            <div class="toc-node-row">
+              <span class="toc-leaf-dot"></span>
+              <a class="toc-tree-link" href="#sub-quiz" onclick="toggleMobileToc()">3. Interactive Retention Quiz</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ========================================================================= -->
+<!-- FULL CURRICULUM DRAWER (CATALOG OF ALL MODULES)                           -->
+<!-- ========================================================================= -->
+<div class="curriculum-drawer-overlay" id="curriculumOverlay" onclick="toggleCurriculumDrawer()"></div>
+<div class="curriculum-drawer" id="curriculumDrawer">
+  <div class="drawer-header">
+    <div class="drawer-title">📚 Kurikulum Lengkap SAMIR Mobile Flutter</div>
+    <button class="drawer-close-btn" onclick="toggleCurriculumDrawer()">✕</button>
+  </div>
+  <div class="drawer-search">
+    <input type="text" id="moduleSearchInput" placeholder="🔍 Cari modul (contoh: startup, router, auth)..." oninput="filterCurriculum()">
+  </div>
+  <div class="drawer-body" id="curriculumListBody">
+    <div class="curriculum-level-group">
+      <div class="curriculum-level-title">Level 0: Learning Roadmap</div>
+      <a class="curriculum-item-link" href="../00-learning-roadmap.html">
+        <span>📄</span> Kurikulum &amp; Roadmap Pembelajaran SAMIR Flutter
+      </a>
+    </div>
+    <div class="curriculum-level-group">
+      <div class="curriculum-level-title">Level 1: Project Foundation</div>
+      <a class="curriculum-item-link" href="../01-project-foundation/01-application-overview.html">
+        <span>📄</span> 01 — Application Overview
+      </a>
+      <a class="curriculum-item-link" href="../01-project-foundation/02-repository-structure.html">
+        <span>📄</span> 02 — Repository Structure
+      </a>
+      <a class="curriculum-item-link" href="../01-project-foundation/03-technology-stack-and-build.html">
+        <span>📄</span> 03 — Technology Stack &amp; Build Tooling
+      </a>
+    </div>
+    <div class="curriculum-level-group">
+      <div class="curriculum-level-title">Level 2: Understanding App Startup</div>
+      <a class="curriculum-item-link" href="../02-understanding-app-startup/01-flutter-entry-point.html">
+        <span>📄</span> 01 — Flutter Entry Point
+      </a>
+      <a class="curriculum-item-link" href="../02-understanding-app-startup/02-module-lifecycle-and-host-sync.html">
+        <span>📄</span> 02 — Module Lifecycle &amp; Host Sync
+      </a>
+      <a class="curriculum-item-link" href="../02-understanding-app-startup/03-startup-sequence-and-initial-routing.html">
+        <span>📄</span> 03 — Startup Sequence &amp; Initial Routing
+      </a>
+      <a class="curriculum-item-link" href="../02-understanding-app-startup/04-root-container-and-tab-switching.html">
+        <span>📄</span> 04 — Root Container &amp; Tab Switching
+      </a>
+    </div>
+    <div class="curriculum-level-group">
+      <div class="curriculum-level-title">Level 3: Understanding Architecture</div>
+      <a class="curriculum-item-link" href="../03-understanding-architecture/01-architecture-overview.html">
+        <span>📄</span> 01 — Architecture Overview
+      </a>
+      <a class="curriculum-item-link" href="../03-understanding-architecture/02-layers-and-responsibilities.html">
+        <span>📄</span> 02 — Layers &amp; Responsibilities
+      </a>
+      <a class="curriculum-item-link" href="../03-understanding-architecture/03-dependency-direction.html">
+        <span>📄</span> 03 — Dependency Direction
+      </a>
+      <a class="curriculum-item-link active" href="#">
+        <span>🟢</span> 04 — Shared Components &amp; Services (Sedang Dibaca)
+      </a>
+    </div>
+    <div class="curriculum-level-group">
+      <div class="curriculum-level-title">Level 4: Understanding Navigation</div>
+      <a class="curriculum-item-link" href="../04-understanding-navigation/01-feature-inventory.html">
+        <span>📄</span> 01 — Feature Inventory
+      </a>
+      <a class="curriculum-item-link" href="../04-understanding-navigation/02-navigation-fundamentals.html">
+        <span>📄</span> 02 — Navigation Fundamentals
+      </a>
+      <a class="curriculum-item-link" href="../04-understanding-navigation/03-complete-navigation-map.html">
+        <span>📄</span> 03 — Complete Navigation Map
+      </a>
+      <a class="curriculum-item-link" href="../04-understanding-navigation/04-native-route-chrome-and-tabbar-sync.html">
+        <span>📄</span> 04 — Native Route Chrome &amp; Tab Bar Sync
+      </a>
+    </div>
+    <div class="curriculum-level-group">
+      <div class="curriculum-level-title">Level 5: Learning Business Flows</div>
+      <a class="curriculum-item-link" href="../05-learning-business-flows/01-user-journey-overview.html">
+        <span>📄</span> 01 — User Journey Overview
+      </a>
+      <a class="curriculum-item-link" href="../05-learning-business-flows/02-authentication-and-session-sync.html">
+        <span>📄</span> 02 — Authentication &amp; Session Sync
+      </a>
+      <a class="curriculum-item-link" href="../05-learning-business-flows/03-repayment-feature-flows.html">
+        <span>📄</span> 03 — Repayment Feature Flows
+      </a>
+      <a class="curriculum-item-link" href="../05-learning-business-flows/04-mine-and-personal-flows.html">
+        <span>📄</span> 04 — Mine &amp; Personal Flows
+      </a>
+      <a class="curriculum-item-link" href="../05-learning-business-flows/05-cross-boundary-journeys.html">
+        <span>📄</span> 05 — Cross-Boundary Journeys
+      </a>
+    </div>
+    <div class="curriculum-level-group">
+      <div class="curriculum-level-title">Level 6: Data &amp; Dependencies</div>
+      <a class="curriculum-item-link" href="../06-understanding-data-and-dependencies/01-dependency-catalog.html">
+        <span>📄</span> 01 — Dependency Catalog
+      </a>
+      <a class="curriculum-item-link" href="../06-understanding-data-and-dependencies/02-networking-and-api-flow.html">
+        <span>📄</span> 02 — Networking &amp; API Flow
+      </a>
+      <a class="curriculum-item-link" href="../06-understanding-data-and-dependencies/03-parameter-signing-and-security.html">
+        <span>📄</span> 03 — Parameter Signing &amp; Security
+      </a>
+      <a class="curriculum-item-link" href="../06-understanding-data-and-dependencies/04-state-management-and-persistence.html">
+        <span>📄</span> 04 — State Management &amp; Persistence
+      </a>
+      <a class="curriculum-item-link" href="../06-understanding-data-and-dependencies/05-flutter-native-channel-bridge.html">
+        <span>📄</span> 05 — Flutter-Native Channel Bridge
+      </a>
+    </div>
+    <div class="curriculum-level-group">
+      <div class="curriculum-level-title">Level 7: Debugging &amp; Maintenance</div>
+      <a class="curriculum-item-link" href="../07-learning-to-debug-and-maintain/01-error-handling.html">
+        <span>📄</span> 01 — Error Handling
+      </a>
+      <a class="curriculum-item-link" href="../07-learning-to-debug-and-maintain/02-testing-and-debugging.html">
+        <span>📄</span> 02 — Testing &amp; Debugging
+      </a>
+      <a class="curriculum-item-link" href="../07-learning-to-debug-and-maintain/03-coupling-and-technical-debt.html">
+        <span>📄</span> 03 — Coupling &amp; Technical Debt
+      </a>
+      <a class="curriculum-item-link" href="../07-learning-to-debug-and-maintain/04-change-impact-analysis.html">
+        <span>📄</span> 04 — Change Impact Analysis
+      </a>
+    </div>
+    <div class="curriculum-level-group">
+      <div class="curriculum-level-title">Level 8: Reference &amp; Codebase Audit</div>
+      <a class="curriculum-item-link" href="../08-reference/01-codebase-glossary.html">
+        <span>📄</span> 01 — Codebase Glossary
+      </a>
+      <a class="curriculum-item-link" href="../08-reference/02-source-code-index.html">
+        <span>📄</span> 02 — Source Code Index
+      </a>
+      <a class="curriculum-item-link" href="../08-reference/03-existing-documentation-audit.html">
+        <span>📄</span> 03 — Existing Documentation Audit
+      </a>
+      <a class="curriculum-item-link" href="../08-reference/04-open-questions-and-unverified-findings.html">
+        <span>📄</span> 04 — Open Questions &amp; Unverified Findings
+      </a>
+    </div>
+    <div class="curriculum-level-group">
+      <div class="curriculum-level-title">Visual Diagrams &amp; Channel Matrices</div>
+      <a class="curriculum-item-link" href="../diagrams/flutter-architecture-overview.html">
+        <span>📄</span> Diagram — Arsitektur Sistem Hybrid Add-to-App (Architecture Overview)
+      </a>
+      <a class="curriculum-item-link" href="../diagrams/flutter-native-channel-matrix.html">
+        <span>📄</span> Diagram — Matriks Relasi Platform Channel (MethodChannel Mapping Matrix)
+      </a>
+      <a class="curriculum-item-link" href="../diagrams/flutter-navigation-and-chrome.html">
+        <span>📄</span> Diagram — Navigasi GoRouter &amp; Sinkronisasi Native Chrome
+      </a>
+      <a class="curriculum-item-link" href="../diagrams/flutter-repayment-flow.html">
+        <span>📄</span> Diagram — Alur Bisnis Modul Tagihan (Repayment Flowchart &amp; Sequence)
+      </a>
+      <a class="curriculum-item-link" href="../diagrams/flutter-startup-and-ready.html">
+        <span>📄</span> Diagram — Alur Peluncuran &amp; Handshake Kesiapan Flutter (Startup &amp; Ready Sequence)
+      </a>
+    </div>
+    <div class="curriculum-level-group">
+      <div class="curriculum-level-title">Course Index &amp; Syllabus</div>
+      <a class="curriculum-item-link" href="../README.html">
+        <span>📄</span> SAMIR Flutter — Learning Curve &amp; Engineering Guide
+      </a>
+    </div>
+  </div>
+</div>
+
+<!-- ========================================================================= -->
+<!-- FULLSCREEN MERMAID DIAGRAM LIGHTBOX MODAL                                 -->
+<!-- ========================================================================= -->
+<div id="diagramModal" class="diagram-modal" onclick="closeDiagramModal(event)">
+  <div class="diagram-modal-dialog" onclick="event.stopPropagation()">
+    <div class="diagram-modal-header">
+      <h3 id="modalDiagramTitle">🔍 Pembesaran Diagram Alur</h3>
+      <div class="diagram-modal-controls">
+        <button class="diagram-ctrl-btn" onclick="zoomDiagram(1.25)">➕ Zoom In</button>
+        <button class="diagram-ctrl-btn" onclick="zoomDiagram(0.8)">➖ Zoom Out</button>
+        <button class="diagram-ctrl-btn" onclick="resetDiagramZoom()">↺ 100%</button>
+        <button class="diagram-close-btn" onclick="closeDiagramModal()">✕ Tutup [Esc]</button>
+      </div>
+    </div>
+    <div class="diagram-modal-body" id="diagramModalBody">
+      <!-- Cloned SVG inserted dynamically -->
+    </div>
+  </div>
+</div>
+
+<!-- Prism.js Scripts for Syntax Highlighting -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-swift.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-dart.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-json.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-yaml.min.js"></script>
+
+<!-- Interactive Scripts: Tabs, TOC ScrollSpy, Drawers & Quiz -->
+<script>
+  function toggleCurriculumDrawer() {
+    const drawer = document.getElementById('curriculumDrawer');
+    const overlay = document.getElementById('curriculumOverlay');
+    drawer.classList.toggle('open');
+    overlay.classList.toggle('open');
+  }
+
+  function toggleMobileToc() {
+    const drawer = document.getElementById('mobileTocDrawer');
+    const overlay = document.getElementById('mobileTocOverlay');
+    drawer.classList.toggle('open');
+    overlay.classList.toggle('open');
+  }
+
+  function filterCurriculum() {
+    const query = document.getElementById('moduleSearchInput').value.toLowerCase();
+    const links = document.querySelectorAll('.curriculum-item-link');
+    links.forEach(link => {
+      const text = link.innerText.toLowerCase();
+      link.style.display = text.includes(query) ? 'flex' : 'none';
+    });
+  }
+
+  function handleTocToggleClick() {
+    if (window.innerWidth > 1200) {
+      toggleDesktopToc();
+    } else {
+      toggleMobileToc();
+    }
+  }
+
+  function toggleDesktopToc() {
+    document.body.classList.toggle('toc-collapsed');
+    const isCollapsed = document.body.classList.contains('toc-collapsed');
+    try {
+      localStorage.setItem('chiron_toc_collapsed', isCollapsed ? '1' : '0');
+    } catch (e) {}
+
+    const topbarBtn = document.getElementById('topbarTocBtn');
+    if (topbarBtn) {
+      if (isCollapsed) {
+        topbarBtn.classList.remove('active');
+        topbarBtn.title = "Tampilkan Daftar Isi (Mode Normal)";
+      } else {
+        topbarBtn.classList.add('active');
+        topbarBtn.title = "Tutup Daftar Isi (Mode Fokus Membaca)";
+      }
+    }
+  }
+
+  function toggleTocBranch(caretEl) {
+    const node = caretEl.closest('.toc-tree-node');
+    if (node) {
+      node.classList.toggle('collapsed');
+      caretEl.textContent = node.classList.contains('collapsed') ? '▸' : '▾';
+    }
+  }
+
+  function toggleAllTocBranches() {
+    const allNodes = document.querySelectorAll('.toc-tree-node');
+    let hasCollapsed = false;
+    allNodes.forEach(n => {
+      if (n.classList.contains('collapsed')) hasCollapsed = true;
+    });
+    allNodes.forEach(n => {
+      const caret = n.querySelector(':scope > .toc-node-row > .toc-caret');
+      if (hasCollapsed) {
+        n.classList.remove('collapsed');
+        if (caret) caret.textContent = '▾';
+      } else {
+        if (!n.classList.contains('root-node')) {
+          n.classList.add('collapsed');
+          if (caret) caret.textContent = '▸';
+        }
+      }
+    });
+  }
+
+  function focusCurrentTocActive() {
+    const activeLink = document.querySelector('.toc-tree-link.active');
+    if (activeLink) {
+      activeLink.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+    } else {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  }
+
+  window.addEventListener('DOMContentLoaded', () => {
+    try {
+      if (localStorage.getItem('chiron_toc_collapsed') === '1' && window.innerWidth > 1200) {
+        document.body.classList.add('toc-collapsed');
+        const topbarBtn = document.getElementById('topbarTocBtn');
+        if (topbarBtn) topbarBtn.classList.remove('active');
+      }
+    } catch (e) {}
+
+    const sectionIds = ['sec-title', 'sec-obj', 'sec-prereq', 'sec-simple', 'sec-actual', 'sub-1-standarisasi-layar-dengan-basepage', 'sub-2-loading-spinner-global-apploadingoverlay', 'sub-3-dialog-terisolasi-appdialoghost-appdialog', 'sub-4-kanal-resmi-appsocialmediasection', 'sec-walkthrough', 'sec-why', 'sec-example', 'sec-mistakes', 'sec-check', 'sec-completion', 'sub-solid', 'sub-blueprint', 'sub-quiz'];
+    const tocLinks = document.querySelectorAll('.toc-tree-link');
+
+    window.addEventListener('scroll', () => {
+      let currentSection = '';
+      const scrollPos = window.scrollY + 140;
+
+      sectionIds.forEach(id => {
+        const el = document.getElementById(id);
+        if (el && el.offsetTop <= scrollPos) {
+          currentSection = id;
+        }
+      });
+
+      if (currentSection) {
+        tocLinks.forEach(link => {
+          link.classList.remove('active');
+          if (link.getAttribute('href') === '#' + currentSection) {
+            link.classList.add('active');
+          }
+        });
+      }
+    });
+  });
+
+  // Diagram Lightbox Controls
+  let currentDiagramScale = 1.0;
+  function openDiagramZoom(diagramId, title) {
+    const originalEl = document.getElementById(diagramId);
+    if (!originalEl) return;
+    const svgEl = originalEl.querySelector('svg');
+    if (!svgEl) return;
+
+    const modal = document.getElementById('diagramModal');
+    const modalBody = document.getElementById('diagramModalBody');
+    const modalTitle = document.getElementById('modalDiagramTitle');
+
+    modalTitle.innerHTML = title ? '🔍 ' + title : '🔍 Pembesaran Diagram Alur';
+    modalBody.innerHTML = svgEl.outerHTML;
+    
+    currentDiagramScale = 1.0;
+    const clonedSvg = modalBody.querySelector('svg');
+    if (clonedSvg) clonedSvg.style.transform = 'scale(' + currentDiagramScale + ')';
+
+    modal.classList.add('active');
+    document.body.style.overflow = 'hidden';
+  }
+
+  function closeDiagramModal(event) {
+    if (event && event.target && event.target.closest && event.target.closest('.diagram-modal-dialog') && !event.target.classList.contains('diagram-close-btn')) {
+      return;
+    }
+    const modal = document.getElementById('diagramModal');
+    modal.classList.remove('active');
+    document.body.style.overflow = 'auto';
+  }
+
+  function zoomDiagram(factor) {
+    const modalBody = document.getElementById('diagramModalBody');
+    const svg = modalBody.querySelector('svg');
+    if (!svg) return;
+    currentDiagramScale *= factor;
+    svg.style.transform = 'scale(' + currentDiagramScale + ')';
+  }
+
+  function resetDiagramZoom() {
+    const modalBody = document.getElementById('diagramModalBody');
+    const svg = modalBody.querySelector('svg');
+    if (!svg) return;
+    currentDiagramScale = 1.0;
+    svg.style.transform = 'scale(1)';
+  }
+
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') {
+      closeDiagramModal();
+      const cDrawer = document.getElementById('curriculumDrawer');
+      if (cDrawer && cDrawer.classList.contains('open')) toggleCurriculumDrawer();
+      const tDrawer = document.getElementById('mobileTocDrawer');
+      if (tDrawer && tDrawer.classList.contains('open')) toggleMobileToc();
+    } else if (e.key === ']' && !e.ctrlKey && !e.metaKey && e.target.tagName !== 'INPUT') {
+      handleTocToggleClick();
+    }
+  });
+
+  // Quiz Evaluation Logic
+  const explanations = {
+  "1": {
+    "success": "Tepat! Domain layer adalah inti logika bisnis murni yang tidak boleh memiliki dependensi ke framework presentasi seperti UIKit atau Flutter Widget.",
+    "danger": "Kurang tepat. Domain layer menampung entitas dan aturan bisnis murni tanpa mengetahui detail implementasi antarmuka pengguna."
+  },
+  "2": {
+    "success": "Benar! Dengan bergantung pada abstraksi protokol/antarmuka, kita dapat menginjeksi Mock Service di unit test tanpa memanggil server sungguhan.",
+    "danger": "Kurang tepat. DIP memungkinkan kita menukar implementasi konkret jaringan atau database dengan mock objek untuk verifikasi logika yang cepat dan deterministik."
+  },
+  "3": {
+    "success": "Sempurna! Ketergantungan satu arah mencegah dependency loop (circular import) dan menjamin modul fondasi tetap stabil ketika modul fitur diubah.",
+    "danger": "Kurang tepat. Arah dependensi yang bersih dan satu arah mencegah siklus ketergantungan melingkar dan membatasi penyebaran regresi."
+  }
+};
+
+  function submitQuiz(quizId, selectedOption, isCorrect) {
+    const card = document.getElementById('quiz-' + quizId);
+    const buttons = card.querySelectorAll('.quiz-btn');
+    const feedback = document.getElementById('feedback-' + quizId);
+
+    buttons.forEach(btn => {
+      btn.disabled = true;
+      btn.style.cursor = 'default';
+    });
+
+    if (window.event && window.event.target) {
+      window.event.target.classList.add(isCorrect ? 'correct' : 'incorrect');
+    }
+
+    feedback.className = 'quiz-feedback show ' + (isCorrect ? 'success' : 'danger');
+    feedback.innerHTML = '<strong>' + (isCorrect ? '🎉 Jawaban Tepat!' : '❌ Jawaban Salah!') + '</strong> ' + 
+      (isCorrect ? explanations[quizId].success : explanations[quizId].danger);
+  }
+</script>
+
+<!-- Chiron Annotations & Multi-IDE Launcher Engine -->
+<script src="../../../.assets/chiron-client.js"></script>
+<script src="../../../.assets/chiron-ide-launcher.js"></script>
+<script src="../../../.assets/chiron-annotations.js"></script>
+
+</body>
+</html>

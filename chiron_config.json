@@ -8,7 +8,10 @@
       "xcode_project_path": "ios/IDSamirLoan.xcworkspace",
       "branch_mappings": {
         "learn/iOS-Arch": "/Users/samir/Documents/Workspace/SAMIR/Mobile/Nexus/samir-mobile-nexus",
-        "develop": "/Users/samir/Documents/Workspace/SAMIR/Mobile/Develop/samir-mobile-develop"
+        "learn/Flutter-Arch": "/Users/samir/Documents/Workspace/SAMIR/Mobile/Nexus/samir-mobile-nexus",
+        "develop": "/Users/samir/Documents/Workspace/SAMIR/Mobile/Develop/samir-mobile-develop",
+        "feature/testing": "/Users/samir/Documents/Workspace/SAMIR/Mobile/Nexus/samir-mobile-nexus",
+        "main": "/Users/samir/Documents/Workspace/SAMIR/Mobile/Nexus/samir-mobile-nexus"
       }
     }
   },

@@ -1,0 +1,1154 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>02 — Layers &amp; Responsibilities | Chiron Academy</title>
+  
+  <!-- Chiron Base Stylesheet -->
+  <link rel="stylesheet" href="../../../.assets/style.css">
+  
+  <!-- Prism.js Syntax Highlighting Theme (Tomorrow Night) -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css">
+  
+  <!-- Mermaid.js for Dynamic Flow Diagrams -->
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+  <script>mermaid.initialize({ startOnLoad: true, theme: 'dark' });</script>
+</head>
+<body>
+
+<!-- ========================================================================= -->
+<!-- STICKY TOP APPLICATION BAR (CROSSNOTE / VS CODE STYLE)                     -->
+<!-- ========================================================================= -->
+<nav class="app-topbar">
+  <div class="topbar-nav-row">
+    <!-- Browser-like History Navigation -->
+    <div class="nav-history-ctrls">
+      <button class="nav-ctrl-btn" onclick="history.back()" title="Kembali (Back)">◀</button>
+      <button class="nav-ctrl-btn" onclick="history.forward()" title="Maju (Forward)">▶</button>
+      <button class="nav-ctrl-btn" onclick="location.reload()" title="Segarkan (Reload)">↻</button>
+    </div>
+
+    <!-- Document Tabs Strip (Crossnote Style) -->
+    <div class="topbar-tabs-scroll" id="docTabsStrip">
+      <a class="doc-tab" href="01-architecture-overview.html" title="01-architecture-overview.html">
+        <span class="tab-icon">📄</span> 01-architecture-overview.html
+        <span class="tab-close" onclick="event.preventDefault(); this.parentElement.remove();">×</span>
+      </a>
+      <a class="doc-tab active" href="#" title="02-layers-and-responsibilities.html">
+        <span class="tab-icon">🟢</span> 02-layers-and-responsibilities.html
+        <span class="tab-close" onclick="event.preventDefault();">×</span>
+      </a>
+      <a class="doc-tab" href="03-dependency-direction.html" title="03-dependency-direction.html">
+        <span class="tab-icon">📄</span> 03-dependency-direction.html
+        <span class="tab-close" onclick="event.preventDefault(); this.parentElement.remove();">×</span>
+      </a>
+      <a class="doc-tab" href="04-shared-components-and-services.html" title="04-shared-components-and-services.html">
+        <span class="tab-icon">📄</span> 04-shared-components-and-services.html
+        <span class="tab-close" onclick="event.preventDefault(); this.parentElement.remove();">×</span>
+      </a>
+    </div>
+
+    <!-- Right Utilities -->
+    <div class="topbar-tools">
+      <button class="tool-btn" onclick="toggleCurriculumDrawer()" title="Buka seluruh daftar modul kurikulum">
+        📚 Semua Modul
+      </button>
+      <button class="tool-btn active" id="topbarTocBtn" onclick="handleTocToggleClick()" title="Buka/Tutup Daftar Isi (Mode Fokus Membaca)">
+        📑 Daftar Isi
+      </button>
+    </div>
+  </div>
+</nav>
+
+<!-- Floating Button to Restore TOC When Dismissed (Focus Mode) -->
+<button class="toc-expand-float-btn" id="tocExpandFloatBtn" onclick="toggleDesktopToc()" title="Tampilkan Kembali Daftar Isi">
+  📑 Buka Daftar Isi
+</button>
+
+<!-- ========================================================================= -->
+<!-- TWO-COLUMN DOCUMENTATION LAYOUT (MAIN CONTENT + STICKY TOC)               -->
+<!-- ========================================================================= -->
+<div class="docs-layout" id="docsLayout">
+
+  <!-- Main Content Column -->
+  <main class="docs-content">
+
+    <!-- Header Section -->
+    <header id="sec-title">
+      <div class="badge">CHIRON CLASSROOM • SAMIR MOBILE iOS</div>
+      <h1>02 — Layers &amp; Responsibilities</h1>
+      <p style="color: var(--text-muted); font-size: 1.05rem; margin-top: 0.25rem;">
+        Pembagian Tanggung Jawab Class
+      </p>
+      <div class="metadata" style="margin-top: 1rem;">
+        <span>📚 Modul: <strong>02-layers-and-responsibilities</strong></span>
+        <span>🎯 Scope: <strong>SAMIR Mobile (iOS Native UIKit & FChannel)</strong></span>
+        <span>⏱️ Estimasi: <strong>20 Menit</strong></span>
+        <span>🏷️ Git Branch: <strong>learn/iOS-Arch</strong></span>
+      </div>
+    </header>
+
+    <!-- BAGIAN 1: DOKUMEN PEMBELAJARAN LENGKAP -->
+    <div class="section-banner">
+      <h2>📖 Bagian 1: Dokumen Pembelajaran Lengkap & Alur Nyata</h2>
+      <span class="pill">Core Knowledge</span>
+    </div>
+
+<p>Dokumen ini membedah lapisan internal (internal layers) yang membentuk setiap modul di SAMIR iOS: peran <code>ViewController</code>, <code>Presenter</code>, <code>Service</code>, <code>Model</code>, dan <code>View</code>, serta kasus khusus arsitektur reaktif di <code>LoanConfirmModule</code>.</p>
+<p>Status Verifikasi: <code>[Verified]</code> (diverifikasi langsung dari implementasi class di <code>SamirLoanModule</code>, <code>SamirAuthModule</code>, dan <code>SamirCommonModule</code>).</p>
+<section id="sec-obj" class="doc-section">
+<h3>🎯 A. Learning Objective</h3>
+<p>Setelah mempelajari dokumen ini, pembaca akan mampu:</p>
+<ol>
+<li>Memahami pembagian layer: Presentation (<code>ViewController</code> & <code>View</code>), Business/Presentation Logic (<code>Presenter</code>), Data/Network (<code>Service</code>), dan State/Schema (<code>Model</code>).</li>
+<li>Mengetahui fitur bawaan dari <code>IDBaseViewController</code> (nav bar style, pop gesture toggle, tracking view duration).</li>
+<li>Memahami perbedaan antara pola Presenter standar vs pola MVVM-Rx di <code>LoanConfirmModule</code>.</li>
+</ol>
+</section>
+<section id="sec-prereq" class="doc-section">
+<h3>📋 B. Prerequisites</h3>
+<ul>
+<li>Sudah membaca <a href="01-architecture-overview.html">01-architecture-overview.md</a>.</li>
+<li>Mengetahui pola desain MVC, MVP, dan MVVM pada pengembangan iOS.</li>
+</ul>
+</section>
+<section id="sec-simple" class="doc-section">
+<h3>💡 C. Simple Explanation (Analogi Restoran Berbintang)</h3>
+<p>Bayangkan sebuah restoran yang melayani pesanan makanan:</p>
+<ul>
+<li><strong>Pelayan (ViewController)</strong>: Menghadapi pelanggan, mencatat menu yang dipilih pelanggan di layar, mengatur dekorasi meja, dan menampilkan piring makanan.</li>
+<li><strong>Kepala Pelayan / Maître d' (Presenter)</strong>: Menerima pesanan dari pelayan, memvalidasi apakah pelanggan memenuhi syarat (misal: usia cukup untuk menu tertentu), lalu menyuruh bagian gudang mengambil bahan baku.</li>
+<li><strong>Bagian Pengadaan / Gudang (Service)</strong>: Menghubungi supplier melalui telepon (<strong>Network API Request</strong>) dan mengambil bahan makanan dalam kardus (<strong>JSON Response</strong>).</li>
+<li><strong>Kardus Makanan Terdaftar (Model)</strong>: Struktur data rapi yang berisi label bahan makanan, tanggal kadaluwarsa, dan takaran.</li>
+<li><strong>Piring & Hiasan Meja (View / TableViewCell)</strong>: Elemen visual tempat menyajikan data agar terlihat menarik bagi pelanggan.</li>
+</ul>
+</section>
+<section id="sec-actual" class="doc-section">
+<h3>💻 D. Actual Implementation (Rincian Tanggung Jawab Layer)</h3>
+
+<div class="mermaid-interactive-card">
+  <div class="mermaid-card-toolbar">
+    <span class="title">📊 Diagram Alur #1</span>
+    <button class="mermaid-zoom-trigger" onclick="openDiagramZoom('diag-1', 'Diagram Alur #1')">🔍 Perbesar Diagram</button>
+  </div>
+  <div class="mermaid-content-wrapper" id="diag-1">
+    <div class="mermaid">
+classDiagram
+    class IDBaseViewController {
+        +idNavType: IDNavType
+        +idStatusBarClear: Bool
+        +startTimeStamp: TimeInterval
+        +endTimeStamp: TimeInterval
+        +popGestureClose()
+        +popGestureOpen()
+        +showToast(message)
+    }
+
+    class IDAssessViewController {
+        +presenter: IDAssessPresenter
+        +setupViews()
+        +bindEvents()
+    }
+
+    class IDAssessPresenter {
+        +service: IDAssessService
+        +view: IDAssessViewController
+        +requestAssessData()
+        +startPolling()
+        +reportPoints()
+    }
+
+    class IDAssessService {
+        +requestAssessStatus(params, completion)
+    }
+
+    class IDAssessModel {
+        +status: String
+        +quotaAmount: Int
+    }
+
+    IDBaseViewController <|-- IDAssessViewController
+    IDAssessViewController --> IDAssessPresenter : Mendelegasikan Aksi User
+    IDAssessPresenter --> IDAssessService : Meminta Data Jaringan
+    IDAssessPresenter --> IDAssessModel : Menyimpan State Bisnis
+    IDAssessService --> IDNetworkRequest : POST Request Bertanda Tangan
+    </div>
+  </div>
+</div>
+<div id="sub-1-presentation-layer-viewcontroller-idbaseviewcontroller" class="doc-subsection">
+<h4>1. Presentation Layer (`ViewController` &amp; `IDBaseViewController`)</h4>
+</div>
+<p>Semua controller mewarisi base class <a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/learn/iOS-Arch/ios/IDSamirLoan/Application/SamirCommonModule/Classes/IDBase/IDBaseViewController.swift" target="_blank" rel="noopener noreferrer">🦊 ios/IDSamirLoan/Application/SamirCommonModule/Classes/IDBase/IDBaseViewController.swift <span class="branch-tag">learn/iOS-Arch</span> ↗</a>.</p>
+<p>Fitur standar yang disediakan otomatis oleh base controller:</p>
+<ul>
+<li><strong>Navigation Bar Styling</strong>: Properti <code>idNavType</code> (<code>.idNavTypeWhite</code>, <code>.idNavTypeClear</code>, <code>.idNavTypeNormal</code>).</li>
+<li><strong>Interactive Pop Gesture</strong>: Fungsi <code>popGestureClose()</code> untuk mematikan gesture swipe back saat pengisian formulir kritis (misal: verifikasi wajah atau input PIN) dan <code>popGestureOpen()</code> untuk mengaktifkannya kembali.</li>
+<li><strong>Duration Tracking</strong>: Otomatis merekam <code>startTimeStamp</code> saat <code>viewWillAppear</code> dan <code>endTimeStamp</code> saat <code>viewWillDisappear</code> untuk dikirim ke sistem pelaporan risiko fraud (<code>IDCustomPointManager.reportRiskViewRealtime</code>).</li>
+<li><strong>Empty & Error State</strong>: Callback <code>id_clickEmptyBlock</code> untuk reload saat jaringan bermasalah.</li>
+</ul>
+<div id="sub-2-presenter-layer-presenter" class="doc-subsection">
+<h4>2. Presenter Layer (`Presenter`)</h4>
+</div>
+<p>Presenter di SAMIR bertindak sebagai koordinator logika presentasi:</p>
+<ul>
+<li><strong>Validasi Input</strong>: Memeriksa format nomor KTP (16 digit), validasi nomor rekening, atau batas usia legal (<code>wetherAgeInLegalRange</code> di <code>IDNewAuthPresenter</code>).</li>
+<li><strong>State Machine & Polling</strong>: Mengelola status berkala (contoh: polling keputusan analisa kuota di <code>IDAssessPresenter.startPolling</code>).</li>
+<li><strong>Pelaporan Analitik</strong>: Memicu event klik tombol atau impresi layar ke <code>IDCustomPointManager</code> atau <code>IDDataReportUtils</code>.</li>
+</ul>
+<h5 id="item-pola-komposisi-presenter-mengapa-di-idnewauthpresenter-terdapat-2-presenter-lain">Pola Komposisi Presenter: Mengapa di `IDNewAuthPresenter` Terdapat 2 Presenter Lain?</h5>
+<p>Di dalam <a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/learn/iOS-Arch/ios/IDSamirLoan/Application/SamirAuthModule/Classes/IDPresenterV2/IDNewAuthPresenter.swift" target="_blank" rel="noopener noreferrer">🦊 IDNewAuthPresenter.swift:L33-43 <span class="branch-tag">learn/iOS-Arch</span> ↗</a>, didefinisikan dua child presenter:</p>
+<pre><code class="language-swift">lazy var resourcePresenter: IDAuthResourcePresenter = { [unowned self] in
+    let presenter = IDAuthResourcePresenter()
+    presenter.currentVC = self.currentVC
+    return presenter
+}()
+
+lazy var bankPresenter: IDAuthBankPresenter = { [unowned self] in
+    let presenter = IDAuthBankPresenter()
+    presenter.delegate = self
+    return presenter
+}()</code></pre>
+<p><strong>Mengapa Dibuat Demikian?</strong></p>
+<ol>
+<li><strong>Pencegahan "God Presenter" (Separation of Concerns / SRP)</strong>:</li>
+</ol>
+<ul>
+<li>Alur KYC autentikasi V2 mencakup 5 langkah besar (<code>.ocr</code>, <code>.basic</code>, <code>.job</code>, <code>.contact</code>, <code>.bank</code>, <code>.changeBank</code>). Jika seluruh logika ditaruh di satu file, ukurannya bisa menembus lebih dari 3.000 baris.</li>
+</ul>
+<ol>
+<li>*<em>Pola Komposisi (</em>Composite Presenter Pattern<em>)</em>*:</li>
+</ol>
+<ul>
+<li><code>IDNewAuthPresenter</code> bertindak sebagai <em>Orkestrator Utama</em> (mengelola navigasi antarlangkah, tableview datasource/delegate, validasi form, dan submission).</li>
+<li><strong><code>resourcePresenter</code> (Spesialis Kamus Data & Wilayah)</strong>: Bertanggung jawab khusus mengunduh dan menyajikan data berjenjang (<em>cascading selection</em>) untuk provinsi, kota, kecamatan, serta kamus opsi (agama, jenis pekerjaan, status perkawinan).</li>
+<li><strong><code>bankPresenter</code> (Spesialis Rekening Bank)</strong>: Bertanggung jawab khusus mencari daftar nama bank, menyaring bank populer (<em>hot banks</em>), dan mengelola pencarian akun bank nasabah.</li>
+</ul>
+<ol>
+<li><strong>Reusability</strong>: <code>IDAuthResourcePresenter</code> dan <code>IDAuthBankPresenter</code> merupakan modul independen yang sudah matang dan dapat digunakan ulang di luar layar KYC tanpa menduplikasi kode.</li>
+</ol>
+<div id="sub-3-service-layer-service" class="doc-subsection">
+<h4>3. Service Layer (`Service`)</h4>
+</div>
+<p>Service murni bertanggung jawab atas interaksi I/O jaringan:</p>
+<ul>
+<li>Memanggil <code>IDNetworkRequest.id_startPOSTRequest(...)</code>.</li>
+<li>Mengurai response dictionary menggunakan pustaka KakaJSON:</li>
+</ul>
+<pre><code class="language-swift">  if let resultDict = req.responseObject as? [String: Any] {
+      let model = resultDict.kj.model(IDAssessModel.self)
+      success(model)
+  }</code></pre>
+<ul>
+<li>Menangani pemetaan error jaringan ke format yang dimengerti Presenter.</li>
+</ul>
+<div id="sub-4-model-layer-model" class="doc-subsection">
+<h4>4. Model Layer (`Model`)</h4>
+</div>
+<p>Struct atau Class yang mengadopsi protokol <code>Convertible</code> dari KakaJSON:</p>
+<ul>
+<li>Mendefinisikan schema payload backend.</li>
+<li>Mendukung mapping custom key jika nama properti JSON berbeda dari nama properti Swift.</li>
+</ul>
+<div id="sub-5-kasus-khusus-loanconfirmmodule-arsitektur-reaktif-mvvm-rx" class="doc-subsection">
+<h4>5. Kasus Khusus: `LoanConfirmModule` (Arsitektur Reaktif MVVM-Rx)</h4>
+</div>
+<p>Path: <a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/learn/iOS-Arch/ios/IDSamirLoan/Application/SamirLoanModule/Classes/LoanConfirmModule/" target="_blank" rel="noopener noreferrer">🦊 ios/IDSamirLoan/Application/SamirLoanModule/Classes/LoanConfirmModule/ <span class="branch-tag">learn/iOS-Arch</span> ↗</a></p>
+<p>Di modul ini, alur data tidak menggunakan delegate Presenter, melainkan stream reaktif berbasis Clean MVVM + RxSwift:</p>
+<h5 id="item-a-kontrak-input-output-loanconfirmviewmodeltype">A. Kontrak Input-Output (`LoanConfirmViewModelType`)</h5>
+<p>Arsitektur ViewModel memisahkan secara tegas antara aksi pengguna (<em>Input</em>) dan state UI (<em>Output</em>):</p>
+<ul>
+<li><strong><code>LoanConfirmViewModelInput</code></strong>:</li>
+</ul>
+<p>Menggunakan <code>PublishSubject</code> untuk menerima event UI: <code>confirmTap</code>, <code>selectCoupon</code>, <code>selectProduct</code>, <code>toggleTermsAgreement</code>, <code>refreshTrial</code>, <code>submitCycleLoanOrder</code>.</p>
+<ul>
+<li><strong><code>LoanConfirmViewModelOutput</code></strong>:</li>
+</ul>
+<p>Menggunakan <strong><code>Driver&lt;T&gt;</code></strong> untuk aliran data yang diobservasi oleh View: <code>isLoading</code>, <code>error</code>, <code>loanData</code>, <code>selectedCoupon</code>, <code>trialResult</code>, <code>canSubmit</code>, <code>showIncomeUpdate</code>.</p>
+<h5 id="item-b-kapan-memakai-subscribe-dan-kapan-memakai-drive">B. Kapan Memakai `subscribe` dan Kapan Memakai `drive`?</h5>
+<div class="table-container"><table class="data-table"><thead><tr><th>Skenario Penggunaan</th><th>Rekomendasi</th><th>Alasan Teknis</th></tr></thead><tbody><tr><td><strong>Binding ke Elemen UI</strong> (<code>UILabel</code>, <code>UIButton</code>, <code>HUD</code>, <code>TableView</code>)</td><td><strong><code>drive</code></strong></td><td>1. <strong>Pasti dieksekusi di Main Thread</strong> (<code>MainScheduler</code>). Tidak perlu menulis <code>.observe(on: MainScheduler.instance)</code>.<br/>2. <strong>Tidak Pernah Error</strong>: <code>Driver</code> menjamin stream tidak akan putus akibat error uncaught, sehingga UI tidak membeku.<br/>3. <strong>Sharing Replay Otomatis</strong>: Memiliki sifat <code>share(replay: 1, scope: .whileConnected)</code> sehingga multiple binding ke label/tombol tidak memicu duplicate network request.</td></tr><tr><td><strong>Logika Data, Domain, Service, & Network API</strong></td><td><strong><code>subscribe</code></strong></td><td>1. <strong>Dapat Berjalan di Background</strong>: Operasi I/O, parsing JSON, atau komputasi berat membutuhkan background thread (<code>ConcurrentDispatchQueueScheduler</code>).<br/>2. <strong>Penanganan Error Alami</strong>: Perlu menangkap event <code>.error(Error)</code> dari HTTP request untuk retry atau logging.<br/>3. <strong>Menerima Input di ViewModel</strong>: Observasi event <code>PublishSubject</code> di level internal ViewModel.</td></tr></tbody></table></div>
+<p><em>Aturan Praktis (Rule of Thumb)</em>:</p>
+<ul>
+<li>Di dalam <strong><code>ViewController</code></strong>: Gunakan <code>viewModel.output.someData.drive(...)</code> saat memperbarui tampilan.</li>
+<li>Di dalam <strong><code>Service</code> / Internal <code>ViewModel</code></strong>: Gunakan <code>.subscribe(...)</code> saat menangani pipeline asinkron dan error.</li>
+</ul>
+<h5 id="item-c-inventaris-arsitektur-codebase-mana-yang-menggunakan-viewmodel-vs-presenter">C. Inventaris Arsitektur Codebase: Mana yang Menggunakan `viewModel` vs `presenter`?</h5>
+<p>Berdasarkan audit komprehensif di seluruh direktori <code>IDSamirLoan</code>:</p>
+<ol>
+<li><strong>Menggunakan <code>ViewModel</code> (MVVM + RxSwift)</strong>:</li>
+</ol>
+<ul>
+<li><strong>HANYA 1 MODUL</strong>: <code>SamirLoanModule/Classes/LoanConfirmModule/</code></li>
+<li><code>LoanConfirmViewModel.swift</code> & <code>LoanConfirmViewModelType.swift</code></li>
+<li>Dikonsumsi oleh <code>LoanConfirmViewController_Rx.swift</code></li>
+<li><em>Status</em>: Modul ini merupakan satu-satunya area modern/reaktif di aplikasi, dibangun secara khusus untuk menangani kompleksitas kalkulasi bunga, tenor dinamis, dan kupon diskon.</li>
+</ul>
+<ol>
+<li><strong>Menggunakan <code>Presenter</code> (Pola MVP / MVC Konvensional)</strong>:</li>
+</ol>
+<ul>
+<li><strong>SELURUH MODUL LAINNYA</strong>:</li>
+<li><code>SamirLoginModule</code>: <code>LoginV2Presenter</code>, <code>IDLoginPresenter</code></li>
+<li><code>SamirAuthModule</code>: <code>IDNewAuthPresenter</code> (V2), <code>IDAuthResourcePresenter</code>, <code>IDAuthBankPresenter</code>, <code>IDAuthLivePresenter</code>, <code>IDAuthPointPresenter</code></li>
+<li><code>SamirLoanModule</code> (di luar confirm): <code>IDLoanPresenter</code>, <code>IDAssessPresenter</code></li>
+<li><code>SamirRepayModule</code>: <code>IDRepayPresenter</code></li>
+<li><code>SamirMineModule</code>: <code>IDMinePresenter</code>, <code>IDMineCloseAccountPresenter</code></li>
+<li><code>SamirCommonModule</code>: <code>IDBasePresenter</code></li>
+</ul>
+</section>
+<section id="sec-walkthrough" class="doc-section">
+<h3>🪜 E. Step-by-Step Walkthrough: Alur Pengisian Formulir Kontak Darurat</h3>
+<p>Mari kita lihat bagaimana layer-layer ini bekerja sama saat user mengisi kontak darurat di <code>SamirAuthModule</code>:</p>
+<ol>
+<li><strong>User Action</strong>: User memilih hubungan keluarga dan nomor kontak di <a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/learn/iOS-Arch/ios/IDSamirLoan/Application/SamirAuthModule/Classes/IDViewControllerV2/IDNewAuthContactViewController.swift" target="_blank" rel="noopener noreferrer">🦊 IDNewAuthContactViewController.swift <span class="branch-tag">learn/iOS-Arch</span> ↗</a>.</li>
+<li><strong>Controller ke Presenter</strong>: Controller memanggil <code>presenter.submitEmergencyContacts(data)</code>.</li>
+<li><strong>Validasi Presenter</strong>: <code>IDNewAuthPresenter</code> memeriksa apakah nomor kontak valid dan tidak sama dengan nomor ponsel akun sendiri.</li>
+<li><strong>Presenter ke Service</strong>: Jika valid, Presenter memanggil <code>IDAuthAPI.saveContactInfo(...)</code> di <code>IDNetworkService</code>.</li>
+<li><strong>Eksekusi Jaringan</strong>: Service membungkus data ke JSON, menandatangani request via <code>IDNetworkSignatureHandler</code>, dan mengirim ke server.</li>
+<li><strong>Response & UI Update</strong>:</li>
+</ol>
+<ul>
+<li>Jika berhasil (<code>code == &quot;200&quot;</code>), Presenter menyuruh Controller: <code>view.didSuccessSaveContacts()</code>.</li>
+<li>Controller melakukan navigasi ke langkah berikutnya via router: <code>IDRouterManager.id_perfromWithURLString(IDRouterSchemeConstants.Auth.bankCard.rawValue)</code>.</li>
+</ul>
+</section>
+<section id="sec-why" class="doc-section">
+<h3>⚖️ F. Why It Matters (Trade-Offs &amp; Analisis Desain)</h3>
+<ul>
+<li><strong>Mengapa Pola Presenter Dipilih daripada MVVM Standar?</strong></li>
+</ul>
+<p>Presenter buatan sendiri tidak memerlukan pustaka pihak ketiga eksternal (seperti RxSwift atau Combine), sehingga mudah dipahami oleh developer dari berbagai latar belakang pengalaman.</p>
+<ul>
+<li><strong>Konsekuensi Monolitik pada Controller</strong>:</li>
+</ul>
+<p>Meskipun logika bisnis sudah dipindahkan ke Presenter, beberapa ViewController (seperti <code>IDHomeViewController</code>) tetap membengkak hingga ribuan baris karena banyaknya konfigurasi tampilan programatik SnapKit dan manajemen subview popup.</p>
+</section>
+<section id="sec-example" class="doc-section">
+<h3>🔬 G. Practical Example (Kode Programatik SnapKit di View)</h3>
+<p>Seluruh UI di SAMIR iOS dibangun secara programatik tanpa Storyboard/XIB. Contoh dari implementasi sel tabel verifikasi:</p>
+<pre><code class="language-swift">// IDNewAuthValueTableViewCell.swift
+override func setupViews() {
+    contentView.addSubview(titleLabel)
+    contentView.addSubview(valueTextField)
+    
+    titleLabel.snp.makeConstraints { make in
+        make.left.equalToSuperview().offset(16)
+        make.centerY.equalToSuperview()
+        make.width.equalTo(100)
+    }
+    
+    valueTextField.snp.makeConstraints { make in
+        make.left.equalTo(titleLabel.snp.right).offset(12)
+        make.right.equalToSuperview().offset(-16)
+        make.centerY.equalToSuperview()
+        make.height.equalTo(44)
+    }
+}</code></pre>
+</section>
+<section id="sec-mistakes" class="doc-section">
+<h3>⚠️ H. Common Mistakes &amp; Debugging</h3>
+<ul>
+<li><strong>Memory Leak pada Presenter / Closure</strong>:</li>
+<li><em>Kesalahan</em>: Presenter memegang referensi kuat (<em>strong reference</em>) ke ViewController, atau closure callback tidak menggunakan <code>[weak self]</code>.</li>
+<li><em>Pencegahan</em>: Selalu gunakan <code>weak var view: IDSomeViewProtocol?</code> di Presenter dan <code>[weak self]</code> di blok network callback.</li>
+<li><strong>Memanggil Endpoint Jaringan Langsung dari ViewController</strong>:</li>
+<li><em>Kesalahan</em>: Menulis <code>IDNetworkRequest.id_startPOSTRequest</code> langsung di dalam <code>viewDidLoad()</code>.</li>
+<li><em>Aturan</em>: Semua panggilan jaringan wajib diisolasi di layer <code>Service</code> dan dikoordinasikan oleh <code>Presenter</code> atau <code>ViewModel</code>.</li>
+</ul>
+</section>
+<section id="sec-check" class="doc-section">
+<h3>🧠 I. Knowledge Check</h3>
+<ol>
+<li>Properti apa di <code>IDBaseViewController</code> yang digunakan untuk mengubah gaya tampilan navigation bar?</li>
+<li>Apa pustaka parsing JSON utama yang digunakan di layer Service?</li>
+<li>Mengapa <code>LoanConfirmViewController_Rx</code> berbeda arsitekturnya dibanding controller lainnya?</li>
+</ol>
+<p><strong>Latihan Observasi</strong>:</p>
+<p>Buka file <code>ios/IDSamirLoan/Application/SamirAuthModule/Classes/IDPresenterV2/IDNewAuthPresenter.swift</code>. Periksa bagaimana presenter ini dipecah menggunakan Swift <code>extension</code> (misal: <code>+OCR.swift</code>, <code>+Job.swift</code>, <code>+Bank.swift</code>) untuk membagi tanggung jawab verifikasi.</p>
+</section>
+<section id="sec-completion" class="doc-section">
+<h3>🏁 J. Completion Criteria</h3>
+<p>Anda telah menguasai dokumen ini jika Anda dapat menjelaskan tanggung jawab spesifik antara ViewController, Presenter, Service, dan Model, serta mampu membuat struktur class baru yang konsisten dengan standar ini.</p>
+<p>Dokumen berikutnya: <a href="03-dependency-direction.html">03-dependency-direction.md</a>.</p>
+</section>
+
+    <!-- BAGIAN 2 & 3: ARCHITECTURAL CRITIQUE & BLUEPRINT -->
+    <div class="section-banner lab" style="margin-top: 4rem;">
+      <h2>🏛️ Bagian 2: Architecture Lab, SOLID Audit & Retention Quizzes</h2>
+      <span class="pill" style="background-color: var(--accent-warning);">Architecture Lab</span>
+    </div>
+
+
+    <!-- SEGMEN 2: ARCHITECTURAL CRITIQUE -->
+    <section class="lesson-segment" id="sub-solid">
+      <h2>🏛️ Audit SOLID & Clean Architecture: Menemukan Titik Lemah pada Implementasi Existing</h2>
+
+      <div class="callout critique">
+        <div class="callout-title">⚠️ Smells 1: Keterikatan Kuat Antar Sub-Modul & Kurangnya Inversi Dependensi</div>
+        <p>Implementasi komponen sering mengasumsikan keberadaan lingkungan runtime tertentu tanpa kontrak antarmuka yang didefinisikan secara tegas.</p>
+      </div>
+
+      <div class="callout critique">
+        <div class="callout-title">⚠️ Smells 2: Risiko Regresi & Minimnya Kontrak Pengujian Terisolasi</div>
+        <p>Perubahan pada satu service atau helper berpotensi merusak fungsionalitas di modul lain karena tingginya kohesi tersembunyi antar file.</p>
+      </div>
+    </section>
+
+    <!-- SEGMEN 3: REFACTORING BLUEPRINT -->
+    <section class="lesson-segment" id="sub-blueprint">
+      <h2>🚀 Blueprint Refactoring Standar Industri: Pola Service Locator & Interface Segregation (SOLID)</h2>
+      <p>Menerapkan prinsip Interface Segregation (ISP) dan Dependency Injection agar setiap service hanya mengekspos metode yang relevan bagi kliennya.</p>
+
+      <div class="callout best-practice">
+        <div class="callout-title">✅ Rekomendasi Solusi Arsitektur Bersih</div>
+        <pre><code class="language-swift">public protocol SessionProvider: AnyObject {
+    var currentToken: String? { get }
+    var isAuthenticated: Bool { get }
+}
+
+public final class AppSessionManager: SessionProvider {
+    public static let shared = AppSessionManager()
+    public var currentToken: String?
+    public var isAuthenticated: Bool { currentToken != nil }
+}</code></pre>
+      </div>
+
+      <h3>Keunggulan Arsitektur Refactoring Ini:</h3>
+      <ul>
+        <li><strong>100% Mockable & Testable:</strong> Memungkinkan pengujian terisolasi tanpa memicu efek samping runtime produksi.</li>
+        <li><strong>Open/Closed Principle (OCP):</strong> Penambahan fitur baru dapat dilakukan tanpa memodifikasi class yang sudah stabil.</li>
+        <li><strong>Decoupled Subsystems:</strong> Membatasi dampak regresi saat terjadi perubahan dependensi eksternal.</li>
+      </ul>
+    </section>
+
+
+    <!-- SEGMEN 4: INTERACTIVE RETENTION QUIZ -->
+    <section class="lesson-segment" id="sub-quiz">
+      <h2>🧠 Interactive Retention & Architectural Quiz</h2>
+      <p>Uji pemahaman alur kode nyata dan keputusan arsitektur Anda:</p>
+
+      <!-- KUIS 1 -->
+      <div class="quiz-card" id="quiz-1">
+        <h4>Kuis 1 (Memory Recall): Berdasarkan standar Clean Architecture, apa peran utama dari domain layer pada modul IOS?</h4>
+        <div class="quiz-options">
+          <button class="quiz-btn" onclick="submitQuiz(1, 'A', true)">
+            A. Mengisolasi aturan bisnis finansial murni agar tidak tercampur dengan UI platform
+          </button>
+          <button class="quiz-btn" onclick="submitQuiz(1, 'B', false)">
+            B. Mengatur tata letak layout dan ukuran tombol di layar aplikasi perangkat nasabah
+          </button>
+          <button class="quiz-btn" onclick="submitQuiz(1, 'C', false)">
+            C. Menyimpan file sertifikat SSL dan kunci enkripsi privat di memori kartu SIM
+          </button>
+          <button class="quiz-btn" onclick="submitQuiz(1, 'D', false)">
+            D. Mengirimkan sinyal detak jantung (heartbeat) ke menara telekomunikasi seluler
+          </button>
+        </div>
+        <div class="quiz-feedback" id="feedback-1"></div>
+      </div>
+      <!-- KUIS 2 -->
+      <div class="quiz-card" id="quiz-2">
+        <h4>Kuis 2 (Architectural Decision): Mengapa penerapan Dependency Inversion Principle (DIP) sangat krusial dalam pembuatan unit test?</h4>
+        <div class="quiz-options">
+          <button class="quiz-btn" onclick="submitQuiz(2, 'A', false)">
+            A. Mengharuskan seluruh kode ditulis menggunakan bahasa pemrograman tingkat rendah C
+          </button>
+          <button class="quiz-btn" onclick="submitQuiz(2, 'B', true)">
+            B. Memungkinkan penyuntikan test double (mock/fake) untuk menguji skenario terisolasi
+          </button>
+          <button class="quiz-btn" onclick="submitQuiz(2, 'C', false)">
+            C. Mengurangi jumlah baris kode hingga setengahnya secara otomatis saat kompilasi
+          </button>
+          <button class="quiz-btn" onclick="submitQuiz(2, 'D', false)">
+            D. Menghilangkan kebutuhan arsitektur modular pada proyek aplikasi berskala besar
+          </button>
+        </div>
+        <div class="quiz-feedback" id="feedback-2"></div>
+      </div>
+      <!-- KUIS 3 -->
+      <div class="quiz-card" id="quiz-3">
+        <h4>Kuis 3 (Debugging & Maintenance): Apa keuntungan utama membatasi dependensi antar modul ke arah satu arah (Unidirectional Dependency)?</h4>
+        <div class="quiz-options">
+          <button class="quiz-btn" onclick="submitQuiz(3, 'A', true)">
+            A. Menghilangkan circular dependency dan mempermudah pelacakan penyebab bug sistem
+          </button>
+          <button class="quiz-btn" onclick="submitQuiz(3, 'B', false)">
+            B. Memaksa seluruh antarmuka aplikasi selalu berjalan dalam orientasi layar lanskap
+          </button>
+          <button class="quiz-btn" onclick="submitQuiz(3, 'C', false)">
+            C. Menghindari kebutuhan update library pihak ketiga selama masa rilis aplikasi
+          </button>
+          <button class="quiz-btn" onclick="submitQuiz(3, 'D', false)">
+            D. Mempercepat koneksi internet pengguna saat melakukan pembayaran virtual account
+          </button>
+        </div>
+        <div class="quiz-feedback" id="feedback-3"></div>
+      </div>
+    </section>
+
+    <!-- Lesson Navigation Footer -->
+    <div class="lesson-nav-footer">
+      <a class="lesson-nav-btn prev" href="../03-understanding-architecture/01-architecture-overview.html">
+  ◀ Modul Sebelumnya: 01 — Architecture Overview
+</a>
+      <a class="lesson-nav-btn next" href="../03-understanding-architecture/03-dependency-direction.html">
+  Modul Selanjutnya: 03 — Dependency Direction ▶
+</a>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+      <div>Chiron Codebase Mastery Academy • SAMIR Mobile iOS</div>
+      <div>Anchor Branch: <strong>learn/iOS-Arch</strong></div>
+    </footer>
+
+  </main>
+
+  <!-- ========================================================================= -->
+  <!-- RIGHT-HAND SIDEBAR: ON-PAGE TABLE OF CONTENTS                             -->
+  <!-- ========================================================================= -->
+  <aside class="docs-toc-sidebar" id="desktopTocSidebar">
+    <div class="toc-header-bar">
+      <span class="toc-header-label">📑 DAFTAR ISI</span>
+      <div class="toc-header-actions">
+        <button class="toc-action-btn" id="tocScrollTopBtn" title="Scroll ke Paling Atas" onclick="window.scrollTo({top: 0, behavior: 'smooth'})">▲</button>
+        <button class="toc-action-btn" id="tocToggleAllBtn" title="Buka/Tutup Semua Cabang" onclick="toggleAllTocBranches()">🔄</button>
+        <button class="toc-action-btn" id="tocResetActiveBtn" title="Fokuskan ke Topik Aktif" onclick="focusCurrentTocActive()">📑</button>
+        <button class="toc-action-btn toc-dismiss-btn" id="tocDismissBtn" title="Tutup Daftar Isi (Fokus Mode Membaca)" onclick="toggleDesktopToc()">✕</button>
+      </div>
+    </div>
+
+    <div class="toc-tree-container">
+      <div class="toc-tree-node root-node" id="toc-node-root">
+        <div class="toc-node-row">
+          <span class="toc-caret" onclick="toggleTocBranch(this)">▾</span>
+          <a class="toc-tree-link root-link" href="#sec-title" title="02 — Layers &amp; Responsibilities">
+            02 — Layers &amp; Responsibilities
+          </a>
+        </div>
+        <div class="toc-branch">
+          <div class="toc-node-row">
+            <span class="toc-leaf-dot"></span>
+            <a class="toc-tree-link" href="#sec-obj">A. Learning Objective</a>
+          </div>
+          <div class="toc-node-row">
+            <span class="toc-leaf-dot"></span>
+            <a class="toc-tree-link" href="#sec-prereq">B. Prerequisites</a>
+          </div>
+          <div class="toc-node-row">
+            <span class="toc-leaf-dot"></span>
+            <a class="toc-tree-link" href="#sec-simple">C. Simple Explanation (Analogi Restoran Berbintang)</a>
+          </div>
+          <div class="toc-tree-node" id="toc-node-sec-actual">
+            <div class="toc-node-row">
+              <span class="toc-caret" onclick="toggleTocBranch(this)">▾</span>
+              <a class="toc-tree-link" href="#sec-actual">D. Actual Implementation (Rincian Tanggung Jawab Layer)</a>
+            </div>
+            <div class="toc-branch">
+              <div class="toc-node-row">
+                <span class="toc-leaf-dot"></span>
+                <a class="toc-tree-link" href="#sub-1-presentation-layer-viewcontroller-idbaseviewcontroller">1. Presentation Layer (`ViewController` &amp; `IDBaseViewController`)</a>
+              </div>
+              <div class="toc-node-row">
+                <span class="toc-leaf-dot"></span>
+                <a class="toc-tree-link" href="#sub-2-presenter-layer-presenter">2. Presenter Layer (`Presenter`)</a>
+              </div>
+              <div class="toc-node-row">
+                <span class="toc-leaf-dot"></span>
+                <a class="toc-tree-link" href="#sub-3-service-layer-service">3. Service Layer (`Service`)</a>
+              </div>
+              <div class="toc-node-row">
+                <span class="toc-leaf-dot"></span>
+                <a class="toc-tree-link" href="#sub-4-model-layer-model">4. Model Layer (`Model`)</a>
+              </div>
+              <div class="toc-node-row">
+                <span class="toc-leaf-dot"></span>
+                <a class="toc-tree-link" href="#sub-5-kasus-khusus-loanconfirmmodule-arsitektur-reaktif-mvvm-rx">5. Kasus Khusus: `LoanConfirmModule` (Arsitektur Reaktif MVVM-Rx)</a>
+              </div>
+            </div>
+          </div>
+          <div class="toc-node-row">
+            <span class="toc-leaf-dot"></span>
+            <a class="toc-tree-link" href="#sec-walkthrough">E. Step-by-Step Walkthrough: Alur Pengisian Formulir Kontak Darurat</a>
+          </div>
+          <div class="toc-node-row">
+            <span class="toc-leaf-dot"></span>
+            <a class="toc-tree-link" href="#sec-why">F. Why It Matters (Trade-Offs &amp; Analisis Desain)</a>
+          </div>
+          <div class="toc-node-row">
+            <span class="toc-leaf-dot"></span>
+            <a class="toc-tree-link" href="#sec-example">G. Practical Example (Kode Programatik SnapKit di View)</a>
+          </div>
+          <div class="toc-node-row">
+            <span class="toc-leaf-dot"></span>
+            <a class="toc-tree-link" href="#sec-mistakes">H. Common Mistakes &amp; Debugging</a>
+          </div>
+          <div class="toc-node-row">
+            <span class="toc-leaf-dot"></span>
+            <a class="toc-tree-link" href="#sec-check">I. Knowledge Check</a>
+          </div>
+          <div class="toc-node-row">
+            <span class="toc-leaf-dot"></span>
+            <a class="toc-tree-link" href="#sec-completion">J. Completion Criteria</a>
+          </div>
+          <!-- Architecture Lab Branches -->
+          <div class="toc-tree-node" id="toc-node-lab" style="margin-top: 0.45rem;">
+            <div class="toc-node-row">
+              <span class="toc-caret" onclick="toggleTocBranch(this)">▾</span>
+              <a class="toc-tree-link" href="#sub-solid" style="font-weight: 700; color: var(--accent-warning);">
+                🏛️ Architecture Lab & Audit
+              </a>
+            </div>
+            <div class="toc-branch">
+              <div class="toc-node-row">
+                <span class="toc-leaf-dot"></span>
+                <a class="toc-tree-link" href="#sub-solid">1. Audit SOLID & Clean Arch</a>
+              </div>
+              <div class="toc-node-row">
+                <span class="toc-leaf-dot"></span>
+                <a class="toc-tree-link" href="#sub-blueprint">2. Refactoring Blueprint</a>
+              </div>
+              <div class="toc-node-row">
+                <span class="toc-leaf-dot"></span>
+                <a class="toc-tree-link" href="#sub-quiz">3. Interactive Retention Quiz</a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </aside>
+
+</div>
+
+<!-- ========================================================================= -->
+<!-- MOBILE / DRAWER TABLE OF CONTENTS OVERLAY                                 -->
+<!-- ========================================================================= -->
+<div class="mobile-toc-overlay" id="mobileTocOverlay" onclick="toggleMobileToc()"></div>
+<div class="mobile-toc-drawer" id="mobileTocDrawer">
+  <div class="toc-header-bar">
+    <span class="toc-header-label">📑 DAFTAR ISI HALAMAN</span>
+    <button class="drawer-close-btn" onclick="toggleMobileToc()">✕</button>
+  </div>
+  <div class="toc-tree-container" style="margin-top: 0.75rem;">
+    <div class="toc-tree-node root-node" id="mob-toc-node-root">
+      <div class="toc-node-row">
+        <span class="toc-caret" onclick="toggleTocBranch(this)">▾</span>
+        <a class="toc-tree-link root-link" href="#sec-title" onclick="toggleMobileToc()">
+          02 — Layers &amp; Responsibilities
+        </a>
+      </div>
+      <div class="toc-branch">
+        <div class="toc-node-row">
+          <span class="toc-leaf-dot"></span>
+          <a class="toc-tree-link" href="#sec-obj" onclick="toggleMobileToc()">A. Learning Objective</a>
+        </div>
+        <div class="toc-node-row">
+          <span class="toc-leaf-dot"></span>
+          <a class="toc-tree-link" href="#sec-prereq" onclick="toggleMobileToc()">B. Prerequisites</a>
+        </div>
+        <div class="toc-node-row">
+          <span class="toc-leaf-dot"></span>
+          <a class="toc-tree-link" href="#sec-simple" onclick="toggleMobileToc()">C. Simple Explanation (Analogi Restoran Berbintang)</a>
+        </div>
+        <div class="toc-tree-node" id="mob-toc-node-sec-actual">
+          <div class="toc-node-row">
+            <span class="toc-caret" onclick="toggleTocBranch(this)">▾</span>
+            <a class="toc-tree-link" href="#sec-actual" onclick="toggleMobileToc()">D. Actual Implementation (Rincian Tanggung Jawab Layer)</a>
+          </div>
+          <div class="toc-branch">
+            <div class="toc-node-row">
+              <span class="toc-leaf-dot"></span>
+              <a class="toc-tree-link" href="#sub-1-presentation-layer-viewcontroller-idbaseviewcontroller" onclick="toggleMobileToc()">1. Presentation Layer (`ViewController` &amp; `IDBaseViewController`)</a>
+            </div>
+            <div class="toc-node-row">
+              <span class="toc-leaf-dot"></span>
+              <a class="toc-tree-link" href="#sub-2-presenter-layer-presenter" onclick="toggleMobileToc()">2. Presenter Layer (`Presenter`)</a>
+            </div>
+            <div class="toc-node-row">
+              <span class="toc-leaf-dot"></span>
+              <a class="toc-tree-link" href="#sub-3-service-layer-service" onclick="toggleMobileToc()">3. Service Layer (`Service`)</a>
+            </div>
+            <div class="toc-node-row">
+              <span class="toc-leaf-dot"></span>
+              <a class="toc-tree-link" href="#sub-4-model-layer-model" onclick="toggleMobileToc()">4. Model Layer (`Model`)</a>
+            </div>
+            <div class="toc-node-row">
+              <span class="toc-leaf-dot"></span>
+              <a class="toc-tree-link" href="#sub-5-kasus-khusus-loanconfirmmodule-arsitektur-reaktif-mvvm-rx" onclick="toggleMobileToc()">5. Kasus Khusus: `LoanConfirmModule` (Arsitektur Reaktif MVVM-Rx)</a>
+            </div>
+          </div>
+        </div>
+        <div class="toc-node-row">
+          <span class="toc-leaf-dot"></span>
+          <a class="toc-tree-link" href="#sec-walkthrough" onclick="toggleMobileToc()">E. Step-by-Step Walkthrough: Alur Pengisian Formulir Kontak Darurat</a>
+        </div>
+        <div class="toc-node-row">
+          <span class="toc-leaf-dot"></span>
+          <a class="toc-tree-link" href="#sec-why" onclick="toggleMobileToc()">F. Why It Matters (Trade-Offs &amp; Analisis Desain)</a>
+        </div>
+        <div class="toc-node-row">
+          <span class="toc-leaf-dot"></span>
+          <a class="toc-tree-link" href="#sec-example" onclick="toggleMobileToc()">G. Practical Example (Kode Programatik SnapKit di View)</a>
+        </div>
+        <div class="toc-node-row">
+          <span class="toc-leaf-dot"></span>
+          <a class="toc-tree-link" href="#sec-mistakes" onclick="toggleMobileToc()">H. Common Mistakes &amp; Debugging</a>
+        </div>
+        <div class="toc-node-row">
+          <span class="toc-leaf-dot"></span>
+          <a class="toc-tree-link" href="#sec-check" onclick="toggleMobileToc()">I. Knowledge Check</a>
+        </div>
+        <div class="toc-node-row">
+          <span class="toc-leaf-dot"></span>
+          <a class="toc-tree-link" href="#sec-completion" onclick="toggleMobileToc()">J. Completion Criteria</a>
+        </div>
+        <div class="toc-tree-node" id="mob-toc-node-lab" style="margin-top: 0.45rem;">
+          <div class="toc-node-row">
+            <span class="toc-caret" onclick="toggleTocBranch(this)">▾</span>
+            <a class="toc-tree-link" href="#sub-solid" onclick="toggleMobileToc()" style="font-weight: 700; color: var(--accent-warning);">
+              🏛️ Architecture Lab & Audit
+            </a>
+          </div>
+          <div class="toc-branch">
+            <div class="toc-node-row">
+              <span class="toc-leaf-dot"></span>
+              <a class="toc-tree-link" href="#sub-solid" onclick="toggleMobileToc()">1. Audit SOLID & Clean Arch</a>
+            </div>
+            <div class="toc-node-row">
+              <span class="toc-leaf-dot"></span>
+              <a class="toc-tree-link" href="#sub-blueprint" onclick="toggleMobileToc()">2. Refactoring Blueprint</a>
+            </div>
+            <div class="toc-node-row">
+              <span class="toc-leaf-dot"></span>
+              <a class="toc-tree-link" href="#sub-quiz" onclick="toggleMobileToc()">3. Interactive Retention Quiz</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ========================================================================= -->
+<!-- FULL CURRICULUM DRAWER (CATALOG OF ALL MODULES)                           -->
+<!-- ========================================================================= -->
+<div class="curriculum-drawer-overlay" id="curriculumOverlay" onclick="toggleCurriculumDrawer()"></div>
+<div class="curriculum-drawer" id="curriculumDrawer">
+  <div class="drawer-header">
+    <div class="drawer-title">📚 Kurikulum Lengkap SAMIR Mobile iOS</div>
+    <button class="drawer-close-btn" onclick="toggleCurriculumDrawer()">✕</button>
+  </div>
+  <div class="drawer-search">
+    <input type="text" id="moduleSearchInput" placeholder="🔍 Cari modul (contoh: startup, router, auth)..." oninput="filterCurriculum()">
+  </div>
+  <div class="drawer-body" id="curriculumListBody">
+    <div class="curriculum-level-group">
+      <div class="curriculum-level-title">Level 0: Learning Roadmap</div>
+      <a class="curriculum-item-link" href="../00-learning-roadmap.html">
+        <span>📄</span> Kurikulum &amp; Roadmap Pembelajaran SAMIR iOS
+      </a>
+    </div>
+    <div class="curriculum-level-group">
+      <div class="curriculum-level-title">Level 1: Project Foundation</div>
+      <a class="curriculum-item-link" href="../01-project-foundation/01-application-overview.html">
+        <span>📄</span> 01 — Application Overview
+      </a>
+      <a class="curriculum-item-link" href="../01-project-foundation/02-repository-structure.html">
+        <span>📄</span> 02 — Repository Structure
+      </a>
+      <a class="curriculum-item-link" href="../01-project-foundation/03-technology-stack-and-build.html">
+        <span>📄</span> 03 — Technology Stack &amp; Build Configuration
+      </a>
+    </div>
+    <div class="curriculum-level-group">
+      <div class="curriculum-level-title">Level 2: Understanding App Startup</div>
+      <a class="curriculum-item-link" href="../02-understanding-app-startup/01-ios-entry-point.html">
+        <span>📄</span> 01 — iOS Entry Point
+      </a>
+      <a class="curriculum-item-link" href="../02-understanding-app-startup/02-application-lifecycle.html">
+        <span>📄</span> 02 — Application Lifecycle
+      </a>
+      <a class="curriculum-item-link" href="../02-understanding-app-startup/03-startup-sequence-and-initial-routing.html">
+        <span>📄</span> 03 — Startup Sequence &amp; Initial Routing
+      </a>
+      <a class="curriculum-item-link" href="../02-understanding-app-startup/04-czmodulemanager-deep-dive.html">
+        <span>📄</span> 04 — CZModuleManager Deep Dive
+      </a>
+    </div>
+    <div class="curriculum-level-group">
+      <div class="curriculum-level-title">Level 3: Understanding Architecture</div>
+      <a class="curriculum-item-link" href="../03-understanding-architecture/01-architecture-overview.html">
+        <span>📄</span> 01 — Architecture Overview
+      </a>
+      <a class="curriculum-item-link active" href="#">
+        <span>🟢</span> 02 — Layers &amp; Responsibilities (Sedang Dibaca)
+      </a>
+      <a class="curriculum-item-link" href="../03-understanding-architecture/03-dependency-direction.html">
+        <span>📄</span> 03 — Dependency Direction
+      </a>
+      <a class="curriculum-item-link" href="../03-understanding-architecture/04-shared-components-and-services.html">
+        <span>📄</span> 04 — Shared Components &amp; Services
+      </a>
+    </div>
+    <div class="curriculum-level-group">
+      <div class="curriculum-level-title">Level 4: Understanding Navigation</div>
+      <a class="curriculum-item-link" href="../04-understanding-navigation/01-feature-inventory.html">
+        <span>📄</span> 01 — Feature Inventory
+      </a>
+      <a class="curriculum-item-link" href="../04-understanding-navigation/02-navigation-fundamentals.html">
+        <span>📄</span> 02 — Navigation Fundamentals
+      </a>
+      <a class="curriculum-item-link" href="../04-understanding-navigation/03-complete-navigation-map.html">
+        <span>📄</span> 03 — Complete Navigation Map
+      </a>
+      <a class="curriculum-item-link" href="../04-understanding-navigation/04-navigation-conditions-and-edge-cases.html">
+        <span>📄</span> 04 — Navigation Conditions &amp; Edge Cases
+      </a>
+    </div>
+    <div class="curriculum-level-group">
+      <div class="curriculum-level-title">Level 5: Learning Business Flows</div>
+      <a class="curriculum-item-link" href="../05-learning-business-flows/01-user-journey-overview.html">
+        <span>📄</span> 01 — User Journey Overview
+      </a>
+      <a class="curriculum-item-link" href="../05-learning-business-flows/02-authentication-and-session-flow.html">
+        <span>📄</span> 02 — Authentication &amp; Session Flow
+      </a>
+      <a class="curriculum-item-link" href="../05-learning-business-flows/03-core-feature-flows.html">
+        <span>📄</span> 03 — Core Feature Flows
+      </a>
+      <a class="curriculum-item-link" href="../05-learning-business-flows/04-cross-feature-journeys.html">
+        <span>📄</span> 04 — Cross-Feature Journeys
+      </a>
+      <a class="curriculum-item-link" href="../05-learning-business-flows/05-production-low-level-flows.html">
+        <span>📄</span> 05 — Production Low-Level Execution Flows
+      </a>
+    </div>
+    <div class="curriculum-level-group">
+      <div class="curriculum-level-title">Level 6: Data &amp; Dependencies</div>
+      <a class="curriculum-item-link" href="../06-understanding-data-and-dependencies/01-dependency-catalog.html">
+        <span>📄</span> 01 — Dependency Catalog
+      </a>
+      <a class="curriculum-item-link" href="../06-understanding-data-and-dependencies/02-networking-and-api-flow.html">
+        <span>📄</span> 02 — Networking &amp; API Flow
+      </a>
+      <a class="curriculum-item-link" href="../06-understanding-data-and-dependencies/03-models-and-data-transformation.html">
+        <span>📄</span> 03 — Models &amp; Data Transformation
+      </a>
+      <a class="curriculum-item-link" href="../06-understanding-data-and-dependencies/04-state-management-and-persistence.html">
+        <span>📄</span> 04 — State Management &amp; Persistence
+      </a>
+      <a class="curriculum-item-link" href="../06-understanding-data-and-dependencies/05-native-flutter-integration.html">
+        <span>📄</span> 05 — Native-Flutter Integration
+      </a>
+    </div>
+    <div class="curriculum-level-group">
+      <div class="curriculum-level-title">Level 7: Debugging &amp; Maintenance</div>
+      <a class="curriculum-item-link" href="../07-learning-to-debug-and-maintain/01-error-handling.html">
+        <span>📄</span> 01 — Error Handling
+      </a>
+      <a class="curriculum-item-link" href="../07-learning-to-debug-and-maintain/02-testing-and-debugging.html">
+        <span>📄</span> Level 7
+      </a>
+      <a class="curriculum-item-link" href="../07-learning-to-debug-and-maintain/03-coupling-and-technical-debt.html">
+        <span>📄</span> Level 7
+      </a>
+      <a class="curriculum-item-link" href="../07-learning-to-debug-and-maintain/04-change-impact-analysis.html">
+        <span>📄</span> Level 7
+      </a>
+    </div>
+    <div class="curriculum-level-group">
+      <div class="curriculum-level-title">Level 8: Reference &amp; Codebase Audit</div>
+      <a class="curriculum-item-link" href="../08-reference/01-codebase-glossary.html">
+        <span>📄</span> Level 8
+      </a>
+      <a class="curriculum-item-link" href="../08-reference/02-source-code-index.html">
+        <span>📄</span> Level 8
+      </a>
+      <a class="curriculum-item-link" href="../08-reference/03-existing-documentation-audit.html">
+        <span>📄</span> Level 8
+      </a>
+      <a class="curriculum-item-link" href="../08-reference/04-open-questions-and-unverified-findings.html">
+        <span>📄</span> Level 8
+      </a>
+    </div>
+    <div class="curriculum-level-group">
+      <div class="curriculum-level-title">Visual Diagrams &amp; Sequence Maps</div>
+      <a class="curriculum-item-link" href="../diagrams/application-startup.html">
+        <span>📄</span> Diagram — Alur Peluncuran Aplikasi (Application Startup Sequence)
+      </a>
+      <a class="curriculum-item-link" href="../diagrams/architecture-overview.html">
+        <span>📄</span> Diagram — Ikhtisar Arsitektur (Architecture Overview)
+      </a>
+      <a class="curriculum-item-link" href="../diagrams/core-user-journeys.html">
+        <span>📄</span> Diagram — Alur Pengguna Utama (Core User Journeys)
+      </a>
+      <a class="curriculum-item-link" href="../diagrams/feature-dependencies.html">
+        <span>📄</span> Diagram — Dependensi Fitur &amp; Modul (Feature Dependencies)
+      </a>
+      <a class="curriculum-item-link" href="../diagrams/navigation-overview.html">
+        <span>📄</span> Diagram — Peta Navigasi Lengkap (Navigation Overview)
+      </a>
+    </div>
+    <div class="curriculum-level-group">
+      <div class="curriculum-level-title">Course Index &amp; Syllabus</div>
+      <a class="curriculum-item-link" href="../README.html">
+        <span>📄</span> SAMIR iOS — Learning Curve &amp; Engineering Guide
+      </a>
+    </div>
+  </div>
+</div>
+
+<!-- ========================================================================= -->
+<!-- FULLSCREEN MERMAID DIAGRAM LIGHTBOX MODAL                                 -->
+<!-- ========================================================================= -->
+<div id="diagramModal" class="diagram-modal" onclick="closeDiagramModal(event)">
+  <div class="diagram-modal-dialog" onclick="event.stopPropagation()">
+    <div class="diagram-modal-header">
+      <h3 id="modalDiagramTitle">🔍 Pembesaran Diagram Alur</h3>
+      <div class="diagram-modal-controls">
+        <button class="diagram-ctrl-btn" onclick="zoomDiagram(1.25)">➕ Zoom In</button>
+        <button class="diagram-ctrl-btn" onclick="zoomDiagram(0.8)">➖ Zoom Out</button>
+        <button class="diagram-ctrl-btn" onclick="resetDiagramZoom()">↺ 100%</button>
+        <button class="diagram-close-btn" onclick="closeDiagramModal()">✕ Tutup [Esc]</button>
+      </div>
+    </div>
+    <div class="diagram-modal-body" id="diagramModalBody">
+      <!-- Cloned SVG inserted dynamically -->
+    </div>
+  </div>
+</div>
+
+<!-- Prism.js Scripts for Syntax Highlighting -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-swift.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-dart.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-json.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-yaml.min.js"></script>
+
+<!-- Interactive Scripts: Tabs, TOC ScrollSpy, Drawers & Quiz -->
+<script>
+  function toggleCurriculumDrawer() {
+    const drawer = document.getElementById('curriculumDrawer');
+    const overlay = document.getElementById('curriculumOverlay');
+    drawer.classList.toggle('open');
+    overlay.classList.toggle('open');
+  }
+
+  function toggleMobileToc() {
+    const drawer = document.getElementById('mobileTocDrawer');
+    const overlay = document.getElementById('mobileTocOverlay');
+    drawer.classList.toggle('open');
+    overlay.classList.toggle('open');
+  }
+
+  function filterCurriculum() {
+    const query = document.getElementById('moduleSearchInput').value.toLowerCase();
+    const links = document.querySelectorAll('.curriculum-item-link');
+    links.forEach(link => {
+      const text = link.innerText.toLowerCase();
+      link.style.display = text.includes(query) ? 'flex' : 'none';
+    });
+  }
+
+  function handleTocToggleClick() {
+    if (window.innerWidth > 1200) {
+      toggleDesktopToc();
+    } else {
+      toggleMobileToc();
+    }
+  }
+
+  function toggleDesktopToc() {
+    document.body.classList.toggle('toc-collapsed');
+    const isCollapsed = document.body.classList.contains('toc-collapsed');
+    try {
+      localStorage.setItem('chiron_toc_collapsed', isCollapsed ? '1' : '0');
+    } catch (e) {}
+
+    const topbarBtn = document.getElementById('topbarTocBtn');
+    if (topbarBtn) {
+      if (isCollapsed) {
+        topbarBtn.classList.remove('active');
+        topbarBtn.title = "Tampilkan Daftar Isi (Mode Normal)";
+      } else {
+        topbarBtn.classList.add('active');
+        topbarBtn.title = "Tutup Daftar Isi (Mode Fokus Membaca)";
+      }
+    }
+  }
+
+  function toggleTocBranch(caretEl) {
+    const node = caretEl.closest('.toc-tree-node');
+    if (node) {
+      node.classList.toggle('collapsed');
+      caretEl.textContent = node.classList.contains('collapsed') ? '▸' : '▾';
+    }
+  }
+
+  function toggleAllTocBranches() {
+    const allNodes = document.querySelectorAll('.toc-tree-node');
+    let hasCollapsed = false;
+    allNodes.forEach(n => {
+      if (n.classList.contains('collapsed')) hasCollapsed = true;
+    });
+    allNodes.forEach(n => {
+      const caret = n.querySelector(':scope > .toc-node-row > .toc-caret');
+      if (hasCollapsed) {
+        n.classList.remove('collapsed');
+        if (caret) caret.textContent = '▾';
+      } else {
+        if (!n.classList.contains('root-node')) {
+          n.classList.add('collapsed');
+          if (caret) caret.textContent = '▸';
+        }
+      }
+    });
+  }
+
+  function focusCurrentTocActive() {
+    const activeLink = document.querySelector('.toc-tree-link.active');
+    if (activeLink) {
+      activeLink.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+    } else {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  }
+
+  window.addEventListener('DOMContentLoaded', () => {
+    try {
+      if (localStorage.getItem('chiron_toc_collapsed') === '1' && window.innerWidth > 1200) {
+        document.body.classList.add('toc-collapsed');
+        const topbarBtn = document.getElementById('topbarTocBtn');
+        if (topbarBtn) topbarBtn.classList.remove('active');
+      }
+    } catch (e) {}
+
+    const sectionIds = ['sec-title', 'sec-obj', 'sec-prereq', 'sec-simple', 'sec-actual', 'sub-1-presentation-layer-viewcontroller-idbaseviewcontroller', 'sub-2-presenter-layer-presenter', 'sub-3-service-layer-service', 'sub-4-model-layer-model', 'sub-5-kasus-khusus-loanconfirmmodule-arsitektur-reaktif-mvvm-rx', 'sec-walkthrough', 'sec-why', 'sec-example', 'sec-mistakes', 'sec-check', 'sec-completion', 'sub-solid', 'sub-blueprint', 'sub-quiz'];
+    const tocLinks = document.querySelectorAll('.toc-tree-link');
+
+    window.addEventListener('scroll', () => {
+      let currentSection = '';
+      const scrollPos = window.scrollY + 140;
+
+      sectionIds.forEach(id => {
+        const el = document.getElementById(id);
+        if (el && el.offsetTop <= scrollPos) {
+          currentSection = id;
+        }
+      });
+
+      if (currentSection) {
+        tocLinks.forEach(link => {
+          link.classList.remove('active');
+          if (link.getAttribute('href') === '#' + currentSection) {
+            link.classList.add('active');
+          }
+        });
+      }
+    });
+  });
+
+  // Diagram Lightbox Controls
+  let currentDiagramScale = 1.0;
+  function openDiagramZoom(diagramId, title) {
+    const originalEl = document.getElementById(diagramId);
+    if (!originalEl) return;
+    const svgEl = originalEl.querySelector('svg');
+    if (!svgEl) return;
+
+    const modal = document.getElementById('diagramModal');
+    const modalBody = document.getElementById('diagramModalBody');
+    const modalTitle = document.getElementById('modalDiagramTitle');
+
+    modalTitle.innerHTML = title ? '🔍 ' + title : '🔍 Pembesaran Diagram Alur';
+    modalBody.innerHTML = svgEl.outerHTML;
+    
+    currentDiagramScale = 1.0;
+    const clonedSvg = modalBody.querySelector('svg');
+    if (clonedSvg) clonedSvg.style.transform = 'scale(' + currentDiagramScale + ')';
+
+    modal.classList.add('active');
+    document.body.style.overflow = 'hidden';
+  }
+
+  function closeDiagramModal(event) {
+    if (event && event.target && event.target.closest && event.target.closest('.diagram-modal-dialog') && !event.target.classList.contains('diagram-close-btn')) {
+      return;
+    }
+    const modal = document.getElementById('diagramModal');
+    modal.classList.remove('active');
+    document.body.style.overflow = 'auto';
+  }
+
+  function zoomDiagram(factor) {
+    const modalBody = document.getElementById('diagramModalBody');
+    const svg = modalBody.querySelector('svg');
+    if (!svg) return;
+    currentDiagramScale *= factor;
+    svg.style.transform = 'scale(' + currentDiagramScale + ')';
+  }
+
+  function resetDiagramZoom() {
+    const modalBody = document.getElementById('diagramModalBody');
+    const svg = modalBody.querySelector('svg');
+    if (!svg) return;
+    currentDiagramScale = 1.0;
+    svg.style.transform = 'scale(1)';
+  }
+
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') {
+      closeDiagramModal();
+      const cDrawer = document.getElementById('curriculumDrawer');
+      if (cDrawer && cDrawer.classList.contains('open')) toggleCurriculumDrawer();
+      const tDrawer = document.getElementById('mobileTocDrawer');
+      if (tDrawer && tDrawer.classList.contains('open')) toggleMobileToc();
+    } else if (e.key === ']' && !e.ctrlKey && !e.metaKey && e.target.tagName !== 'INPUT') {
+      handleTocToggleClick();
+    }
+  });
+
+  // Quiz Evaluation Logic
+  const explanations = {
+  "1": {
+    "success": "Tepat! Domain layer adalah inti logika bisnis murni yang tidak boleh memiliki dependensi ke framework presentasi seperti UIKit atau Flutter Widget.",
+    "danger": "Kurang tepat. Domain layer menampung entitas dan aturan bisnis murni tanpa mengetahui detail implementasi antarmuka pengguna."
+  },
+  "2": {
+    "success": "Benar! Dengan bergantung pada abstraksi protokol/antarmuka, kita dapat menginjeksi Mock Service di unit test tanpa memanggil server sungguhan.",
+    "danger": "Kurang tepat. DIP memungkinkan kita menukar implementasi konkret jaringan atau database dengan mock objek untuk verifikasi logika yang cepat dan deterministik."
+  },
+  "3": {
+    "success": "Sempurna! Ketergantungan satu arah mencegah dependency loop (circular import) dan menjamin modul fondasi tetap stabil ketika modul fitur diubah.",
+    "danger": "Kurang tepat. Arah dependensi yang bersih dan satu arah mencegah siklus ketergantungan melingkar dan membatasi penyebaran regresi."
+  }
+};
+
+  function submitQuiz(quizId, selectedOption, isCorrect) {
+    const card = document.getElementById('quiz-' + quizId);
+    const buttons = card.querySelectorAll('.quiz-btn');
+    const feedback = document.getElementById('feedback-' + quizId);
+
+    buttons.forEach(btn => {
+      btn.disabled = true;
+      btn.style.cursor = 'default';
+    });
+
+    if (window.event && window.event.target) {
+      window.event.target.classList.add(isCorrect ? 'correct' : 'incorrect');
+    }
+
+    feedback.className = 'quiz-feedback show ' + (isCorrect ? 'success' : 'danger');
+    feedback.innerHTML = '<strong>' + (isCorrect ? '🎉 Jawaban Tepat!' : '❌ Jawaban Salah!') + '</strong> ' + 
+      (isCorrect ? explanations[quizId].success : explanations[quizId].danger);
+  }
+</script>
+
+<!-- Chiron Annotations & Multi-IDE Launcher Engine -->
+<script src="../../../.assets/chiron-client.js"></script>
+<script src="../../../.assets/chiron-ide-launcher.js"></script>
+<script src="../../../.assets/chiron-annotations.js"></script>
+
+</body>
+</html>

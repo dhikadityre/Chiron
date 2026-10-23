@@ -1,0 +1,1110 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>04 — Cross-Feature Journeys | Chiron Academy</title>
+  
+  <!-- Chiron Base Stylesheet -->
+  <link rel="stylesheet" href="../../../.assets/style.css">
+  
+  <!-- Prism.js Syntax Highlighting Theme (Tomorrow Night) -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css">
+  
+  <!-- Mermaid.js for Dynamic Flow Diagrams -->
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+  <script>mermaid.initialize({ startOnLoad: true, theme: 'dark' });</script>
+</head>
+<body>
+
+<!-- ========================================================================= -->
+<!-- STICKY TOP APPLICATION BAR (CROSSNOTE / VS CODE STYLE)                     -->
+<!-- ========================================================================= -->
+<nav class="app-topbar">
+  <div class="topbar-nav-row">
+    <!-- Browser-like History Navigation -->
+    <div class="nav-history-ctrls">
+      <button class="nav-ctrl-btn" onclick="history.back()" title="Kembali (Back)">◀</button>
+      <button class="nav-ctrl-btn" onclick="history.forward()" title="Maju (Forward)">▶</button>
+      <button class="nav-ctrl-btn" onclick="location.reload()" title="Segarkan (Reload)">↻</button>
+    </div>
+
+    <!-- Document Tabs Strip (Crossnote Style) -->
+    <div class="topbar-tabs-scroll" id="docTabsStrip">
+      <a class="doc-tab" href="01-user-journey-overview.html" title="01-user-journey-overview.html">
+        <span class="tab-icon">📄</span> 01-user-journey-overview.html
+        <span class="tab-close" onclick="event.preventDefault(); this.parentElement.remove();">×</span>
+      </a>
+      <a class="doc-tab" href="02-authentication-and-session-flow.html" title="02-authentication-and-session-flow.html">
+        <span class="tab-icon">📄</span> 02-authentication-and-session-flow.html
+        <span class="tab-close" onclick="event.preventDefault(); this.parentElement.remove();">×</span>
+      </a>
+      <a class="doc-tab" href="03-core-feature-flows.html" title="03-core-feature-flows.html">
+        <span class="tab-icon">📄</span> 03-core-feature-flows.html
+        <span class="tab-close" onclick="event.preventDefault(); this.parentElement.remove();">×</span>
+      </a>
+      <a class="doc-tab active" href="#" title="04-cross-feature-journeys.html">
+        <span class="tab-icon">🟢</span> 04-cross-feature-journeys.html
+        <span class="tab-close" onclick="event.preventDefault();">×</span>
+      </a>
+      <a class="doc-tab" href="05-production-low-level-flows.html" title="05-production-low-level-flows.html">
+        <span class="tab-icon">📄</span> 05-production-low-level-flows.html
+        <span class="tab-close" onclick="event.preventDefault(); this.parentElement.remove();">×</span>
+      </a>
+    </div>
+
+    <!-- Right Utilities -->
+    <div class="topbar-tools">
+      <button class="tool-btn" onclick="toggleCurriculumDrawer()" title="Buka seluruh daftar modul kurikulum">
+        📚 Semua Modul
+      </button>
+      <button class="tool-btn active" id="topbarTocBtn" onclick="handleTocToggleClick()" title="Buka/Tutup Daftar Isi (Mode Fokus Membaca)">
+        📑 Daftar Isi
+      </button>
+    </div>
+  </div>
+</nav>
+
+<!-- Floating Button to Restore TOC When Dismissed (Focus Mode) -->
+<button class="toc-expand-float-btn" id="tocExpandFloatBtn" onclick="toggleDesktopToc()" title="Tampilkan Kembali Daftar Isi">
+  📑 Buka Daftar Isi
+</button>
+
+<!-- ========================================================================= -->
+<!-- TWO-COLUMN DOCUMENTATION LAYOUT (MAIN CONTENT + STICKY TOC)               -->
+<!-- ========================================================================= -->
+<div class="docs-layout" id="docsLayout">
+
+  <!-- Main Content Column -->
+  <main class="docs-content">
+
+    <!-- Header Section -->
+    <header id="sec-title">
+      <div class="badge">CHIRON CLASSROOM • SAMIR MOBILE iOS</div>
+      <h1>04 — Cross-Feature Journeys</h1>
+      <p style="color: var(--text-muted); font-size: 1.05rem; margin-top: 0.25rem;">
+        Interaksi Lintas Fitur &amp; Transisi Runtime
+      </p>
+      <div class="metadata" style="margin-top: 1rem;">
+        <span>📚 Modul: <strong>04-cross-feature-journeys</strong></span>
+        <span>🎯 Scope: <strong>SAMIR Mobile (iOS Native UIKit & FChannel)</strong></span>
+        <span>⏱️ Estimasi: <strong>20 Menit</strong></span>
+        <span>🏷️ Git Branch: <strong>learn/iOS-Arch</strong></span>
+      </div>
+    </header>
+
+    <!-- BAGIAN 1: DOKUMEN PEMBELAJARAN LENGKAP -->
+    <div class="section-banner">
+      <h2>📖 Bagian 1: Dokumen Pembelajaran Lengkap & Alur Nyata</h2>
+      <span class="pill">Core Knowledge</span>
+    </div>
+
+<p>Dokumen ini mendokumentasikan skenario perjalanan pengguna yang melibatkan interaksi lintas modul (cross-feature journeys): penanganan sesi kedaluwarsa di tengah pengisian formulir, lompatan dari halaman web H5 ke fitur native, integrasi deep link eksternal, serta pergantian runtime antara Native Swift dan Flutter Engine.</p>
+<p>Status Verifikasi: <code>[Verified]</code> (diverifikasi langsung dari handler notifikasi, delegat jembatan JS, dan koordinator tab bar).</p>
+<section id="sec-obj" class="doc-section">
+<h3>🎯 A. Learning Objective</h3>
+<p>Setelah mempelajari dokumen ini, pembaca akan mampu:</p>
+<ol>
+<li>Menjelaskan bagaimana aplikasi menyelamatkan state pengguna saat token sesi kedaluwarsa (<code>10006</code>) di tengah transaksi pinjaman.</li>
+<li>Memahami bagaimana halaman web H5 memicu aksi native melalui URL Scheme <code>samir://</code> dan JSBridge.</li>
+<li>Memahami proses pergantian tab yang mulus antara Native Swift (Tab 0) dan Flutter (Tab 1 & 2) tanpa flicker layar.</li>
+</ol>
+</section>
+<section id="sec-prereq" class="doc-section">
+<h3>📋 B. Prerequisites</h3>
+<ul>
+<li>Sudah membaca <a href="02-authentication-and-session-flow.html">02-authentication-and-session-flow.md</a> dan <a href="03-core-feature-flows.html">03-core-feature-flows.md</a>.</li>
+<li>Mengetahui konsep JavaScript Bridge (<code>WKScriptMessageHandler</code>) dan Flutter Platform View Container.</li>
+</ul>
+</section>
+<section id="sec-simple" class="doc-section">
+<h3>💡 C. Simple Explanation (Analogi Perjalanan Antarpulau)</h3>
+<p>Bayangkan Anda melakukan perjalanan wisata antarpulau:</p>
+<ul>
+<li><strong>Pulau Native (Beranda & KYC)</strong>: Menggunakan mobil jalan raya (UIKit murni).</li>
+<li><strong>Pulau Web (Halaman Promo H5)</strong>: Menggunakan perahu (WKWebView). Di atas perahu ada radio komunikasi (<strong>JSBridge</strong>) untuk meminta bantuan ke pangkalan di darat.</li>
+<li><strong>Pulau Flutter (Tagihan & Profil)</strong>: Menggunakan kereta gantung canggih (Flutter Engine) yang terhubung ke stasiun utama mall.</li>
+<li><strong>Insiden Badai (Token Expired <code>10006</code>)</strong>: Jika di tengah jalan terjadi badai, tim penyelamat darurat otomatis memulangkan Anda ke posko awal (<strong>Tab 0 Beranda</strong>) dan meminta Anda memperbarui tanda pengenal (<strong>Modal Login</strong>).</li>
+</ul>
+</section>
+<section id="sec-actual" class="doc-section">
+<h3>💻 D. Actual Implementation: 4 Skenario Interaksi Lintas Fitur</h3>
+<div id="sub-skenario-1-interupsi-token-kedaluwarsa-di-tengah-alur-kyc-pinjaman" class="doc-subsection">
+<h4>SKENARIO 1: Interupsi Token Kedaluwarsa di Tengah Alur KYC / Pinjaman</h4>
+</div>
+
+<div class="mermaid-interactive-card">
+  <div class="mermaid-card-toolbar">
+    <span class="title">📊 Diagram Alur #1</span>
+    <button class="mermaid-zoom-trigger" onclick="openDiagramZoom('diag-1', 'Diagram Alur #1')">🔍 Perbesar Diagram</button>
+  </div>
+  <div class="mermaid-content-wrapper" id="diag-1">
+    <div class="mermaid">
+sequenceDiagram
+    participant User
+    participant KYC as IDNewBankViewController
+    participant Req as IDNetworkRequest
+    participant LoginSrv as IDLoginModuleServiceHandler
+    participant Tab as IDMainTabBarController
+    participant Modal as LoginViewV2Controller
+
+    User->>KYC: Tap "Simpan Rekening Bank"
+    KYC->>Req: POST bankCard/bindCard (Token lama)
+    Req-->>Req: Response Backend: { "code": "10006", "msg": "Session Expired" }
+    
+    Note over Req,LoginSrv: Deteksi Re-Login Otomatis
+    Req->>LoginSrv: reloginWhenRequestError()
+    LoginSrv->>LoginSrv: removeUserInfoWhenLoginOut()
+    LoginSrv->>Tab: Pindah ke Tab 0 (samir://main/tab?tab=home)
+    LoginSrv->>Modal: IDLoginManager.shared.loginAction()
+    
+    Note over User,Modal: User Muncul di Beranda dengan Dialog Login
+    User->>Modal: Input OTP & Login Berhasil
+    Modal-->>Tab: Broadcast LoginSuccess
+    Tab-->>User: Beranda me-refresh data produk pinjaman
+    </div>
+  </div>
+</div>
+<h5 id="item-analisis-arsitektur">Analisis Arsitektur:</h5>
+<p>Ketika error <code>10006</code> terjadi:</p>
+<ol>
+<li><code>IDNetworkRequest.p_handleReLoginError</code> mencegat response sebelum blok failure callback presenter dipanggil.</li>
+<li>Sesi dibersihkan untuk mencegah request lain menggunakan token yang sudah mati.</li>
+<li>Navigation stack di-pop/reset secara paksa ke Beranda (<code>Tab 0</code>) untuk mencegah pengguna terus mengisi data di layar yang tidak lagi memiliki otorisasi.</li>
+<li>Form login muncul secara modal.</li>
+</ol>
+<div id="sub-skenario-2-jembatan-web-h5-melompat-ke-fitur-native-h5-to-native-jump" class="doc-subsection">
+<h4>SKENARIO 2: Jembatan Web H5 Melompat ke Fitur Native (H5 to Native Jump)</h4>
+</div>
+<p>Halaman H5 yang berjalan di <a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/learn/iOS-Arch/ios/IDSamirLoan/Application/SamirWebViewModule/Classes/Controller/IDBusinessWebViewController.swift" target="_blank" rel="noopener noreferrer">🦊 IDBusinessWebViewController.swift <span class="branch-tag">learn/iOS-Arch</span> ↗</a> dapat memicu navigasi native melalui dua cara:</p>
+
+<div class="mermaid-interactive-card">
+  <div class="mermaid-card-toolbar">
+    <span class="title">📊 Diagram Alur #2</span>
+    <button class="mermaid-zoom-trigger" onclick="openDiagramZoom('diag-2', 'Diagram Alur #2')">🔍 Perbesar Diagram</button>
+  </div>
+  <div class="mermaid-content-wrapper" id="diag-2">
+    <div class="mermaid">
+sequenceDiagram
+    participant H5 as H5 Web Page (JavaScript)
+    participant WK as WKWebView
+    participant Bridge as IDWebInjectJSBridge / IDWebViewJsHandler
+    participant Router as IDRouterManager
+    participant Native as IDNewOCRViewController
+
+    alt Cara A: Menggunakan URL Scheme (samir://)
+        H5->>WK: window.location.href = "samir://auth/identity"
+        WK->>Bridge: decidePolicyFor navigationAction
+        Bridge->>Router: IDRouterManager.id_perfromWithURLString("samir://auth/identity")
+        Router->>Native: Push IDNewOCRViewController
+    else Cara B: Menggunakan JavaScript Bridge (callApp)
+        H5->>WK: window.webkit.messageHandlers.callApp.postMessage({ method: "showToast", paramsData: "Pesan dari Web" })
+        WK->>Bridge: idn_webView(..., withResponse: response)
+        Bridge->>Bridge: IDWebCallAppHandler.toastMesage("Pesan dari Web")
+        Bridge-->>H5: Toast muncul di atas layar native
+    end
+    </div>
+  </div>
+</div>
+<h5 id="item-1-cara-a-intersepsi-skema-url">1. Cara A — Intersepsi Skema URL:</h5>
+<p>Jika link web mengarah ke URL ber-scheme <code>samir://</code> (misal: tombol <em>"Ambil Foto KTP"</em> di halaman panduan web), delegat navigasi webview mencegat URL tersebut (<code>decidePolicyFor navigationAction</code>), membatalkan navigasi browser, dan meneruskannya ke <code>IDRouterManager.id_perfromWithURLString(url)</code>.</p>
+<h5 id="item-2-cara-b-javascript-bridge-handler-apphandlersplist">2. Cara B — JavaScript Bridge Handler (`AppHandlers.plist`):</h5>
+<p>Pustaka menyuntikkan script bridge di <code>IDWebInjectJSBridge</code>:</p>
+<ul>
+<li><code>showToast</code>: Menampilkan toast native.</li>
+<li><code>setH5Title</code>: Mengubah judul navigation bar native sesuai judul halaman web.</li>
+<li><code>back</code>: Memanggil <code>currentVC.idn_goback()</code> untuk menutup browser.</li>
+</ul>
+<div id="sub-skenario-3-deep-link-eksternal-menuju-layar-tagihan-kupon" class="doc-subsection">
+<h4>SKENARIO 3: Deep Link Eksternal Menuju Layar Tagihan / Kupon</h4>
+</div>
+<p>Ketika pengguna mengklik link promosi dari pesan WhatsApp atau push notification:</p>
+<ol>
+<li><strong>Penerimaan Link</strong>: Link <code>samir://repay/historyOrder</code> atau <code>https://m.samir.co.id/samir/repay/detail?bizId=123</code> diterima oleh <code>IDSamirMainModule</code>.</li>
+<li><strong>Kondisi Autentikasi</strong>:</li>
+</ol>
+<ul>
+<li>Jika <code>isLogin() == true</code>: Navigasi langsung didispatch ke router atau webview terotentikasi.</li>
+<li>Jika <code>isLogin() == false</code>: Link disimpan di cache <code>Samir_DeepLink_Str</code>, form login dibuka, dan navigasi baru dieksekusi setelah event <code>LoginSuccess</code> diterima.</li>
+</ul>
+<ol>
+<li><strong>Pembersihan Cache</strong>: Begitu layar tujuan terbuka, <code>clearPushCache()</code> dipanggil untuk mencegah navigasi ganda.</li>
+</ol>
+<div id="sub-skenario-4-transisi-mulus-native-swift-ke-layar-hybrid-flutter" class="doc-subsection">
+<h4>SKENARIO 4: Transisi Mulus Native Swift ke Layar Hybrid Flutter</h4>
+</div>
+<p>Path: <a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/learn/iOS-Arch/ios/IDSamirLoan/Application/SamirMainModule/Classes/IDController/IDMainTabBarController.swift:L67-150" target="_blank" rel="noopener noreferrer">🦊 ios/IDSamirLoan/Application/SamirMainModule/Classes/IDController/IDMainTabBarController.swift <span class="branch-tag">learn/iOS-Arch</span> ↗</a></p>
+<p>Bagaimana aplikasi berpindah dari Beranda Native (Tab 0) ke Tagihan Flutter (Tab 1) tanpa layar berkedip?</p>
+
+<div class="mermaid-interactive-card">
+  <div class="mermaid-card-toolbar">
+    <span class="title">📊 Diagram Alur #3</span>
+    <button class="mermaid-zoom-trigger" onclick="openDiagramZoom('diag-3', 'Diagram Alur #3')">🔍 Perbesar Diagram</button>
+  </div>
+  <div class="mermaid-content-wrapper" id="diag-3">
+    <div class="mermaid">
+sequenceDiagram
+    participant User
+    participant Tab as IDMainTabBarController
+    participant FCont as flutterContainerView
+    participant FEng as FlutterEngineManager
+    participant FPage as FlutterRootPage (IndexedStack)
+
+    User->>Tab: Tap Tab 1 ("Tagihan")
+    Tab->>Tab: flutterRootRoute(for: selectedVC) -> return "/repay"
+    Tab->>FEng: resume() Lifecycle
+    Tab->>FEng: showRoot(route: "/repay", requestID: 101)
+    FEng->>FPage: FlutterRootController.select("/repay")
+    Note over FPage: Flutter me-render frame Repay di background
+    FPage-->>FEng: frameReady == true
+    FEng-->>Tab: Completion Handler Callback
+    Tab->>FCont: flutterContainerView.isHidden = false
+    Tab->>Tab: updatePersistentFlutterHostLayout() (Sinkronisasi safe area)
+    Note over User: Layar Tagihan Flutter Tampil Mulus di Atas Native
+    </div>
+  </div>
+</div>
+<h5 id="item-mekanisme-anti-flicker">Mekanisme Anti-Flicker:</h5>
+<ol>
+<li><strong>Persistent Container</strong>: View Flutter (<code>flutterContainerView</code>) tidak dibuat dan dihancurkan ulang setiap tab berpindah; ia disematkan secara permanen di bawah <code>tabBar</code>.</li>
+<li><strong>Frame Ready Guard</strong>: Saat berpindah dari tab native ke tab Flutter, <code>flutterContainerView</code> tetap disembunyikan (<code>isHidden = true</code>) sampai Flutter mengirim konfirmasi <code>frameReady == true</code>. Ini mencegah pengguna melihat layar putih atau rendering kosong sesaat!</li>
+<li><strong>Safe Area Sync</strong>: <code>updatePersistentSafeArea(top:bottom:)</code> secara presisi menghitung tinggi notch iPhone dan tinggi tab bar native agar layout Flutter tidak tertutup tombol fisik perangkat.</li>
+</ol>
+</section>
+<section id="sec-walkthrough" class="doc-section">
+<h3>🪜 E. Step-by-Step Walkthrough: Menutup Halaman Flutter dari Native Navigation</h3>
+<p>Ketika user berada di halaman detail Flutter <code>/mine/personal</code> dan menekan tombol kembali di navigation bar:</p>
+<ol>
+<li>Flutter memanggil method channel <code>closeFlutterPage</code>.</li>
+<li>Native menangkap panggilan di <a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/learn/iOS-Arch/ios/IDSamirLoan/Application/SamirCommonModule/Classes/FChannel/FlutterNativeChannel+route.swift:L93-108" target="_blank" rel="noopener noreferrer">🦊 FlutterNativeChannel+route.swift <span class="branch-tag">learn/iOS-Arch</span> ↗</a>:</li>
+</ol>
+<pre><code class="language-swift">   func closeFlutterPage(result: @escaping FlutterResult) {
+       mainThread {
+           guard let topVC = UIViewController.cz.topViewController() else { return }
+           if let nav = topVC.navigationController, nav.viewControllers.count &gt; 1 {
+               nav.popViewController(animated: true)
+           } else if topVC.presentingViewController != nil {
+               topVC.dismiss(animated: true)
+           }
+           result(nil)
+       }
+   }</code></pre>
+<ol>
+<li>Native secara otomatis memeriksa apakah halaman saat ini berada dalam tumpukan navigasi (<code>popViewController</code>) atau disajikan secara modal (<code>dismiss</code>).</li>
+</ol>
+</section>
+<section id="sec-why" class="doc-section">
+<h3>⚖️ F. Why It Matters: Ketahanan Arsitektur Hybrid (Resilience)</h3>
+<p>Integrasi Native-Flutter yang tidak dirancang dengan baik sering kali mengalami masalah:</p>
+<ul>
+<li>Memori membengkak jika membuat engine Flutter baru di setiap tab.</li>
+<li>State UI hilang saat berpindah-pindah tab.</li>
+</ul>
+<p>Dengan pola <strong>Single Prewarmed Engine</strong> + <strong>Persistent Container</strong> + <strong>IndexedStack</strong> yang diterapkan di SAMIR iOS, konsumsi memori tetap stabil dan performa antarmuka terasa seperti aplikasi native 100%.</p>
+</section>
+<section id="sec-example" class="doc-section">
+<h3>🔬 G. Practical Example: Penanganan Tombol Back Fisik &amp; Dialog Disclaimer</h3>
+<p>Ketika user berada di halaman profil Flutter dan mengklik tombol "Disclaimer Hukum":</p>
+<ol>
+<li>Flutter mengirim pesan <code>jumpDisclaimerPopup</code> ke native channel.</li>
+<li>Native mengeksekusi <code>showMineDisclaimer(result:)</code> di main thread.</li>
+<li>Dialog modal native <code>IDNPopupController</code> muncul di atas layar Flutter.</li>
+<li>Ketika user menekan tombol "Setuju", dialog native tertutup dan Flutter menerima callback konfirmasi.</li>
+</ol>
+</section>
+<section id="sec-mistakes" class="doc-section">
+<h3>⚠️ H. Common Mistakes &amp; Debugging</h3>
+<ul>
+<li><strong>Crash Saat Transisi Flutter ke Native</strong>:</li>
+<li><em>Penyebab</em>: Memanggil UI update dari thread background di MethodChannel.</li>
+<li><em>Aturan</em>: Semua interaksi navigasi dan UI dari Flutter channel <strong>wajib</strong> dibungkus di dalam <code>mainThread { ... }</code> atau <code>DispatchQueue.main.async</code>.</li>
+<li><strong>Safe Area Inset Salah pada Layar Dynamic Island (iPhone 14 Pro+)</strong>:</li>
+<li>Jika konten Flutter tertutup oleh Dynamic Island, periksa fungsi <code>updatePersistentSafeArea</code> di <code>SamirFlutterViewController</code>.</li>
+</ul>
+</section>
+<section id="sec-check" class="doc-section">
+<h3>🧠 I. Knowledge Check</h3>
+<ol>
+<li>Apa yang dilakukan aplikasi secara otomatis jika sebuah request di tengah alur KYC mengembalikan kode <code>10006</code>?</li>
+<li>Bagaimana cara halaman web H5 menampilkan pesan toast native di layar?</li>
+<li>Mengapa tampilan kontainer Flutter disembunyikan sementara sampai sinyal <code>frameReady</code> diterima?</li>
+</ol>
+</section>
+<section id="sec-completion" class="doc-section">
+<h3>🏁 J. Completion Criteria</h3>
+<p>Anda telah menguasai dokumen ini jika Anda memahami seluruh interaksi lintas modul, jembatan H5, dan mekanisme sinkronisasi Native-Flutter.</p>
+<p>Dokumen berikutnya: <a href="../06-understanding-data-and-dependencies/01-dependency-catalog.html">06-understanding-data-and-dependencies/01-dependency-catalog.md</a>.</p>
+</section>
+
+    <!-- BAGIAN 2 & 3: ARCHITECTURAL CRITIQUE & BLUEPRINT -->
+    <div class="section-banner lab" style="margin-top: 4rem;">
+      <h2>🏛️ Bagian 2: Architecture Lab, SOLID Audit & Retention Quizzes</h2>
+      <span class="pill" style="background-color: var(--accent-warning);">Architecture Lab</span>
+    </div>
+
+
+    <!-- SEGMEN 2: ARCHITECTURAL CRITIQUE -->
+    <section class="lesson-segment" id="sub-solid">
+      <h2>🏛️ Audit SOLID & Clean Architecture: Menemukan Titik Lemah pada Implementasi Existing</h2>
+
+      <div class="callout critique">
+        <div class="callout-title">⚠️ Smells 1: State Mutation Tersebar & Kurangnya Single Source of Truth</div>
+        <p>Status transaksi pinjaman dan otentikasi disimpan di beberapa singleton berbeda secara terpisah, rentan memicu race condition dan state inconsistency antar tab.</p>
+      </div>
+
+      <div class="callout critique">
+        <div class="callout-title">⚠️ Smells 2: Kurangnya Abstraksi Domain Layer (Business Logic Terikat ke UI)</div>
+        <p>Logika validasi kredit dan kalkulasi bunga dilakukan langsung di lapisan presentasi tampilan, menyulitkan pemeliharaan dan pengujian regresi.</p>
+      </div>
+    </section>
+
+    <!-- SEGMEN 3: REFACTORING BLUEPRINT -->
+    <section class="lesson-segment" id="sub-blueprint">
+      <h2>🚀 Blueprint Refactoring Standar Industri: Pola Clean Architecture Use Case (Domain Interactor Pattern)</h2>
+      <p>Mengisolasi logika bisnis finansial ke dalam Use Case murni yang bebas dari UIKit atau Widget Flutter, menjamin 100% testability dan integritas transaksi.</p>
+
+      <div class="callout best-practice">
+        <div class="callout-title">✅ Rekomendasi Solusi Arsitektur Bersih</div>
+        <pre><code class="language-swift">public protocol CalculateRepaymentUseCase {
+    func execute(loanAmount: Double, tenorDays: Int) -&gt; RepaymentCalculation
+}
+
+public final class DefaultCalculateRepaymentUseCase: CalculateRepaymentUseCase {
+    public func execute(loanAmount: Double, tenorDays: Int) -&gt; RepaymentCalculation {
+        // Business rule murni terisolasi dari UI
+        return RepaymentCalculation(principal: loanAmount, interest: loanAmount * 0.003 * Double(tenorDays))
+    }
+}</code></pre>
+      </div>
+
+      <h3>Keunggulan Arsitektur Refactoring Ini:</h3>
+      <ul>
+        <li><strong>100% Mockable & Testable:</strong> Memungkinkan pengujian terisolasi tanpa memicu efek samping runtime produksi.</li>
+        <li><strong>Open/Closed Principle (OCP):</strong> Penambahan fitur baru dapat dilakukan tanpa memodifikasi class yang sudah stabil.</li>
+        <li><strong>Decoupled Subsystems:</strong> Membatasi dampak regresi saat terjadi perubahan dependensi eksternal.</li>
+      </ul>
+    </section>
+
+
+    <!-- SEGMEN 4: INTERACTIVE RETENTION QUIZ -->
+    <section class="lesson-segment" id="sub-quiz">
+      <h2>🧠 Interactive Retention & Architectural Quiz</h2>
+      <p>Uji pemahaman alur kode nyata dan keputusan arsitektur Anda:</p>
+
+      <!-- KUIS 1 -->
+      <div class="quiz-card" id="quiz-1">
+        <h4>Kuis 1 (Memory Recall): Berdasarkan standar Clean Architecture, apa peran utama dari domain layer pada modul IOS?</h4>
+        <div class="quiz-options">
+          <button class="quiz-btn" onclick="submitQuiz(1, 'A', true)">
+            A. Mengisolasi aturan bisnis finansial murni agar tidak tercampur dengan UI platform
+          </button>
+          <button class="quiz-btn" onclick="submitQuiz(1, 'B', false)">
+            B. Mengatur tata letak layout dan ukuran tombol di layar aplikasi perangkat nasabah
+          </button>
+          <button class="quiz-btn" onclick="submitQuiz(1, 'C', false)">
+            C. Menyimpan file sertifikat SSL dan kunci enkripsi privat di memori kartu SIM
+          </button>
+          <button class="quiz-btn" onclick="submitQuiz(1, 'D', false)">
+            D. Mengirimkan sinyal detak jantung (heartbeat) ke menara telekomunikasi seluler
+          </button>
+        </div>
+        <div class="quiz-feedback" id="feedback-1"></div>
+      </div>
+      <!-- KUIS 2 -->
+      <div class="quiz-card" id="quiz-2">
+        <h4>Kuis 2 (Architectural Decision): Mengapa penerapan Dependency Inversion Principle (DIP) sangat krusial dalam pembuatan unit test?</h4>
+        <div class="quiz-options">
+          <button class="quiz-btn" onclick="submitQuiz(2, 'A', false)">
+            A. Mengharuskan seluruh kode ditulis menggunakan bahasa pemrograman tingkat rendah C
+          </button>
+          <button class="quiz-btn" onclick="submitQuiz(2, 'B', true)">
+            B. Memungkinkan penyuntikan test double (mock/fake) untuk menguji skenario terisolasi
+          </button>
+          <button class="quiz-btn" onclick="submitQuiz(2, 'C', false)">
+            C. Mengurangi jumlah baris kode hingga setengahnya secara otomatis saat kompilasi
+          </button>
+          <button class="quiz-btn" onclick="submitQuiz(2, 'D', false)">
+            D. Menghilangkan kebutuhan arsitektur modular pada proyek aplikasi berskala besar
+          </button>
+        </div>
+        <div class="quiz-feedback" id="feedback-2"></div>
+      </div>
+      <!-- KUIS 3 -->
+      <div class="quiz-card" id="quiz-3">
+        <h4>Kuis 3 (Debugging & Maintenance): Apa keuntungan utama membatasi dependensi antar modul ke arah satu arah (Unidirectional Dependency)?</h4>
+        <div class="quiz-options">
+          <button class="quiz-btn" onclick="submitQuiz(3, 'A', true)">
+            A. Menghilangkan circular dependency dan mempermudah pelacakan penyebab bug sistem
+          </button>
+          <button class="quiz-btn" onclick="submitQuiz(3, 'B', false)">
+            B. Memaksa seluruh antarmuka aplikasi selalu berjalan dalam orientasi layar lanskap
+          </button>
+          <button class="quiz-btn" onclick="submitQuiz(3, 'C', false)">
+            C. Menghindari kebutuhan update library pihak ketiga selama masa rilis aplikasi
+          </button>
+          <button class="quiz-btn" onclick="submitQuiz(3, 'D', false)">
+            D. Mempercepat koneksi internet pengguna saat melakukan pembayaran virtual account
+          </button>
+        </div>
+        <div class="quiz-feedback" id="feedback-3"></div>
+      </div>
+    </section>
+
+    <!-- Lesson Navigation Footer -->
+    <div class="lesson-nav-footer">
+      <a class="lesson-nav-btn prev" href="../05-learning-business-flows/03-core-feature-flows.html">
+  ◀ Modul Sebelumnya: 03 — Core Feature Flows
+</a>
+      <a class="lesson-nav-btn next" href="../05-learning-business-flows/05-production-low-level-flows.html">
+  Modul Selanjutnya: 05 — Production Low-Level Execution Flows ▶
+</a>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+      <div>Chiron Codebase Mastery Academy • SAMIR Mobile iOS</div>
+      <div>Anchor Branch: <strong>learn/iOS-Arch</strong></div>
+    </footer>
+
+  </main>
+
+  <!-- ========================================================================= -->
+  <!-- RIGHT-HAND SIDEBAR: ON-PAGE TABLE OF CONTENTS                             -->
+  <!-- ========================================================================= -->
+  <aside class="docs-toc-sidebar" id="desktopTocSidebar">
+    <div class="toc-header-bar">
+      <span class="toc-header-label">📑 DAFTAR ISI</span>
+      <div class="toc-header-actions">
+        <button class="toc-action-btn" id="tocScrollTopBtn" title="Scroll ke Paling Atas" onclick="window.scrollTo({top: 0, behavior: 'smooth'})">▲</button>
+        <button class="toc-action-btn" id="tocToggleAllBtn" title="Buka/Tutup Semua Cabang" onclick="toggleAllTocBranches()">🔄</button>
+        <button class="toc-action-btn" id="tocResetActiveBtn" title="Fokuskan ke Topik Aktif" onclick="focusCurrentTocActive()">📑</button>
+        <button class="toc-action-btn toc-dismiss-btn" id="tocDismissBtn" title="Tutup Daftar Isi (Fokus Mode Membaca)" onclick="toggleDesktopToc()">✕</button>
+      </div>
+    </div>
+
+    <div class="toc-tree-container">
+      <div class="toc-tree-node root-node" id="toc-node-root">
+        <div class="toc-node-row">
+          <span class="toc-caret" onclick="toggleTocBranch(this)">▾</span>
+          <a class="toc-tree-link root-link" href="#sec-title" title="04 — Cross-Feature Journeys">
+            04 — Cross-Feature Journeys
+          </a>
+        </div>
+        <div class="toc-branch">
+          <div class="toc-node-row">
+            <span class="toc-leaf-dot"></span>
+            <a class="toc-tree-link" href="#sec-obj">A. Learning Objective</a>
+          </div>
+          <div class="toc-node-row">
+            <span class="toc-leaf-dot"></span>
+            <a class="toc-tree-link" href="#sec-prereq">B. Prerequisites</a>
+          </div>
+          <div class="toc-node-row">
+            <span class="toc-leaf-dot"></span>
+            <a class="toc-tree-link" href="#sec-simple">C. Simple Explanation (Analogi Perjalanan Antarpulau)</a>
+          </div>
+          <div class="toc-tree-node" id="toc-node-sec-actual">
+            <div class="toc-node-row">
+              <span class="toc-caret" onclick="toggleTocBranch(this)">▾</span>
+              <a class="toc-tree-link" href="#sec-actual">D. Actual Implementation: 4 Skenario Interaksi Lintas Fitur</a>
+            </div>
+            <div class="toc-branch">
+              <div class="toc-node-row">
+                <span class="toc-leaf-dot"></span>
+                <a class="toc-tree-link" href="#sub-skenario-1-interupsi-token-kedaluwarsa-di-tengah-alur-kyc-pinjaman">SKENARIO 1: Interupsi Token Kedaluwarsa di Tengah Alur KYC / Pinjaman</a>
+              </div>
+              <div class="toc-node-row">
+                <span class="toc-leaf-dot"></span>
+                <a class="toc-tree-link" href="#sub-skenario-2-jembatan-web-h5-melompat-ke-fitur-native-h5-to-native-jump">SKENARIO 2: Jembatan Web H5 Melompat ke Fitur Native (H5 to Native Jump)</a>
+              </div>
+              <div class="toc-node-row">
+                <span class="toc-leaf-dot"></span>
+                <a class="toc-tree-link" href="#sub-skenario-3-deep-link-eksternal-menuju-layar-tagihan-kupon">SKENARIO 3: Deep Link Eksternal Menuju Layar Tagihan / Kupon</a>
+              </div>
+              <div class="toc-node-row">
+                <span class="toc-leaf-dot"></span>
+                <a class="toc-tree-link" href="#sub-skenario-4-transisi-mulus-native-swift-ke-layar-hybrid-flutter">SKENARIO 4: Transisi Mulus Native Swift ke Layar Hybrid Flutter</a>
+              </div>
+            </div>
+          </div>
+          <div class="toc-node-row">
+            <span class="toc-leaf-dot"></span>
+            <a class="toc-tree-link" href="#sec-walkthrough">E. Step-by-Step Walkthrough: Menutup Halaman Flutter dari Native Navigation</a>
+          </div>
+          <div class="toc-node-row">
+            <span class="toc-leaf-dot"></span>
+            <a class="toc-tree-link" href="#sec-why">F. Why It Matters: Ketahanan Arsitektur Hybrid (Resilience)</a>
+          </div>
+          <div class="toc-node-row">
+            <span class="toc-leaf-dot"></span>
+            <a class="toc-tree-link" href="#sec-example">G. Practical Example: Penanganan Tombol Back Fisik &amp; Dialog Disclaimer</a>
+          </div>
+          <div class="toc-node-row">
+            <span class="toc-leaf-dot"></span>
+            <a class="toc-tree-link" href="#sec-mistakes">H. Common Mistakes &amp; Debugging</a>
+          </div>
+          <div class="toc-node-row">
+            <span class="toc-leaf-dot"></span>
+            <a class="toc-tree-link" href="#sec-check">I. Knowledge Check</a>
+          </div>
+          <div class="toc-node-row">
+            <span class="toc-leaf-dot"></span>
+            <a class="toc-tree-link" href="#sec-completion">J. Completion Criteria</a>
+          </div>
+          <!-- Architecture Lab Branches -->
+          <div class="toc-tree-node" id="toc-node-lab" style="margin-top: 0.45rem;">
+            <div class="toc-node-row">
+              <span class="toc-caret" onclick="toggleTocBranch(this)">▾</span>
+              <a class="toc-tree-link" href="#sub-solid" style="font-weight: 700; color: var(--accent-warning);">
+                🏛️ Architecture Lab & Audit
+              </a>
+            </div>
+            <div class="toc-branch">
+              <div class="toc-node-row">
+                <span class="toc-leaf-dot"></span>
+                <a class="toc-tree-link" href="#sub-solid">1. Audit SOLID & Clean Arch</a>
+              </div>
+              <div class="toc-node-row">
+                <span class="toc-leaf-dot"></span>
+                <a class="toc-tree-link" href="#sub-blueprint">2. Refactoring Blueprint</a>
+              </div>
+              <div class="toc-node-row">
+                <span class="toc-leaf-dot"></span>
+                <a class="toc-tree-link" href="#sub-quiz">3. Interactive Retention Quiz</a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </aside>
+
+</div>
+
+<!-- ========================================================================= -->
+<!-- MOBILE / DRAWER TABLE OF CONTENTS OVERLAY                                 -->
+<!-- ========================================================================= -->
+<div class="mobile-toc-overlay" id="mobileTocOverlay" onclick="toggleMobileToc()"></div>
+<div class="mobile-toc-drawer" id="mobileTocDrawer">
+  <div class="toc-header-bar">
+    <span class="toc-header-label">📑 DAFTAR ISI HALAMAN</span>
+    <button class="drawer-close-btn" onclick="toggleMobileToc()">✕</button>
+  </div>
+  <div class="toc-tree-container" style="margin-top: 0.75rem;">
+    <div class="toc-tree-node root-node" id="mob-toc-node-root">
+      <div class="toc-node-row">
+        <span class="toc-caret" onclick="toggleTocBranch(this)">▾</span>
+        <a class="toc-tree-link root-link" href="#sec-title" onclick="toggleMobileToc()">
+          04 — Cross-Feature Journeys
+        </a>
+      </div>
+      <div class="toc-branch">
+        <div class="toc-node-row">
+          <span class="toc-leaf-dot"></span>
+          <a class="toc-tree-link" href="#sec-obj" onclick="toggleMobileToc()">A. Learning Objective</a>
+        </div>
+        <div class="toc-node-row">
+          <span class="toc-leaf-dot"></span>
+          <a class="toc-tree-link" href="#sec-prereq" onclick="toggleMobileToc()">B. Prerequisites</a>
+        </div>
+        <div class="toc-node-row">
+          <span class="toc-leaf-dot"></span>
+          <a class="toc-tree-link" href="#sec-simple" onclick="toggleMobileToc()">C. Simple Explanation (Analogi Perjalanan Antarpulau)</a>
+        </div>
+        <div class="toc-tree-node" id="mob-toc-node-sec-actual">
+          <div class="toc-node-row">
+            <span class="toc-caret" onclick="toggleTocBranch(this)">▾</span>
+            <a class="toc-tree-link" href="#sec-actual" onclick="toggleMobileToc()">D. Actual Implementation: 4 Skenario Interaksi Lintas Fitur</a>
+          </div>
+          <div class="toc-branch">
+            <div class="toc-node-row">
+              <span class="toc-leaf-dot"></span>
+              <a class="toc-tree-link" href="#sub-skenario-1-interupsi-token-kedaluwarsa-di-tengah-alur-kyc-pinjaman" onclick="toggleMobileToc()">SKENARIO 1: Interupsi Token Kedaluwarsa di Tengah Alur KYC / Pinjaman</a>
+            </div>
+            <div class="toc-node-row">
+              <span class="toc-leaf-dot"></span>
+              <a class="toc-tree-link" href="#sub-skenario-2-jembatan-web-h5-melompat-ke-fitur-native-h5-to-native-jump" onclick="toggleMobileToc()">SKENARIO 2: Jembatan Web H5 Melompat ke Fitur Native (H5 to Native Jump)</a>
+            </div>
+            <div class="toc-node-row">
+              <span class="toc-leaf-dot"></span>
+              <a class="toc-tree-link" href="#sub-skenario-3-deep-link-eksternal-menuju-layar-tagihan-kupon" onclick="toggleMobileToc()">SKENARIO 3: Deep Link Eksternal Menuju Layar Tagihan / Kupon</a>
+            </div>
+            <div class="toc-node-row">
+              <span class="toc-leaf-dot"></span>
+              <a class="toc-tree-link" href="#sub-skenario-4-transisi-mulus-native-swift-ke-layar-hybrid-flutter" onclick="toggleMobileToc()">SKENARIO 4: Transisi Mulus Native Swift ke Layar Hybrid Flutter</a>
+            </div>
+          </div>
+        </div>
+        <div class="toc-node-row">
+          <span class="toc-leaf-dot"></span>
+          <a class="toc-tree-link" href="#sec-walkthrough" onclick="toggleMobileToc()">E. Step-by-Step Walkthrough: Menutup Halaman Flutter dari Native Navigation</a>
+        </div>
+        <div class="toc-node-row">
+          <span class="toc-leaf-dot"></span>
+          <a class="toc-tree-link" href="#sec-why" onclick="toggleMobileToc()">F. Why It Matters: Ketahanan Arsitektur Hybrid (Resilience)</a>
+        </div>
+        <div class="toc-node-row">
+          <span class="toc-leaf-dot"></span>
+          <a class="toc-tree-link" href="#sec-example" onclick="toggleMobileToc()">G. Practical Example: Penanganan Tombol Back Fisik &amp; Dialog Disclaimer</a>
+        </div>
+        <div class="toc-node-row">
+          <span class="toc-leaf-dot"></span>
+          <a class="toc-tree-link" href="#sec-mistakes" onclick="toggleMobileToc()">H. Common Mistakes &amp; Debugging</a>
+        </div>
+        <div class="toc-node-row">
+          <span class="toc-leaf-dot"></span>
+          <a class="toc-tree-link" href="#sec-check" onclick="toggleMobileToc()">I. Knowledge Check</a>
+        </div>
+        <div class="toc-node-row">
+          <span class="toc-leaf-dot"></span>
+          <a class="toc-tree-link" href="#sec-completion" onclick="toggleMobileToc()">J. Completion Criteria</a>
+        </div>
+        <div class="toc-tree-node" id="mob-toc-node-lab" style="margin-top: 0.45rem;">
+          <div class="toc-node-row">
+            <span class="toc-caret" onclick="toggleTocBranch(this)">▾</span>
+            <a class="toc-tree-link" href="#sub-solid" onclick="toggleMobileToc()" style="font-weight: 700; color: var(--accent-warning);">
+              🏛️ Architecture Lab & Audit
+            </a>
+          </div>
+          <div class="toc-branch">
+            <div class="toc-node-row">
+              <span class="toc-leaf-dot"></span>
+              <a class="toc-tree-link" href="#sub-solid" onclick="toggleMobileToc()">1. Audit SOLID & Clean Arch</a>
+            </div>
+            <div class="toc-node-row">
+              <span class="toc-leaf-dot"></span>
+              <a class="toc-tree-link" href="#sub-blueprint" onclick="toggleMobileToc()">2. Refactoring Blueprint</a>
+            </div>
+            <div class="toc-node-row">
+              <span class="toc-leaf-dot"></span>
+              <a class="toc-tree-link" href="#sub-quiz" onclick="toggleMobileToc()">3. Interactive Retention Quiz</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ========================================================================= -->
+<!-- FULL CURRICULUM DRAWER (CATALOG OF ALL MODULES)                           -->
+<!-- ========================================================================= -->
+<div class="curriculum-drawer-overlay" id="curriculumOverlay" onclick="toggleCurriculumDrawer()"></div>
+<div class="curriculum-drawer" id="curriculumDrawer">
+  <div class="drawer-header">
+    <div class="drawer-title">📚 Kurikulum Lengkap SAMIR Mobile iOS</div>
+    <button class="drawer-close-btn" onclick="toggleCurriculumDrawer()">✕</button>
+  </div>
+  <div class="drawer-search">
+    <input type="text" id="moduleSearchInput" placeholder="🔍 Cari modul (contoh: startup, router, auth)..." oninput="filterCurriculum()">
+  </div>
+  <div class="drawer-body" id="curriculumListBody">
+    <div class="curriculum-level-group">
+      <div class="curriculum-level-title">Level 0: Learning Roadmap</div>
+      <a class="curriculum-item-link" href="../00-learning-roadmap.html">
+        <span>📄</span> Kurikulum &amp; Roadmap Pembelajaran SAMIR iOS
+      </a>
+    </div>
+    <div class="curriculum-level-group">
+      <div class="curriculum-level-title">Level 1: Project Foundation</div>
+      <a class="curriculum-item-link" href="../01-project-foundation/01-application-overview.html">
+        <span>📄</span> 01 — Application Overview
+      </a>
+      <a class="curriculum-item-link" href="../01-project-foundation/02-repository-structure.html">
+        <span>📄</span> 02 — Repository Structure
+      </a>
+      <a class="curriculum-item-link" href="../01-project-foundation/03-technology-stack-and-build.html">
+        <span>📄</span> 03 — Technology Stack &amp; Build Configuration
+      </a>
+    </div>
+    <div class="curriculum-level-group">
+      <div class="curriculum-level-title">Level 2: Understanding App Startup</div>
+      <a class="curriculum-item-link" href="../02-understanding-app-startup/01-ios-entry-point.html">
+        <span>📄</span> 01 — iOS Entry Point
+      </a>
+      <a class="curriculum-item-link" href="../02-understanding-app-startup/02-application-lifecycle.html">
+        <span>📄</span> 02 — Application Lifecycle
+      </a>
+      <a class="curriculum-item-link" href="../02-understanding-app-startup/03-startup-sequence-and-initial-routing.html">
+        <span>📄</span> 03 — Startup Sequence &amp; Initial Routing
+      </a>
+      <a class="curriculum-item-link" href="../02-understanding-app-startup/04-czmodulemanager-deep-dive.html">
+        <span>📄</span> 04 — CZModuleManager Deep Dive
+      </a>
+    </div>
+    <div class="curriculum-level-group">
+      <div class="curriculum-level-title">Level 3: Understanding Architecture</div>
+      <a class="curriculum-item-link" href="../03-understanding-architecture/01-architecture-overview.html">
+        <span>📄</span> 01 — Architecture Overview
+      </a>
+      <a class="curriculum-item-link" href="../03-understanding-architecture/02-layers-and-responsibilities.html">
+        <span>📄</span> 02 — Layers &amp; Responsibilities
+      </a>
+      <a class="curriculum-item-link" href="../03-understanding-architecture/03-dependency-direction.html">
+        <span>📄</span> 03 — Dependency Direction
+      </a>
+      <a class="curriculum-item-link" href="../03-understanding-architecture/04-shared-components-and-services.html">
+        <span>📄</span> 04 — Shared Components &amp; Services
+      </a>
+    </div>
+    <div class="curriculum-level-group">
+      <div class="curriculum-level-title">Level 4: Understanding Navigation</div>
+      <a class="curriculum-item-link" href="../04-understanding-navigation/01-feature-inventory.html">
+        <span>📄</span> 01 — Feature Inventory
+      </a>
+      <a class="curriculum-item-link" href="../04-understanding-navigation/02-navigation-fundamentals.html">
+        <span>📄</span> 02 — Navigation Fundamentals
+      </a>
+      <a class="curriculum-item-link" href="../04-understanding-navigation/03-complete-navigation-map.html">
+        <span>📄</span> 03 — Complete Navigation Map
+      </a>
+      <a class="curriculum-item-link" href="../04-understanding-navigation/04-navigation-conditions-and-edge-cases.html">
+        <span>📄</span> 04 — Navigation Conditions &amp; Edge Cases
+      </a>
+    </div>
+    <div class="curriculum-level-group">
+      <div class="curriculum-level-title">Level 5: Learning Business Flows</div>
+      <a class="curriculum-item-link" href="../05-learning-business-flows/01-user-journey-overview.html">
+        <span>📄</span> 01 — User Journey Overview
+      </a>
+      <a class="curriculum-item-link" href="../05-learning-business-flows/02-authentication-and-session-flow.html">
+        <span>📄</span> 02 — Authentication &amp; Session Flow
+      </a>
+      <a class="curriculum-item-link" href="../05-learning-business-flows/03-core-feature-flows.html">
+        <span>📄</span> 03 — Core Feature Flows
+      </a>
+      <a class="curriculum-item-link active" href="#">
+        <span>🟢</span> 04 — Cross-Feature Journeys (Sedang Dibaca)
+      </a>
+      <a class="curriculum-item-link" href="../05-learning-business-flows/05-production-low-level-flows.html">
+        <span>📄</span> 05 — Production Low-Level Execution Flows
+      </a>
+    </div>
+    <div class="curriculum-level-group">
+      <div class="curriculum-level-title">Level 6: Data &amp; Dependencies</div>
+      <a class="curriculum-item-link" href="../06-understanding-data-and-dependencies/01-dependency-catalog.html">
+        <span>📄</span> 01 — Dependency Catalog
+      </a>
+      <a class="curriculum-item-link" href="../06-understanding-data-and-dependencies/02-networking-and-api-flow.html">
+        <span>📄</span> 02 — Networking &amp; API Flow
+      </a>
+      <a class="curriculum-item-link" href="../06-understanding-data-and-dependencies/03-models-and-data-transformation.html">
+        <span>📄</span> 03 — Models &amp; Data Transformation
+      </a>
+      <a class="curriculum-item-link" href="../06-understanding-data-and-dependencies/04-state-management-and-persistence.html">
+        <span>📄</span> 04 — State Management &amp; Persistence
+      </a>
+      <a class="curriculum-item-link" href="../06-understanding-data-and-dependencies/05-native-flutter-integration.html">
+        <span>📄</span> 05 — Native-Flutter Integration
+      </a>
+    </div>
+    <div class="curriculum-level-group">
+      <div class="curriculum-level-title">Level 7: Debugging &amp; Maintenance</div>
+      <a class="curriculum-item-link" href="../07-learning-to-debug-and-maintain/01-error-handling.html">
+        <span>📄</span> 01 — Error Handling
+      </a>
+      <a class="curriculum-item-link" href="../07-learning-to-debug-and-maintain/02-testing-and-debugging.html">
+        <span>📄</span> Level 7
+      </a>
+      <a class="curriculum-item-link" href="../07-learning-to-debug-and-maintain/03-coupling-and-technical-debt.html">
+        <span>📄</span> Level 7
+      </a>
+      <a class="curriculum-item-link" href="../07-learning-to-debug-and-maintain/04-change-impact-analysis.html">
+        <span>📄</span> Level 7
+      </a>
+    </div>
+    <div class="curriculum-level-group">
+      <div class="curriculum-level-title">Level 8: Reference &amp; Codebase Audit</div>
+      <a class="curriculum-item-link" href="../08-reference/01-codebase-glossary.html">
+        <span>📄</span> Level 8
+      </a>
+      <a class="curriculum-item-link" href="../08-reference/02-source-code-index.html">
+        <span>📄</span> Level 8
+      </a>
+      <a class="curriculum-item-link" href="../08-reference/03-existing-documentation-audit.html">
+        <span>📄</span> Level 8
+      </a>
+      <a class="curriculum-item-link" href="../08-reference/04-open-questions-and-unverified-findings.html">
+        <span>📄</span> Level 8
+      </a>
+    </div>
+    <div class="curriculum-level-group">
+      <div class="curriculum-level-title">Visual Diagrams &amp; Sequence Maps</div>
+      <a class="curriculum-item-link" href="../diagrams/application-startup.html">
+        <span>📄</span> Diagram — Alur Peluncuran Aplikasi (Application Startup Sequence)
+      </a>
+      <a class="curriculum-item-link" href="../diagrams/architecture-overview.html">
+        <span>📄</span> Diagram — Ikhtisar Arsitektur (Architecture Overview)
+      </a>
+      <a class="curriculum-item-link" href="../diagrams/core-user-journeys.html">
+        <span>📄</span> Diagram — Alur Pengguna Utama (Core User Journeys)
+      </a>
+      <a class="curriculum-item-link" href="../diagrams/feature-dependencies.html">
+        <span>📄</span> Diagram — Dependensi Fitur &amp; Modul (Feature Dependencies)
+      </a>
+      <a class="curriculum-item-link" href="../diagrams/navigation-overview.html">
+        <span>📄</span> Diagram — Peta Navigasi Lengkap (Navigation Overview)
+      </a>
+    </div>
+    <div class="curriculum-level-group">
+      <div class="curriculum-level-title">Course Index &amp; Syllabus</div>
+      <a class="curriculum-item-link" href="../README.html">
+        <span>📄</span> SAMIR iOS — Learning Curve &amp; Engineering Guide
+      </a>
+    </div>
+  </div>
+</div>
+
+<!-- ========================================================================= -->
+<!-- FULLSCREEN MERMAID DIAGRAM LIGHTBOX MODAL                                 -->
+<!-- ========================================================================= -->
+<div id="diagramModal" class="diagram-modal" onclick="closeDiagramModal(event)">
+  <div class="diagram-modal-dialog" onclick="event.stopPropagation()">
+    <div class="diagram-modal-header">
+      <h3 id="modalDiagramTitle">🔍 Pembesaran Diagram Alur</h3>
+      <div class="diagram-modal-controls">
+        <button class="diagram-ctrl-btn" onclick="zoomDiagram(1.25)">➕ Zoom In</button>
+        <button class="diagram-ctrl-btn" onclick="zoomDiagram(0.8)">➖ Zoom Out</button>
+        <button class="diagram-ctrl-btn" onclick="resetDiagramZoom()">↺ 100%</button>
+        <button class="diagram-close-btn" onclick="closeDiagramModal()">✕ Tutup [Esc]</button>
+      </div>
+    </div>
+    <div class="diagram-modal-body" id="diagramModalBody">
+      <!-- Cloned SVG inserted dynamically -->
+    </div>
+  </div>
+</div>
+
+<!-- Prism.js Scripts for Syntax Highlighting -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-swift.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-dart.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-json.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-yaml.min.js"></script>
+
+<!-- Interactive Scripts: Tabs, TOC ScrollSpy, Drawers & Quiz -->
+<script>
+  function toggleCurriculumDrawer() {
+    const drawer = document.getElementById('curriculumDrawer');
+    const overlay = document.getElementById('curriculumOverlay');
+    drawer.classList.toggle('open');
+    overlay.classList.toggle('open');
+  }
+
+  function toggleMobileToc() {
+    const drawer = document.getElementById('mobileTocDrawer');
+    const overlay = document.getElementById('mobileTocOverlay');
+    drawer.classList.toggle('open');
+    overlay.classList.toggle('open');
+  }
+
+  function filterCurriculum() {
+    const query = document.getElementById('moduleSearchInput').value.toLowerCase();
+    const links = document.querySelectorAll('.curriculum-item-link');
+    links.forEach(link => {
+      const text = link.innerText.toLowerCase();
+      link.style.display = text.includes(query) ? 'flex' : 'none';
+    });
+  }
+
+  function handleTocToggleClick() {
+    if (window.innerWidth > 1200) {
+      toggleDesktopToc();
+    } else {
+      toggleMobileToc();
+    }
+  }
+
+  function toggleDesktopToc() {
+    document.body.classList.toggle('toc-collapsed');
+    const isCollapsed = document.body.classList.contains('toc-collapsed');
+    try {
+      localStorage.setItem('chiron_toc_collapsed', isCollapsed ? '1' : '0');
+    } catch (e) {}
+
+    const topbarBtn = document.getElementById('topbarTocBtn');
+    if (topbarBtn) {
+      if (isCollapsed) {
+        topbarBtn.classList.remove('active');
+        topbarBtn.title = "Tampilkan Daftar Isi (Mode Normal)";
+      } else {
+        topbarBtn.classList.add('active');
+        topbarBtn.title = "Tutup Daftar Isi (Mode Fokus Membaca)";
+      }
+    }
+  }
+
+  function toggleTocBranch(caretEl) {
+    const node = caretEl.closest('.toc-tree-node');
+    if (node) {
+      node.classList.toggle('collapsed');
+      caretEl.textContent = node.classList.contains('collapsed') ? '▸' : '▾';
+    }
+  }
+
+  function toggleAllTocBranches() {
+    const allNodes = document.querySelectorAll('.toc-tree-node');
+    let hasCollapsed = false;
+    allNodes.forEach(n => {
+      if (n.classList.contains('collapsed')) hasCollapsed = true;
+    });
+    allNodes.forEach(n => {
+      const caret = n.querySelector(':scope > .toc-node-row > .toc-caret');
+      if (hasCollapsed) {
+        n.classList.remove('collapsed');
+        if (caret) caret.textContent = '▾';
+      } else {
+        if (!n.classList.contains('root-node')) {
+          n.classList.add('collapsed');
+          if (caret) caret.textContent = '▸';
+        }
+      }
+    });
+  }
+
+  function focusCurrentTocActive() {
+    const activeLink = document.querySelector('.toc-tree-link.active');
+    if (activeLink) {
+      activeLink.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+    } else {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  }
+
+  window.addEventListener('DOMContentLoaded', () => {
+    try {
+      if (localStorage.getItem('chiron_toc_collapsed') === '1' && window.innerWidth > 1200) {
+        document.body.classList.add('toc-collapsed');
+        const topbarBtn = document.getElementById('topbarTocBtn');
+        if (topbarBtn) topbarBtn.classList.remove('active');
+      }
+    } catch (e) {}
+
+    const sectionIds = ['sec-title', 'sec-obj', 'sec-prereq', 'sec-simple', 'sec-actual', 'sub-skenario-1-interupsi-token-kedaluwarsa-di-tengah-alur-kyc-pinjaman', 'sub-skenario-2-jembatan-web-h5-melompat-ke-fitur-native-h5-to-native-jump', 'sub-skenario-3-deep-link-eksternal-menuju-layar-tagihan-kupon', 'sub-skenario-4-transisi-mulus-native-swift-ke-layar-hybrid-flutter', 'sec-walkthrough', 'sec-why', 'sec-example', 'sec-mistakes', 'sec-check', 'sec-completion', 'sub-solid', 'sub-blueprint', 'sub-quiz'];
+    const tocLinks = document.querySelectorAll('.toc-tree-link');
+
+    window.addEventListener('scroll', () => {
+      let currentSection = '';
+      const scrollPos = window.scrollY + 140;
+
+      sectionIds.forEach(id => {
+        const el = document.getElementById(id);
+        if (el && el.offsetTop <= scrollPos) {
+          currentSection = id;
+        }
+      });
+
+      if (currentSection) {
+        tocLinks.forEach(link => {
+          link.classList.remove('active');
+          if (link.getAttribute('href') === '#' + currentSection) {
+            link.classList.add('active');
+          }
+        });
+      }
+    });
+  });
+
+  // Diagram Lightbox Controls
+  let currentDiagramScale = 1.0;
+  function openDiagramZoom(diagramId, title) {
+    const originalEl = document.getElementById(diagramId);
+    if (!originalEl) return;
+    const svgEl = originalEl.querySelector('svg');
+    if (!svgEl) return;
+
+    const modal = document.getElementById('diagramModal');
+    const modalBody = document.getElementById('diagramModalBody');
+    const modalTitle = document.getElementById('modalDiagramTitle');
+
+    modalTitle.innerHTML = title ? '🔍 ' + title : '🔍 Pembesaran Diagram Alur';
+    modalBody.innerHTML = svgEl.outerHTML;
+    
+    currentDiagramScale = 1.0;
+    const clonedSvg = modalBody.querySelector('svg');
+    if (clonedSvg) clonedSvg.style.transform = 'scale(' + currentDiagramScale + ')';
+
+    modal.classList.add('active');
+    document.body.style.overflow = 'hidden';
+  }
+
+  function closeDiagramModal(event) {
+    if (event && event.target && event.target.closest && event.target.closest('.diagram-modal-dialog') && !event.target.classList.contains('diagram-close-btn')) {
+      return;
+    }
+    const modal = document.getElementById('diagramModal');
+    modal.classList.remove('active');
+    document.body.style.overflow = 'auto';
+  }
+
+  function zoomDiagram(factor) {
+    const modalBody = document.getElementById('diagramModalBody');
+    const svg = modalBody.querySelector('svg');
+    if (!svg) return;
+    currentDiagramScale *= factor;
+    svg.style.transform = 'scale(' + currentDiagramScale + ')';
+  }
+
+  function resetDiagramZoom() {
+    const modalBody = document.getElementById('diagramModalBody');
+    const svg = modalBody.querySelector('svg');
+    if (!svg) return;
+    currentDiagramScale = 1.0;
+    svg.style.transform = 'scale(1)';
+  }
+
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') {
+      closeDiagramModal();
+      const cDrawer = document.getElementById('curriculumDrawer');
+      if (cDrawer && cDrawer.classList.contains('open')) toggleCurriculumDrawer();
+      const tDrawer = document.getElementById('mobileTocDrawer');
+      if (tDrawer && tDrawer.classList.contains('open')) toggleMobileToc();
+    } else if (e.key === ']' && !e.ctrlKey && !e.metaKey && e.target.tagName !== 'INPUT') {
+      handleTocToggleClick();
+    }
+  });
+
+  // Quiz Evaluation Logic
+  const explanations = {
+  "1": {
+    "success": "Tepat! Domain layer adalah inti logika bisnis murni yang tidak boleh memiliki dependensi ke framework presentasi seperti UIKit atau Flutter Widget.",
+    "danger": "Kurang tepat. Domain layer menampung entitas dan aturan bisnis murni tanpa mengetahui detail implementasi antarmuka pengguna."
+  },
+  "2": {
+    "success": "Benar! Dengan bergantung pada abstraksi protokol/antarmuka, kita dapat menginjeksi Mock Service di unit test tanpa memanggil server sungguhan.",
+    "danger": "Kurang tepat. DIP memungkinkan kita menukar implementasi konkret jaringan atau database dengan mock objek untuk verifikasi logika yang cepat dan deterministik."
+  },
+  "3": {
+    "success": "Sempurna! Ketergantungan satu arah mencegah dependency loop (circular import) dan menjamin modul fondasi tetap stabil ketika modul fitur diubah.",
+    "danger": "Kurang tepat. Arah dependensi yang bersih dan satu arah mencegah siklus ketergantungan melingkar dan membatasi penyebaran regresi."
+  }
+};
+
+  function submitQuiz(quizId, selectedOption, isCorrect) {
+    const card = document.getElementById('quiz-' + quizId);
+    const buttons = card.querySelectorAll('.quiz-btn');
+    const feedback = document.getElementById('feedback-' + quizId);
+
+    buttons.forEach(btn => {
+      btn.disabled = true;
+      btn.style.cursor = 'default';
+    });
+
+    if (window.event && window.event.target) {
+      window.event.target.classList.add(isCorrect ? 'correct' : 'incorrect');
+    }
+
+    feedback.className = 'quiz-feedback show ' + (isCorrect ? 'success' : 'danger');
+    feedback.innerHTML = '<strong>' + (isCorrect ? '🎉 Jawaban Tepat!' : '❌ Jawaban Salah!') + '</strong> ' + 
+      (isCorrect ? explanations[quizId].success : explanations[quizId].danger);
+  }
+</script>
+
+<!-- Chiron Annotations & Multi-IDE Launcher Engine -->
+<script src="../../../.assets/chiron-client.js"></script>
+<script src="../../../.assets/chiron-ide-launcher.js"></script>
+<script src="../../../.assets/chiron-annotations.js"></script>
+
+</body>
+</html>

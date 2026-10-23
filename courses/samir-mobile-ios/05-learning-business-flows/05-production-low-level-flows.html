@@ -1,0 +1,1284 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>05 — Production Low-Level Execution Flows | Chiron Academy</title>
+  
+  <!-- Chiron Base Stylesheet -->
+  <link rel="stylesheet" href="../../../.assets/style.css">
+  
+  <!-- Prism.js Syntax Highlighting Theme (Tomorrow Night) -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css">
+  
+  <!-- Mermaid.js for Dynamic Flow Diagrams -->
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+  <script>mermaid.initialize({ startOnLoad: true, theme: 'dark' });</script>
+</head>
+<body>
+
+<!-- ========================================================================= -->
+<!-- STICKY TOP APPLICATION BAR (CROSSNOTE / VS CODE STYLE)                     -->
+<!-- ========================================================================= -->
+<nav class="app-topbar">
+  <div class="topbar-nav-row">
+    <!-- Browser-like History Navigation -->
+    <div class="nav-history-ctrls">
+      <button class="nav-ctrl-btn" onclick="history.back()" title="Kembali (Back)">◀</button>
+      <button class="nav-ctrl-btn" onclick="history.forward()" title="Maju (Forward)">▶</button>
+      <button class="nav-ctrl-btn" onclick="location.reload()" title="Segarkan (Reload)">↻</button>
+    </div>
+
+    <!-- Document Tabs Strip (Crossnote Style) -->
+    <div class="topbar-tabs-scroll" id="docTabsStrip">
+      <a class="doc-tab" href="01-user-journey-overview.html" title="01-user-journey-overview.html">
+        <span class="tab-icon">📄</span> 01-user-journey-overview.html
+        <span class="tab-close" onclick="event.preventDefault(); this.parentElement.remove();">×</span>
+      </a>
+      <a class="doc-tab" href="02-authentication-and-session-flow.html" title="02-authentication-and-session-flow.html">
+        <span class="tab-icon">📄</span> 02-authentication-and-session-flow.html
+        <span class="tab-close" onclick="event.preventDefault(); this.parentElement.remove();">×</span>
+      </a>
+      <a class="doc-tab" href="03-core-feature-flows.html" title="03-core-feature-flows.html">
+        <span class="tab-icon">📄</span> 03-core-feature-flows.html
+        <span class="tab-close" onclick="event.preventDefault(); this.parentElement.remove();">×</span>
+      </a>
+      <a class="doc-tab" href="04-cross-feature-journeys.html" title="04-cross-feature-journeys.html">
+        <span class="tab-icon">📄</span> 04-cross-feature-journeys.html
+        <span class="tab-close" onclick="event.preventDefault(); this.parentElement.remove();">×</span>
+      </a>
+      <a class="doc-tab active" href="#" title="05-production-low-level-flows.html">
+        <span class="tab-icon">🟢</span> 05-production-low-level-flows.html
+        <span class="tab-close" onclick="event.preventDefault();">×</span>
+      </a>
+    </div>
+
+    <!-- Right Utilities -->
+    <div class="topbar-tools">
+      <button class="tool-btn" onclick="toggleCurriculumDrawer()" title="Buka seluruh daftar modul kurikulum">
+        📚 Semua Modul
+      </button>
+      <button class="tool-btn active" id="topbarTocBtn" onclick="handleTocToggleClick()" title="Buka/Tutup Daftar Isi (Mode Fokus Membaca)">
+        📑 Daftar Isi
+      </button>
+    </div>
+  </div>
+</nav>
+
+<!-- Floating Button to Restore TOC When Dismissed (Focus Mode) -->
+<button class="toc-expand-float-btn" id="tocExpandFloatBtn" onclick="toggleDesktopToc()" title="Tampilkan Kembali Daftar Isi">
+  📑 Buka Daftar Isi
+</button>
+
+<!-- ========================================================================= -->
+<!-- TWO-COLUMN DOCUMENTATION LAYOUT (MAIN CONTENT + STICKY TOC)               -->
+<!-- ========================================================================= -->
+<div class="docs-layout" id="docsLayout">
+
+  <!-- Main Content Column -->
+  <main class="docs-content">
+
+    <!-- Header Section -->
+    <header id="sec-title">
+      <div class="badge">CHIRON CLASSROOM • SAMIR MOBILE iOS</div>
+      <h1>05 — Production Low-Level Execution Flows</h1>
+      <p style="color: var(--text-muted); font-size: 1.05rem; margin-top: 0.25rem;">
+        Bedah Alur Produksi Ter-Decouple
+      </p>
+      <div class="metadata" style="margin-top: 1rem;">
+        <span>📚 Modul: <strong>05-production-low-level-flows</strong></span>
+        <span>🎯 Scope: <strong>SAMIR Mobile (iOS Native UIKit & FChannel)</strong></span>
+        <span>⏱️ Estimasi: <strong>20 Menit</strong></span>
+        <span>🏷️ Git Branch: <strong>learn/iOS-Arch</strong></span>
+      </div>
+    </header>
+
+    <!-- BAGIAN 1: DOKUMEN PEMBELAJARAN LENGKAP -->
+    <div class="section-banner">
+      <h2>📖 Bagian 1: Dokumen Pembelajaran Lengkap & Alur Nyata</h2>
+      <span class="pill">Core Knowledge</span>
+    </div>
+
+<p>Dokumen ini mendokumentasikan 4 alur kerja utama di tingkat produksi (<em>production low-level execution paths</em>) pada aplikasi <strong>SAMIR iOS</strong>. Format dokumen disusun berdasarkan standar <code>/ios-explain-flow</code> (Senior-to-Middle Mentoring) dengan fokus pada alasan decoupling arsitektur, rantai eksekusi komponen nyata, dan visualisasi interaksi menggunakan Mermaid Sequence Diagram.</p>
+<p>Status Verifikasi: <code>[Verified]</code> (ditelusuri langsung dari implementasi nyata di codebase <code>samir-mobile-nexus/ios/IDSamirLoan</code>).</p>
+<section id="sec-daftar-alur-produksi" class="doc-section">
+<h3>📌 DAFTAR ALUR PRODUKSI</h3>
+<ol>
+<li><a href="#alur-1-pipeline-request-jaringan-penandatanganan-kriptografis--envelope-handling" target="_blank" rel="noopener noreferrer">Alur 1: Pipeline Request Jaringan, Penandatanganan Kriptografis, &amp; Envelope Handling</a></li>
+<li><a href="#alur-2-konfirmasi-pinjaman-perhitungan-biaya-realtime-rx--pengajuan-order-formal" target="_blank" rel="noopener noreferrer">Alur 2: Konfirmasi Pinjaman, Perhitungan Biaya Realtime (Rx), &amp; Pengajuan Order Formal</a></li>
+<li><a href="#alur-3-navigasi-antar-modul--resolusi-deep-link-ter-decouple-czrouter" target="_blank" rel="noopener noreferrer">Alur 3: Navigasi Antar-Modul &amp; Resolusi Deep-Link Ter-decouple (CZRouter)</a></li>
+<li><a href="#alur-4-transisi-layar-native-ke-persistent-flutter-container--shared-session-bridge" target="_blank" rel="noopener noreferrer">Alur 4: Transisi Layar Native ke Persistent Flutter Container &amp; Shared Session Bridge</a></li>
+</ol>
+</section>
+<section id="sec-alur-1-pipeline-request-jaringan-penandatanganan-kriptografis-envelope-handling" class="doc-section">
+<h3>📌 Alur 1: Pipeline Request Jaringan, Penandatanganan Kriptografis, &amp; Envelope Handling</h3>
+<div id="sub-1-the-why-arsitektur-motivasi" class="doc-subsection">
+<h4>1. THE &quot;WHY&quot; (Arsitektur &amp; Motivasi)</h4>
+</div>
+<ul>
+<li><strong>Pola Arsitektur</strong>: Layered Client-Adapter Architecture (<code>BusinessService</code> -> <code>IDNetworkRequest</code> Facade -> <code>IDNetworkSignatureHandler</code> -> <code>LibNetSignGenerator</code> C-Wrapper -> <code>CZNetworkCenter</code> -> <code>CZAlamofireBridge</code> -> <code>Alamofire.Session</code>).</li>
+<li><strong>Alasan Pemisahan & Decoupling</strong>:</li>
+</ul>
+<ol>
+<li><strong>Security Binary Isolation</strong>: Logika pembuatan hash <code>sign</code> diisolasi di binary vendor framework tertutup (<code>LibNetSignGenerator.framework</code>), melindungi algoritma penandatanganan dari reverse engineering terhadap Swift source code.</li>
+<li><strong>Transport Layer Decoupling</strong>: Wrapper <code>CZAlamofireBridge</code> mengisolasi pihak ketiga (<code>Alamofire</code>). Jika dependensi networking diperbarui atau diganti, seluruh modul bisnis tingkat atas tidak terdampak.</li>
+<li><strong>Centralized Envelope & Session Interception</strong>: Pembongkaran format <code>{code, msg, result}</code> serta penanganan sesi kadaluarsa (<code>code == &quot;10006&quot;</code>) dilakukan secara terpusat di <code>IDNetworkRequest</code>, mengeliminasi boilerplate kode error handling di ratusan controller.</li>
+</ol>
+<div id="sub-2-the-trigger-chain-reaction-alur-eksekusi" class="doc-subsection">
+<h4>2. THE TRIGGER &amp; CHAIN REACTION (Alur Eksekusi)</h4>
+</div>
+<ul>
+<li><strong>Entry Point</strong>: Pemanggilan service bisnis oleh presenter atau viewModel, contoh: <code>IDLoanService.requestProductDetail(...)</code> yang mengeksekusi <code>IDNetworkRequest.id_startPOSTRequest(...)</code>.</li>
+<li><strong>Execution Chain</strong>:</li>
+</ul>
+<ol>
+<li>Service memanggil <code>IDNetworkRequest.id_startPOSTRequest(requestUrl, params: params, success: ..., failure: ...)</code>.</li>
+<li>Properti getter <code>cz_requestArguments</code> di <code>IDNetworkRequest</code> membaca parameter bisnis dan memanggil <code>ApiParamsHelper.getDefaultParams()</code> untuk menyuntikkan 18 parameter umum (account_id, mid, timestamp, uuid, version, dll.).</li>
+<li><code>IDNetworkRequest</code> memeriksa varian request: memanggil <code>IDNetworkSignatureHandler.getNormalRequestParamsWithSign(allRequestProperties)</code>.</li>
+<li><code>IDNetworkSignatureHandler</code> mengurutkan dictionary, mengubahnya menjadi JSON string, lalu memanggil method ObjC <code>NetworkRequestSignWrapper.ns_encrypt(forNormal: jsonStr, staticKey: IDNetworkManager.shared.static_key)</code>.</li>
+<li>Framework <code>LibNetSignGenerator</code> menghitung hash dan mengembalikan nilai string ke field <code>&quot;sign&quot;</code> pada dictionary request.</li>
+<li><code>IDNetworkRequest.startWithCompletionBlock</code> memanggil <code>CZBaseRequest.start()</code>, yang mendaftarkan instance request ke <code>CZNetworkCenter.sharedInstance().addRequest(self)</code>.</li>
+<li><code>CZNetworkCenter</code> membangun <code>URLRequest</code> dan mendelegasikannya ke <code>CZAlamofireBridge.startDataRequest(urlRequest: ..., sessionConfiguration: ..., validatesDomainName: ...)</code>.</li>
+<li><code>CZAlamofireBridge</code> mengeksekusi request HTTP melalui instance <code>Alamofire.Session</code>.</li>
+<li>Saat HTTP response diterima, <code>handleRequestResult</code> di <code>CZNetworkCenter</code> meneruskan data mentah ke <code>IDNetworkRequest.p_handleSuccessRequest</code>.</li>
+<li><code>IDNetworkRequest</code> memvalidasi envelope JSON:</li>
+</ol>
+<ul>
+<li>Jika <code>code == &quot;200&quot;</code>, panggil callback <code>success(self)</code> dengan <code>responseObject</code> berisi objek <code>result</code>.</li>
+<li>Jika <code>code == &quot;10006&quot;</code>, eksekusi <code>reloginWhenRequestError()</code> (reset sesi & arahkan ke layar login).</li>
+<li>Jika kode error lain, bangun instance <code>NSError</code> dengan <code>cz_errorMessage</code> dan panggil <code>failure(self)</code>.</li>
+</ul>
+<div id="sub-3-mermaid-sequence-diagram" class="doc-subsection">
+<h4>3. MERMAID SEQUENCE DIAGRAM</h4>
+</div>
+
+<div class="mermaid-interactive-card">
+  <div class="mermaid-card-toolbar">
+    <span class="title">📊 Diagram Alur #1</span>
+    <button class="mermaid-zoom-trigger" onclick="openDiagramZoom('diag-1', 'Diagram Alur #1')">🔍 Perbesar Diagram</button>
+  </div>
+  <div class="mermaid-content-wrapper" id="diag-1">
+    <div class="mermaid">
+sequenceDiagram
+    autonumber
+    participant Srv as BusinessService (IDLoanService)
+    participant Req as IDNetworkRequest (CZBaseRequest)
+    participant Helper as ApiParamsHelper
+    participant SignHandler as IDNetworkSignatureHandler
+    participant Vendor as LibNetSignGenerator (NetworkRequestSignWrapper)
+    participant Center as CZNetworkCenter
+    participant Bridge as CZAlamofireBridge
+    participant AF as Alamofire.Session
+    participant Backend as Backend Server
+
+    Srv->>Req: id_startPOSTRequest(requestUrl, params)
+    Req->>Helper: getDefaultParams()
+    Helper-->>Req: Return 18 common params
+    Req->>SignHandler: getNormalRequestParamsWithSign(mergedParams)
+    SignHandler->>Vendor: ns_encrypt(forNormal: jsonStr, staticKey: IDNetworkManager.static_key)
+    Vendor-->>SignHandler: String heksadesimal "sign"
+    SignHandler-->>Req: Dictionary dengan field "sign"
+    Req->>Center: addRequest(self)
+    Center->>Bridge: startDataRequest(urlRequest, validatesDomainName)
+    Bridge->>AF: request(urlRequest).responseData()
+    AF->>Backend: HTTPS POST (Encrypted TLS & Signed Payload)
+    Backend-->>AF: HTTP 200 { "code": "200", "msg": "OK", "result": {...} }
+    AF-->>Bridge: AFDataResponse
+    Bridge-->>Center: handleRequestResult(task, responseData, error)
+    Center-->>Req: p_handleSuccessRequest(request)
+    alt code == "200"
+        Req-->>Srv: success(req) -> unwrap req.responseObject
+    else code == "10006"
+        Req->>Req: reloginWhenRequestError() (Logout & Tab 0)
+    else error code lain
+        Req-->>Srv: failure(req) -> NSError.cz_errorMessage
+    end
+    </div>
+  </div>
+</div>
+</section>
+<section id="sec-alur-2-konfirmasi-pinjaman-perhitungan-biaya-realtime-rx-pengajuan-order-formal" class="doc-section">
+<h3>📌 Alur 2: Konfirmasi Pinjaman, Perhitungan Biaya Realtime (Rx), &amp; Pengajuan Order Formal</h3>
+<div id="sub-1-the-why-arsitektur-motivasi" class="doc-subsection">
+<h4>1. THE &quot;WHY&quot; (Arsitektur &amp; Motivasi)</h4>
+</div>
+<ul>
+<li><strong>Pola Arsitektur</strong>: Clean MVVM-Rx (Model-View-ViewModel with Reactive Extensions & Unidirectional Data Flow).</li>
+<li><strong>Alasan Pemisahan & Decoupling</strong>:</li>
+</ul>
+<ol>
+<li><strong>Strict Input/Output Decoupling</strong>: View Controller hanya berinteraksi melalui interface <code>LoanConfirmViewModelInput</code> (<code>PublishSubject</code>) dan <code>LoanConfirmViewModelOutput</code> (<code>Driver</code>), mencegah View memanipulasi state internal secara langsung.</li>
+<li><strong>Thread Safety via Driver</strong>: Output UI dijamin terikat pada <code>MainScheduler</code> dan tidak dapat mengemisikan <code>error</code> stream termination, mencegah kegagalan rendering dan crash antarmuka pada formulir finansial kritis.</li>
+<li><strong>Decoupled Pricing Engine</strong>: Logika perhitungan bunga, diskon kupon, dan breakdown biaya pinjaman diisolasi di <code>LoanConfirmServiceProtocol</code>, memungkinkan unit testing kalkulasi kredit tanpa instansiasi view.</li>
+</ol>
+<div id="sub-2-the-trigger-chain-reaction-alur-eksekusi" class="doc-subsection">
+<h4>2. THE TRIGGER &amp; CHAIN REACTION (Alur Eksekusi)</h4>
+</div>
+<ul>
+<li><strong>Entry Point</strong>: Pengguna membuka halaman konfirmasi pinjaman, memilih kartu tenor produk, memilih voucher kupon, mencentang persetujuan akad, atau menekan tombol konfirmasi pencairan.</li>
+<li><strong>Execution Chain</strong>:</li>
+</ul>
+<ol>
+<li>Saat layar dimuat, <code>LoanConfirmViewController_Rx.viewDidLoad</code> memanggil <code>input.refreshTrial.onNext(())</code>.</li>
+<li><code>LoanConfirmViewModel</code> mengaktifkan <code>_isLoading.accept(true)</code> dan memanggil <code>service.requestLoanConfirmDetails(bizId: ...)</code>.</li>
+<li><code>LoanConfirmService</code> memanggil <code>IDNetworkRequest</code> ke endpoint <code>product/confirm/details</code>; data kuota dan kupon yang diterima disimpan ke <code>_loanData</code> (<code>BehaviorRelay</code>).</li>
+<li>Driver <code>output.loanData</code> mengemisikan nilai ke View, memperbarui tampilan limit pinjaman dan daftar kartu produk cicilan.</li>
+<li>Pengguna mengetuk pilihan tenor pinjaman -> View memicu <code>input.selectProduct.onNext((product, index))</code>.</li>
+<li>ViewModel memperbarui <code>_selectedProduct.accept(product)</code> dan memicu perhitungan ulang simulasi biaya melalui <code>service.requestTrialCalculation(...)</code>.</li>
+<li>Service memanggil endpoint <code>product/confirm/calculateTrial</code>; hasil kalkulasi baru diterima dan dipancarkan ke <code>_trialResult</code>.</li>
+<li>Driver <code>output.trialResult</code> dan <code>output.receivedAmount</code> memperbarui label "Jumlah Diterima Bersih", biaya admin, dan bunga cicilan secara realtime.</li>
+<li>Pengguna mencentang persetujuan akad & regulasi SEOJK -> View memicu <code>input.toggleTermsAgreement.onNext(true)</code>.</li>
+<li>ViewModel mengevaluasi kombinasi state via <code>Observable.combineLatest</code>; Driver <code>output.canSubmit</code> mengemisikan <code>true</code> langsung ke <code>btnConfirm.rx.isEnabled</code>.</li>
+<li>Pengguna menekan tombol "Ajukan Pinjaman" -> View memicu <code>input.submitCycleLoanOrder.onNext((lat, lng, usageKey, path))</code>.</li>
+<li>ViewModel memvalidasi koordinat GPS, mengaktifkan <code>_isLoading.accept(true)</code>, dan memanggil <code>service.submitCycleFormalOrder(...)</code>.</li>
+<li>Service mengirim request bertanda tangan ke <code>product/confirm/cycleOrder</code>; respon <code>IDCycleFormalOrderModel</code> dengan status <code>&quot;AUDITING&quot;</code> dipancarkan ke <code>_cycleLoanOrderSuccess</code>.</li>
+<li>Driver <code>output.cycleLoanOrderSuccess</code> diterima <code>LoanConfirmViewController_Rx</code>, menampilkan dialog status sukses dan merutekan navigasi kembali ke Tab Beranda (<code>Tab 0</code>).</li>
+</ol>
+<div id="sub-3-mermaid-sequence-diagram" class="doc-subsection">
+<h4>3. MERMAID SEQUENCE DIAGRAM</h4>
+</div>
+
+<div class="mermaid-interactive-card">
+  <div class="mermaid-card-toolbar">
+    <span class="title">📊 Diagram Alur #2</span>
+    <button class="mermaid-zoom-trigger" onclick="openDiagramZoom('diag-2', 'Diagram Alur #2')">🔍 Perbesar Diagram</button>
+  </div>
+  <div class="mermaid-content-wrapper" id="diag-2">
+    <div class="mermaid">
+sequenceDiagram
+    autonumber
+    participant User as User Interaction
+    participant VC as LoanConfirmViewController_Rx
+    participant In as LoanConfirmViewModelInput (PublishSubject)
+    participant VM as LoanConfirmViewModel
+    participant Srv as LoanConfirmServiceProtocol
+    participant Out as LoanConfirmViewModelOutput (Driver)
+    participant Net as IDNetworkRequest + LibNetSign
+
+    %% Skenario 1: Initial Load & Fetch
+    VC->>In: refreshTrial.onNext(())
+    In->>VM: Trigger detail & trial fetch
+    VM->>Out: isLoading emits true
+    VM->>Srv: requestLoanConfirmDetails(bizId)
+    Srv->>Net: POST product/confirm/details
+    Net-->>Srv: Return { quotaList, couponList, trialResult }
+    Srv-->>VM: Callback IDConfirmQuotaDetailModel
+    VM->>VM: Update _loanData & _trialResult (BehaviorRelay)
+    VM->>Out: loanData & trialResult emit values
+    Out-->>VC: drive() Update slider, kartu produk, & ringkasan
+
+    %% Skenario 2: Pilih Kupon / Tenor & Realtime Calculation
+    User->>VC: Pilih Tenor Produk / Kupon Diskon
+    VC->>In: selectProduct.onNext((product, index))
+    In->>VM: _selectedProduct.accept(product)
+    VM->>Srv: requestTrialCalculation(amount, term, couponIds)
+    Srv->>Net: POST product/confirm/calculateTrial
+    Net-->>Srv: Return IDConfirmTrialModel
+    Srv-->>VM: Callback updated trial fees
+    VM->>Out: trialResult & receivedAmount emit values
+    Out-->>VC: drive() Label nominal diterima ter-update instan
+
+    %% Skenario 3: Agreement & Submit Order Formal
+    User->>VC: Centang S&K & Tap "Cairkan Dana"
+    VC->>In: toggleTermsAgreement.onNext(true)
+    In->>VM: _isTermsAgreed.accept(true)
+    VM->>Out: canSubmit emits true
+    Out-->>VC: drive(btnConfirm.rx.isEnabled) -> Tombol aktif
+    VC->>In: submitCycleLoanOrder.onNext((lat, lng, usageKey, path))
+    In->>VM: Validasi GPS & state
+    VM->>Out: isLoading emits true
+    VM->>Srv: submitCycleFormalOrder(orderPayload)
+    Srv->>Net: POST product/confirm/cycleOrder
+    Net-->>Srv: Return IDCycleFormalOrderModel { status: "AUDITING" }
+    Srv-->>VM: Success callback
+    VM->>Out: cycleLoanOrderSuccess emits model
+    Out-->>VC: drive() Tampilkan popup sukses & navigasi balik Tab 0
+    </div>
+  </div>
+</div>
+</section>
+<section id="sec-alur-3-navigasi-antar-modul-resolusi-deep-link-ter-decouple-czrouter" class="doc-section">
+<h3>📌 Alur 3: Navigasi Antar-Modul &amp; Resolusi Deep-Link Ter-decouple (CZRouter)</h3>
+<div id="sub-1-the-why-arsitektur-motivasi" class="doc-subsection">
+<h4>1. THE &quot;WHY&quot; (Arsitektur &amp; Motivasi)</h4>
+</div>
+<ul>
+<li><strong>Pola Arsitektur</strong>: Mediator / URL-Based Dynamic Router Pattern (<code>CZSwiftRouterLib</code>).</li>
+<li><strong>Alasan Pemisahan & Decoupling</strong>:</li>
+</ul>
+<ol>
+<li><strong>Zero Compile-Time Coupling</strong>: Modul fitur (seperti <code>SamirMainModule</code> dan <code>SamirAuthModule</code>) tidak saling meng-import file satu sama lain, memangkas dependency cycle dan mempercepat proses build.</li>
+<li><strong>Universal Navigation Pipeline</strong>: Format URL tunggal (<code>samir://&lt;module&gt;/&lt;path&gt;?params</code>) melayani deep link push notification, banner WebView H5, dan perpindahan layar kode internal secara identik.</li>
+<li><strong>Decentralized Route Handlers</strong>: Setiap modul mendaftarkan domain jalurnya sendiri (<code>IDSamirAuthModuleRouterHandler</code>) ke tabel rute saat bootstrap modul tanpa memodifikasi registry sentral.</li>
+</ol>
+<div id="sub-2-the-trigger-chain-reaction-alur-eksekusi" class="doc-subsection">
+<h4>2. THE TRIGGER &amp; CHAIN REACTION (Alur Eksekusi)</h4>
+</div>
+<ul>
+<li><strong>Entry Point</strong>: Pemanggilan in-app via <code>IDRouterManager.open(routerUrl)</code> atau penanganan deep link sistem di <code>AppDelegate.application(_:open:options:)</code>.</li>
+<li><strong>Execution Chain</strong>:</li>
+</ul>
+<ol>
+<li>Pemanggil mengeksekusi URL navigasi target: <code>IDRouterManager.open(&quot;samir://auth/identity?step=1&amp;status=RENEW&quot;)</code>.</li>
+<li><code>IDRouterManager</code> meneruskan URL string ke <code>CZRouterCenter.sharedInstance().open(url: routerUrl)</code>.</li>
+<li><code>CZRouterCenter</code> mengurai string menjadi objek <code>CZRouterRequest</code>: skema <code>samir://</code>, path <code>/auth/identity</code>, dan query parameters <code>[&quot;step&quot;: &quot;1&quot;, &quot;status&quot;: &quot;RENEW&quot;]</code>.</li>
+<li><code>CZRouterCenter</code> mencocokkan pola regex path pada <code>CZRouterTable</code>.</li>
+<li>Regex pencocokan mengidentifikasi bahwa prefix <code>/auth/*</code> terdaftar untuk kelas <code>IDSamirAuthModuleRouterHandler</code>.</li>
+<li><code>CZRouterCenter</code> mengeksekusi method <code>handle(_ router: CZRouterProtocol?)</code> pada instance <code>IDSamirAuthModuleRouterHandler</code>.</li>
+<li>Handler mengevaluasi switch-case pada properti <code>router?.path</code>, menemukan kecocokan dengan <code>IDSamirAuthRouterPath.Identity</code>.</li>
+<li>Handler membaca dictionary <code>router?.params</code> dan menginstansiasi view controller target: <code>let vc = IDNewOCRViewController(); vc.step = step; vc.status = status</code>.</li>
+<li>Handler memanggil helper navigasi <code>openVC(vc)</code>.</li>
+<li>Helper menelusuri hierarchy view controller aktif via <code>UIViewController.cz.topViewController()?.navigationController</code>.</li>
+<li>Navigation controller aktif mengeksekusi <code>pushViewController(vc, animated: true)</code> dan transisi layar selesai tanpa caller mengetahui kelas target konkret.</li>
+</ol>
+<div id="sub-3-mermaid-sequence-diagram" class="doc-subsection">
+<h4>3. MERMAID SEQUENCE DIAGRAM</h4>
+</div>
+
+<div class="mermaid-interactive-card">
+  <div class="mermaid-card-toolbar">
+    <span class="title">📊 Diagram Alur #3</span>
+    <button class="mermaid-zoom-trigger" onclick="openDiagramZoom('diag-3', 'Diagram Alur #3')">🔍 Perbesar Diagram</button>
+  </div>
+  <div class="mermaid-content-wrapper" id="diag-3">
+    <div class="mermaid">
+sequenceDiagram
+    autonumber
+    participant Caller as Caller (Banner / Push / Feature VC)
+    participant Mgr as IDRouterManager
+    participant Center as CZRouterCenter
+    participant Table as CZRouterTable (Regex Registry)
+    participant Handler as IDSamirAuthModuleRouterHandler
+    participant TargetVC as IDNewOCRViewController
+    participant Nav as Top UINavigationController
+
+    Caller->>Mgr: open("samir://auth/identity?step=1&status=RENEW")
+    Mgr->>Center: open(url: routerUrl)
+    Center->>Center: Parse CZRouterRequest (scheme, path, queryParams)
+    Center->>Table: matchHandler(for: "/auth/identity")
+    Table-->>Center: Return IDSamirAuthModuleRouterHandler instance
+    Center->>Handler: handle(routerRequest)
+    Handler->>Handler: switch router?.path -> case .Identity
+    Handler->>TargetVC: init() & inject params (isEdit, step, status)
+    Handler->>Handler: openVC(targetVC)
+    Handler->>Nav: UIViewController.cz.topViewController()?.navigationController
+    Nav->>Nav: pushViewController(targetVC, animated: true)
+    Nav-->>Caller: Transisi Layar Selesai (Decoupled)
+    </div>
+  </div>
+</div>
+</section>
+<section id="sec-alur-4-transisi-layar-native-ke-persistent-flutter-container-shared-session-bridge" class="doc-section">
+<h3>📌 Alur 4: Transisi Layar Native ke Persistent Flutter Container &amp; Shared Session Bridge</h3>
+<div id="sub-1-the-why-arsitektur-motivasi" class="doc-subsection">
+<h4>1. THE &quot;WHY&quot; (Arsitektur &amp; Motivasi)</h4>
+</div>
+<ul>
+<li><strong>Pola Arsitektur</strong>: Prewarmed Single-Engine Persistent Host Bridge (<code>FlutterEngineManager</code> + <code>FlutterNativeChannel</code> + MethodChannel RPC).</li>
+<li><strong>Alasan Pemisahan & Decoupling</strong>:</li>
+</ul>
+<ol>
+<li><strong>Memory & CPU Conservation</strong>: Alih-alih membuat <code>FlutterViewController</code> baru di setiap navigasi (~30-40MB RAM per engine), aplikasi menggunakan 1 single prewarmed engine yang aktif sejak booting.</li>
+<li><strong>Zero-Flicker Screen Switch</strong>: Container Flutter (<code>flutterContainerView</code>) disisipkan tepat di bawah TabBar native. Transisi antara Tab Native (Tab 0: Home) dan Tab Flutter (Tab 1: Repay, Tab 2: Mine) hanya melakukan toggle <code>isHidden</code> setelah Flutter mengirimkan sinyal <code>frameReady</code>, mengeliminasi efek layar berkedip putih/hitam.</li>
+<li><strong>Single Source of Truth (SSOT) Session</strong>: Flutter tidak mengelola token otentikasi atau hashing tanda tangan sendiri; seluruh parameter perangkat dan <code>staticKey</code> dipinjam dari Native via method channel <code>getNativeRequestParams</code>.</li>
+</ol>
+<div id="sub-2-the-trigger-chain-reaction-alur-eksekusi" class="doc-subsection">
+<h4>2. THE TRIGGER &amp; CHAIN REACTION (Alur Eksekusi)</h4>
+</div>
+<ul>
+<li><strong>Entry Point</strong>: Pengguna mengetuk Tab 1 ("Tagihan" / <code>IDRepayViewController</code>) atau Tab 2 ("Akun Saya" / <code>IDMineViewController</code>) pada native bottom TabBar.</li>
+<li><strong>Execution Chain</strong>:</li>
+</ul>
+<ol>
+<li><code>IDMainTabBarController</code> menangkap delegasi pemilihan tab dan memanggil <code>flutterRootRoute(for: selectedViewController)</code>.</li>
+<li>Jika tab yang dipilih adalah <code>IDRepayViewController</code>, fungsi mengembalikan rute <code>&quot;/repay&quot;</code>.</li>
+<li><code>IDMainTabBarController</code> mengeksekusi <code>switchFlutterRoot(to: &quot;/repay&quot;)</code> dan membuat penomoran unik <code>requestID</code>.</li>
+<li>Method memanggil <code>FlutterEngineManager.shared.resume()</code>, lalu memicu <code>FlutterNativeChannel.shared.showFlutterRoute(&quot;/repay&quot;, presentation: &quot;root&quot;, requestID: requestID)</code>.</li>
+<li><code>FlutterNativeChannel</code> mengeksekusi <code>methodChannel?.invokeMethod(&quot;showFlutterRoute&quot;, arguments: [&quot;route&quot;: &quot;/repay&quot;, &quot;presentation&quot;: &quot;root&quot;, &quot;requestId&quot;: requestID])</code> melalui channel <code>samir_native_channel</code>.</li>
+<li>Modul Flutter menerima RPC di <code>FlutterRootPage</code>, mengubah indeks aktif pada widget <code>IndexedStack</code>, dan me-render frame tampilan Repay.</li>
+<li>Flutter mengembalikan callback payload <code>{&quot;frameReady&quot;: true, &quot;requestId&quot;: requestID}</code> ke native iOS.</li>
+<li>Native completion block memverifikasi bahwa <code>requestID</code> cocok dengan tab aktif saat ini, lalu mengubah status <code>flutterContainerView.isHidden = false</code> dan memanggil <code>FlutterEngineManager.shared.setPersistentRootVisible(true)</code>.</li>
+<li>Ketika halaman Flutter membutuhkan komunikasi HTTP: Modul Dart mengirimkan RPC <code>getNativeRequestParams</code> melalui <code>samir_native_channel</code>.</li>
+<li><code>FlutterNativeChannel.getNativeRequestParams</code> di iOS memanggil <code>ApiParamsHelper.getDefaultParams()</code> dan menyisipkan <code>staticKey = IDNetworkManager.shared.static_key</code>, lalu mengembalikan dictionary parameter lengkap ke Flutter.</li>
+</ol>
+<div id="sub-3-mermaid-sequence-diagram" class="doc-subsection">
+<h4>3. MERMAID SEQUENCE DIAGRAM</h4>
+</div>
+
+<div class="mermaid-interactive-card">
+  <div class="mermaid-card-toolbar">
+    <span class="title">📊 Diagram Alur #4</span>
+    <button class="mermaid-zoom-trigger" onclick="openDiagramZoom('diag-4', 'Diagram Alur #4')">🔍 Perbesar Diagram</button>
+  </div>
+  <div class="mermaid-content-wrapper" id="diag-4">
+    <div class="mermaid">
+sequenceDiagram
+    autonumber
+    participant User as User Interaction
+    participant TabBar as IDMainTabBarController
+    participant EngineMgr as FlutterEngineManager
+    participant Channel as FlutterNativeChannel
+    participant Bridge as MethodChannel (samir_native_channel)
+    participant FlutterUI as FlutterRootPage (IndexedStack)
+    participant Helper as ApiParamsHelper
+
+    %% Skenario 1: Tab Switching & Frame Ready Unhiding
+    User->>TabBar: Tap Tab 1 ("Tagihan" / IDRepayViewController)
+    TabBar->>TabBar: flutterRootRoute(for: vc) -> "/repay"
+    TabBar->>TabBar: switchFlutterRoot(to: "/repay", requestID: 101)
+    TabBar->>EngineMgr: resume()
+    TabBar->>Channel: showFlutterRoute("/repay", presentation: "root", requestID: 101)
+    Channel->>Bridge: invokeMethod("showFlutterRoute", {route, presentation, requestId})
+    Bridge->>FlutterUI: Switch IndexedStack to "/repay" & Render Frame
+    FlutterUI-->>Bridge: Callback { "frameReady": true, "requestId": 101 }
+    Bridge-->>Channel: Response payload
+    Channel-->>TabBar: Completion handler verified (requestID == 101)
+    TabBar->>TabBar: flutterContainerView.isHidden = false
+    TabBar->>EngineMgr: setPersistentRootVisible(true)
+    TabBar-->>User: Tampilan Layar Tagihan Tampil Mulus (No Flicker)
+
+    %% Skenario 2: Flutter Borrowing Native Auth & Signing Params
+    FlutterUI->>Bridge: invokeMethod("getNativeRequestParams")
+    Bridge->>Channel: handleMethodCall("getNativeRequestParams")
+    Channel->>Helper: getDefaultParams()
+    Helper-->>Channel: 18 Common Params
+    Channel->>Channel: Injeksi staticKey dari IDNetworkManager
+    Channel-->>Bridge: Return complete params dictionary
+    Bridge-->>FlutterUI: Data siap digunakan untuk HTTP Request di Dart
+    </div>
+  </div>
+</div>
+</section>
+<section id="sec-rangkuman-arsitektur-untuk-middle-developer" class="doc-section">
+<h3>📌 Rangkuman Arsitektur untuk Middle Developer</h3>
+<div class="table-container"><table class="data-table"><thead><tr><th>Dimensi</th><th>Alur 1: Network Pipeline</th><th>Alur 2: Loan Confirm (Rx)</th><th>Alur 3: Inter-Module Router</th><th>Alur 4: Native-Flutter Bridge</th></tr></thead><tbody><tr><td><strong>Arsitektur Utama</strong></td><td>Layered Client-Adapter</td><td>Clean MVVM-Rx</td><td>Mediator / Dynamic Router</td><td>Prewarmed Single-Engine Bridge</td></tr><tr><td><strong>Komponen Kunci</strong></td><td><code>IDNetworkRequest</code>, <code>LibNetSign</code></td><td><code>LoanConfirmViewModel</code></td><td><code>CZRouterCenter</code>, <code>CZRouterTable</code></td><td><code>FlutterEngineManager</code>, <code>FlutterNativeChannel</code></td></tr><tr><td><strong>Pola Komunikasi</strong></td><td>Delegate & Completion Blocks</td><td>Reactive Input/Output (Subjects/Driver)</td><td>URL Query String Parsing</td><td>Bi-directional MethodChannel RPC</td></tr><tr><td><strong>Anti-Pattern Dicegah</strong></td><td>Hardcoded signing di Swift code</td><td>Mutable state leaking ke View</td><td>Circular compile-time module imports</td><td>Multi-engine RAM bloat & visual screen flickering</td></tr><tr><td><strong>Prinsip SOLID</strong></td><td>Single Responsibility (SRP)</td><td>Interface Segregation (ISP)</td><td>Dependency Inversion (DIP)</td><td>Open/Closed Principle (OCP)</td></tr></tbody></table></div>
+</section>
+
+    <!-- BAGIAN 2 & 3: ARCHITECTURAL CRITIQUE & BLUEPRINT -->
+    <div class="section-banner lab" style="margin-top: 4rem;">
+      <h2>🏛️ Bagian 2: Architecture Lab, SOLID Audit & Retention Quizzes</h2>
+      <span class="pill" style="background-color: var(--accent-warning);">Architecture Lab</span>
+    </div>
+
+
+    <!-- SEGMEN 2: ARCHITECTURAL CRITIQUE -->
+    <section class="lesson-segment" id="sub-solid">
+      <h2>🏛️ Audit SOLID & Clean Architecture: Menemukan Titik Lemah pada Implementasi Existing</h2>
+
+      <div class="callout critique">
+        <div class="callout-title">⚠️ Smells 1: State Mutation Tersebar & Kurangnya Single Source of Truth</div>
+        <p>Status transaksi pinjaman dan otentikasi disimpan di beberapa singleton berbeda secara terpisah, rentan memicu race condition dan state inconsistency antar tab.</p>
+      </div>
+
+      <div class="callout critique">
+        <div class="callout-title">⚠️ Smells 2: Kurangnya Abstraksi Domain Layer (Business Logic Terikat ke UI)</div>
+        <p>Logika validasi kredit dan kalkulasi bunga dilakukan langsung di lapisan presentasi tampilan, menyulitkan pemeliharaan dan pengujian regresi.</p>
+      </div>
+    </section>
+
+    <!-- SEGMEN 3: REFACTORING BLUEPRINT -->
+    <section class="lesson-segment" id="sub-blueprint">
+      <h2>🚀 Blueprint Refactoring Standar Industri: Pola Clean Architecture Use Case (Domain Interactor Pattern)</h2>
+      <p>Mengisolasi logika bisnis finansial ke dalam Use Case murni yang bebas dari UIKit atau Widget Flutter, menjamin 100% testability dan integritas transaksi.</p>
+
+      <div class="callout best-practice">
+        <div class="callout-title">✅ Rekomendasi Solusi Arsitektur Bersih</div>
+        <pre><code class="language-swift">public protocol CalculateRepaymentUseCase {
+    func execute(loanAmount: Double, tenorDays: Int) -&gt; RepaymentCalculation
+}
+
+public final class DefaultCalculateRepaymentUseCase: CalculateRepaymentUseCase {
+    public func execute(loanAmount: Double, tenorDays: Int) -&gt; RepaymentCalculation {
+        // Business rule murni terisolasi dari UI
+        return RepaymentCalculation(principal: loanAmount, interest: loanAmount * 0.003 * Double(tenorDays))
+    }
+}</code></pre>
+      </div>
+
+      <h3>Keunggulan Arsitektur Refactoring Ini:</h3>
+      <ul>
+        <li><strong>100% Mockable & Testable:</strong> Memungkinkan pengujian terisolasi tanpa memicu efek samping runtime produksi.</li>
+        <li><strong>Open/Closed Principle (OCP):</strong> Penambahan fitur baru dapat dilakukan tanpa memodifikasi class yang sudah stabil.</li>
+        <li><strong>Decoupled Subsystems:</strong> Membatasi dampak regresi saat terjadi perubahan dependensi eksternal.</li>
+      </ul>
+    </section>
+
+
+    <!-- SEGMEN 4: INTERACTIVE RETENTION QUIZ -->
+    <section class="lesson-segment" id="sub-quiz">
+      <h2>🧠 Interactive Retention & Architectural Quiz</h2>
+      <p>Uji pemahaman alur kode nyata dan keputusan arsitektur Anda:</p>
+
+      <!-- KUIS 1 -->
+      <div class="quiz-card" id="quiz-1">
+        <h4>Kuis 1 (Memory Recall): Berdasarkan standar Clean Architecture, apa peran utama dari domain layer pada modul IOS?</h4>
+        <div class="quiz-options">
+          <button class="quiz-btn" onclick="submitQuiz(1, 'A', true)">
+            A. Mengisolasi aturan bisnis finansial murni agar tidak tercampur dengan UI platform
+          </button>
+          <button class="quiz-btn" onclick="submitQuiz(1, 'B', false)">
+            B. Mengatur tata letak layout dan ukuran tombol di layar aplikasi perangkat nasabah
+          </button>
+          <button class="quiz-btn" onclick="submitQuiz(1, 'C', false)">
+            C. Menyimpan file sertifikat SSL dan kunci enkripsi privat di memori kartu SIM
+          </button>
+          <button class="quiz-btn" onclick="submitQuiz(1, 'D', false)">
+            D. Mengirimkan sinyal detak jantung (heartbeat) ke menara telekomunikasi seluler
+          </button>
+        </div>
+        <div class="quiz-feedback" id="feedback-1"></div>
+      </div>
+      <!-- KUIS 2 -->
+      <div class="quiz-card" id="quiz-2">
+        <h4>Kuis 2 (Architectural Decision): Mengapa penerapan Dependency Inversion Principle (DIP) sangat krusial dalam pembuatan unit test?</h4>
+        <div class="quiz-options">
+          <button class="quiz-btn" onclick="submitQuiz(2, 'A', false)">
+            A. Mengharuskan seluruh kode ditulis menggunakan bahasa pemrograman tingkat rendah C
+          </button>
+          <button class="quiz-btn" onclick="submitQuiz(2, 'B', true)">
+            B. Memungkinkan penyuntikan test double (mock/fake) untuk menguji skenario terisolasi
+          </button>
+          <button class="quiz-btn" onclick="submitQuiz(2, 'C', false)">
+            C. Mengurangi jumlah baris kode hingga setengahnya secara otomatis saat kompilasi
+          </button>
+          <button class="quiz-btn" onclick="submitQuiz(2, 'D', false)">
+            D. Menghilangkan kebutuhan arsitektur modular pada proyek aplikasi berskala besar
+          </button>
+        </div>
+        <div class="quiz-feedback" id="feedback-2"></div>
+      </div>
+      <!-- KUIS 3 -->
+      <div class="quiz-card" id="quiz-3">
+        <h4>Kuis 3 (Debugging & Maintenance): Apa keuntungan utama membatasi dependensi antar modul ke arah satu arah (Unidirectional Dependency)?</h4>
+        <div class="quiz-options">
+          <button class="quiz-btn" onclick="submitQuiz(3, 'A', true)">
+            A. Menghilangkan circular dependency dan mempermudah pelacakan penyebab bug sistem
+          </button>
+          <button class="quiz-btn" onclick="submitQuiz(3, 'B', false)">
+            B. Memaksa seluruh antarmuka aplikasi selalu berjalan dalam orientasi layar lanskap
+          </button>
+          <button class="quiz-btn" onclick="submitQuiz(3, 'C', false)">
+            C. Menghindari kebutuhan update library pihak ketiga selama masa rilis aplikasi
+          </button>
+          <button class="quiz-btn" onclick="submitQuiz(3, 'D', false)">
+            D. Mempercepat koneksi internet pengguna saat melakukan pembayaran virtual account
+          </button>
+        </div>
+        <div class="quiz-feedback" id="feedback-3"></div>
+      </div>
+    </section>
+
+    <!-- Lesson Navigation Footer -->
+    <div class="lesson-nav-footer">
+      <a class="lesson-nav-btn prev" href="../05-learning-business-flows/04-cross-feature-journeys.html">
+  ◀ Modul Sebelumnya: 04 — Cross-Feature Journeys
+</a>
+      <a class="lesson-nav-btn next" href="../06-understanding-data-and-dependencies/01-dependency-catalog.html">
+  Modul Selanjutnya: 01 — Dependency Catalog ▶
+</a>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+      <div>Chiron Codebase Mastery Academy • SAMIR Mobile iOS</div>
+      <div>Anchor Branch: <strong>learn/iOS-Arch</strong></div>
+    </footer>
+
+  </main>
+
+  <!-- ========================================================================= -->
+  <!-- RIGHT-HAND SIDEBAR: ON-PAGE TABLE OF CONTENTS                             -->
+  <!-- ========================================================================= -->
+  <aside class="docs-toc-sidebar" id="desktopTocSidebar">
+    <div class="toc-header-bar">
+      <span class="toc-header-label">📑 DAFTAR ISI</span>
+      <div class="toc-header-actions">
+        <button class="toc-action-btn" id="tocScrollTopBtn" title="Scroll ke Paling Atas" onclick="window.scrollTo({top: 0, behavior: 'smooth'})">▲</button>
+        <button class="toc-action-btn" id="tocToggleAllBtn" title="Buka/Tutup Semua Cabang" onclick="toggleAllTocBranches()">🔄</button>
+        <button class="toc-action-btn" id="tocResetActiveBtn" title="Fokuskan ke Topik Aktif" onclick="focusCurrentTocActive()">📑</button>
+        <button class="toc-action-btn toc-dismiss-btn" id="tocDismissBtn" title="Tutup Daftar Isi (Fokus Mode Membaca)" onclick="toggleDesktopToc()">✕</button>
+      </div>
+    </div>
+
+    <div class="toc-tree-container">
+      <div class="toc-tree-node root-node" id="toc-node-root">
+        <div class="toc-node-row">
+          <span class="toc-caret" onclick="toggleTocBranch(this)">▾</span>
+          <a class="toc-tree-link root-link" href="#sec-title" title="05 — Production Low-Level Execution Flows">
+            05 — Production Low-Level Execution Flows
+          </a>
+        </div>
+        <div class="toc-branch">
+          <div class="toc-node-row">
+            <span class="toc-leaf-dot"></span>
+            <a class="toc-tree-link" href="#sec-daftar-alur-produksi">DAFTAR ALUR PRODUKSI</a>
+          </div>
+          <div class="toc-tree-node" id="toc-node-sec-alur-1-pipeline-request-jaringan-penandatanganan-kriptografis-envelope-handling">
+            <div class="toc-node-row">
+              <span class="toc-caret" onclick="toggleTocBranch(this)">▾</span>
+              <a class="toc-tree-link" href="#sec-alur-1-pipeline-request-jaringan-penandatanganan-kriptografis-envelope-handling">Alur 1: Pipeline Request Jaringan, Penandatanganan Kriptografis, &amp; Envelope Handling</a>
+            </div>
+            <div class="toc-branch">
+              <div class="toc-node-row">
+                <span class="toc-leaf-dot"></span>
+                <a class="toc-tree-link" href="#sub-1-the-why-arsitektur-motivasi">1. THE &quot;WHY&quot; (Arsitektur &amp; Motivasi)</a>
+              </div>
+              <div class="toc-node-row">
+                <span class="toc-leaf-dot"></span>
+                <a class="toc-tree-link" href="#sub-2-the-trigger-chain-reaction-alur-eksekusi">2. THE TRIGGER &amp; CHAIN REACTION (Alur Eksekusi)</a>
+              </div>
+              <div class="toc-node-row">
+                <span class="toc-leaf-dot"></span>
+                <a class="toc-tree-link" href="#sub-3-mermaid-sequence-diagram">3. MERMAID SEQUENCE DIAGRAM</a>
+              </div>
+            </div>
+          </div>
+          <div class="toc-tree-node" id="toc-node-sec-alur-2-konfirmasi-pinjaman-perhitungan-biaya-realtime-rx-pengajuan-order-formal">
+            <div class="toc-node-row">
+              <span class="toc-caret" onclick="toggleTocBranch(this)">▾</span>
+              <a class="toc-tree-link" href="#sec-alur-2-konfirmasi-pinjaman-perhitungan-biaya-realtime-rx-pengajuan-order-formal">Alur 2: Konfirmasi Pinjaman, Perhitungan Biaya Realtime (Rx), &amp; Pengajuan Order Formal</a>
+            </div>
+            <div class="toc-branch">
+              <div class="toc-node-row">
+                <span class="toc-leaf-dot"></span>
+                <a class="toc-tree-link" href="#sub-1-the-why-arsitektur-motivasi">1. THE &quot;WHY&quot; (Arsitektur &amp; Motivasi)</a>
+              </div>
+              <div class="toc-node-row">
+                <span class="toc-leaf-dot"></span>
+                <a class="toc-tree-link" href="#sub-2-the-trigger-chain-reaction-alur-eksekusi">2. THE TRIGGER &amp; CHAIN REACTION (Alur Eksekusi)</a>
+              </div>
+              <div class="toc-node-row">
+                <span class="toc-leaf-dot"></span>
+                <a class="toc-tree-link" href="#sub-3-mermaid-sequence-diagram">3. MERMAID SEQUENCE DIAGRAM</a>
+              </div>
+            </div>
+          </div>
+          <div class="toc-tree-node" id="toc-node-sec-alur-3-navigasi-antar-modul-resolusi-deep-link-ter-decouple-czrouter">
+            <div class="toc-node-row">
+              <span class="toc-caret" onclick="toggleTocBranch(this)">▾</span>
+              <a class="toc-tree-link" href="#sec-alur-3-navigasi-antar-modul-resolusi-deep-link-ter-decouple-czrouter">Alur 3: Navigasi Antar-Modul &amp; Resolusi Deep-Link Ter-decouple (CZRouter)</a>
+            </div>
+            <div class="toc-branch">
+              <div class="toc-node-row">
+                <span class="toc-leaf-dot"></span>
+                <a class="toc-tree-link" href="#sub-1-the-why-arsitektur-motivasi">1. THE &quot;WHY&quot; (Arsitektur &amp; Motivasi)</a>
+              </div>
+              <div class="toc-node-row">
+                <span class="toc-leaf-dot"></span>
+                <a class="toc-tree-link" href="#sub-2-the-trigger-chain-reaction-alur-eksekusi">2. THE TRIGGER &amp; CHAIN REACTION (Alur Eksekusi)</a>
+              </div>
+              <div class="toc-node-row">
+                <span class="toc-leaf-dot"></span>
+                <a class="toc-tree-link" href="#sub-3-mermaid-sequence-diagram">3. MERMAID SEQUENCE DIAGRAM</a>
+              </div>
+            </div>
+          </div>
+          <div class="toc-tree-node" id="toc-node-sec-alur-4-transisi-layar-native-ke-persistent-flutter-container-shared-session-bridge">
+            <div class="toc-node-row">
+              <span class="toc-caret" onclick="toggleTocBranch(this)">▾</span>
+              <a class="toc-tree-link" href="#sec-alur-4-transisi-layar-native-ke-persistent-flutter-container-shared-session-bridge">Alur 4: Transisi Layar Native ke Persistent Flutter Container &amp; Shared Session Bridge</a>
+            </div>
+            <div class="toc-branch">
+              <div class="toc-node-row">
+                <span class="toc-leaf-dot"></span>
+                <a class="toc-tree-link" href="#sub-1-the-why-arsitektur-motivasi">1. THE &quot;WHY&quot; (Arsitektur &amp; Motivasi)</a>
+              </div>
+              <div class="toc-node-row">
+                <span class="toc-leaf-dot"></span>
+                <a class="toc-tree-link" href="#sub-2-the-trigger-chain-reaction-alur-eksekusi">2. THE TRIGGER &amp; CHAIN REACTION (Alur Eksekusi)</a>
+              </div>
+              <div class="toc-node-row">
+                <span class="toc-leaf-dot"></span>
+                <a class="toc-tree-link" href="#sub-3-mermaid-sequence-diagram">3. MERMAID SEQUENCE DIAGRAM</a>
+              </div>
+            </div>
+          </div>
+          <div class="toc-node-row">
+            <span class="toc-leaf-dot"></span>
+            <a class="toc-tree-link" href="#sec-rangkuman-arsitektur-untuk-middle-developer">Rangkuman Arsitektur untuk Middle Developer</a>
+          </div>
+          <!-- Architecture Lab Branches -->
+          <div class="toc-tree-node" id="toc-node-lab" style="margin-top: 0.45rem;">
+            <div class="toc-node-row">
+              <span class="toc-caret" onclick="toggleTocBranch(this)">▾</span>
+              <a class="toc-tree-link" href="#sub-solid" style="font-weight: 700; color: var(--accent-warning);">
+                🏛️ Architecture Lab & Audit
+              </a>
+            </div>
+            <div class="toc-branch">
+              <div class="toc-node-row">
+                <span class="toc-leaf-dot"></span>
+                <a class="toc-tree-link" href="#sub-solid">1. Audit SOLID & Clean Arch</a>
+              </div>
+              <div class="toc-node-row">
+                <span class="toc-leaf-dot"></span>
+                <a class="toc-tree-link" href="#sub-blueprint">2. Refactoring Blueprint</a>
+              </div>
+              <div class="toc-node-row">
+                <span class="toc-leaf-dot"></span>
+                <a class="toc-tree-link" href="#sub-quiz">3. Interactive Retention Quiz</a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </aside>
+
+</div>
+
+<!-- ========================================================================= -->
+<!-- MOBILE / DRAWER TABLE OF CONTENTS OVERLAY                                 -->
+<!-- ========================================================================= -->
+<div class="mobile-toc-overlay" id="mobileTocOverlay" onclick="toggleMobileToc()"></div>
+<div class="mobile-toc-drawer" id="mobileTocDrawer">
+  <div class="toc-header-bar">
+    <span class="toc-header-label">📑 DAFTAR ISI HALAMAN</span>
+    <button class="drawer-close-btn" onclick="toggleMobileToc()">✕</button>
+  </div>
+  <div class="toc-tree-container" style="margin-top: 0.75rem;">
+    <div class="toc-tree-node root-node" id="mob-toc-node-root">
+      <div class="toc-node-row">
+        <span class="toc-caret" onclick="toggleTocBranch(this)">▾</span>
+        <a class="toc-tree-link root-link" href="#sec-title" onclick="toggleMobileToc()">
+          05 — Production Low-Level Execution Flows
+        </a>
+      </div>
+      <div class="toc-branch">
+        <div class="toc-node-row">
+          <span class="toc-leaf-dot"></span>
+          <a class="toc-tree-link" href="#sec-daftar-alur-produksi" onclick="toggleMobileToc()">DAFTAR ALUR PRODUKSI</a>
+        </div>
+        <div class="toc-tree-node" id="mob-toc-node-sec-alur-1-pipeline-request-jaringan-penandatanganan-kriptografis-envelope-handling">
+          <div class="toc-node-row">
+            <span class="toc-caret" onclick="toggleTocBranch(this)">▾</span>
+            <a class="toc-tree-link" href="#sec-alur-1-pipeline-request-jaringan-penandatanganan-kriptografis-envelope-handling" onclick="toggleMobileToc()">Alur 1: Pipeline Request Jaringan, Penandatanganan Kriptografis, &amp; Envelope Handling</a>
+          </div>
+          <div class="toc-branch">
+            <div class="toc-node-row">
+              <span class="toc-leaf-dot"></span>
+              <a class="toc-tree-link" href="#sub-1-the-why-arsitektur-motivasi" onclick="toggleMobileToc()">1. THE &quot;WHY&quot; (Arsitektur &amp; Motivasi)</a>
+            </div>
+            <div class="toc-node-row">
+              <span class="toc-leaf-dot"></span>
+              <a class="toc-tree-link" href="#sub-2-the-trigger-chain-reaction-alur-eksekusi" onclick="toggleMobileToc()">2. THE TRIGGER &amp; CHAIN REACTION (Alur Eksekusi)</a>
+            </div>
+            <div class="toc-node-row">
+              <span class="toc-leaf-dot"></span>
+              <a class="toc-tree-link" href="#sub-3-mermaid-sequence-diagram" onclick="toggleMobileToc()">3. MERMAID SEQUENCE DIAGRAM</a>
+            </div>
+          </div>
+        </div>
+        <div class="toc-tree-node" id="mob-toc-node-sec-alur-2-konfirmasi-pinjaman-perhitungan-biaya-realtime-rx-pengajuan-order-formal">
+          <div class="toc-node-row">
+            <span class="toc-caret" onclick="toggleTocBranch(this)">▾</span>
+            <a class="toc-tree-link" href="#sec-alur-2-konfirmasi-pinjaman-perhitungan-biaya-realtime-rx-pengajuan-order-formal" onclick="toggleMobileToc()">Alur 2: Konfirmasi Pinjaman, Perhitungan Biaya Realtime (Rx), &amp; Pengajuan Order Formal</a>
+          </div>
+          <div class="toc-branch">
+            <div class="toc-node-row">
+              <span class="toc-leaf-dot"></span>
+              <a class="toc-tree-link" href="#sub-1-the-why-arsitektur-motivasi" onclick="toggleMobileToc()">1. THE &quot;WHY&quot; (Arsitektur &amp; Motivasi)</a>
+            </div>
+            <div class="toc-node-row">
+              <span class="toc-leaf-dot"></span>
+              <a class="toc-tree-link" href="#sub-2-the-trigger-chain-reaction-alur-eksekusi" onclick="toggleMobileToc()">2. THE TRIGGER &amp; CHAIN REACTION (Alur Eksekusi)</a>
+            </div>
+            <div class="toc-node-row">
+              <span class="toc-leaf-dot"></span>
+              <a class="toc-tree-link" href="#sub-3-mermaid-sequence-diagram" onclick="toggleMobileToc()">3. MERMAID SEQUENCE DIAGRAM</a>
+            </div>
+          </div>
+        </div>
+        <div class="toc-tree-node" id="mob-toc-node-sec-alur-3-navigasi-antar-modul-resolusi-deep-link-ter-decouple-czrouter">
+          <div class="toc-node-row">
+            <span class="toc-caret" onclick="toggleTocBranch(this)">▾</span>
+            <a class="toc-tree-link" href="#sec-alur-3-navigasi-antar-modul-resolusi-deep-link-ter-decouple-czrouter" onclick="toggleMobileToc()">Alur 3: Navigasi Antar-Modul &amp; Resolusi Deep-Link Ter-decouple (CZRouter)</a>
+          </div>
+          <div class="toc-branch">
+            <div class="toc-node-row">
+              <span class="toc-leaf-dot"></span>
+              <a class="toc-tree-link" href="#sub-1-the-why-arsitektur-motivasi" onclick="toggleMobileToc()">1. THE &quot;WHY&quot; (Arsitektur &amp; Motivasi)</a>
+            </div>
+            <div class="toc-node-row">
+              <span class="toc-leaf-dot"></span>
+              <a class="toc-tree-link" href="#sub-2-the-trigger-chain-reaction-alur-eksekusi" onclick="toggleMobileToc()">2. THE TRIGGER &amp; CHAIN REACTION (Alur Eksekusi)</a>
+            </div>
+            <div class="toc-node-row">
+              <span class="toc-leaf-dot"></span>
+              <a class="toc-tree-link" href="#sub-3-mermaid-sequence-diagram" onclick="toggleMobileToc()">3. MERMAID SEQUENCE DIAGRAM</a>
+            </div>
+          </div>
+        </div>
+        <div class="toc-tree-node" id="mob-toc-node-sec-alur-4-transisi-layar-native-ke-persistent-flutter-container-shared-session-bridge">
+          <div class="toc-node-row">
+            <span class="toc-caret" onclick="toggleTocBranch(this)">▾</span>
+            <a class="toc-tree-link" href="#sec-alur-4-transisi-layar-native-ke-persistent-flutter-container-shared-session-bridge" onclick="toggleMobileToc()">Alur 4: Transisi Layar Native ke Persistent Flutter Container &amp; Shared Session Bridge</a>
+          </div>
+          <div class="toc-branch">
+            <div class="toc-node-row">
+              <span class="toc-leaf-dot"></span>
+              <a class="toc-tree-link" href="#sub-1-the-why-arsitektur-motivasi" onclick="toggleMobileToc()">1. THE &quot;WHY&quot; (Arsitektur &amp; Motivasi)</a>
+            </div>
+            <div class="toc-node-row">
+              <span class="toc-leaf-dot"></span>
+              <a class="toc-tree-link" href="#sub-2-the-trigger-chain-reaction-alur-eksekusi" onclick="toggleMobileToc()">2. THE TRIGGER &amp; CHAIN REACTION (Alur Eksekusi)</a>
+            </div>
+            <div class="toc-node-row">
+              <span class="toc-leaf-dot"></span>
+              <a class="toc-tree-link" href="#sub-3-mermaid-sequence-diagram" onclick="toggleMobileToc()">3. MERMAID SEQUENCE DIAGRAM</a>
+            </div>
+          </div>
+        </div>
+        <div class="toc-node-row">
+          <span class="toc-leaf-dot"></span>
+          <a class="toc-tree-link" href="#sec-rangkuman-arsitektur-untuk-middle-developer" onclick="toggleMobileToc()">Rangkuman Arsitektur untuk Middle Developer</a>
+        </div>
+        <div class="toc-tree-node" id="mob-toc-node-lab" style="margin-top: 0.45rem;">
+          <div class="toc-node-row">
+            <span class="toc-caret" onclick="toggleTocBranch(this)">▾</span>
+            <a class="toc-tree-link" href="#sub-solid" onclick="toggleMobileToc()" style="font-weight: 700; color: var(--accent-warning);">
+              🏛️ Architecture Lab & Audit
+            </a>
+          </div>
+          <div class="toc-branch">
+            <div class="toc-node-row">
+              <span class="toc-leaf-dot"></span>
+              <a class="toc-tree-link" href="#sub-solid" onclick="toggleMobileToc()">1. Audit SOLID & Clean Arch</a>
+            </div>
+            <div class="toc-node-row">
+              <span class="toc-leaf-dot"></span>
+              <a class="toc-tree-link" href="#sub-blueprint" onclick="toggleMobileToc()">2. Refactoring Blueprint</a>
+            </div>
+            <div class="toc-node-row">
+              <span class="toc-leaf-dot"></span>
+              <a class="toc-tree-link" href="#sub-quiz" onclick="toggleMobileToc()">3. Interactive Retention Quiz</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ========================================================================= -->
+<!-- FULL CURRICULUM DRAWER (CATALOG OF ALL MODULES)                           -->
+<!-- ========================================================================= -->
+<div class="curriculum-drawer-overlay" id="curriculumOverlay" onclick="toggleCurriculumDrawer()"></div>
+<div class="curriculum-drawer" id="curriculumDrawer">
+  <div class="drawer-header">
+    <div class="drawer-title">📚 Kurikulum Lengkap SAMIR Mobile iOS</div>
+    <button class="drawer-close-btn" onclick="toggleCurriculumDrawer()">✕</button>
+  </div>
+  <div class="drawer-search">
+    <input type="text" id="moduleSearchInput" placeholder="🔍 Cari modul (contoh: startup, router, auth)..." oninput="filterCurriculum()">
+  </div>
+  <div class="drawer-body" id="curriculumListBody">
+    <div class="curriculum-level-group">
+      <div class="curriculum-level-title">Level 0: Learning Roadmap</div>
+      <a class="curriculum-item-link" href="../00-learning-roadmap.html">
+        <span>📄</span> Kurikulum &amp; Roadmap Pembelajaran SAMIR iOS
+      </a>
+    </div>
+    <div class="curriculum-level-group">
+      <div class="curriculum-level-title">Level 1: Project Foundation</div>
+      <a class="curriculum-item-link" href="../01-project-foundation/01-application-overview.html">
+        <span>📄</span> 01 — Application Overview
+      </a>
+      <a class="curriculum-item-link" href="../01-project-foundation/02-repository-structure.html">
+        <span>📄</span> 02 — Repository Structure
+      </a>
+      <a class="curriculum-item-link" href="../01-project-foundation/03-technology-stack-and-build.html">
+        <span>📄</span> 03 — Technology Stack &amp; Build Configuration
+      </a>
+    </div>
+    <div class="curriculum-level-group">
+      <div class="curriculum-level-title">Level 2: Understanding App Startup</div>
+      <a class="curriculum-item-link" href="../02-understanding-app-startup/01-ios-entry-point.html">
+        <span>📄</span> 01 — iOS Entry Point
+      </a>
+      <a class="curriculum-item-link" href="../02-understanding-app-startup/02-application-lifecycle.html">
+        <span>📄</span> 02 — Application Lifecycle
+      </a>
+      <a class="curriculum-item-link" href="../02-understanding-app-startup/03-startup-sequence-and-initial-routing.html">
+        <span>📄</span> 03 — Startup Sequence &amp; Initial Routing
+      </a>
+      <a class="curriculum-item-link" href="../02-understanding-app-startup/04-czmodulemanager-deep-dive.html">
+        <span>📄</span> 04 — CZModuleManager Deep Dive
+      </a>
+    </div>
+    <div class="curriculum-level-group">
+      <div class="curriculum-level-title">Level 3: Understanding Architecture</div>
+      <a class="curriculum-item-link" href="../03-understanding-architecture/01-architecture-overview.html">
+        <span>📄</span> 01 — Architecture Overview
+      </a>
+      <a class="curriculum-item-link" href="../03-understanding-architecture/02-layers-and-responsibilities.html">
+        <span>📄</span> 02 — Layers &amp; Responsibilities
+      </a>
+      <a class="curriculum-item-link" href="../03-understanding-architecture/03-dependency-direction.html">
+        <span>📄</span> 03 — Dependency Direction
+      </a>
+      <a class="curriculum-item-link" href="../03-understanding-architecture/04-shared-components-and-services.html">
+        <span>📄</span> 04 — Shared Components &amp; Services
+      </a>
+    </div>
+    <div class="curriculum-level-group">
+      <div class="curriculum-level-title">Level 4: Understanding Navigation</div>
+      <a class="curriculum-item-link" href="../04-understanding-navigation/01-feature-inventory.html">
+        <span>📄</span> 01 — Feature Inventory
+      </a>
+      <a class="curriculum-item-link" href="../04-understanding-navigation/02-navigation-fundamentals.html">
+        <span>📄</span> 02 — Navigation Fundamentals
+      </a>
+      <a class="curriculum-item-link" href="../04-understanding-navigation/03-complete-navigation-map.html">
+        <span>📄</span> 03 — Complete Navigation Map
+      </a>
+      <a class="curriculum-item-link" href="../04-understanding-navigation/04-navigation-conditions-and-edge-cases.html">
+        <span>📄</span> 04 — Navigation Conditions &amp; Edge Cases
+      </a>
+    </div>
+    <div class="curriculum-level-group">
+      <div class="curriculum-level-title">Level 5: Learning Business Flows</div>
+      <a class="curriculum-item-link" href="../05-learning-business-flows/01-user-journey-overview.html">
+        <span>📄</span> 01 — User Journey Overview
+      </a>
+      <a class="curriculum-item-link" href="../05-learning-business-flows/02-authentication-and-session-flow.html">
+        <span>📄</span> 02 — Authentication &amp; Session Flow
+      </a>
+      <a class="curriculum-item-link" href="../05-learning-business-flows/03-core-feature-flows.html">
+        <span>📄</span> 03 — Core Feature Flows
+      </a>
+      <a class="curriculum-item-link" href="../05-learning-business-flows/04-cross-feature-journeys.html">
+        <span>📄</span> 04 — Cross-Feature Journeys
+      </a>
+      <a class="curriculum-item-link active" href="#">
+        <span>🟢</span> 05 — Production Low-Level Execution Flows (Sedang Dibaca)
+      </a>
+    </div>
+    <div class="curriculum-level-group">
+      <div class="curriculum-level-title">Level 6: Data &amp; Dependencies</div>
+      <a class="curriculum-item-link" href="../06-understanding-data-and-dependencies/01-dependency-catalog.html">
+        <span>📄</span> 01 — Dependency Catalog
+      </a>
+      <a class="curriculum-item-link" href="../06-understanding-data-and-dependencies/02-networking-and-api-flow.html">
+        <span>📄</span> 02 — Networking &amp; API Flow
+      </a>
+      <a class="curriculum-item-link" href="../06-understanding-data-and-dependencies/03-models-and-data-transformation.html">
+        <span>📄</span> 03 — Models &amp; Data Transformation
+      </a>
+      <a class="curriculum-item-link" href="../06-understanding-data-and-dependencies/04-state-management-and-persistence.html">
+        <span>📄</span> 04 — State Management &amp; Persistence
+      </a>
+      <a class="curriculum-item-link" href="../06-understanding-data-and-dependencies/05-native-flutter-integration.html">
+        <span>📄</span> 05 — Native-Flutter Integration
+      </a>
+    </div>
+    <div class="curriculum-level-group">
+      <div class="curriculum-level-title">Level 7: Debugging &amp; Maintenance</div>
+      <a class="curriculum-item-link" href="../07-learning-to-debug-and-maintain/01-error-handling.html">
+        <span>📄</span> 01 — Error Handling
+      </a>
+      <a class="curriculum-item-link" href="../07-learning-to-debug-and-maintain/02-testing-and-debugging.html">
+        <span>📄</span> Level 7
+      </a>
+      <a class="curriculum-item-link" href="../07-learning-to-debug-and-maintain/03-coupling-and-technical-debt.html">
+        <span>📄</span> Level 7
+      </a>
+      <a class="curriculum-item-link" href="../07-learning-to-debug-and-maintain/04-change-impact-analysis.html">
+        <span>📄</span> Level 7
+      </a>
+    </div>
+    <div class="curriculum-level-group">
+      <div class="curriculum-level-title">Level 8: Reference &amp; Codebase Audit</div>
+      <a class="curriculum-item-link" href="../08-reference/01-codebase-glossary.html">
+        <span>📄</span> Level 8
+      </a>
+      <a class="curriculum-item-link" href="../08-reference/02-source-code-index.html">
+        <span>📄</span> Level 8
+      </a>
+      <a class="curriculum-item-link" href="../08-reference/03-existing-documentation-audit.html">
+        <span>📄</span> Level 8
+      </a>
+      <a class="curriculum-item-link" href="../08-reference/04-open-questions-and-unverified-findings.html">
+        <span>📄</span> Level 8
+      </a>
+    </div>
+    <div class="curriculum-level-group">
+      <div class="curriculum-level-title">Visual Diagrams &amp; Sequence Maps</div>
+      <a class="curriculum-item-link" href="../diagrams/application-startup.html">
+        <span>📄</span> Diagram — Alur Peluncuran Aplikasi (Application Startup Sequence)
+      </a>
+      <a class="curriculum-item-link" href="../diagrams/architecture-overview.html">
+        <span>📄</span> Diagram — Ikhtisar Arsitektur (Architecture Overview)
+      </a>
+      <a class="curriculum-item-link" href="../diagrams/core-user-journeys.html">
+        <span>📄</span> Diagram — Alur Pengguna Utama (Core User Journeys)
+      </a>
+      <a class="curriculum-item-link" href="../diagrams/feature-dependencies.html">
+        <span>📄</span> Diagram — Dependensi Fitur &amp; Modul (Feature Dependencies)
+      </a>
+      <a class="curriculum-item-link" href="../diagrams/navigation-overview.html">
+        <span>📄</span> Diagram — Peta Navigasi Lengkap (Navigation Overview)
+      </a>
+    </div>
+    <div class="curriculum-level-group">
+      <div class="curriculum-level-title">Course Index &amp; Syllabus</div>
+      <a class="curriculum-item-link" href="../README.html">
+        <span>📄</span> SAMIR iOS — Learning Curve &amp; Engineering Guide
+      </a>
+    </div>
+  </div>
+</div>
+
+<!-- ========================================================================= -->
+<!-- FULLSCREEN MERMAID DIAGRAM LIGHTBOX MODAL                                 -->
+<!-- ========================================================================= -->
+<div id="diagramModal" class="diagram-modal" onclick="closeDiagramModal(event)">
+  <div class="diagram-modal-dialog" onclick="event.stopPropagation()">
+    <div class="diagram-modal-header">
+      <h3 id="modalDiagramTitle">🔍 Pembesaran Diagram Alur</h3>
+      <div class="diagram-modal-controls">
+        <button class="diagram-ctrl-btn" onclick="zoomDiagram(1.25)">➕ Zoom In</button>
+        <button class="diagram-ctrl-btn" onclick="zoomDiagram(0.8)">➖ Zoom Out</button>
+        <button class="diagram-ctrl-btn" onclick="resetDiagramZoom()">↺ 100%</button>
+        <button class="diagram-close-btn" onclick="closeDiagramModal()">✕ Tutup [Esc]</button>
+      </div>
+    </div>
+    <div class="diagram-modal-body" id="diagramModalBody">
+      <!-- Cloned SVG inserted dynamically -->
+    </div>
+  </div>
+</div>
+
+<!-- Prism.js Scripts for Syntax Highlighting -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-swift.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-dart.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-json.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-yaml.min.js"></script>
+
+<!-- Interactive Scripts: Tabs, TOC ScrollSpy, Drawers & Quiz -->
+<script>
+  function toggleCurriculumDrawer() {
+    const drawer = document.getElementById('curriculumDrawer');
+    const overlay = document.getElementById('curriculumOverlay');
+    drawer.classList.toggle('open');
+    overlay.classList.toggle('open');
+  }
+
+  function toggleMobileToc() {
+    const drawer = document.getElementById('mobileTocDrawer');
+    const overlay = document.getElementById('mobileTocOverlay');
+    drawer.classList.toggle('open');
+    overlay.classList.toggle('open');
+  }
+
+  function filterCurriculum() {
+    const query = document.getElementById('moduleSearchInput').value.toLowerCase();
+    const links = document.querySelectorAll('.curriculum-item-link');
+    links.forEach(link => {
+      const text = link.innerText.toLowerCase();
+      link.style.display = text.includes(query) ? 'flex' : 'none';
+    });
+  }
+
+  function handleTocToggleClick() {
+    if (window.innerWidth > 1200) {
+      toggleDesktopToc();
+    } else {
+      toggleMobileToc();
+    }
+  }
+
+  function toggleDesktopToc() {
+    document.body.classList.toggle('toc-collapsed');
+    const isCollapsed = document.body.classList.contains('toc-collapsed');
+    try {
+      localStorage.setItem('chiron_toc_collapsed', isCollapsed ? '1' : '0');
+    } catch (e) {}
+
+    const topbarBtn = document.getElementById('topbarTocBtn');
+    if (topbarBtn) {
+      if (isCollapsed) {
+        topbarBtn.classList.remove('active');
+        topbarBtn.title = "Tampilkan Daftar Isi (Mode Normal)";
+      } else {
+        topbarBtn.classList.add('active');
+        topbarBtn.title = "Tutup Daftar Isi (Mode Fokus Membaca)";
+      }
+    }
+  }
+
+  function toggleTocBranch(caretEl) {
+    const node = caretEl.closest('.toc-tree-node');
+    if (node) {
+      node.classList.toggle('collapsed');
+      caretEl.textContent = node.classList.contains('collapsed') ? '▸' : '▾';
+    }
+  }
+
+  function toggleAllTocBranches() {
+    const allNodes = document.querySelectorAll('.toc-tree-node');
+    let hasCollapsed = false;
+    allNodes.forEach(n => {
+      if (n.classList.contains('collapsed')) hasCollapsed = true;
+    });
+    allNodes.forEach(n => {
+      const caret = n.querySelector(':scope > .toc-node-row > .toc-caret');
+      if (hasCollapsed) {
+        n.classList.remove('collapsed');
+        if (caret) caret.textContent = '▾';
+      } else {
+        if (!n.classList.contains('root-node')) {
+          n.classList.add('collapsed');
+          if (caret) caret.textContent = '▸';
+        }
+      }
+    });
+  }
+
+  function focusCurrentTocActive() {
+    const activeLink = document.querySelector('.toc-tree-link.active');
+    if (activeLink) {
+      activeLink.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+    } else {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  }
+
+  window.addEventListener('DOMContentLoaded', () => {
+    try {
+      if (localStorage.getItem('chiron_toc_collapsed') === '1' && window.innerWidth > 1200) {
+        document.body.classList.add('toc-collapsed');
+        const topbarBtn = document.getElementById('topbarTocBtn');
+        if (topbarBtn) topbarBtn.classList.remove('active');
+      }
+    } catch (e) {}
+
+    const sectionIds = ['sec-title', 'sec-daftar-alur-produksi', 'sec-alur-1-pipeline-request-jaringan-penandatanganan-kriptografis-envelope-handling', 'sub-1-the-why-arsitektur-motivasi', 'sub-2-the-trigger-chain-reaction-alur-eksekusi', 'sub-3-mermaid-sequence-diagram', 'sec-alur-2-konfirmasi-pinjaman-perhitungan-biaya-realtime-rx-pengajuan-order-formal', 'sub-1-the-why-arsitektur-motivasi', 'sub-2-the-trigger-chain-reaction-alur-eksekusi', 'sub-3-mermaid-sequence-diagram', 'sec-alur-3-navigasi-antar-modul-resolusi-deep-link-ter-decouple-czrouter', 'sub-1-the-why-arsitektur-motivasi', 'sub-2-the-trigger-chain-reaction-alur-eksekusi', 'sub-3-mermaid-sequence-diagram', 'sec-alur-4-transisi-layar-native-ke-persistent-flutter-container-shared-session-bridge', 'sub-1-the-why-arsitektur-motivasi', 'sub-2-the-trigger-chain-reaction-alur-eksekusi', 'sub-3-mermaid-sequence-diagram', 'sec-rangkuman-arsitektur-untuk-middle-developer', 'sub-solid', 'sub-blueprint', 'sub-quiz'];
+    const tocLinks = document.querySelectorAll('.toc-tree-link');
+
+    window.addEventListener('scroll', () => {
+      let currentSection = '';
+      const scrollPos = window.scrollY + 140;
+
+      sectionIds.forEach(id => {
+        const el = document.getElementById(id);
+        if (el && el.offsetTop <= scrollPos) {
+          currentSection = id;
+        }
+      });
+
+      if (currentSection) {
+        tocLinks.forEach(link => {
+          link.classList.remove('active');
+          if (link.getAttribute('href') === '#' + currentSection) {
+            link.classList.add('active');
+          }
+        });
+      }
+    });
+  });
+
+  // Diagram Lightbox Controls
+  let currentDiagramScale = 1.0;
+  function openDiagramZoom(diagramId, title) {
+    const originalEl = document.getElementById(diagramId);
+    if (!originalEl) return;
+    const svgEl = originalEl.querySelector('svg');
+    if (!svgEl) return;
+
+    const modal = document.getElementById('diagramModal');
+    const modalBody = document.getElementById('diagramModalBody');
+    const modalTitle = document.getElementById('modalDiagramTitle');
+
+    modalTitle.innerHTML = title ? '🔍 ' + title : '🔍 Pembesaran Diagram Alur';
+    modalBody.innerHTML = svgEl.outerHTML;
+    
+    currentDiagramScale = 1.0;
+    const clonedSvg = modalBody.querySelector('svg');
+    if (clonedSvg) clonedSvg.style.transform = 'scale(' + currentDiagramScale + ')';
+
+    modal.classList.add('active');
+    document.body.style.overflow = 'hidden';
+  }
+
+  function closeDiagramModal(event) {
+    if (event && event.target && event.target.closest && event.target.closest('.diagram-modal-dialog') && !event.target.classList.contains('diagram-close-btn')) {
+      return;
+    }
+    const modal = document.getElementById('diagramModal');
+    modal.classList.remove('active');
+    document.body.style.overflow = 'auto';
+  }
+
+  function zoomDiagram(factor) {
+    const modalBody = document.getElementById('diagramModalBody');
+    const svg = modalBody.querySelector('svg');
+    if (!svg) return;
+    currentDiagramScale *= factor;
+    svg.style.transform = 'scale(' + currentDiagramScale + ')';
+  }
+
+  function resetDiagramZoom() {
+    const modalBody = document.getElementById('diagramModalBody');
+    const svg = modalBody.querySelector('svg');
+    if (!svg) return;
+    currentDiagramScale = 1.0;
+    svg.style.transform = 'scale(1)';
+  }
+
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') {
+      closeDiagramModal();
+      const cDrawer = document.getElementById('curriculumDrawer');
+      if (cDrawer && cDrawer.classList.contains('open')) toggleCurriculumDrawer();
+      const tDrawer = document.getElementById('mobileTocDrawer');
+      if (tDrawer && tDrawer.classList.contains('open')) toggleMobileToc();
+    } else if (e.key === ']' && !e.ctrlKey && !e.metaKey && e.target.tagName !== 'INPUT') {
+      handleTocToggleClick();
+    }
+  });
+
+  // Quiz Evaluation Logic
+  const explanations = {
+  "1": {
+    "success": "Tepat! Domain layer adalah inti logika bisnis murni yang tidak boleh memiliki dependensi ke framework presentasi seperti UIKit atau Flutter Widget.",
+    "danger": "Kurang tepat. Domain layer menampung entitas dan aturan bisnis murni tanpa mengetahui detail implementasi antarmuka pengguna."
+  },
+  "2": {
+    "success": "Benar! Dengan bergantung pada abstraksi protokol/antarmuka, kita dapat menginjeksi Mock Service di unit test tanpa memanggil server sungguhan.",
+    "danger": "Kurang tepat. DIP memungkinkan kita menukar implementasi konkret jaringan atau database dengan mock objek untuk verifikasi logika yang cepat dan deterministik."
+  },
+  "3": {
+    "success": "Sempurna! Ketergantungan satu arah mencegah dependency loop (circular import) dan menjamin modul fondasi tetap stabil ketika modul fitur diubah.",
+    "danger": "Kurang tepat. Arah dependensi yang bersih dan satu arah mencegah siklus ketergantungan melingkar dan membatasi penyebaran regresi."
+  }
+};
+
+  function submitQuiz(quizId, selectedOption, isCorrect) {
+    const card = document.getElementById('quiz-' + quizId);
+    const buttons = card.querySelectorAll('.quiz-btn');
+    const feedback = document.getElementById('feedback-' + quizId);
+
+    buttons.forEach(btn => {
+      btn.disabled = true;
+      btn.style.cursor = 'default';
+    });
+
+    if (window.event && window.event.target) {
+      window.event.target.classList.add(isCorrect ? 'correct' : 'incorrect');
+    }
+
+    feedback.className = 'quiz-feedback show ' + (isCorrect ? 'success' : 'danger');
+    feedback.innerHTML = '<strong>' + (isCorrect ? '🎉 Jawaban Tepat!' : '❌ Jawaban Salah!') + '</strong> ' + 
+      (isCorrect ? explanations[quizId].success : explanations[quizId].danger);
+  }
+</script>
+
+<!-- Chiron Annotations & Multi-IDE Launcher Engine -->
+<script src="../../../.assets/chiron-client.js"></script>
+<script src="../../../.assets/chiron-ide-launcher.js"></script>
+<script src="../../../.assets/chiron-annotations.js"></script>
+
+</body>
+</html>

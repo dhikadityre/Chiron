@@ -1,0 +1,1287 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>04 — CZModuleManager Deep Dive | Chiron Academy</title>
+  
+  <!-- Chiron Base Stylesheet -->
+  <link rel="stylesheet" href="../../../.assets/style.css">
+  
+  <!-- Prism.js Syntax Highlighting Theme (Tomorrow Night) -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css">
+  
+  <!-- Mermaid.js for Dynamic Flow Diagrams -->
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+  <script>mermaid.initialize({ startOnLoad: true, theme: 'dark' });</script>
+</head>
+<body>
+
+<!-- ========================================================================= -->
+<!-- STICKY TOP APPLICATION BAR (CROSSNOTE / VS CODE STYLE)                     -->
+<!-- ========================================================================= -->
+<nav class="app-topbar">
+  <div class="topbar-nav-row">
+    <!-- Browser-like History Navigation -->
+    <div class="nav-history-ctrls">
+      <button class="nav-ctrl-btn" onclick="history.back()" title="Kembali (Back)">◀</button>
+      <button class="nav-ctrl-btn" onclick="history.forward()" title="Maju (Forward)">▶</button>
+      <button class="nav-ctrl-btn" onclick="location.reload()" title="Segarkan (Reload)">↻</button>
+    </div>
+
+    <!-- Document Tabs Strip (Crossnote Style) -->
+    <div class="topbar-tabs-scroll" id="docTabsStrip">
+      <a class="doc-tab" href="01-ios-entry-point.html" title="01-ios-entry-point.html">
+        <span class="tab-icon">📄</span> 01-ios-entry-point.html
+        <span class="tab-close" onclick="event.preventDefault(); this.parentElement.remove();">×</span>
+      </a>
+      <a class="doc-tab" href="02-application-lifecycle.html" title="02-application-lifecycle.html">
+        <span class="tab-icon">📄</span> 02-application-lifecycle.html
+        <span class="tab-close" onclick="event.preventDefault(); this.parentElement.remove();">×</span>
+      </a>
+      <a class="doc-tab" href="03-startup-sequence-and-initial-routing.html" title="03-startup-sequence-and-initial-routing.html">
+        <span class="tab-icon">📄</span> 03-startup-sequence-and-initial-routing.html
+        <span class="tab-close" onclick="event.preventDefault(); this.parentElement.remove();">×</span>
+      </a>
+      <a class="doc-tab active" href="#" title="04-czmodulemanager-deep-dive.html">
+        <span class="tab-icon">🟢</span> 04-czmodulemanager-deep-dive.html
+        <span class="tab-close" onclick="event.preventDefault();">×</span>
+      </a>
+    </div>
+
+    <!-- Right Utilities -->
+    <div class="topbar-tools">
+      <button class="tool-btn" onclick="toggleCurriculumDrawer()" title="Buka seluruh daftar modul kurikulum">
+        📚 Semua Modul
+      </button>
+      <button class="tool-btn active" id="topbarTocBtn" onclick="handleTocToggleClick()" title="Buka/Tutup Daftar Isi (Mode Fokus Membaca)">
+        📑 Daftar Isi
+      </button>
+    </div>
+  </div>
+</nav>
+
+<!-- Floating Button to Restore TOC When Dismissed (Focus Mode) -->
+<button class="toc-expand-float-btn" id="tocExpandFloatBtn" onclick="toggleDesktopToc()" title="Tampilkan Kembali Daftar Isi">
+  📑 Buka Daftar Isi
+</button>
+
+<!-- ========================================================================= -->
+<!-- TWO-COLUMN DOCUMENTATION LAYOUT (MAIN CONTENT + STICKY TOC)               -->
+<!-- ========================================================================= -->
+<div class="docs-layout" id="docsLayout">
+
+  <!-- Main Content Column -->
+  <main class="docs-content">
+
+    <!-- Header Section -->
+    <header id="sec-title">
+      <div class="badge">CHIRON CLASSROOM • SAMIR MOBILE iOS</div>
+      <h1>04 — CZModuleManager Deep Dive</h1>
+      <p style="color: var(--text-muted); font-size: 1.05rem; margin-top: 0.25rem;">
+        Mekanisme Registrasi, Fallback Namespace, &amp; Routing
+      </p>
+      <div class="metadata" style="margin-top: 1rem;">
+        <span>📚 Modul: <strong>04-czmodulemanager-deep-dive</strong></span>
+        <span>🎯 Scope: <strong>SAMIR Mobile (iOS Native UIKit & FChannel)</strong></span>
+        <span>⏱️ Estimasi: <strong>20 Menit</strong></span>
+        <span>🏷️ Git Branch: <strong>learn/iOS-Arch</strong></span>
+      </div>
+    </header>
+
+    <!-- BAGIAN 1: DOKUMEN PEMBELAJARAN LENGKAP -->
+    <div class="section-banner">
+      <h2>📖 Bagian 1: Dokumen Pembelajaran Lengkap & Alur Nyata</h2>
+      <span class="pill">Core Knowledge</span>
+    </div>
+
+<p>Dokumen ini mengupas tuntas proses di balik layar (<strong>under the hood</strong>) dari <a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/learn/iOS-Arch/ios/IDSamirLoan/Application/CZSwiftModuleLib/Classes/CZModuleManager.swift" target="_blank" rel="noopener noreferrer">🦊 CZModuleManager.swift <span class="branch-tag">learn/iOS-Arch</span> ↗</a> di lingkungan <strong>Production</strong>: mulai dari bootstrapping cold start, dynamic class reflection, resolusi namespace Swift (<code>moduleName</code> vs <code>bundleName</code>), mekanisme routing & URL filtering, koordinasi penanganan deeplink saat splash screen, hingga inter-module communication melalui thread-safe service locator.</p>
+<p>Status Verifikasi: <code>[Verified]</code> (diverifikasi langsung dari <code>CZModuleManager.swift</code>, <code>CZModuleProtocol.swift</code>, <code>CZRouterCenter.swift</code>, <code>Bundle+CZExtension.swift</code>, <code>IDSamirMainModule.swift</code>, <code>IDHomeViewController.swift</code>, dan <code>IDModuleList.plist</code>).</p>
+<section id="sec-obj" class="doc-section">
+<h3>🎯 A. Learning Objective</h3>
+<p>Setelah mempelajari dokumen ini, pembaca akan mampu:</p>
+<ol>
+<li>Menjelaskan siklus hidup internal <code>CZModuleManager</code> dari fase <strong>Cold Start</strong> hingga dispatch event runtime UIKit.</li>
+<li>Memahami mekanisme refleksi dinamis <code>NSClassFromString</code>, format namespace biner Swift, dan alasan teknis mengapa <code>registerModule(&quot;\(moduleName).\(className)&quot;)</code> selalu bernilai <code>false</code> di Production sementara fallback <code>Bundle.cz.bundleName + &quot;.\(className)&quot;</code> yang berhasil.</li>
+<li>Menyebutkan kondisi-kondisi di mana <code>moduleObject</code> dapat bernilai <code>nil</code> / <code>false</code> saat factory method <code>create()</code> dipanggil.</li>
+<li>Menjelaskan arsitektur pendaftaran <code>routers()</code> dan <code>routerFilters()</code> (<code>CZRouterCenter</code>) lengkap dengan contoh alur nyata: navigasi antarmodul, <em>passing parameters</em>, hingga <em>back navigation</em>.</li>
+<li>Menjelaskan use case aliasing / URL rewriting pada <code>routerFilters</code> untuk backward-compatibility deep link lama.</li>
+<li>Memahami koordinasi penundaan eksekusi Deeplink (<code>Samir_DeepLink_Str</code>) selama splash countdown 3 detik hingga dikonsumsi oleh Beranda.</li>
+<li>Menjelaskan mengapa <code>serviceForProtocol</code> dibuat, seberapa penting perannya (dipanggil 80+ kali di SAMIR), dan bagaimana <em>serial queue</em> menjamin <em>thread-safety</em>.</li>
+</ol>
+</section>
+<section id="sec-prereq" class="doc-section">
+<h3>📋 B. Prerequisites</h3>
+<ul>
+<li>Sudah membaca <a href="01-ios-entry-point.html">01-ios-entry-point.md</a> dan <a href="02-application-lifecycle.html">02-application-lifecycle.md</a>.</li>
+<li>Memahami konsep namespace kompilasi Swift dan runtime Objective-C (<code>NSClassFromString</code>).</li>
+</ul>
+</section>
+<section id="sec-simple" class="doc-section">
+<h3>📌 C. Definisi &amp; Konsep Kunci</h3>
+<div id="sub-1-apa-itu-cold-start" class="doc-subsection">
+<h4>1. Apa itu Cold Start?</h4>
+</div>
+<p>Dalam pengembangan mobile iOS, siklus peluncuran aplikasi terbagi menjadi tiga kondisi:</p>
+<ul>
+<li><strong>Cold Start (Kondisi Mati Total):</strong></li>
+</ul>
+<p>Aplikasi diluncurkan ketika proses biner sama sekali <strong>belum ada di memori RAM perangkat</strong>.</p>
+<ul>
+<li><em>Pemicu:</em> Pengguna baru menyalakan HP, aplikasi baru saja ditutup paksa (<em>force quit / swipe up</em>) dari App Switcher, atau sistem operasi iOS mematikan proses di background untuk membebaskan RAM.</li>
+<li><em>Rangkaian Eksekusi:</em> Kernel OS memuat biner -> <code>dyld</code> -> <a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/learn/iOS-Arch/ios/IDSamirLoan/main.swift" target="_blank" rel="noopener noreferrer">🦊 main.swift <span class="branch-tag">learn/iOS-Arch</span> ↗</a> -> Inisialisasi APM TingYun -> <a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/learn/iOS-Arch/ios/IDSamirLoan/Application/CZSwiftModuleLib/Classes/CZModuleManager.swift#L55" target="_blank" rel="noopener noreferrer">🦊 CZModuleManager.setup <span class="branch-tag">learn/iOS-Arch</span> ↗</a> (baca plist & register seluruh modul/service) -> <code>UIApplicationMain</code> -> <code>CZAppDelegate</code> -> <code>IDSamirMainModule</code> (Window, Flutter prewarm, Splash Screen 3 detik).</li>
+<li><strong>Warm Start:</strong> Proses aplikasi masih ada di RAM (berada di background), lalu pengguna membuka kembali aplikasi. Sistem <strong>tidak</strong> mengulang <code>main.swift</code> maupun <code>CZModuleManager.setup()</code>, melainkan hanya memicu lifecycle <code>applicationWillEnterForeground</code> dan <code>applicationDidBecomeActive</code>.</li>
+<li><strong>Hot Start:</strong> Aplikasi baru diminimize sebentar dan OS langsung membawanya ke foreground tanpa reload state apa pun.</li>
+</ul>
+<div id="sub-2-analogi-pusat-pengendali-terminal-bandara" class="doc-subsection">
+<h4>2. Analogi Pusat Pengendali Terminal Bandara</h4>
+</div>
+<p>Bayangkan <code>CZModuleManager</code> sebagai <strong>Pusat Pengendali Terminal Bandara</strong>:</p>
+<ul>
+<li><strong>Manifest Maskapai (<a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/learn/iOS-Arch/ios/IDSamirLoan/Application/Configuration/Module/IDModuleList.plist" target="_blank" rel="noopener noreferrer">🦊 IDModuleList.plist <span class="branch-tag">learn/iOS-Arch</span> ↗</a>)</strong>: Daftar resmi maskapai yang beroperasi di bandara (<code>SamirMainModule</code>, <code>SamirLoanModule</code>, <code>SamirAuthModule</code>, dll.).</li>
+<li><strong>Petugas Registrasi (<code>registerAllModules</code>)</strong>: Memanggil nama maskapai. Jika dipanggil dengan kode internasional (<code>moduleName</code>) gagal karena semua maskapai bernaung di bawah satu bendera bandara lokal (<code>bundleName</code> = <code>IDSamirLoan</code>), petugas beralih menggunakan kode lokal.</li>
+<li><strong>Papan Petunjuk & Gate Boarding (<code>routers</code>)</strong>: Setiap maskapai mendaftarkan pintu gate masing-masing (<code>samir://auth/identity</code>).</li>
+<li><strong>Layanan Pengalihan Tiket Lama (<code>routerFilters</code>)</strong>: Mengarahkan penumpang yang membawa tiket lama dengan nomor gerbang usang ke gerbang baru secara otomatis tanpa tersesat.</li>
+<li><strong>Loket Layanan Bersama (<code>serviceForProtocol</code>)</strong>: Tempat maskapai meminta layanan bersama (misal: verifikasi status login user) melalui antrean tertib dan aman (<code>serviceCacheQueue.sync</code>).</li>
+</ul>
+</section>
+<section id="sec-actual" class="doc-section">
+<h3>📌 D. Proses di Balik Layar di Production (Under the Hood)</h3>
+<div id="sub-1-bootstrapping-awal-mainswift---czmodulehandler" class="doc-subsection">
+<h4>1. Bootstrapping Awal (`main.swift` -&gt; `CZModuleHandler`)</h4>
+</div>
+<p>Eksekusi aplikasi dimulai dari <a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/learn/iOS-Arch/ios/IDSamirLoan/main.swift#L39" target="_blank" rel="noopener noreferrer">🦊 main.swift <span class="branch-tag">learn/iOS-Arch</span> ↗</a>:</p>
+<pre><code class="language-swift">let _ = CZModuleHandler.ModuleManagerApplicationMain(
+    CommandLine.argc,
+    argv: UnsafeMutablePointer(CommandLine.unsafeArgv),
+    moduleConfigurationFileName: &quot;IDModuleList&quot;,
+    serviceConfigurationFileName: &quot;IDServiceList&quot;
+)</code></pre>
+<p><a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/learn/iOS-Arch/ios/IDSamirLoan/Application/CZSwiftModuleLib/Classes/CZModuleHandler.swift#L16" target="_blank" rel="noopener noreferrer">🦊 CZModuleHandler.swift:L16 <span class="branch-tag">learn/iOS-Arch</span> ↗</a> langsung memicu:</p>
+<pre><code class="language-swift">CZModuleManager.shared.setup(moduleFileName, servicePlistFileName: serviceFileName)</code></pre>
+<p>Proses ini mengeksekusi dua tahapan inisialisasi:</p>
+<ol>
+<li><code>registerAllModules(&quot;IDModuleList&quot;)</code></li>
+<li><code>registerAllServices(&quot;IDServiceList&quot;)</code></li>
+</ol>
+<div id="sub-2-pembedahan-registerallmodules-modulename-vs-bundlename" class="doc-subsection">
+<h4>2. Pembedahan `registerAllModules`: `moduleName` vs `bundleName`</h4>
+</div>
+<p>Pada <a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/learn/iOS-Arch/ios/IDSamirLoan/Application/CZSwiftModuleLib/Classes/CZModuleManager.swift#L62-L77" target="_blank" rel="noopener noreferrer">🦊 CZModuleManager.swift:L62-L77 <span class="branch-tag">learn/iOS-Arch</span> ↗</a>:</p>
+<pre><code class="language-swift">if let contents = NSDictionary(contentsOf: url!) as? [String: String] {
+    for (moduleName, className) in contents {
+        if registerModule(&quot;\(moduleName).\(className)&quot;) == false {
+            let _ = registerModule(Bundle.cz.bundleName + &quot;.\(className)&quot;)
+        }
+    }
+}</code></pre>
+<h5 id="item-a-apakah-secara-flow-ia-mendaftarkan-modulename-atau-bundlename">A. Apakah secara flow ia mendaftarkan `moduleName` atau `bundleName`?</h5>
+<div class="callout best-practice"><p>[!IMPORTANT] <strong>Secara flow aktual di Production, yang berhasil didaftarkan selalu <code>bundleName</code> (<code>IDSamirLoan.&lt;ClassName&gt;</code>)!</strong></p></div>
+<p>Mari telusuri penyebab teknisnya:</p>
+<ol>
+<li>Di <a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/learn/iOS-Arch/ios/IDSamirLoan/Application/Configuration/Module/IDModuleList.plist" target="_blank" rel="noopener noreferrer">🦊 IDModuleList.plist <span class="branch-tag">learn/iOS-Arch</span> ↗</a>:</li>
+</ol>
+<ul>
+<li><code>moduleName</code> (Key) = <code>&quot;SamirMainModule&quot;</code></li>
+<li><code>className</code> (Value) = <code>&quot;IDSamirMainModule&quot;</code></li>
+</ul>
+<ol>
+<li>Di Swift runtime, simbol class disimpan dengan format: <code>&lt;NamaTarget/Binary&gt;.&lt;NamaClass&gt;</code>.</li>
+<li>Dalam struktur proyek SAMIR iOS, modul <code>SamirMainModule</code>, <code>SamirAuthModule</code>, dll. <strong>tidak dikompilasi sebagai Dynamic Framework / CocoaPods terpisah</strong>, melainkan berada di dalam target aplikasi utama (<a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/learn/iOS-Arch/ios/IDSamirLoan.xcodeproj/project.pbxproj" target="_blank" rel="noopener noreferrer">🦊 IDSamirLoan.xcodeproj <span class="branch-tag">learn/iOS-Arch</span> ↗</a>).</li>
+<li>Akibatnya, namespace resmi class tersebut di memori biner adalah:</li>
+</ol>
+<p><code>&quot;IDSamirLoan.IDSamirMainModule&quot;</code> (bukan <code>&quot;SamirMainModule.IDSamirMainModule&quot;</code>).</p>
+<ol>
+<li>Properti <a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/learn/iOS-Arch/ios/IDSamirLoan/Application/CZSwiftUtils/Classes/CZExtension/Bundle+CZExtension.swift#L95" target="_blank" rel="noopener noreferrer">🦊 Bundle.cz.bundleName <span class="branch-tag">learn/iOS-Arch</span> ↗</a> mengambil <code>CFBundleName</code> dari <code>Bundle.main</code>, yang menghasilkan string <code>&quot;IDSamirLoan&quot;</code>.</li>
+</ol>
+<h5 id="item-b-pembedahan-nsclassfromstring-dan-kondisi-moduleobject-bernilai-false">B. Pembedahan `NSClassFromString` dan Kondisi `moduleObject` Bernilai `false`</h5>
+<pre><code class="language-swift">// CZModuleManager.swift:L80-L86
+guard let moduleClass: AnyClass = NSClassFromString(moduleName) else {
+    return false
+}
+guard let moduleObject: CZModuleProtocol = (moduleClass as! CZModuleProtocol.Type).create() else { 
+    return false
+}</code></pre>
+<ol>
+<li><strong>Apa itu <code>NSClassFromString</code>?</strong></li>
+</ol>
+<p>Fungsi runtime Objective-C / Foundation yang mengubah string nama lengkap class menjadi metatype class (<code>AnyClass?</code>) di memori. Jika nama class cocok dengan tabel simbol biner yang dimuat, ia mengembalikan tipe class-nya; jika tidak ditemukan, ia mengembalikan <code>nil</code>.</p>
+<ol>
+<li><strong>Evaluasi Pemanggilan Pertama (<code>moduleName.className</code>):</strong></li>
+</ol>
+<pre><code class="language-swift">   registerModule(&quot;SamirMainModule.IDSamirMainModule&quot;)</code></pre>
+<p><code>NSClassFromString</code> <strong>pasti menghasilkan <code>nil</code></strong> karena tidak ada binary framework bernama <code>SamirMainModule</code>. <code>guard</code> pertama langsung gagal dan me-return <code>false</code>.</p>
+<ol>
+<li><strong>Evaluasi Pemanggilan Kedua (Fallback <code>Bundle.cz.bundleName + &quot;.\(className)&quot;</code>):</strong></li>
+</ol>
+<pre><code class="language-swift">   registerModule(&quot;IDSamirLoan.IDSamirMainModule&quot;)</code></pre>
+<p><code>NSClassFromString</code> <strong>berhasil menemukan <code>AnyClass</code></strong>.</p>
+<ol>
+<li><strong>Kapan <code>moduleObject</code> pada <code>guard</code> kedua bisa bernilai <code>false</code> / <code>nil</code>?</strong></li>
+</ol>
+<p>Metode protokol didefinisikan sebagai failable factory method:</p>
+<pre><code class="language-swift">   @objc public protocol CZModuleProtocol: UIApplicationDelegate {
+       static func create() -&gt; CZModuleProtocol?
+   }</code></pre>
+<p>Nilai <code>moduleObject</code> bernilai <code>nil</code> jika:</p>
+<ul>
+<li><strong>Feature Flag / Kill Switch:</strong> Implementasi <code>create()</code> sengaja mengecek kondisi feature toggle dan me-return <code>nil</code> jika fitur sedang dimatikan.</li>
+<li><strong>Kegagalan Inisialisasi Dependensi Internal:</strong> Jika <code>create()</code> membutuhkan alokasi memori penting atau berkas konfigurasi lokal yang corrupt/gagal dimuat.</li>
+<li><strong>Unit Testing / Mocking:</strong> Di lingkungan pengujian otomatis, modul tertentu sengaja di-stub untuk mengembalikan <code>nil</code> agar tidak ikut berjalan.</li>
+<li><strong>Defensive Programming:</strong> Menjaga aplikasi agar tidak mengalami <em>Null Pointer Exception</em> / crash jika factory method mengembalikan <code>nil</code>.</li>
+</ul>
+<p><em>(Di SAMIR saat ini, seluruh modul konkret mengembalikan instance valid, sehingga guard kedua selalu lolos).</em></p>
+<h5 id="item-c-mengapa-arsitektur-fallback-ini-dibuat">C. Mengapa Arsitektur Fallback Ini Dibuat?</h5>
+<p>Arsitek <a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/learn/iOS-Arch/ios/IDSamirLoan/Application/CZSwiftModuleLib/Classes/CZModuleManager.swift" target="_blank" rel="noopener noreferrer">🦊 CZSwiftModuleLib <span class="branch-tag">learn/iOS-Arch</span> ↗</a> merancangnya dengan prinsip <strong>Hybrid Architectural Compatibility</strong>:</p>
+<ol>
+<li><strong>Dukungan Multi-Framework (Future-Ready):</strong> Jika suatu hari modul dipisahkan menjadi CocoaPods / Dynamic Framework independen (<code>SamirMainModule.framework</code>), pemanggilan pertama langsung berhasil tanpa perlu mengubah kode <code>CZModuleManager</code>.</li>
+<li><strong>Dukungan Monolitik Flat (Saat Ini):</strong> Mengingat seluruh file modul saat ini masih tergabung dalam satu target biner aplikasi (<code>IDSamirLoan</code>), fallback <code>Bundle.cz.bundleName</code> menjamin dynamic loading tetap berjalan mulus tanpa runtime error.</li>
+</ol>
+<div id="sub-3-pendaftaran-router-filter-router-czroutercenter" class="doc-subsection">
+<h4>3. Pendaftaran Router &amp; Filter Router (`CZRouterCenter`)</h4>
+</div>
+<p>Setiap kali modul berhasil dibuat (<code>registerModule</code>), <code>CZModuleManager</code> mendaftarkan routing modul ke <a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/learn/iOS-Arch/ios/IDSamirLoan/Application/CZSwiftRouterLib/Classes/CZRouterCenter.swift#L10" target="_blank" rel="noopener noreferrer">🦊 CZRouterCenter.shared <span class="branch-tag">learn/iOS-Arch</span> ↗</a>:</p>
+<pre><code class="language-swift">// CZModuleManager.swift:L131-L141
+private func registerRouter(_ module: CZModuleProtocol) {
+    if module.responds(to: NSSelectorFromString(&quot;routers&quot;)) {
+        CZRouterCenter.shared.addRouters(module.routers?())
+    }
+}
+
+private func registerFilterRouter(_ module: CZModuleProtocol) {
+    if module.responds(to: NSSelectorFromString(&quot;routerFilters&quot;)) {
+        CZRouterCenter.shared.addFilters(module.routerFilters?())
+    }
+}</code></pre>
+<div id="sub-4-contoh-nyata-penggunaan-routers-di-production-end-to-end-flow" class="doc-subsection">
+<h4>4. Contoh Nyata Penggunaan `routers` di Production (End-to-End Flow)</h4>
+</div>
+<p>Mari ambil contoh nyata: <strong>Pengguna menyelesaikan login OTP di Modul Login, lalu diarahkan ke Form Foto KTP di Modul Auth dengan membawa data, kemudian menekan tombol kembali (back).</strong></p>
+<h5 id="item-langkah-1-modul-tujuan-mendaftarkan-rute">Langkah 1: Modul Tujuan Mendaftarkan Rute</h5>
+<p>Di <a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/learn/iOS-Arch/ios/IDSamirLoan/Application/SamirAuthModule/Classes/IDModule/IDSamirAuthModule.swift#L25-L46" target="_blank" rel="noopener noreferrer">🦊 IDSamirAuthModule.swift:L25-L46 <span class="branch-tag">learn/iOS-Arch</span> ↗</a>:</p>
+<pre><code class="language-swift">func routers() -&gt; [CZRouter] {
+    let router = CZRouter.initWithSchemes([&quot;samir&quot;], withHostParttern: &quot;auth&quot;)
+    let routerTable = CZRouterTable()
+    let handler = IDSamirAuthModuleRouterHandler()
+    
+    // Mendaftarkan path /identity ke handler
+    routerTable.registerHandler(handler, forPathPattern: IDSamirAuthRouterPath.Identity)
+    router?.addRouterTable(routerTable)
+    return [router!]
+}</code></pre>
+<h5 id="item-langkah-2-modul-pemanggil-memicu-navigasi-membawa-data-passing-parameters">Langkah 2: Modul Pemanggil Memicu Navigasi + Membawa Data (*Passing Parameters*)</h5>
+<p>Di <a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/learn/iOS-Arch/ios/IDSamirLoan/Application/SamirLoginModule/Classes/IDViewcontroller/IDCodeViewController.swift#L450" target="_blank" rel="noopener noreferrer">🦊 IDCodeViewController.swift:L450 <span class="branch-tag">learn/iOS-Arch</span> ↗</a> (<code>SamirLoginModule</code>), aplikasi memanggil tanpa perlu mengimpor <code>SamirAuthModule</code>:</p>
+<pre><code class="language-swift">let routerUrl = &quot;samir://auth/identity&quot;
+let routerParams: [String: Any] = [
+    &quot;isEdit&quot;: &quot;1&quot;,
+    &quot;step&quot;: &quot;ocr&quot;
+]
+
+IDRouterManager.id_perfromWithURLString(routerUrl, params: routerParams)</code></pre>
+<h5 id="item-langkah-3-ekstraksi-parameter-unpacking-menampilkan-layar">Langkah 3: Ekstraksi Parameter (*Unpacking*) &amp; Menampilkan Layar</h5>
+<p>Di <a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/learn/iOS-Arch/ios/IDSamirLoan/Application/SamirAuthModule/Classes/IDRouter/IDSamirAuthModuleRouterHandler.swift#L54-L68" target="_blank" rel="noopener noreferrer">🦊 IDSamirAuthModuleRouterHandler.swift:L54-L68 <span class="branch-tag">learn/iOS-Arch</span> ↗</a>:</p>
+<pre><code class="language-swift">func openIdentityPage(_ params: [String: Any]?) {
+    let vc = IDNewOCRViewController()
+    
+    // Unpack data dari dictionary router
+    if let editable = params?[&quot;isEdit&quot;] as? String {
+        vc.isEdit = editable
+    }
+    if let step = params?[&quot;step&quot;] as? String {
+        vc.step = step
+    }
+    
+    openVC(vc)
+}
+
+func openVC(_ vc: UIViewController) {
+    if let nav = vc.cz.topViewController()?.navigationController {
+        nav.pushViewController(vc, animated: true)
+    }
+}</code></pre>
+<h5 id="item-langkah-4-navigasi-kembali-back-navigation">Langkah 4: Navigasi Kembali (*Back Navigation*)</h5>
+<p>Ketika user selesai atau membatalkan foto KTP, tombol back di navigation bar memicu selector di <a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/learn/iOS-Arch/ios/IDSamirLoan/Application/SamirCommonModule/Classes/IDBase/IDBaseViewController.swift#L166" target="_blank" rel="noopener noreferrer">🦊 IDBaseViewController.swift <span class="branch-tag">learn/iOS-Arch</span> ↗</a>:</p>
+<pre><code class="language-swift">@objc func clickLeftItem() {
+    self.navigationController?.popViewController(animated: true)
+}</code></pre>
+<p>Layar <code>IDNewOCRViewController</code> di-pop dari navigation stack dan memorinya dibersihkan tanpa meninggalkan jejak kopling antarmodul.</p>
+<div id="sub-5-routerfilters-mekanisme-aliasing-usecase-di-production" class="doc-subsection">
+<h4>5. `routerFilters`: Mekanisme Aliasing &amp; Usecase di Production</h4>
+</div>
+<p>Method <a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/learn/iOS-Arch/ios/IDSamirLoan/Application/CZSwiftRouterLib/Classes/CZRouterCenter.swift#L113-L137" target="_blank" rel="noopener noreferrer">🦊 filterRouterUrl <span class="branch-tag">learn/iOS-Arch</span> ↗</a> menjalankan <strong>URL Rewriting / Aliasing</strong>:</p>
+<ol>
+<li>Memotong bagian basis URL (<code>splitUrl</code>) dari query string (<code>urlParams</code>).</li>
+<li>Jika <code>splitUrl</code> ada di kamus <code>filterRouters</code>, basis URL ditukar dengan target URL baru.</li>
+<li>Query parameters bawaan disambung kembali di belakangnya.</li>
+</ol>
+<h5 id="item-usecase-di-production">Usecase di Production:</h5>
+<ol>
+<li><strong>Backward Compatibility Deep Link Lama (Migrasi URL Promosi):</strong></li>
+</ol>
+<p>Jika tim marketing pernah menyebarkan banner promosi dengan link lama <code>samir://old_promo?code=SAMIR2024</code>, dan fitur tersebut kini dialihkan ke tab utama, daftarkan filter <code>[&quot;samir://old_promo&quot;: &quot;samir://main/tab&quot;]</code>. Link otomatis di-rewrite menjadi <code>samir://main/tab?code=SAMIR2024</code> tanpa mematahkan link di perangkat user.</p>
+<ol>
+<li><strong>Normalisasi URL Singkat H5 Web Bridge:</strong></li>
+</ol>
+<p>Memetakan skema singkat dari script web H5 ke endpoint native yang lebih panjang.</p>
+<div id="sub-6-alur-lengkap-deeplink-saat-cold-start-koordinasi-splash-screen" class="doc-subsection">
+<h4>6. Alur Lengkap Deeplink saat Cold Start (Koordinasi Splash Screen)</h4>
+</div>
+<p>Saat aplikasi diluncurkan dari luar (AppsFlyer / SMS link) dalam kondisi <strong>Cold Start</strong>, aplikasi sedang menampilkan splash countdown 3 detik (<a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/learn/iOS-Arch/ios/IDSamirLoan/Application/SamirMainModule/Classes/IDController/IDLaunchViewController.swift" target="_blank" rel="noopener noreferrer">🦊 IDLaunchViewController <span class="branch-tag">learn/iOS-Arch</span> ↗</a>). Kita tidak boleh langsung menimpa splash screen sebelum UI siap.</p>
+<p>Berikut koordinasi penyimpanannya:</p>
+<ol>
+<li><strong>Penyimpanan Sementara (Save):</strong></li>
+</ol>
+<p>Di <a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/learn/iOS-Arch/ios/IDSamirLoan/Application/SamirMainModule/Classes/IDModule/IDSamirMainModule.swift#L214-L218" target="_blank" rel="noopener noreferrer">🦊 IDSamirMainModule.swift:L214-L218 <span class="branch-tag">learn/iOS-Arch</span> ↗</a>, saat <code>launchViewController</code> aktif:</p>
+<pre><code class="language-swift">   if currentVC == launchViewController {
+       UserDefaults.standard.setValue(link, forKey: &quot;Samir_DeepLink_Str&quot;)
+       UserDefaults.standard.setValue(linkType, forKey: &quot;Samir_DeepLink_Type&quot;)
+       return
+   }</code></pre>
+<ol>
+<li><strong>Trigger 1 — Delegat Selesai Splash (<code>finishLaunch</code>):</strong></li>
+</ol>
+<p>Di <a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/learn/iOS-Arch/ios/IDSamirLoan/Application/SamirMainModule/Classes/IDModule/IDSamirMainModule.swift#L345-L354" target="_blank" rel="noopener noreferrer">🦊 IDSamirMainModule.swift:L345-L354 <span class="branch-tag">learn/iOS-Arch</span> ↗</a>, begitu timer 3 detik habis:</p>
+<pre><code class="language-swift">   public func finishLaunch() {
+       changeMainRootViewController(window: window) // Pasang IDMainTabBarController
+       launchViewController = nil
+       if let deeplink = UserDefaults.standard.value(forKey: &quot;Samir_DeepLink_Str&quot;) as? String {
+           handleDeepLink(link: deeplink, linkType: &quot;2&quot;)
+       }
+   }</code></pre>
+<ol>
+<li><strong>Trigger 2 — Konsumsi dan Penghapusan Cache di Beranda:</strong></li>
+</ol>
+<p>Di <a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/learn/iOS-Arch/ios/IDSamirLoan/Application/SamirLoanModule/Classes/IDController/IDHomeViewController.swift#L418-L440" target="_blank" rel="noopener noreferrer">🦊 IDHomeViewController.swift:L418-L440 <span class="branch-tag">learn/iOS-Arch</span> ↗</a>, setelah data akun Beranda selesai dimuat (<code>handleHomeDataLoadCompletion()</code>):</p>
+<pre><code class="language-swift">   func handleDeepLink() {
+       if let deeplink = UserDefaults.standard.value(forKey: &quot;Samir_DeepLink_Str&quot;) as? String, !deeplink.isEmpty {
+           self.handleDeepLinkPush(link: deeplink, linkType: deeplinkType)
+           
+           // Clear cache agar tidak tereksekusi ganda!
+           UserDefaults.standard.setValue(&quot;&quot;, forKey: &quot;Samir_DeepLink_Str&quot;)
+           UserDefaults.standard.setValue(&quot;&quot;, forKey: &quot;Samir_DeepLink_Type&quot;)
+           UserDefaults.standard.synchronize()
+       }
+   }</code></pre>
+<div id="sub-7-mengapa-serviceforprotocol-dibuat-dan-seberapa-penting" class="doc-subsection">
+<h4>7. Mengapa `serviceForProtocol` Dibuat dan Seberapa Penting?</h4>
+</div>
+<h5 id="item-a-kenapa-router-saja-tidak-cukup">A. Kenapa Router Saja Tidak Cukup?</h5>
+<p>Router sangat ideal untuk <strong>navigasi visual antarlayar</strong> (membuka ViewController). Namun, router <strong>tidak dapat digunakan</strong> untuk meminta data balikan bertipe kuat (<em>strong-typed</em>) tanpa UI:</p>
+<ul>
+<li><em>"Apakah pengguna sedang login saat ini?"</em> (<code>isLogin() -&gt; Bool</code>)</li>
+<li><em>"Berapa nomor HP atau custId pengguna yang sedang aktif?"</em> (<code>loginInfo()?.mobile</code>)</li>
+<li><em>"Jalankan fungsi logout token di latar belakang!"</em> (<code>postLoginOutRequest(...)</code>)</li>
+</ul>
+<p>Jika modul lain langsung mengimpor <code>SamirLoginModule</code>, akan terjadi <strong>circular dependency</strong> dan pelanggaran arsitektur.</p>
+<h5 id="item-b-solusi-service-locator-pattern">B. Solusi: Service Locator Pattern</h5>
+<ol>
+<li>Definisi antarmuka protokol dibuat di <a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/learn/iOS-Arch/ios/IDSamirLoan/Application/SamirServiceModule/Classes/IDServiceManager.swift" target="_blank" rel="noopener noreferrer">🦊 IDServiceManager.swift <span class="branch-tag">learn/iOS-Arch</span> ↗</a>:</li>
+</ol>
+<pre><code class="language-swift">   public protocol IDLoginModuleServiceProtocol: CZBaseServiceProtocol {
+       func isLogin() -&gt; Bool
+       func loginInfo() -&gt; IDLoginCodeDataModel?
+       func loginAction()
+   }</code></pre>
+<ol>
+<li>Modul mana pun cukup memanggil fasad:</li>
+</ol>
+<pre><code class="language-swift">   let isLogin = IDServiceManager.loginService()?.isLogin() ?? false</code></pre>
+<ol>
+<li>Di balik layar, <a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/learn/iOS-Arch/ios/IDSamirLoan/Application/CZSwiftModuleLib/Classes/CZModuleManager.swift#L33-L53" target="_blank" rel="noopener noreferrer">🦊 CZModuleManager.serviceForProtocol <span class="branch-tag">learn/iOS-Arch</span> ↗</a> mencari class handler di <a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/learn/iOS-Arch/ios/IDSamirLoan/Application/Configuration/Module/IDServiceList.plist" target="_blank" rel="noopener noreferrer">🦊 IDServiceList.plist <span class="branch-tag">learn/iOS-Arch</span> ↗</a> (<code>IDLoginModuleServiceHandler</code>), menginstansiasinya secara lazy, menyimpannya di cache singleton secara aman via <code>serviceCacheQueue.sync</code>, lalu mengembalikannya sebagai protokol.</li>
+</ol>
+<h5 id="item-c-seberapa-penting-di-samir">C. Seberapa Penting di SAMIR?</h5>
+<p><strong>Sangat KRUSIAL.</strong></p>
+<p>Fasad ini dipanggil <strong>lebih dari 80 kali</strong> di seluruh layer aplikasi:</p>
+<ul>
+<li><strong>Flutter Native Channel (<a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/learn/iOS-Arch/ios/IDSamirLoan/Application/SamirCommonModule/Classes/FChannel/FlutterNativeChannel+method.swift#L35" target="_blank" rel="noopener noreferrer">🦊 FlutterNativeChannel+method.swift:L35 <span class="branch-tag">learn/iOS-Arch</span> ↗</a>):</strong> Tab Flutter membaca sesi login native.</li>
+<li><strong>Pengajuan Pinjaman (<a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/learn/iOS-Arch/ios/IDSamirLoan/Application/SamirLoanModule/Classes/LoanConfirmModule/Services/LoanConfirmService.swift#L951" target="_blank" rel="noopener noreferrer">🦊 LoanConfirmService.swift:L951 <span class="branch-tag">learn/iOS-Arch</span> ↗</a>):</strong> Mengambil token autentikasi nasabah.</li>
+<li><strong>Telemetri & APM (<a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/learn/iOS-Arch/ios/IDSamirLoan/Application/Utils/TYUtils.swift#L39" target="_blank" rel="noopener noreferrer">🦊 TYUtils.swift:L39 <span class="branch-tag">learn/iOS-Arch</span> ↗</a>):</strong> Melampirkan identitas user pada laporan performa.</li>
+</ul>
+</section>
+<section id="sec-walkthrough" class="doc-section">
+<h3>📌 E. Mermaid Sequence Diagram Lengkap (Production Startup &amp; Deeplink Flow)</h3>
+
+<div class="mermaid-interactive-card">
+  <div class="mermaid-card-toolbar">
+    <span class="title">📊 Diagram Alur #1</span>
+    <button class="mermaid-zoom-trigger" onclick="openDiagramZoom('diag-1', 'Diagram Alur #1')">🔍 Perbesar Diagram</button>
+  </div>
+  <div class="mermaid-content-wrapper" id="diag-1">
+    <div class="mermaid">
+sequenceDiagram
+    autonumber
+    participant Main as main.swift
+    participant Handler as CZModuleHandler
+    participant Manager as CZModuleManager
+    participant Router as CZRouterCenter
+    participant Splash as IDLaunchViewController
+    participant Home as IDHomeViewController
+    participant UD as UserDefaults
+
+    %% Phase 1: Bootstrapping & Plist Registration
+    Main->>Handler: ModuleManagerApplicationMain(argc, argv, "IDModuleList", "IDServiceList")
+    Handler->>Manager: setup("IDModuleList", "IDServiceList")
+    
+    rect rgb(240, 245, 255)
+    Note over Manager,Router: 1. Registrasi Modul & Fallback Namespace
+    Manager->>Manager: registerAllModules("IDModuleList.plist")
+    loop Tiap Item di IDModuleList.plist
+        Manager->>Manager: NSClassFromString("SamirAuthModule...") -> nil (False)
+        Manager->>Manager: Fallback: NSClassFromString("IDSamirLoan...") -> Class (True)
+        Manager->>Router: addRouters(module.routers?())
+        Manager->>Router: addFilters(module.routerFilters?())
+    end
+    end
+
+    %% Phase 2: Cold Start Splash Screen & Pending Deeplink
+    rect rgb(255, 245, 240)
+    Note over Splash,UD: 2. Cold Start Splash Screen (Countdown 3s)
+    opt Deeplink Tiba Saat Splash Aktif
+        Manager->>UD: Simpan ke "Samir_DeepLink_Str"
+    end
+    Splash->>Manager: finishLaunch() (Timer 3s Habis)
+    Manager->>Manager: changeMainRootViewController (Pasang TabBar)
+    end
+
+    %% Phase 3: Beranda Ready & Eksekusi Deeplink
+    rect rgb(240, 255, 240)
+    Note over Home,Router: 3. Beranda Selesai Load API & Eksekusi Router
+    Home->>Home: handleHomeDataLoadCompletion()
+    Home->>UD: Baca "Samir_DeepLink_Str"
+    Home->>Router: perform(url) -> Buka Layar Target!
+    Home->>UD: Reset "Samir_DeepLink_Str" = ""
+    end
+    </div>
+  </div>
+</div>
+</section>
+<section id="sec-why" class="doc-section">
+<h3>📌 F. Ringkasan Evaluasi Teknis</h3>
+<div class="table-container"><table class="data-table"><thead><tr><th>Komponen / Operasi</th><th>Hasil Evaluasi di Production</th><th>Implikasi bagi Developer</th></tr></thead><tbody><tr><td><strong><code>registerModule(&quot;\(moduleName).\(className)&quot;)</code></strong></td><td><strong>Selalu Gagal (<code>false</code>)</strong></td><td>Normal di arsitektur monolit flat; class dimuat lewat fallback <code>Bundle.cz.bundleName</code>.</td></tr><tr><td><strong><code>registerModule(Bundle.cz.bundleName + &quot;.\(className)&quot;)</code></strong></td><td><strong>Selalu Berhasil (<code>true</code>)</strong></td><td>Namespace biner utama (<code>IDSamirLoan</code>) adalah namespace aktif di runtime iOS.</td></tr><tr><td><strong>Pendaftaran Router (<code>routers()</code>)</strong></td><td>Aktif untuk navigasi antarmodul</td><td>Gunakan <code>IDRouterManager.id_perfromWithURLString</code> untuk membuka layar modul lain.</td></tr><tr><td><strong>Pending Deeplink Cache</strong></td><td>Disimpan di <code>UserDefaults</code></td><td>Mencegah konflik tampilan selama splash screen 3 detik berlangsung.</td></tr><tr><td><strong>Service Locator Cache</strong></td><td>Thread-Safe via <code>serviceCacheQueue</code></td><td>Memungkinkan pertukaran data bisnis (misal sesi login) tanpa ketergantungan UI.</td></tr></tbody></table></div>
+</section>
+<section id="sec-example" class="doc-section">
+<h3>🧠 G. Knowledge Check</h3>
+<ol>
+<li>Mengapa <code>NSClassFromString(&quot;SamirAuthModule.IDSamirAuthModule&quot;)</code> mengembalikan nilai <code>nil</code> di aplikasi SAMIR saat ini?</li>
+<li>Kapan nilai <code>moduleObject</code> dapat bernilai <code>nil</code> saat factory method <code>create()</code> dipanggil?</li>
+<li>Mengapa eksekusi deeplink harus ditahan di <code>UserDefaults</code> (<code>Samir_DeepLink_Str</code>) saat Cold Start dan kapan trigger pembersihannya dijalankan?</li>
+<li>Mengapa kita memerlukan <code>serviceForProtocol</code> padahal sudah memiliki <code>CZRouterCenter</code>?</li>
+</ol>
+</section>
+<section id="sec-mistakes" class="doc-section">
+<h3>📌 H. Referensi Terkait</h3>
+<ul>
+<li><a href="01-ios-entry-point.html">01-ios-entry-point.md</a> — Titik masuk eksekusi <code>main.swift</code>.</li>
+<li><a href="02-application-lifecycle.html">02-application-lifecycle.md</a> — Propagasi event delegasi UIKit ke modul.</li>
+<li><a href="../04-understanding-navigation/02-navigation-fundamentals.html">04-understanding-navigation/02-navigation-fundamentals.md</a> — Arsitektur detail <code>CZSwiftRouterLib</code>.</li>
+</ul>
+</section>
+
+    <!-- BAGIAN 2 & 3: ARCHITECTURAL CRITIQUE & BLUEPRINT -->
+    <div class="section-banner lab" style="margin-top: 4rem;">
+      <h2>🏛️ Bagian 2: Architecture Lab, SOLID Audit & Retention Quizzes</h2>
+      <span class="pill" style="background-color: var(--accent-warning);">Architecture Lab</span>
+    </div>
+
+
+    <!-- SEGMEN 2: ARCHITECTURAL CRITIQUE -->
+    <section class="lesson-segment" id="sub-solid">
+      <h2>🏛️ Audit SOLID & Clean Architecture: Menemukan Titik Lemah pada Implementasi Existing</h2>
+
+      <div class="callout critique">
+        <div class="callout-title">⚠️ Smells 1: Pelanggaran SRP: God Object Coordinator pada Alur Startup</div>
+        <p>Class modul startup utama pada SAMIR Mobile iOS menangani terlalu banyak tanggung jawab: registrasi APM, inisialisasi jaringan, pemanasan runtime engine, serta registrasi push notifications secara monolitik.</p>
+      </div>
+
+      <div class="callout critique">
+        <div class="callout-title">⚠️ Smells 2: Pelanggaran DIP: Keterikatan Statis Singleton (0% Unit Testability)</div>
+        <p>Komponen memanggil static shared singleton secara langsung tanpa melalui abstraksi antarmuka (Dependency Inversion Principle), membuat pengujian terisolasi di automated unit test menjadi mustahil tanpa memicu efek samping jaringan dan APM produksi.</p>
+      </div>
+    </section>
+
+    <!-- SEGMEN 3: REFACTORING BLUEPRINT -->
+    <section class="lesson-segment" id="sub-blueprint">
+      <h2>🚀 Blueprint Refactoring Standar Industri: Penerapan Composite Startup Task Architecture</h2>
+      <p>Memecah alur peluncuran aplikasi menjadi serangkaian task mandiri yang mengimplementasikan protokol tunggal (Open/Closed Principle) dan dapat dieksekusi secara terkoordinasi (sync/async).</p>
+
+      <div class="callout best-practice">
+        <div class="callout-title">✅ Rekomendasi Solusi Arsitektur Bersih</div>
+        <pre><code class="language-swift">public protocol AppStartupTask {
+    var identifier: String { get }
+    var executionQueue: TaskExecutionQueue { get }
+    func execute(with application: UIApplication, launchOptions: [UIApplication.LaunchOptionsKey: Any]?)
+}
+
+public final class AppStartupCoordinator {
+    private let tasks: [AppStartupTask]
+    public init(tasks: [AppStartupTask]) { self.tasks = tasks }
+    
+    public func launch(application: UIApplication, options: [UIApplication.LaunchOptionsKey: Any]?) {
+        tasks.forEach { $0.execute(with: application, launchOptions: options) }
+    }
+}</code></pre>
+      </div>
+
+      <h3>Keunggulan Arsitektur Refactoring Ini:</h3>
+      <ul>
+        <li><strong>100% Mockable & Testable:</strong> Memungkinkan pengujian terisolasi tanpa memicu efek samping runtime produksi.</li>
+        <li><strong>Open/Closed Principle (OCP):</strong> Penambahan fitur baru dapat dilakukan tanpa memodifikasi class yang sudah stabil.</li>
+        <li><strong>Decoupled Subsystems:</strong> Membatasi dampak regresi saat terjadi perubahan dependensi eksternal.</li>
+      </ul>
+    </section>
+
+
+    <!-- SEGMEN 4: INTERACTIVE RETENTION QUIZ -->
+    <section class="lesson-segment" id="sub-quiz">
+      <h2>🧠 Interactive Retention & Architectural Quiz</h2>
+      <p>Uji pemahaman alur kode nyata dan keputusan arsitektur Anda:</p>
+
+      <!-- KUIS 1 -->
+      <div class="quiz-card" id="quiz-1">
+        <h4>Kuis 1 (Memory Recall): Apa fungsi paling utama dari fase inisialisasi awal pada siklus peluncuran IOS?</h4>
+        <div class="quiz-options">
+          <button class="quiz-btn" onclick="submitQuiz(1, 'A', true)">
+            A. Mempersiapkan runtime sistem dan SDK sebelum UI utama dirender ke layar
+          </button>
+          <button class="quiz-btn" onclick="submitQuiz(1, 'B', false)">
+            B. Mengunduh seluruh aset gambar dan database transaksi nasabah secara lokal
+          </button>
+          <button class="quiz-btn" onclick="submitQuiz(1, 'C', false)">
+            C. Menghapus seluruh cache UserDefaults atau SharedPreferences pengguna lama
+          </button>
+          <button class="quiz-btn" onclick="submitQuiz(1, 'D', false)">
+            D. Menutup secara paksa aplikasi jika koneksi internet tidak stabil pada boot
+          </button>
+        </div>
+        <div class="quiz-feedback" id="feedback-1"></div>
+      </div>
+      <!-- KUIS 2 -->
+      <div class="quiz-card" id="quiz-2">
+        <h4>Kuis 2 (Architectural Decision): Mengapa keterikatan langsung pada static shared singleton saat startup dianggap sebagai architectural smell?</h4>
+        <div class="quiz-options">
+          <button class="quiz-btn" onclick="submitQuiz(2, 'A', false)">
+            A. Mengakibatkan binary aplikasi berukuran dua kali lipat lebih besar di store
+          </button>
+          <button class="quiz-btn" onclick="submitQuiz(2, 'B', true)">
+            B. Menghambat automated testing karena dependensi tidak dapat diganti dengan mock
+          </button>
+          <button class="quiz-btn" onclick="submitQuiz(2, 'C', false)">
+            C. Menghentikan rendering antarmuka UIKit atau Flutter saat proses kompilasi
+          </button>
+          <button class="quiz-btn" onclick="submitQuiz(2, 'D', false)">
+            D. Memaksa compiler menolak seluruh deklarasi protokol antarmuka abstraksi
+          </button>
+        </div>
+        <div class="quiz-feedback" id="feedback-2"></div>
+      </div>
+      <!-- KUIS 3 -->
+      <div class="quiz-card" id="quiz-3">
+        <h4>Kuis 3 (Debugging & Maintenance): Bagaimana pendekatan terbaik dalam mengisolasi inisialisasi SDK analitik agar tidak memperlambat startup?</h4>
+        <div class="quiz-options">
+          <button class="quiz-btn" onclick="submitQuiz(3, 'A', true)">
+            A. Memindahkan eksekusi inisialisasi ke antrian background secara asynchronous
+          </button>
+          <button class="quiz-btn" onclick="submitQuiz(3, 'B', false)">
+            B. Memanggil Thread.sleep(2.0) di main queue untuk memberi waktu prosesor rileks
+          </button>
+          <button class="quiz-btn" onclick="submitQuiz(3, 'C', false)">
+            C. Menunda inisialisasi hingga nasabah menutup aplikasi pertama kali di device
+          </button>
+          <button class="quiz-btn" onclick="submitQuiz(3, 'D', false)">
+            D. Menggabungkan seluruh SDK pihak ketiga ke dalam satu fungsi C++ statis
+          </button>
+        </div>
+        <div class="quiz-feedback" id="feedback-3"></div>
+      </div>
+    </section>
+
+    <!-- Lesson Navigation Footer -->
+    <div class="lesson-nav-footer">
+      <a class="lesson-nav-btn prev" href="../02-understanding-app-startup/03-startup-sequence-and-initial-routing.html">
+  ◀ Modul Sebelumnya: 03 — Startup Sequence &amp; Initial Routing
+</a>
+      <a class="lesson-nav-btn next" href="../03-understanding-architecture/01-architecture-overview.html">
+  Modul Selanjutnya: 01 — Architecture Overview ▶
+</a>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+      <div>Chiron Codebase Mastery Academy • SAMIR Mobile iOS</div>
+      <div>Anchor Branch: <strong>learn/iOS-Arch</strong></div>
+    </footer>
+
+  </main>
+
+  <!-- ========================================================================= -->
+  <!-- RIGHT-HAND SIDEBAR: ON-PAGE TABLE OF CONTENTS                             -->
+  <!-- ========================================================================= -->
+  <aside class="docs-toc-sidebar" id="desktopTocSidebar">
+    <div class="toc-header-bar">
+      <span class="toc-header-label">📑 DAFTAR ISI</span>
+      <div class="toc-header-actions">
+        <button class="toc-action-btn" id="tocScrollTopBtn" title="Scroll ke Paling Atas" onclick="window.scrollTo({top: 0, behavior: 'smooth'})">▲</button>
+        <button class="toc-action-btn" id="tocToggleAllBtn" title="Buka/Tutup Semua Cabang" onclick="toggleAllTocBranches()">🔄</button>
+        <button class="toc-action-btn" id="tocResetActiveBtn" title="Fokuskan ke Topik Aktif" onclick="focusCurrentTocActive()">📑</button>
+        <button class="toc-action-btn toc-dismiss-btn" id="tocDismissBtn" title="Tutup Daftar Isi (Fokus Mode Membaca)" onclick="toggleDesktopToc()">✕</button>
+      </div>
+    </div>
+
+    <div class="toc-tree-container">
+      <div class="toc-tree-node root-node" id="toc-node-root">
+        <div class="toc-node-row">
+          <span class="toc-caret" onclick="toggleTocBranch(this)">▾</span>
+          <a class="toc-tree-link root-link" href="#sec-title" title="04 — CZModuleManager Deep Dive">
+            04 — CZModuleManager Deep Dive
+          </a>
+        </div>
+        <div class="toc-branch">
+          <div class="toc-node-row">
+            <span class="toc-leaf-dot"></span>
+            <a class="toc-tree-link" href="#sec-obj">A. Learning Objective</a>
+          </div>
+          <div class="toc-node-row">
+            <span class="toc-leaf-dot"></span>
+            <a class="toc-tree-link" href="#sec-prereq">B. Prerequisites</a>
+          </div>
+          <div class="toc-tree-node" id="toc-node-sec-simple">
+            <div class="toc-node-row">
+              <span class="toc-caret" onclick="toggleTocBranch(this)">▾</span>
+              <a class="toc-tree-link" href="#sec-simple">C. Definisi &amp; Konsep Kunci</a>
+            </div>
+            <div class="toc-branch">
+              <div class="toc-node-row">
+                <span class="toc-leaf-dot"></span>
+                <a class="toc-tree-link" href="#sub-1-apa-itu-cold-start">1. Apa itu Cold Start?</a>
+              </div>
+              <div class="toc-node-row">
+                <span class="toc-leaf-dot"></span>
+                <a class="toc-tree-link" href="#sub-2-analogi-pusat-pengendali-terminal-bandara">2. Analogi Pusat Pengendali Terminal Bandara</a>
+              </div>
+            </div>
+          </div>
+          <div class="toc-tree-node" id="toc-node-sec-actual">
+            <div class="toc-node-row">
+              <span class="toc-caret" onclick="toggleTocBranch(this)">▾</span>
+              <a class="toc-tree-link" href="#sec-actual">D. Proses di Balik Layar di Production (Under the Hood)</a>
+            </div>
+            <div class="toc-branch">
+              <div class="toc-node-row">
+                <span class="toc-leaf-dot"></span>
+                <a class="toc-tree-link" href="#sub-1-bootstrapping-awal-mainswift---czmodulehandler">1. Bootstrapping Awal (`main.swift` -&gt; `CZModuleHandler`)</a>
+              </div>
+              <div class="toc-node-row">
+                <span class="toc-leaf-dot"></span>
+                <a class="toc-tree-link" href="#sub-2-pembedahan-registerallmodules-modulename-vs-bundlename">2. Pembedahan `registerAllModules`: `moduleName` vs `bundleName`</a>
+              </div>
+              <div class="toc-node-row">
+                <span class="toc-leaf-dot"></span>
+                <a class="toc-tree-link" href="#sub-3-pendaftaran-router-filter-router-czroutercenter">3. Pendaftaran Router &amp; Filter Router (`CZRouterCenter`)</a>
+              </div>
+              <div class="toc-node-row">
+                <span class="toc-leaf-dot"></span>
+                <a class="toc-tree-link" href="#sub-4-contoh-nyata-penggunaan-routers-di-production-end-to-end-flow">4. Contoh Nyata Penggunaan `routers` di Production (End-to-End Flow)</a>
+              </div>
+              <div class="toc-node-row">
+                <span class="toc-leaf-dot"></span>
+                <a class="toc-tree-link" href="#sub-5-routerfilters-mekanisme-aliasing-usecase-di-production">5. `routerFilters`: Mekanisme Aliasing &amp; Usecase di Production</a>
+              </div>
+              <div class="toc-node-row">
+                <span class="toc-leaf-dot"></span>
+                <a class="toc-tree-link" href="#sub-6-alur-lengkap-deeplink-saat-cold-start-koordinasi-splash-screen">6. Alur Lengkap Deeplink saat Cold Start (Koordinasi Splash Screen)</a>
+              </div>
+              <div class="toc-node-row">
+                <span class="toc-leaf-dot"></span>
+                <a class="toc-tree-link" href="#sub-7-mengapa-serviceforprotocol-dibuat-dan-seberapa-penting">7. Mengapa `serviceForProtocol` Dibuat dan Seberapa Penting?</a>
+              </div>
+            </div>
+          </div>
+          <div class="toc-node-row">
+            <span class="toc-leaf-dot"></span>
+            <a class="toc-tree-link" href="#sec-walkthrough">E. Mermaid Sequence Diagram Lengkap (Production Startup &amp; Deeplink Flow)</a>
+          </div>
+          <div class="toc-node-row">
+            <span class="toc-leaf-dot"></span>
+            <a class="toc-tree-link" href="#sec-why">F. Ringkasan Evaluasi Teknis</a>
+          </div>
+          <div class="toc-node-row">
+            <span class="toc-leaf-dot"></span>
+            <a class="toc-tree-link" href="#sec-example">G. Knowledge Check</a>
+          </div>
+          <div class="toc-node-row">
+            <span class="toc-leaf-dot"></span>
+            <a class="toc-tree-link" href="#sec-mistakes">H. Referensi Terkait</a>
+          </div>
+          <!-- Architecture Lab Branches -->
+          <div class="toc-tree-node" id="toc-node-lab" style="margin-top: 0.45rem;">
+            <div class="toc-node-row">
+              <span class="toc-caret" onclick="toggleTocBranch(this)">▾</span>
+              <a class="toc-tree-link" href="#sub-solid" style="font-weight: 700; color: var(--accent-warning);">
+                🏛️ Architecture Lab & Audit
+              </a>
+            </div>
+            <div class="toc-branch">
+              <div class="toc-node-row">
+                <span class="toc-leaf-dot"></span>
+                <a class="toc-tree-link" href="#sub-solid">1. Audit SOLID & Clean Arch</a>
+              </div>
+              <div class="toc-node-row">
+                <span class="toc-leaf-dot"></span>
+                <a class="toc-tree-link" href="#sub-blueprint">2. Refactoring Blueprint</a>
+              </div>
+              <div class="toc-node-row">
+                <span class="toc-leaf-dot"></span>
+                <a class="toc-tree-link" href="#sub-quiz">3. Interactive Retention Quiz</a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </aside>
+
+</div>
+
+<!-- ========================================================================= -->
+<!-- MOBILE / DRAWER TABLE OF CONTENTS OVERLAY                                 -->
+<!-- ========================================================================= -->
+<div class="mobile-toc-overlay" id="mobileTocOverlay" onclick="toggleMobileToc()"></div>
+<div class="mobile-toc-drawer" id="mobileTocDrawer">
+  <div class="toc-header-bar">
+    <span class="toc-header-label">📑 DAFTAR ISI HALAMAN</span>
+    <button class="drawer-close-btn" onclick="toggleMobileToc()">✕</button>
+  </div>
+  <div class="toc-tree-container" style="margin-top: 0.75rem;">
+    <div class="toc-tree-node root-node" id="mob-toc-node-root">
+      <div class="toc-node-row">
+        <span class="toc-caret" onclick="toggleTocBranch(this)">▾</span>
+        <a class="toc-tree-link root-link" href="#sec-title" onclick="toggleMobileToc()">
+          04 — CZModuleManager Deep Dive
+        </a>
+      </div>
+      <div class="toc-branch">
+        <div class="toc-node-row">
+          <span class="toc-leaf-dot"></span>
+          <a class="toc-tree-link" href="#sec-obj" onclick="toggleMobileToc()">A. Learning Objective</a>
+        </div>
+        <div class="toc-node-row">
+          <span class="toc-leaf-dot"></span>
+          <a class="toc-tree-link" href="#sec-prereq" onclick="toggleMobileToc()">B. Prerequisites</a>
+        </div>
+        <div class="toc-tree-node" id="mob-toc-node-sec-simple">
+          <div class="toc-node-row">
+            <span class="toc-caret" onclick="toggleTocBranch(this)">▾</span>
+            <a class="toc-tree-link" href="#sec-simple" onclick="toggleMobileToc()">C. Definisi &amp; Konsep Kunci</a>
+          </div>
+          <div class="toc-branch">
+            <div class="toc-node-row">
+              <span class="toc-leaf-dot"></span>
+              <a class="toc-tree-link" href="#sub-1-apa-itu-cold-start" onclick="toggleMobileToc()">1. Apa itu Cold Start?</a>
+            </div>
+            <div class="toc-node-row">
+              <span class="toc-leaf-dot"></span>
+              <a class="toc-tree-link" href="#sub-2-analogi-pusat-pengendali-terminal-bandara" onclick="toggleMobileToc()">2. Analogi Pusat Pengendali Terminal Bandara</a>
+            </div>
+          </div>
+        </div>
+        <div class="toc-tree-node" id="mob-toc-node-sec-actual">
+          <div class="toc-node-row">
+            <span class="toc-caret" onclick="toggleTocBranch(this)">▾</span>
+            <a class="toc-tree-link" href="#sec-actual" onclick="toggleMobileToc()">D. Proses di Balik Layar di Production (Under the Hood)</a>
+          </div>
+          <div class="toc-branch">
+            <div class="toc-node-row">
+              <span class="toc-leaf-dot"></span>
+              <a class="toc-tree-link" href="#sub-1-bootstrapping-awal-mainswift---czmodulehandler" onclick="toggleMobileToc()">1. Bootstrapping Awal (`main.swift` -&gt; `CZModuleHandler`)</a>
+            </div>
+            <div class="toc-node-row">
+              <span class="toc-leaf-dot"></span>
+              <a class="toc-tree-link" href="#sub-2-pembedahan-registerallmodules-modulename-vs-bundlename" onclick="toggleMobileToc()">2. Pembedahan `registerAllModules`: `moduleName` vs `bundleName`</a>
+            </div>
+            <div class="toc-node-row">
+              <span class="toc-leaf-dot"></span>
+              <a class="toc-tree-link" href="#sub-3-pendaftaran-router-filter-router-czroutercenter" onclick="toggleMobileToc()">3. Pendaftaran Router &amp; Filter Router (`CZRouterCenter`)</a>
+            </div>
+            <div class="toc-node-row">
+              <span class="toc-leaf-dot"></span>
+              <a class="toc-tree-link" href="#sub-4-contoh-nyata-penggunaan-routers-di-production-end-to-end-flow" onclick="toggleMobileToc()">4. Contoh Nyata Penggunaan `routers` di Production (End-to-End Flow)</a>
+            </div>
+            <div class="toc-node-row">
+              <span class="toc-leaf-dot"></span>
+              <a class="toc-tree-link" href="#sub-5-routerfilters-mekanisme-aliasing-usecase-di-production" onclick="toggleMobileToc()">5. `routerFilters`: Mekanisme Aliasing &amp; Usecase di Production</a>
+            </div>
+            <div class="toc-node-row">
+              <span class="toc-leaf-dot"></span>
+              <a class="toc-tree-link" href="#sub-6-alur-lengkap-deeplink-saat-cold-start-koordinasi-splash-screen" onclick="toggleMobileToc()">6. Alur Lengkap Deeplink saat Cold Start (Koordinasi Splash Screen)</a>
+            </div>
+            <div class="toc-node-row">
+              <span class="toc-leaf-dot"></span>
+              <a class="toc-tree-link" href="#sub-7-mengapa-serviceforprotocol-dibuat-dan-seberapa-penting" onclick="toggleMobileToc()">7. Mengapa `serviceForProtocol` Dibuat dan Seberapa Penting?</a>
+            </div>
+          </div>
+        </div>
+        <div class="toc-node-row">
+          <span class="toc-leaf-dot"></span>
+          <a class="toc-tree-link" href="#sec-walkthrough" onclick="toggleMobileToc()">E. Mermaid Sequence Diagram Lengkap (Production Startup &amp; Deeplink Flow)</a>
+        </div>
+        <div class="toc-node-row">
+          <span class="toc-leaf-dot"></span>
+          <a class="toc-tree-link" href="#sec-why" onclick="toggleMobileToc()">F. Ringkasan Evaluasi Teknis</a>
+        </div>
+        <div class="toc-node-row">
+          <span class="toc-leaf-dot"></span>
+          <a class="toc-tree-link" href="#sec-example" onclick="toggleMobileToc()">G. Knowledge Check</a>
+        </div>
+        <div class="toc-node-row">
+          <span class="toc-leaf-dot"></span>
+          <a class="toc-tree-link" href="#sec-mistakes" onclick="toggleMobileToc()">H. Referensi Terkait</a>
+        </div>
+        <div class="toc-tree-node" id="mob-toc-node-lab" style="margin-top: 0.45rem;">
+          <div class="toc-node-row">
+            <span class="toc-caret" onclick="toggleTocBranch(this)">▾</span>
+            <a class="toc-tree-link" href="#sub-solid" onclick="toggleMobileToc()" style="font-weight: 700; color: var(--accent-warning);">
+              🏛️ Architecture Lab & Audit
+            </a>
+          </div>
+          <div class="toc-branch">
+            <div class="toc-node-row">
+              <span class="toc-leaf-dot"></span>
+              <a class="toc-tree-link" href="#sub-solid" onclick="toggleMobileToc()">1. Audit SOLID & Clean Arch</a>
+            </div>
+            <div class="toc-node-row">
+              <span class="toc-leaf-dot"></span>
+              <a class="toc-tree-link" href="#sub-blueprint" onclick="toggleMobileToc()">2. Refactoring Blueprint</a>
+            </div>
+            <div class="toc-node-row">
+              <span class="toc-leaf-dot"></span>
+              <a class="toc-tree-link" href="#sub-quiz" onclick="toggleMobileToc()">3. Interactive Retention Quiz</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ========================================================================= -->
+<!-- FULL CURRICULUM DRAWER (CATALOG OF ALL MODULES)                           -->
+<!-- ========================================================================= -->
+<div class="curriculum-drawer-overlay" id="curriculumOverlay" onclick="toggleCurriculumDrawer()"></div>
+<div class="curriculum-drawer" id="curriculumDrawer">
+  <div class="drawer-header">
+    <div class="drawer-title">📚 Kurikulum Lengkap SAMIR Mobile iOS</div>
+    <button class="drawer-close-btn" onclick="toggleCurriculumDrawer()">✕</button>
+  </div>
+  <div class="drawer-search">
+    <input type="text" id="moduleSearchInput" placeholder="🔍 Cari modul (contoh: startup, router, auth)..." oninput="filterCurriculum()">
+  </div>
+  <div class="drawer-body" id="curriculumListBody">
+    <div class="curriculum-level-group">
+      <div class="curriculum-level-title">Level 0: Learning Roadmap</div>
+      <a class="curriculum-item-link" href="../00-learning-roadmap.html">
+        <span>📄</span> Kurikulum &amp; Roadmap Pembelajaran SAMIR iOS
+      </a>
+    </div>
+    <div class="curriculum-level-group">
+      <div class="curriculum-level-title">Level 1: Project Foundation</div>
+      <a class="curriculum-item-link" href="../01-project-foundation/01-application-overview.html">
+        <span>📄</span> 01 — Application Overview
+      </a>
+      <a class="curriculum-item-link" href="../01-project-foundation/02-repository-structure.html">
+        <span>📄</span> 02 — Repository Structure
+      </a>
+      <a class="curriculum-item-link" href="../01-project-foundation/03-technology-stack-and-build.html">
+        <span>📄</span> 03 — Technology Stack &amp; Build Configuration
+      </a>
+    </div>
+    <div class="curriculum-level-group">
+      <div class="curriculum-level-title">Level 2: Understanding App Startup</div>
+      <a class="curriculum-item-link" href="../02-understanding-app-startup/01-ios-entry-point.html">
+        <span>📄</span> 01 — iOS Entry Point
+      </a>
+      <a class="curriculum-item-link" href="../02-understanding-app-startup/02-application-lifecycle.html">
+        <span>📄</span> 02 — Application Lifecycle
+      </a>
+      <a class="curriculum-item-link" href="../02-understanding-app-startup/03-startup-sequence-and-initial-routing.html">
+        <span>📄</span> 03 — Startup Sequence &amp; Initial Routing
+      </a>
+      <a class="curriculum-item-link active" href="#">
+        <span>🟢</span> 04 — CZModuleManager Deep Dive (Sedang Dibaca)
+      </a>
+    </div>
+    <div class="curriculum-level-group">
+      <div class="curriculum-level-title">Level 3: Understanding Architecture</div>
+      <a class="curriculum-item-link" href="../03-understanding-architecture/01-architecture-overview.html">
+        <span>📄</span> 01 — Architecture Overview
+      </a>
+      <a class="curriculum-item-link" href="../03-understanding-architecture/02-layers-and-responsibilities.html">
+        <span>📄</span> 02 — Layers &amp; Responsibilities
+      </a>
+      <a class="curriculum-item-link" href="../03-understanding-architecture/03-dependency-direction.html">
+        <span>📄</span> 03 — Dependency Direction
+      </a>
+      <a class="curriculum-item-link" href="../03-understanding-architecture/04-shared-components-and-services.html">
+        <span>📄</span> 04 — Shared Components &amp; Services
+      </a>
+    </div>
+    <div class="curriculum-level-group">
+      <div class="curriculum-level-title">Level 4: Understanding Navigation</div>
+      <a class="curriculum-item-link" href="../04-understanding-navigation/01-feature-inventory.html">
+        <span>📄</span> 01 — Feature Inventory
+      </a>
+      <a class="curriculum-item-link" href="../04-understanding-navigation/02-navigation-fundamentals.html">
+        <span>📄</span> 02 — Navigation Fundamentals
+      </a>
+      <a class="curriculum-item-link" href="../04-understanding-navigation/03-complete-navigation-map.html">
+        <span>📄</span> 03 — Complete Navigation Map
+      </a>
+      <a class="curriculum-item-link" href="../04-understanding-navigation/04-navigation-conditions-and-edge-cases.html">
+        <span>📄</span> 04 — Navigation Conditions &amp; Edge Cases
+      </a>
+    </div>
+    <div class="curriculum-level-group">
+      <div class="curriculum-level-title">Level 5: Learning Business Flows</div>
+      <a class="curriculum-item-link" href="../05-learning-business-flows/01-user-journey-overview.html">
+        <span>📄</span> 01 — User Journey Overview
+      </a>
+      <a class="curriculum-item-link" href="../05-learning-business-flows/02-authentication-and-session-flow.html">
+        <span>📄</span> 02 — Authentication &amp; Session Flow
+      </a>
+      <a class="curriculum-item-link" href="../05-learning-business-flows/03-core-feature-flows.html">
+        <span>📄</span> 03 — Core Feature Flows
+      </a>
+      <a class="curriculum-item-link" href="../05-learning-business-flows/04-cross-feature-journeys.html">
+        <span>📄</span> 04 — Cross-Feature Journeys
+      </a>
+      <a class="curriculum-item-link" href="../05-learning-business-flows/05-production-low-level-flows.html">
+        <span>📄</span> 05 — Production Low-Level Execution Flows
+      </a>
+    </div>
+    <div class="curriculum-level-group">
+      <div class="curriculum-level-title">Level 6: Data &amp; Dependencies</div>
+      <a class="curriculum-item-link" href="../06-understanding-data-and-dependencies/01-dependency-catalog.html">
+        <span>📄</span> 01 — Dependency Catalog
+      </a>
+      <a class="curriculum-item-link" href="../06-understanding-data-and-dependencies/02-networking-and-api-flow.html">
+        <span>📄</span> 02 — Networking &amp; API Flow
+      </a>
+      <a class="curriculum-item-link" href="../06-understanding-data-and-dependencies/03-models-and-data-transformation.html">
+        <span>📄</span> 03 — Models &amp; Data Transformation
+      </a>
+      <a class="curriculum-item-link" href="../06-understanding-data-and-dependencies/04-state-management-and-persistence.html">
+        <span>📄</span> 04 — State Management &amp; Persistence
+      </a>
+      <a class="curriculum-item-link" href="../06-understanding-data-and-dependencies/05-native-flutter-integration.html">
+        <span>📄</span> 05 — Native-Flutter Integration
+      </a>
+    </div>
+    <div class="curriculum-level-group">
+      <div class="curriculum-level-title">Level 7: Debugging &amp; Maintenance</div>
+      <a class="curriculum-item-link" href="../07-learning-to-debug-and-maintain/01-error-handling.html">
+        <span>📄</span> 01 — Error Handling
+      </a>
+      <a class="curriculum-item-link" href="../07-learning-to-debug-and-maintain/02-testing-and-debugging.html">
+        <span>📄</span> Level 7
+      </a>
+      <a class="curriculum-item-link" href="../07-learning-to-debug-and-maintain/03-coupling-and-technical-debt.html">
+        <span>📄</span> Level 7
+      </a>
+      <a class="curriculum-item-link" href="../07-learning-to-debug-and-maintain/04-change-impact-analysis.html">
+        <span>📄</span> Level 7
+      </a>
+    </div>
+    <div class="curriculum-level-group">
+      <div class="curriculum-level-title">Level 8: Reference &amp; Codebase Audit</div>
+      <a class="curriculum-item-link" href="../08-reference/01-codebase-glossary.html">
+        <span>📄</span> Level 8
+      </a>
+      <a class="curriculum-item-link" href="../08-reference/02-source-code-index.html">
+        <span>📄</span> Level 8
+      </a>
+      <a class="curriculum-item-link" href="../08-reference/03-existing-documentation-audit.html">
+        <span>📄</span> Level 8
+      </a>
+      <a class="curriculum-item-link" href="../08-reference/04-open-questions-and-unverified-findings.html">
+        <span>📄</span> Level 8
+      </a>
+    </div>
+    <div class="curriculum-level-group">
+      <div class="curriculum-level-title">Visual Diagrams &amp; Sequence Maps</div>
+      <a class="curriculum-item-link" href="../diagrams/application-startup.html">
+        <span>📄</span> Diagram — Alur Peluncuran Aplikasi (Application Startup Sequence)
+      </a>
+      <a class="curriculum-item-link" href="../diagrams/architecture-overview.html">
+        <span>📄</span> Diagram — Ikhtisar Arsitektur (Architecture Overview)
+      </a>
+      <a class="curriculum-item-link" href="../diagrams/core-user-journeys.html">
+        <span>📄</span> Diagram — Alur Pengguna Utama (Core User Journeys)
+      </a>
+      <a class="curriculum-item-link" href="../diagrams/feature-dependencies.html">
+        <span>📄</span> Diagram — Dependensi Fitur &amp; Modul (Feature Dependencies)
+      </a>
+      <a class="curriculum-item-link" href="../diagrams/navigation-overview.html">
+        <span>📄</span> Diagram — Peta Navigasi Lengkap (Navigation Overview)
+      </a>
+    </div>
+    <div class="curriculum-level-group">
+      <div class="curriculum-level-title">Course Index &amp; Syllabus</div>
+      <a class="curriculum-item-link" href="../README.html">
+        <span>📄</span> SAMIR iOS — Learning Curve &amp; Engineering Guide
+      </a>
+    </div>
+  </div>
+</div>
+
+<!-- ========================================================================= -->
+<!-- FULLSCREEN MERMAID DIAGRAM LIGHTBOX MODAL                                 -->
+<!-- ========================================================================= -->
+<div id="diagramModal" class="diagram-modal" onclick="closeDiagramModal(event)">
+  <div class="diagram-modal-dialog" onclick="event.stopPropagation()">
+    <div class="diagram-modal-header">
+      <h3 id="modalDiagramTitle">🔍 Pembesaran Diagram Alur</h3>
+      <div class="diagram-modal-controls">
+        <button class="diagram-ctrl-btn" onclick="zoomDiagram(1.25)">➕ Zoom In</button>
+        <button class="diagram-ctrl-btn" onclick="zoomDiagram(0.8)">➖ Zoom Out</button>
+        <button class="diagram-ctrl-btn" onclick="resetDiagramZoom()">↺ 100%</button>
+        <button class="diagram-close-btn" onclick="closeDiagramModal()">✕ Tutup [Esc]</button>
+      </div>
+    </div>
+    <div class="diagram-modal-body" id="diagramModalBody">
+      <!-- Cloned SVG inserted dynamically -->
+    </div>
+  </div>
+</div>
+
+<!-- Prism.js Scripts for Syntax Highlighting -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-swift.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-dart.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-json.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-yaml.min.js"></script>
+
+<!-- Interactive Scripts: Tabs, TOC ScrollSpy, Drawers & Quiz -->
+<script>
+  function toggleCurriculumDrawer() {
+    const drawer = document.getElementById('curriculumDrawer');
+    const overlay = document.getElementById('curriculumOverlay');
+    drawer.classList.toggle('open');
+    overlay.classList.toggle('open');
+  }
+
+  function toggleMobileToc() {
+    const drawer = document.getElementById('mobileTocDrawer');
+    const overlay = document.getElementById('mobileTocOverlay');
+    drawer.classList.toggle('open');
+    overlay.classList.toggle('open');
+  }
+
+  function filterCurriculum() {
+    const query = document.getElementById('moduleSearchInput').value.toLowerCase();
+    const links = document.querySelectorAll('.curriculum-item-link');
+    links.forEach(link => {
+      const text = link.innerText.toLowerCase();
+      link.style.display = text.includes(query) ? 'flex' : 'none';
+    });
+  }
+
+  function handleTocToggleClick() {
+    if (window.innerWidth > 1200) {
+      toggleDesktopToc();
+    } else {
+      toggleMobileToc();
+    }
+  }
+
+  function toggleDesktopToc() {
+    document.body.classList.toggle('toc-collapsed');
+    const isCollapsed = document.body.classList.contains('toc-collapsed');
+    try {
+      localStorage.setItem('chiron_toc_collapsed', isCollapsed ? '1' : '0');
+    } catch (e) {}
+
+    const topbarBtn = document.getElementById('topbarTocBtn');
+    if (topbarBtn) {
+      if (isCollapsed) {
+        topbarBtn.classList.remove('active');
+        topbarBtn.title = "Tampilkan Daftar Isi (Mode Normal)";
+      } else {
+        topbarBtn.classList.add('active');
+        topbarBtn.title = "Tutup Daftar Isi (Mode Fokus Membaca)";
+      }
+    }
+  }
+
+  function toggleTocBranch(caretEl) {
+    const node = caretEl.closest('.toc-tree-node');
+    if (node) {
+      node.classList.toggle('collapsed');
+      caretEl.textContent = node.classList.contains('collapsed') ? '▸' : '▾';
+    }
+  }
+
+  function toggleAllTocBranches() {
+    const allNodes = document.querySelectorAll('.toc-tree-node');
+    let hasCollapsed = false;
+    allNodes.forEach(n => {
+      if (n.classList.contains('collapsed')) hasCollapsed = true;
+    });
+    allNodes.forEach(n => {
+      const caret = n.querySelector(':scope > .toc-node-row > .toc-caret');
+      if (hasCollapsed) {
+        n.classList.remove('collapsed');
+        if (caret) caret.textContent = '▾';
+      } else {
+        if (!n.classList.contains('root-node')) {
+          n.classList.add('collapsed');
+          if (caret) caret.textContent = '▸';
+        }
+      }
+    });
+  }
+
+  function focusCurrentTocActive() {
+    const activeLink = document.querySelector('.toc-tree-link.active');
+    if (activeLink) {
+      activeLink.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+    } else {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  }
+
+  window.addEventListener('DOMContentLoaded', () => {
+    try {
+      if (localStorage.getItem('chiron_toc_collapsed') === '1' && window.innerWidth > 1200) {
+        document.body.classList.add('toc-collapsed');
+        const topbarBtn = document.getElementById('topbarTocBtn');
+        if (topbarBtn) topbarBtn.classList.remove('active');
+      }
+    } catch (e) {}
+
+    const sectionIds = ['sec-title', 'sec-obj', 'sec-prereq', 'sec-simple', 'sub-1-apa-itu-cold-start', 'sub-2-analogi-pusat-pengendali-terminal-bandara', 'sec-actual', 'sub-1-bootstrapping-awal-mainswift---czmodulehandler', 'sub-2-pembedahan-registerallmodules-modulename-vs-bundlename', 'sub-3-pendaftaran-router-filter-router-czroutercenter', 'sub-4-contoh-nyata-penggunaan-routers-di-production-end-to-end-flow', 'sub-5-routerfilters-mekanisme-aliasing-usecase-di-production', 'sub-6-alur-lengkap-deeplink-saat-cold-start-koordinasi-splash-screen', 'sub-7-mengapa-serviceforprotocol-dibuat-dan-seberapa-penting', 'sec-walkthrough', 'sec-why', 'sec-example', 'sec-mistakes', 'sub-solid', 'sub-blueprint', 'sub-quiz'];
+    const tocLinks = document.querySelectorAll('.toc-tree-link');
+
+    window.addEventListener('scroll', () => {
+      let currentSection = '';
+      const scrollPos = window.scrollY + 140;
+
+      sectionIds.forEach(id => {
+        const el = document.getElementById(id);
+        if (el && el.offsetTop <= scrollPos) {
+          currentSection = id;
+        }
+      });
+
+      if (currentSection) {
+        tocLinks.forEach(link => {
+          link.classList.remove('active');
+          if (link.getAttribute('href') === '#' + currentSection) {
+            link.classList.add('active');
+          }
+        });
+      }
+    });
+  });
+
+  // Diagram Lightbox Controls
+  let currentDiagramScale = 1.0;
+  function openDiagramZoom(diagramId, title) {
+    const originalEl = document.getElementById(diagramId);
+    if (!originalEl) return;
+    const svgEl = originalEl.querySelector('svg');
+    if (!svgEl) return;
+
+    const modal = document.getElementById('diagramModal');
+    const modalBody = document.getElementById('diagramModalBody');
+    const modalTitle = document.getElementById('modalDiagramTitle');
+
+    modalTitle.innerHTML = title ? '🔍 ' + title : '🔍 Pembesaran Diagram Alur';
+    modalBody.innerHTML = svgEl.outerHTML;
+    
+    currentDiagramScale = 1.0;
+    const clonedSvg = modalBody.querySelector('svg');
+    if (clonedSvg) clonedSvg.style.transform = 'scale(' + currentDiagramScale + ')';
+
+    modal.classList.add('active');
+    document.body.style.overflow = 'hidden';
+  }
+
+  function closeDiagramModal(event) {
+    if (event && event.target && event.target.closest && event.target.closest('.diagram-modal-dialog') && !event.target.classList.contains('diagram-close-btn')) {
+      return;
+    }
+    const modal = document.getElementById('diagramModal');
+    modal.classList.remove('active');
+    document.body.style.overflow = 'auto';
+  }
+
+  function zoomDiagram(factor) {
+    const modalBody = document.getElementById('diagramModalBody');
+    const svg = modalBody.querySelector('svg');
+    if (!svg) return;
+    currentDiagramScale *= factor;
+    svg.style.transform = 'scale(' + currentDiagramScale + ')';
+  }
+
+  function resetDiagramZoom() {
+    const modalBody = document.getElementById('diagramModalBody');
+    const svg = modalBody.querySelector('svg');
+    if (!svg) return;
+    currentDiagramScale = 1.0;
+    svg.style.transform = 'scale(1)';
+  }
+
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') {
+      closeDiagramModal();
+      const cDrawer = document.getElementById('curriculumDrawer');
+      if (cDrawer && cDrawer.classList.contains('open')) toggleCurriculumDrawer();
+      const tDrawer = document.getElementById('mobileTocDrawer');
+      if (tDrawer && tDrawer.classList.contains('open')) toggleMobileToc();
+    } else if (e.key === ']' && !e.ctrlKey && !e.metaKey && e.target.tagName !== 'INPUT') {
+      handleTocToggleClick();
+    }
+  });
+
+  // Quiz Evaluation Logic
+  const explanations = {
+  "1": {
+    "success": "Tepat sekali! Tahap inisialisasi cold-start bertugas mengonfigurasi SDK krusial dan runtime sistem sebelum tampilan utama dapat disajikan kepada nasabah secara aman.",
+    "danger": "Kurang tepat. Fase startup awal dirancang untuk mengonfigurasi runtime sistem, environment, dan SDK analitik/keamanan sebelum UI utama dimuat."
+  },
+  "2": {
+    "success": "Benar! Singleton konkret sulit di-mock dalam unit test karena mempertahankan shared state global yang mencemari hasil pengujian.",
+    "danger": "Kurang tepat. Kelemahan terbesar static singleton adalah hilangnya testability: Anda tidak dapat menyuntikkan mock object untuk menguji logika peluncuran secara mandiri."
+  },
+  "3": {
+    "success": "Sempurna! Inisialisasi SDK analitik non-kritis sebaiknya dialihkan ke background thread agar Time To First Meaningful Paint aplikasi tetap instan.",
+    "danger": "Kurang tepat. Untuk mencegah lag pada Main Thread, task analitik dan tracking non-kritis harus dijalankan di antrian background secara async."
+  }
+};
+
+  function submitQuiz(quizId, selectedOption, isCorrect) {
+    const card = document.getElementById('quiz-' + quizId);
+    const buttons = card.querySelectorAll('.quiz-btn');
+    const feedback = document.getElementById('feedback-' + quizId);
+
+    buttons.forEach(btn => {
+      btn.disabled = true;
+      btn.style.cursor = 'default';
+    });
+
+    if (window.event && window.event.target) {
+      window.event.target.classList.add(isCorrect ? 'correct' : 'incorrect');
+    }
+
+    feedback.className = 'quiz-feedback show ' + (isCorrect ? 'success' : 'danger');
+    feedback.innerHTML = '<strong>' + (isCorrect ? '🎉 Jawaban Tepat!' : '❌ Jawaban Salah!') + '</strong> ' + 
+      (isCorrect ? explanations[quizId].success : explanations[quizId].danger);
+  }
+</script>
+
+<!-- Chiron Annotations & Multi-IDE Launcher Engine -->
+<script src="../../../.assets/chiron-client.js"></script>
+<script src="../../../.assets/chiron-ide-launcher.js"></script>
+<script src="../../../.assets/chiron-annotations.js"></script>
+
+</body>
+</html>

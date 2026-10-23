@@ -1,0 +1,1073 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>04 — Root Container &amp; Tab Switching | Chiron Academy</title>
+  
+  <!-- Chiron Base Stylesheet -->
+  <link rel="stylesheet" href="../../../.assets/style.css">
+  
+  <!-- Prism.js Syntax Highlighting Theme (Tomorrow Night) -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css">
+  
+  <!-- Mermaid.js for Dynamic Flow Diagrams -->
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+  <script>mermaid.initialize({ startOnLoad: true, theme: 'dark' });</script>
+</head>
+<body>
+
+<!-- ========================================================================= -->
+<!-- STICKY TOP APPLICATION BAR (CROSSNOTE / VS CODE STYLE)                     -->
+<!-- ========================================================================= -->
+<nav class="app-topbar">
+  <div class="topbar-nav-row">
+    <!-- Browser-like History Navigation -->
+    <div class="nav-history-ctrls">
+      <button class="nav-ctrl-btn" onclick="history.back()" title="Kembali (Back)">◀</button>
+      <button class="nav-ctrl-btn" onclick="history.forward()" title="Maju (Forward)">▶</button>
+      <button class="nav-ctrl-btn" onclick="location.reload()" title="Segarkan (Reload)">↻</button>
+    </div>
+
+    <!-- Document Tabs Strip (Crossnote Style) -->
+    <div class="topbar-tabs-scroll" id="docTabsStrip">
+      <a class="doc-tab" href="01-flutter-entry-point.html" title="01-flutter-entry-point.html">
+        <span class="tab-icon">📄</span> 01-flutter-entry-point.html
+        <span class="tab-close" onclick="event.preventDefault(); this.parentElement.remove();">×</span>
+      </a>
+      <a class="doc-tab" href="02-module-lifecycle-and-host-sync.html" title="02-module-lifecycle-and-host-sync.html">
+        <span class="tab-icon">📄</span> 02-module-lifecycle-and-host-sync.html
+        <span class="tab-close" onclick="event.preventDefault(); this.parentElement.remove();">×</span>
+      </a>
+      <a class="doc-tab" href="03-startup-sequence-and-initial-routing.html" title="03-startup-sequence-and-initial-routing.html">
+        <span class="tab-icon">📄</span> 03-startup-sequence-and-initial-routing.html
+        <span class="tab-close" onclick="event.preventDefault(); this.parentElement.remove();">×</span>
+      </a>
+      <a class="doc-tab active" href="#" title="04-root-container-and-tab-switching.html">
+        <span class="tab-icon">🟢</span> 04-root-container-and-tab-switching.html
+        <span class="tab-close" onclick="event.preventDefault();">×</span>
+      </a>
+    </div>
+
+    <!-- Right Utilities -->
+    <div class="topbar-tools">
+      <button class="tool-btn" onclick="toggleCurriculumDrawer()" title="Buka seluruh daftar modul kurikulum">
+        📚 Semua Modul
+      </button>
+      <button class="tool-btn active" id="topbarTocBtn" onclick="handleTocToggleClick()" title="Buka/Tutup Daftar Isi (Mode Fokus Membaca)">
+        📑 Daftar Isi
+      </button>
+    </div>
+  </div>
+</nav>
+
+<!-- Floating Button to Restore TOC When Dismissed (Focus Mode) -->
+<button class="toc-expand-float-btn" id="tocExpandFloatBtn" onclick="toggleDesktopToc()" title="Tampilkan Kembali Daftar Isi">
+  📑 Buka Daftar Isi
+</button>
+
+<!-- ========================================================================= -->
+<!-- TWO-COLUMN DOCUMENTATION LAYOUT (MAIN CONTENT + STICKY TOC)               -->
+<!-- ========================================================================= -->
+<div class="docs-layout" id="docsLayout">
+
+  <!-- Main Content Column -->
+  <main class="docs-content">
+
+    <!-- Header Section -->
+    <header id="sec-title">
+      <div class="badge">CHIRON CLASSROOM • SAMIR MOBILE FLUTTER</div>
+      <h1>04 — Root Container &amp; Tab Switching</h1>
+      <p style="color: var(--text-muted); font-size: 1.05rem; margin-top: 0.25rem;">
+        Arsitektur Wadah Tab Bersama
+      </p>
+      <div class="metadata" style="margin-top: 1rem;">
+        <span>📚 Modul: <strong>04-root-container-and-tab-switching</strong></span>
+        <span>🎯 Scope: <strong>SAMIR Mobile (Flutter Add-to-App & MethodChannel)</strong></span>
+        <span>⏱️ Estimasi: <strong>20 Menit</strong></span>
+        <span>🏷️ Git Branch: <strong>learn/Flutter-Arch</strong></span>
+      </div>
+    </header>
+
+    <!-- BAGIAN 1: DOKUMEN PEMBELAJARAN LENGKAP -->
+    <div class="section-banner">
+      <h2>📖 Bagian 1: Dokumen Pembelajaran Lengkap & Alur Nyata</h2>
+      <span class="pill">Core Knowledge</span>
+    </div>
+
+<p>Dokumentasi ini menjelaskan implementasi <a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/learn/Flutter-Arch/flutter/lib/pages/root/flutter_root_page.dart" target="_blank" rel="noopener noreferrer">🦊 flutter/lib/pages/root/flutter_root_page.dart <span class="branch-tag">learn/Flutter-Arch</span> ↗</a> sebagai kontainer root bersama, peran pengendali status reaktif <a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/learn/Flutter-Arch/flutter/lib/common/router/flutter_root_controller.dart" target="_blank" rel="noopener noreferrer">🦊 flutter/lib/common/router/flutter_root_controller.dart <span class="branch-tag">learn/Flutter-Arch</span> ↗</a>, pemanfaatan <code>IndexedStack</code>, serta mekanisme pergantian tab instan antara Tab Tagihan (Repay) dan Tab Saya (Mine) di dalam satu Flutter Engine.</p>
+<p>Status Verifikasi: <code>[Verified]</code> (diverifikasi langsung dari <a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/learn/Flutter-Arch/flutter/lib/pages/root/flutter_root_page.dart" target="_blank" rel="noopener noreferrer">🦊 flutter/lib/pages/root/flutter_root_page.dart <span class="branch-tag">learn/Flutter-Arch</span> ↗</a> dan <a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/learn/Flutter-Arch/flutter/lib/common/router/flutter_root_controller.dart" target="_blank" rel="noopener noreferrer">🦊 flutter/lib/common/router/flutter_root_controller.dart <span class="branch-tag">learn/Flutter-Arch</span> ↗</a>).</p>
+<section id="sec-obj" class="doc-section">
+<h3>🎯 A. Learning Objective</h3>
+<p>Setelah menyelesaikan dokumen ini, pembaca akan mampu:</p>
+<ol>
+<li>Memahami arsitektur wadah tunggal (<code>FlutterRootPage</code>) yang mengelola dua tab native berbeda.</li>
+<li>Menjelaskan mekanisme kerja <code>FlutterRootController.selectedPath</code> yang menggunakan pola <code>ValueNotifier</code>.</li>
+<li>Mengetahui cara kerja <code>IndexedStack</code> dalam mempertahankan state (form input, scroll offset, cache) saat pengguna berpindah tab.</li>
+<li>Menjelaskan integrasi <code>AnnotatedRegion&lt;SystemUiOverlayStyle&gt;</code> untuk memastikan warna status bar perangkat tetap konsisten.</li>
+</ol>
+</section>
+<section id="sec-prereq" class="doc-section">
+<h3>📋 B. Prerequisites</h3>
+<p>Telah membaca <a href="03-startup-sequence-and-initial-routing.html">03-startup-sequence-and-initial-routing.md</a>.</p>
+</section>
+<section id="sec-simple" class="doc-section">
+<h3>💡 C. Simple Explanation (Analogi &amp; Konsep Sederhana)</h3>
+<p>Bayangkan sebuah proyektor film dengan dua slide transparan yang terpasang di atas rel bergeser:</p>
+<ul>
+<li>Slide 1 adalah <strong>Halaman Profil (Mine)</strong>.</li>
+<li>Slide 2 adalah <strong>Halaman Tagihan (Repay)</strong>.</li>
+<li>Ketika proyektor dinyalakan (<code>FlutterRootPage</code>), kedua slide sudah berada di posisinya masing-masing.</li>
+<li>Tuas mekanik (<code>FlutterRootController</code>) cukup menggeser rel sepersekian milimeter untuk menempatkan Slide 1 atau Slide 2 di depan lensa lampu proyektor.</li>
+<li>Slide yang sedang tidak disorot lampu tidak dilepas atau dibuang; posisi gambar dan catatannya tetap menempel sempurna di slide tersebut, siap disorot kembali dalam sekejap mata.</li>
+</ul>
+</section>
+<section id="sec-actual" class="doc-section">
+<h3>💻 D. Actual Implementation (Bukti di Kode Sumber)</h3>
+<div id="sub-1-bedah-flutterrootcontroller" class="doc-subsection">
+<h4>1. Bedah `FlutterRootController`</h4>
+</div>
+<p>File <a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/learn/Flutter-Arch/flutter/lib/common/router/flutter_root_controller.dart" target="_blank" rel="noopener noreferrer">🦊 flutter/lib/common/router/flutter_root_controller.dart <span class="branch-tag">learn/Flutter-Arch</span> ↗</a> bertindak sebagai State Store reaktif murni tanpa dependensi eksternal:</p>
+<pre><code class="language-dart">abstract final class FlutterRootController {
+  FlutterRootController._();
+
+  static final ValueNotifier&lt;String?&gt; selectedPath = ValueNotifier&lt;String?&gt;(null);
+
+  static bool supports(String? location) {
+    return RootRoutes.isTabRoot(location);
+  }
+
+  static bool isSelected(String location) {
+    return selectedPath.value == RootRoutes.normalize(location);
+  }
+
+  static void select(String location) {
+    final String path = RootRoutes.normalize(location);
+    if (!supports(path) || selectedPath.value == path) {
+      return;
+    }
+    selectedPath.value = path;
+  }
+}</code></pre>
+<p>Karakteristik penting:</p>
+<ul>
+<li>Menggunakan <code>ValueNotifier&lt;String?&gt;</code>: Ringan dan efisien, hanya memicu update pada listener yang terdaftar tanpa perlu rebuild global.</li>
+<li><code>supports(location)</code>: Memvalidasi apakah path rute adalah rute root yang didukung (<code>/mine</code> atau <code>/repay</code>).</li>
+<li>Idempoten: Jika path yang dipilih sama dengan path saat ini (<code>selectedPath.value == path</code>), notifikasi diabaikan untuk mencegah siklus render sia-sia.</li>
+</ul>
+<div id="sub-2-bedah-flutterrootpage" class="doc-subsection">
+<h4>2. Bedah `FlutterRootPage`</h4>
+</div>
+<p>File <a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/learn/Flutter-Arch/flutter/lib/pages/root/flutter_root_page.dart" target="_blank" rel="noopener noreferrer">🦊 flutter/lib/pages/root/flutter_root_page.dart <span class="branch-tag">learn/Flutter-Arch</span> ↗</a>:</p>
+<pre><code class="language-dart">class FlutterRootPage extends StatefulWidget {
+  const FlutterRootPage({super.key});
+
+  @override
+  State&lt;FlutterRootPage&gt; createState() =&gt; _FlutterRootPageState();
+}
+
+class _FlutterRootPageState extends State&lt;FlutterRootPage&gt; {
+  static const List&lt;String&gt; _paths = &lt;String&gt;[
+    RoutePaths.mineHome,
+    RoutePaths.repayHome,
+  ];
+
+  late final List&lt;Widget&gt; _pages = const &lt;Widget&gt;[
+    MineHomePage(),
+    RepayHomePage(),
+  ];
+
+  @override
+  void initState() {
+    super.initState();
+    FlutterRootController.selectedPath.addListener(_handleSelectionChanged);
+  }
+
+  @override
+  void dispose() {
+    FlutterRootController.selectedPath.removeListener(_handleSelectionChanged);
+    super.dispose();
+  }
+
+  void _handleSelectionChanged() {
+    if (mounted) {
+      setState(() {});
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final String? selectedPath = FlutterRootController.selectedPath.value;
+    final int selectedIndex = selectedPath == null
+        ? -1
+        : _paths.indexOf(selectedPath);
+
+    return AnnotatedRegion&lt;SystemUiOverlayStyle&gt;(
+      value: AppSystemUiStyle.onLightBackground,
+      child: IndexedStack(
+        index: selectedIndex &lt; 0 ? null : selectedIndex,
+        sizing: StackFit.expand,
+        children: List&lt;Widget&gt;.generate(_pages.length, (int index) {
+          final bool visible = index == selectedIndex;
+          return PageLifecycleVisibility(
+            visible: visible,
+            child: TickerMode(enabled: visible, child: _pages[index]),
+          );
+        }, growable: false),
+      ),
+    );
+  }
+}</code></pre>
+<div id="sub-3-pemetaan-indeks-tab" class="doc-subsection">
+<h4>3. Pemetaan Indeks Tab</h4>
+</div>
+<p>Tabel korelasi indeks <code>IndexedStack</code> terhadap rute dan modul:</p>
+<div class="table-container"><table class="data-table"><thead><tr><th>Indeks</th><th>Path Rute (<code>RoutePaths</code>)</th><th>Komponen Widget</th><th>Tab Native di iOS</th></tr></thead><tbody><tr><td><strong>0</strong></td><td><code>RoutePaths.mineHome</code> (<code>/mine</code>)</td><td><code>MineHomePage()</code></td><td>Tab 2 (Saya / Mine)</td></tr><tr><td><strong>1</strong></td><td><code>RoutePaths.repayHome</code> (<code>/repay</code>)</td><td><code>RepayHomePage()</code></td><td>Tab 1 (Tagihan / Repay)</td></tr></tbody></table></div>
+</section>
+<section id="sec-walkthrough" class="doc-section">
+<h3>🪜 E. Step-by-Step Walkthrough: Alur Pergantian Tab (Switching Flow)</h3>
+<ol>
+<li><strong>User Mengetuk Tab Tagihan di Host iOS</strong>:</li>
+</ol>
+<p><code>IDMainTabBarController</code> native mendeteksi perpindahan ke index 1 (Tagihan).</p>
+<ol>
+<li><strong>Native Memanggil Channel</strong>:</li>
+</ol>
+<p>Host mengirimkan pesan method channel <code>showFlutterRoute</code> dengan payload <code>{&quot;route&quot;: &quot;/repay&quot;}</code>.</p>
+<ol>
+<li><strong>Routers Mengarahkan</strong>:</li>
+</ol>
+<p><code>FlutterNativeRouteDispatcher</code> memanggil <code>Routers.go(&#x27;/repay&#x27;)</code>.</p>
+<ol>
+<li><strong>Controller Memperbarui State</strong>:</li>
+</ol>
+<p><code>Routers.go</code> mendeteksi bahwa <code>/repay</code> didukung oleh <code>FlutterRootController</code>, lalu memanggil <code>FlutterRootController.select(&#x27;/repay&#x27;)</code>.</p>
+<ol>
+<li><strong>Listener <code>FlutterRootPage</code> Terpicu</strong>:</li>
+</ol>
+<p>Fungsi <code>_handleSelectionChanged()</code> menerima notifikasi nilai baru, lalu memanggil <code>setState()</code>.</p>
+<ol>
+<li><strong>Pergantian Indeks Visual</strong>:</li>
+</ol>
+<p>Nilai <code>selectedIndex</code> berubah dari 0 ke 1. <code>IndexedStack</code> seketika memunculkan <code>RepayHomePage()</code> di layar.</p>
+<ol>
+<li><strong>Lifecycle & Ticker Update</strong>:</li>
+</ol>
+<ul>
+<li><code>MineHomePage</code> (Index 0): <code>visible = false</code>, <code>TickerMode</code> dimatikan.</li>
+<li><code>RepayHomePage</code> (Index 1): <code>visible = true</code>, <code>TickerMode</code> diaktifkan, dan event <code>onPageVisible()</code> dipicu.</li>
+</ul>
+</section>
+<section id="sec-why" class="doc-section">
+<h3>⚖️ F. Why It Matters (Trade-Offs &amp; Implikasi Teknis)</h3>
+<ul>
+<li><strong>Menghilangkan Tab Switching Latency</strong>:</li>
+</ul>
+<p>Jika Flutter menghancurkan (<em>destroy</em>) widget halaman setiap kali pengguna berpindah tab, pengguna akan mengalami jeda pemuatan (loading skeleton) dan scrolling position akan reset ke paling atas. <code>IndexedStack</code> mempertahankan state form dan posisi scroll secara utuh di memori.</p>
+<ul>
+<li><strong>Konsistensi Status Bar dengan <code>AnnotatedRegion</code></strong>:</li>
+</ul>
+<p>Aplikasi SAMIR menggunakan tema antarmuka terang (<em>light background</em>). Pembungkus <code>AnnotatedRegion&lt;SystemUiOverlayStyle&gt;(value: AppSystemUiStyle.onLightBackground)</code> memastikan ikon status bar (jam, baterai, wifi) selalu berwarna hitam legam di perangkat iOS dan Android, menghindari teks status bar menjadi putih tak terbaca di atas latar belakang terang.</p>
+</section>
+<section id="sec-example" class="doc-section">
+<h3>🔬 G. Practical Example (Skenario Penggunaan Nyata)</h3>
+<p>Pengguna sedang mengisi form bantuan di halaman profil (Mine), lalu berpindah ke tab Tagihan untuk memeriksa tanggal jatuh tempo, dan kemudian kembali ke tab profil:</p>
+<ul>
+<li>Berkat <code>IndexedStack</code>, seluruh teks yang sudah diketik di form halaman Mine tidak hilang.</li>
+<li>Pengguna dapat melanjutkan pengetikan tanpa frustrasi.</li>
+</ul>
+</section>
+<section id="sec-mistakes" class="doc-section">
+<h3>⚠️ H. Common Mistakes &amp; Debugging</h3>
+<ul>
+<li><strong>Lupa Melepas Listener pada <code>dispose()</code></strong>:</li>
+<li><code>FlutterRootController.selectedPath.removeListener(_handleSelectionChanged)</code> wajib dipanggil di fungsi <code>dispose()</code> untuk mencegah memory leak.</li>
+<li><strong>Memberikan Index Negatif ke <code>IndexedStack</code></strong>:</li>
+<li>Pada baris 57: <code>index: selectedIndex &lt; 0 ? null : selectedIndex</code>. Jika <code>selectedPath</code> belum terdefinisi saat booting awal, memberikan <code>null</code> akan membuat <code>IndexedStack</code> tidak menampilkan child manapun daripada memicu runtime <code>RangeError</code>.</li>
+</ul>
+</section>
+<section id="sec-check" class="doc-section">
+<h3>🧠 I. Knowledge Check</h3>
+<ol>
+<li>Mengapa <code>FlutterRootPage</code> menggunakan <code>IndexedStack</code> dan bukan <code>TabBarView</code> biasa?</li>
+<li>Objek apa yang digunakan oleh <code>FlutterRootController</code> untuk menyebarkan perubahan tab yang aktif?</li>
+<li>Apa yang terjadi pada controller animasi di halaman yang sedang tersembunyi di dalam <code>IndexedStack</code>?</li>
+</ol>
+<p><strong>Latihan Observasi</strong>:</p>
+<p>Buka <a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/learn/Flutter-Arch/flutter/lib/pages/root/flutter_root_page.dart" target="_blank" rel="noopener noreferrer">🦊 flutter/lib/pages/root/flutter_root_page.dart <span class="branch-tag">learn/Flutter-Arch</span> ↗</a>. Amati deklarasi <code>_paths</code> pada baris 19–22 dan pastikan urutan indeksnya selaras dengan list <code>_pages</code>.</p>
+</section>
+<section id="sec-completion" class="doc-section">
+<h3>🏁 J. Completion Criteria</h3>
+<p>Anda telah menguasai Level 2: Bootstrapping & Lifecycle Flutter SAMIR secara menyeluruh.</p>
+<p>Dokumen berikutnya: <a href="../03-understanding-architecture/01-architecture-overview.html">Level 3: Arsitektur Hybrid Add-to-App</a>.</p>
+</section>
+
+    <!-- BAGIAN 2 & 3: ARCHITECTURAL CRITIQUE & BLUEPRINT -->
+    <div class="section-banner lab" style="margin-top: 4rem;">
+      <h2>🏛️ Bagian 2: Architecture Lab, SOLID Audit & Retention Quizzes</h2>
+      <span class="pill" style="background-color: var(--accent-warning);">Architecture Lab</span>
+    </div>
+
+
+    <!-- SEGMEN 2: ARCHITECTURAL CRITIQUE -->
+    <section class="lesson-segment" id="sub-solid">
+      <h2>🏛️ Audit SOLID & Clean Architecture: Menemukan Titik Lemah pada Implementasi Existing</h2>
+
+      <div class="callout critique">
+        <div class="callout-title">⚠️ Smells 1: Pelanggaran SRP: God Object Coordinator pada Alur Startup</div>
+        <p>Class modul startup utama pada SAMIR Mobile Flutter menangani terlalu banyak tanggung jawab: registrasi APM, inisialisasi jaringan, pemanasan runtime engine, serta registrasi push notifications secara monolitik.</p>
+      </div>
+
+      <div class="callout critique">
+        <div class="callout-title">⚠️ Smells 2: Pelanggaran DIP: Keterikatan Statis Singleton (0% Unit Testability)</div>
+        <p>Komponen memanggil static shared singleton secara langsung tanpa melalui abstraksi antarmuka (Dependency Inversion Principle), membuat pengujian terisolasi di automated unit test menjadi mustahil tanpa memicu efek samping jaringan dan APM produksi.</p>
+      </div>
+    </section>
+
+    <!-- SEGMEN 3: REFACTORING BLUEPRINT -->
+    <section class="lesson-segment" id="sub-blueprint">
+      <h2>🚀 Blueprint Refactoring Standar Industri: Penerapan Composite Startup Task Architecture</h2>
+      <p>Memecah alur peluncuran aplikasi menjadi serangkaian task mandiri yang mengimplementasikan protokol tunggal (Open/Closed Principle) dan dapat dieksekusi secara terkoordinasi (sync/async).</p>
+
+      <div class="callout best-practice">
+        <div class="callout-title">✅ Rekomendasi Solusi Arsitektur Bersih</div>
+        <pre><code class="language-dart">abstract class AppStartupTask {
+  String get identifier;
+  Future&lt;void&gt; execute();
+}
+
+class StartupTaskCoordinator {
+  final List&lt;AppStartupTask&gt; tasks;
+  StartupTaskCoordinator(this.tasks);
+
+  Future&lt;void&gt; runAll() async {
+    for (final task in tasks) {
+      await task.execute();
+    }
+  }
+}</code></pre>
+      </div>
+
+      <h3>Keunggulan Arsitektur Refactoring Ini:</h3>
+      <ul>
+        <li><strong>100% Mockable & Testable:</strong> Memungkinkan pengujian terisolasi tanpa memicu efek samping runtime produksi.</li>
+        <li><strong>Open/Closed Principle (OCP):</strong> Penambahan fitur baru dapat dilakukan tanpa memodifikasi class yang sudah stabil.</li>
+        <li><strong>Decoupled Subsystems:</strong> Membatasi dampak regresi saat terjadi perubahan dependensi eksternal.</li>
+      </ul>
+    </section>
+
+
+    <!-- SEGMEN 4: INTERACTIVE RETENTION QUIZ -->
+    <section class="lesson-segment" id="sub-quiz">
+      <h2>🧠 Interactive Retention & Architectural Quiz</h2>
+      <p>Uji pemahaman alur kode nyata dan keputusan arsitektur Anda:</p>
+
+      <!-- KUIS 1 -->
+      <div class="quiz-card" id="quiz-1">
+        <h4>Kuis 1 (Memory Recall): Apa fungsi paling utama dari fase inisialisasi awal pada siklus peluncuran FLUTTER?</h4>
+        <div class="quiz-options">
+          <button class="quiz-btn" onclick="submitQuiz(1, 'A', true)">
+            A. Mempersiapkan runtime sistem dan SDK sebelum UI utama dirender ke layar
+          </button>
+          <button class="quiz-btn" onclick="submitQuiz(1, 'B', false)">
+            B. Mengunduh seluruh aset gambar dan database transaksi nasabah secara lokal
+          </button>
+          <button class="quiz-btn" onclick="submitQuiz(1, 'C', false)">
+            C. Menghapus seluruh cache UserDefaults atau SharedPreferences pengguna lama
+          </button>
+          <button class="quiz-btn" onclick="submitQuiz(1, 'D', false)">
+            D. Menutup secara paksa aplikasi jika koneksi internet tidak stabil pada boot
+          </button>
+        </div>
+        <div class="quiz-feedback" id="feedback-1"></div>
+      </div>
+      <!-- KUIS 2 -->
+      <div class="quiz-card" id="quiz-2">
+        <h4>Kuis 2 (Architectural Decision): Mengapa keterikatan langsung pada static shared singleton saat startup dianggap sebagai architectural smell?</h4>
+        <div class="quiz-options">
+          <button class="quiz-btn" onclick="submitQuiz(2, 'A', false)">
+            A. Mengakibatkan binary aplikasi berukuran dua kali lipat lebih besar di store
+          </button>
+          <button class="quiz-btn" onclick="submitQuiz(2, 'B', true)">
+            B. Menghambat automated testing karena dependensi tidak dapat diganti dengan mock
+          </button>
+          <button class="quiz-btn" onclick="submitQuiz(2, 'C', false)">
+            C. Menghentikan rendering antarmuka UIKit atau Flutter saat proses kompilasi
+          </button>
+          <button class="quiz-btn" onclick="submitQuiz(2, 'D', false)">
+            D. Memaksa compiler menolak seluruh deklarasi protokol antarmuka abstraksi
+          </button>
+        </div>
+        <div class="quiz-feedback" id="feedback-2"></div>
+      </div>
+      <!-- KUIS 3 -->
+      <div class="quiz-card" id="quiz-3">
+        <h4>Kuis 3 (Debugging & Maintenance): Bagaimana pendekatan terbaik dalam mengisolasi inisialisasi SDK analitik agar tidak memperlambat startup?</h4>
+        <div class="quiz-options">
+          <button class="quiz-btn" onclick="submitQuiz(3, 'A', true)">
+            A. Memindahkan eksekusi inisialisasi ke antrian background secara asynchronous
+          </button>
+          <button class="quiz-btn" onclick="submitQuiz(3, 'B', false)">
+            B. Memanggil Thread.sleep(2.0) di main queue untuk memberi waktu prosesor rileks
+          </button>
+          <button class="quiz-btn" onclick="submitQuiz(3, 'C', false)">
+            C. Menunda inisialisasi hingga nasabah menutup aplikasi pertama kali di device
+          </button>
+          <button class="quiz-btn" onclick="submitQuiz(3, 'D', false)">
+            D. Menggabungkan seluruh SDK pihak ketiga ke dalam satu fungsi C++ statis
+          </button>
+        </div>
+        <div class="quiz-feedback" id="feedback-3"></div>
+      </div>
+    </section>
+
+    <!-- Lesson Navigation Footer -->
+    <div class="lesson-nav-footer">
+      <a class="lesson-nav-btn prev" href="../02-understanding-app-startup/03-startup-sequence-and-initial-routing.html">
+  ◀ Modul Sebelumnya: 03 — Startup Sequence &amp; Initial Routing
+</a>
+      <a class="lesson-nav-btn next" href="../03-understanding-architecture/01-architecture-overview.html">
+  Modul Selanjutnya: 01 — Architecture Overview ▶
+</a>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+      <div>Chiron Codebase Mastery Academy • SAMIR Mobile Flutter</div>
+      <div>Anchor Branch: <strong>learn/Flutter-Arch</strong></div>
+    </footer>
+
+  </main>
+
+  <!-- ========================================================================= -->
+  <!-- RIGHT-HAND SIDEBAR: ON-PAGE TABLE OF CONTENTS                             -->
+  <!-- ========================================================================= -->
+  <aside class="docs-toc-sidebar" id="desktopTocSidebar">
+    <div class="toc-header-bar">
+      <span class="toc-header-label">📑 DAFTAR ISI</span>
+      <div class="toc-header-actions">
+        <button class="toc-action-btn" id="tocScrollTopBtn" title="Scroll ke Paling Atas" onclick="window.scrollTo({top: 0, behavior: 'smooth'})">▲</button>
+        <button class="toc-action-btn" id="tocToggleAllBtn" title="Buka/Tutup Semua Cabang" onclick="toggleAllTocBranches()">🔄</button>
+        <button class="toc-action-btn" id="tocResetActiveBtn" title="Fokuskan ke Topik Aktif" onclick="focusCurrentTocActive()">📑</button>
+        <button class="toc-action-btn toc-dismiss-btn" id="tocDismissBtn" title="Tutup Daftar Isi (Fokus Mode Membaca)" onclick="toggleDesktopToc()">✕</button>
+      </div>
+    </div>
+
+    <div class="toc-tree-container">
+      <div class="toc-tree-node root-node" id="toc-node-root">
+        <div class="toc-node-row">
+          <span class="toc-caret" onclick="toggleTocBranch(this)">▾</span>
+          <a class="toc-tree-link root-link" href="#sec-title" title="04 — Root Container &amp; Tab Switching">
+            04 — Root Container &amp; Tab Switching
+          </a>
+        </div>
+        <div class="toc-branch">
+          <div class="toc-node-row">
+            <span class="toc-leaf-dot"></span>
+            <a class="toc-tree-link" href="#sec-obj">A. Learning Objective</a>
+          </div>
+          <div class="toc-node-row">
+            <span class="toc-leaf-dot"></span>
+            <a class="toc-tree-link" href="#sec-prereq">B. Prerequisites</a>
+          </div>
+          <div class="toc-node-row">
+            <span class="toc-leaf-dot"></span>
+            <a class="toc-tree-link" href="#sec-simple">C. Simple Explanation (Analogi &amp; Konsep Sederhana)</a>
+          </div>
+          <div class="toc-tree-node" id="toc-node-sec-actual">
+            <div class="toc-node-row">
+              <span class="toc-caret" onclick="toggleTocBranch(this)">▾</span>
+              <a class="toc-tree-link" href="#sec-actual">D. Actual Implementation (Bukti di Kode Sumber)</a>
+            </div>
+            <div class="toc-branch">
+              <div class="toc-node-row">
+                <span class="toc-leaf-dot"></span>
+                <a class="toc-tree-link" href="#sub-1-bedah-flutterrootcontroller">1. Bedah `FlutterRootController`</a>
+              </div>
+              <div class="toc-node-row">
+                <span class="toc-leaf-dot"></span>
+                <a class="toc-tree-link" href="#sub-2-bedah-flutterrootpage">2. Bedah `FlutterRootPage`</a>
+              </div>
+              <div class="toc-node-row">
+                <span class="toc-leaf-dot"></span>
+                <a class="toc-tree-link" href="#sub-3-pemetaan-indeks-tab">3. Pemetaan Indeks Tab</a>
+              </div>
+            </div>
+          </div>
+          <div class="toc-node-row">
+            <span class="toc-leaf-dot"></span>
+            <a class="toc-tree-link" href="#sec-walkthrough">E. Step-by-Step Walkthrough: Alur Pergantian Tab (Switching Flow)</a>
+          </div>
+          <div class="toc-node-row">
+            <span class="toc-leaf-dot"></span>
+            <a class="toc-tree-link" href="#sec-why">F. Why It Matters (Trade-Offs &amp; Implikasi Teknis)</a>
+          </div>
+          <div class="toc-node-row">
+            <span class="toc-leaf-dot"></span>
+            <a class="toc-tree-link" href="#sec-example">G. Practical Example (Skenario Penggunaan Nyata)</a>
+          </div>
+          <div class="toc-node-row">
+            <span class="toc-leaf-dot"></span>
+            <a class="toc-tree-link" href="#sec-mistakes">H. Common Mistakes &amp; Debugging</a>
+          </div>
+          <div class="toc-node-row">
+            <span class="toc-leaf-dot"></span>
+            <a class="toc-tree-link" href="#sec-check">I. Knowledge Check</a>
+          </div>
+          <div class="toc-node-row">
+            <span class="toc-leaf-dot"></span>
+            <a class="toc-tree-link" href="#sec-completion">J. Completion Criteria</a>
+          </div>
+          <!-- Architecture Lab Branches -->
+          <div class="toc-tree-node" id="toc-node-lab" style="margin-top: 0.45rem;">
+            <div class="toc-node-row">
+              <span class="toc-caret" onclick="toggleTocBranch(this)">▾</span>
+              <a class="toc-tree-link" href="#sub-solid" style="font-weight: 700; color: var(--accent-warning);">
+                🏛️ Architecture Lab & Audit
+              </a>
+            </div>
+            <div class="toc-branch">
+              <div class="toc-node-row">
+                <span class="toc-leaf-dot"></span>
+                <a class="toc-tree-link" href="#sub-solid">1. Audit SOLID & Clean Arch</a>
+              </div>
+              <div class="toc-node-row">
+                <span class="toc-leaf-dot"></span>
+                <a class="toc-tree-link" href="#sub-blueprint">2. Refactoring Blueprint</a>
+              </div>
+              <div class="toc-node-row">
+                <span class="toc-leaf-dot"></span>
+                <a class="toc-tree-link" href="#sub-quiz">3. Interactive Retention Quiz</a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </aside>
+
+</div>
+
+<!-- ========================================================================= -->
+<!-- MOBILE / DRAWER TABLE OF CONTENTS OVERLAY                                 -->
+<!-- ========================================================================= -->
+<div class="mobile-toc-overlay" id="mobileTocOverlay" onclick="toggleMobileToc()"></div>
+<div class="mobile-toc-drawer" id="mobileTocDrawer">
+  <div class="toc-header-bar">
+    <span class="toc-header-label">📑 DAFTAR ISI HALAMAN</span>
+    <button class="drawer-close-btn" onclick="toggleMobileToc()">✕</button>
+  </div>
+  <div class="toc-tree-container" style="margin-top: 0.75rem;">
+    <div class="toc-tree-node root-node" id="mob-toc-node-root">
+      <div class="toc-node-row">
+        <span class="toc-caret" onclick="toggleTocBranch(this)">▾</span>
+        <a class="toc-tree-link root-link" href="#sec-title" onclick="toggleMobileToc()">
+          04 — Root Container &amp; Tab Switching
+        </a>
+      </div>
+      <div class="toc-branch">
+        <div class="toc-node-row">
+          <span class="toc-leaf-dot"></span>
+          <a class="toc-tree-link" href="#sec-obj" onclick="toggleMobileToc()">A. Learning Objective</a>
+        </div>
+        <div class="toc-node-row">
+          <span class="toc-leaf-dot"></span>
+          <a class="toc-tree-link" href="#sec-prereq" onclick="toggleMobileToc()">B. Prerequisites</a>
+        </div>
+        <div class="toc-node-row">
+          <span class="toc-leaf-dot"></span>
+          <a class="toc-tree-link" href="#sec-simple" onclick="toggleMobileToc()">C. Simple Explanation (Analogi &amp; Konsep Sederhana)</a>
+        </div>
+        <div class="toc-tree-node" id="mob-toc-node-sec-actual">
+          <div class="toc-node-row">
+            <span class="toc-caret" onclick="toggleTocBranch(this)">▾</span>
+            <a class="toc-tree-link" href="#sec-actual" onclick="toggleMobileToc()">D. Actual Implementation (Bukti di Kode Sumber)</a>
+          </div>
+          <div class="toc-branch">
+            <div class="toc-node-row">
+              <span class="toc-leaf-dot"></span>
+              <a class="toc-tree-link" href="#sub-1-bedah-flutterrootcontroller" onclick="toggleMobileToc()">1. Bedah `FlutterRootController`</a>
+            </div>
+            <div class="toc-node-row">
+              <span class="toc-leaf-dot"></span>
+              <a class="toc-tree-link" href="#sub-2-bedah-flutterrootpage" onclick="toggleMobileToc()">2. Bedah `FlutterRootPage`</a>
+            </div>
+            <div class="toc-node-row">
+              <span class="toc-leaf-dot"></span>
+              <a class="toc-tree-link" href="#sub-3-pemetaan-indeks-tab" onclick="toggleMobileToc()">3. Pemetaan Indeks Tab</a>
+            </div>
+          </div>
+        </div>
+        <div class="toc-node-row">
+          <span class="toc-leaf-dot"></span>
+          <a class="toc-tree-link" href="#sec-walkthrough" onclick="toggleMobileToc()">E. Step-by-Step Walkthrough: Alur Pergantian Tab (Switching Flow)</a>
+        </div>
+        <div class="toc-node-row">
+          <span class="toc-leaf-dot"></span>
+          <a class="toc-tree-link" href="#sec-why" onclick="toggleMobileToc()">F. Why It Matters (Trade-Offs &amp; Implikasi Teknis)</a>
+        </div>
+        <div class="toc-node-row">
+          <span class="toc-leaf-dot"></span>
+          <a class="toc-tree-link" href="#sec-example" onclick="toggleMobileToc()">G. Practical Example (Skenario Penggunaan Nyata)</a>
+        </div>
+        <div class="toc-node-row">
+          <span class="toc-leaf-dot"></span>
+          <a class="toc-tree-link" href="#sec-mistakes" onclick="toggleMobileToc()">H. Common Mistakes &amp; Debugging</a>
+        </div>
+        <div class="toc-node-row">
+          <span class="toc-leaf-dot"></span>
+          <a class="toc-tree-link" href="#sec-check" onclick="toggleMobileToc()">I. Knowledge Check</a>
+        </div>
+        <div class="toc-node-row">
+          <span class="toc-leaf-dot"></span>
+          <a class="toc-tree-link" href="#sec-completion" onclick="toggleMobileToc()">J. Completion Criteria</a>
+        </div>
+        <div class="toc-tree-node" id="mob-toc-node-lab" style="margin-top: 0.45rem;">
+          <div class="toc-node-row">
+            <span class="toc-caret" onclick="toggleTocBranch(this)">▾</span>
+            <a class="toc-tree-link" href="#sub-solid" onclick="toggleMobileToc()" style="font-weight: 700; color: var(--accent-warning);">
+              🏛️ Architecture Lab & Audit
+            </a>
+          </div>
+          <div class="toc-branch">
+            <div class="toc-node-row">
+              <span class="toc-leaf-dot"></span>
+              <a class="toc-tree-link" href="#sub-solid" onclick="toggleMobileToc()">1. Audit SOLID & Clean Arch</a>
+            </div>
+            <div class="toc-node-row">
+              <span class="toc-leaf-dot"></span>
+              <a class="toc-tree-link" href="#sub-blueprint" onclick="toggleMobileToc()">2. Refactoring Blueprint</a>
+            </div>
+            <div class="toc-node-row">
+              <span class="toc-leaf-dot"></span>
+              <a class="toc-tree-link" href="#sub-quiz" onclick="toggleMobileToc()">3. Interactive Retention Quiz</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ========================================================================= -->
+<!-- FULL CURRICULUM DRAWER (CATALOG OF ALL MODULES)                           -->
+<!-- ========================================================================= -->
+<div class="curriculum-drawer-overlay" id="curriculumOverlay" onclick="toggleCurriculumDrawer()"></div>
+<div class="curriculum-drawer" id="curriculumDrawer">
+  <div class="drawer-header">
+    <div class="drawer-title">📚 Kurikulum Lengkap SAMIR Mobile Flutter</div>
+    <button class="drawer-close-btn" onclick="toggleCurriculumDrawer()">✕</button>
+  </div>
+  <div class="drawer-search">
+    <input type="text" id="moduleSearchInput" placeholder="🔍 Cari modul (contoh: startup, router, auth)..." oninput="filterCurriculum()">
+  </div>
+  <div class="drawer-body" id="curriculumListBody">
+    <div class="curriculum-level-group">
+      <div class="curriculum-level-title">Level 0: Learning Roadmap</div>
+      <a class="curriculum-item-link" href="../00-learning-roadmap.html">
+        <span>📄</span> Kurikulum &amp; Roadmap Pembelajaran SAMIR Flutter
+      </a>
+    </div>
+    <div class="curriculum-level-group">
+      <div class="curriculum-level-title">Level 1: Project Foundation</div>
+      <a class="curriculum-item-link" href="../01-project-foundation/01-application-overview.html">
+        <span>📄</span> 01 — Application Overview
+      </a>
+      <a class="curriculum-item-link" href="../01-project-foundation/02-repository-structure.html">
+        <span>📄</span> 02 — Repository Structure
+      </a>
+      <a class="curriculum-item-link" href="../01-project-foundation/03-technology-stack-and-build.html">
+        <span>📄</span> 03 — Technology Stack &amp; Build Tooling
+      </a>
+    </div>
+    <div class="curriculum-level-group">
+      <div class="curriculum-level-title">Level 2: Understanding App Startup</div>
+      <a class="curriculum-item-link" href="../02-understanding-app-startup/01-flutter-entry-point.html">
+        <span>📄</span> 01 — Flutter Entry Point
+      </a>
+      <a class="curriculum-item-link" href="../02-understanding-app-startup/02-module-lifecycle-and-host-sync.html">
+        <span>📄</span> 02 — Module Lifecycle &amp; Host Sync
+      </a>
+      <a class="curriculum-item-link" href="../02-understanding-app-startup/03-startup-sequence-and-initial-routing.html">
+        <span>📄</span> 03 — Startup Sequence &amp; Initial Routing
+      </a>
+      <a class="curriculum-item-link active" href="#">
+        <span>🟢</span> 04 — Root Container &amp; Tab Switching (Sedang Dibaca)
+      </a>
+    </div>
+    <div class="curriculum-level-group">
+      <div class="curriculum-level-title">Level 3: Understanding Architecture</div>
+      <a class="curriculum-item-link" href="../03-understanding-architecture/01-architecture-overview.html">
+        <span>📄</span> 01 — Architecture Overview
+      </a>
+      <a class="curriculum-item-link" href="../03-understanding-architecture/02-layers-and-responsibilities.html">
+        <span>📄</span> 02 — Layers &amp; Responsibilities
+      </a>
+      <a class="curriculum-item-link" href="../03-understanding-architecture/03-dependency-direction.html">
+        <span>📄</span> 03 — Dependency Direction
+      </a>
+      <a class="curriculum-item-link" href="../03-understanding-architecture/04-shared-components-and-services.html">
+        <span>📄</span> 04 — Shared Components &amp; Services
+      </a>
+    </div>
+    <div class="curriculum-level-group">
+      <div class="curriculum-level-title">Level 4: Understanding Navigation</div>
+      <a class="curriculum-item-link" href="../04-understanding-navigation/01-feature-inventory.html">
+        <span>📄</span> 01 — Feature Inventory
+      </a>
+      <a class="curriculum-item-link" href="../04-understanding-navigation/02-navigation-fundamentals.html">
+        <span>📄</span> 02 — Navigation Fundamentals
+      </a>
+      <a class="curriculum-item-link" href="../04-understanding-navigation/03-complete-navigation-map.html">
+        <span>📄</span> 03 — Complete Navigation Map
+      </a>
+      <a class="curriculum-item-link" href="../04-understanding-navigation/04-native-route-chrome-and-tabbar-sync.html">
+        <span>📄</span> 04 — Native Route Chrome &amp; Tab Bar Sync
+      </a>
+    </div>
+    <div class="curriculum-level-group">
+      <div class="curriculum-level-title">Level 5: Learning Business Flows</div>
+      <a class="curriculum-item-link" href="../05-learning-business-flows/01-user-journey-overview.html">
+        <span>📄</span> 01 — User Journey Overview
+      </a>
+      <a class="curriculum-item-link" href="../05-learning-business-flows/02-authentication-and-session-sync.html">
+        <span>📄</span> 02 — Authentication &amp; Session Sync
+      </a>
+      <a class="curriculum-item-link" href="../05-learning-business-flows/03-repayment-feature-flows.html">
+        <span>📄</span> 03 — Repayment Feature Flows
+      </a>
+      <a class="curriculum-item-link" href="../05-learning-business-flows/04-mine-and-personal-flows.html">
+        <span>📄</span> 04 — Mine &amp; Personal Flows
+      </a>
+      <a class="curriculum-item-link" href="../05-learning-business-flows/05-cross-boundary-journeys.html">
+        <span>📄</span> 05 — Cross-Boundary Journeys
+      </a>
+    </div>
+    <div class="curriculum-level-group">
+      <div class="curriculum-level-title">Level 6: Data &amp; Dependencies</div>
+      <a class="curriculum-item-link" href="../06-understanding-data-and-dependencies/01-dependency-catalog.html">
+        <span>📄</span> 01 — Dependency Catalog
+      </a>
+      <a class="curriculum-item-link" href="../06-understanding-data-and-dependencies/02-networking-and-api-flow.html">
+        <span>📄</span> 02 — Networking &amp; API Flow
+      </a>
+      <a class="curriculum-item-link" href="../06-understanding-data-and-dependencies/03-parameter-signing-and-security.html">
+        <span>📄</span> 03 — Parameter Signing &amp; Security
+      </a>
+      <a class="curriculum-item-link" href="../06-understanding-data-and-dependencies/04-state-management-and-persistence.html">
+        <span>📄</span> 04 — State Management &amp; Persistence
+      </a>
+      <a class="curriculum-item-link" href="../06-understanding-data-and-dependencies/05-flutter-native-channel-bridge.html">
+        <span>📄</span> 05 — Flutter-Native Channel Bridge
+      </a>
+    </div>
+    <div class="curriculum-level-group">
+      <div class="curriculum-level-title">Level 7: Debugging &amp; Maintenance</div>
+      <a class="curriculum-item-link" href="../07-learning-to-debug-and-maintain/01-error-handling.html">
+        <span>📄</span> 01 — Error Handling
+      </a>
+      <a class="curriculum-item-link" href="../07-learning-to-debug-and-maintain/02-testing-and-debugging.html">
+        <span>📄</span> 02 — Testing &amp; Debugging
+      </a>
+      <a class="curriculum-item-link" href="../07-learning-to-debug-and-maintain/03-coupling-and-technical-debt.html">
+        <span>📄</span> 03 — Coupling &amp; Technical Debt
+      </a>
+      <a class="curriculum-item-link" href="../07-learning-to-debug-and-maintain/04-change-impact-analysis.html">
+        <span>📄</span> 04 — Change Impact Analysis
+      </a>
+    </div>
+    <div class="curriculum-level-group">
+      <div class="curriculum-level-title">Level 8: Reference &amp; Codebase Audit</div>
+      <a class="curriculum-item-link" href="../08-reference/01-codebase-glossary.html">
+        <span>📄</span> 01 — Codebase Glossary
+      </a>
+      <a class="curriculum-item-link" href="../08-reference/02-source-code-index.html">
+        <span>📄</span> 02 — Source Code Index
+      </a>
+      <a class="curriculum-item-link" href="../08-reference/03-existing-documentation-audit.html">
+        <span>📄</span> 03 — Existing Documentation Audit
+      </a>
+      <a class="curriculum-item-link" href="../08-reference/04-open-questions-and-unverified-findings.html">
+        <span>📄</span> 04 — Open Questions &amp; Unverified Findings
+      </a>
+    </div>
+    <div class="curriculum-level-group">
+      <div class="curriculum-level-title">Visual Diagrams &amp; Channel Matrices</div>
+      <a class="curriculum-item-link" href="../diagrams/flutter-architecture-overview.html">
+        <span>📄</span> Diagram — Arsitektur Sistem Hybrid Add-to-App (Architecture Overview)
+      </a>
+      <a class="curriculum-item-link" href="../diagrams/flutter-native-channel-matrix.html">
+        <span>📄</span> Diagram — Matriks Relasi Platform Channel (MethodChannel Mapping Matrix)
+      </a>
+      <a class="curriculum-item-link" href="../diagrams/flutter-navigation-and-chrome.html">
+        <span>📄</span> Diagram — Navigasi GoRouter &amp; Sinkronisasi Native Chrome
+      </a>
+      <a class="curriculum-item-link" href="../diagrams/flutter-repayment-flow.html">
+        <span>📄</span> Diagram — Alur Bisnis Modul Tagihan (Repayment Flowchart &amp; Sequence)
+      </a>
+      <a class="curriculum-item-link" href="../diagrams/flutter-startup-and-ready.html">
+        <span>📄</span> Diagram — Alur Peluncuran &amp; Handshake Kesiapan Flutter (Startup &amp; Ready Sequence)
+      </a>
+    </div>
+    <div class="curriculum-level-group">
+      <div class="curriculum-level-title">Course Index &amp; Syllabus</div>
+      <a class="curriculum-item-link" href="../README.html">
+        <span>📄</span> SAMIR Flutter — Learning Curve &amp; Engineering Guide
+      </a>
+    </div>
+  </div>
+</div>
+
+<!-- ========================================================================= -->
+<!-- FULLSCREEN MERMAID DIAGRAM LIGHTBOX MODAL                                 -->
+<!-- ========================================================================= -->
+<div id="diagramModal" class="diagram-modal" onclick="closeDiagramModal(event)">
+  <div class="diagram-modal-dialog" onclick="event.stopPropagation()">
+    <div class="diagram-modal-header">
+      <h3 id="modalDiagramTitle">🔍 Pembesaran Diagram Alur</h3>
+      <div class="diagram-modal-controls">
+        <button class="diagram-ctrl-btn" onclick="zoomDiagram(1.25)">➕ Zoom In</button>
+        <button class="diagram-ctrl-btn" onclick="zoomDiagram(0.8)">➖ Zoom Out</button>
+        <button class="diagram-ctrl-btn" onclick="resetDiagramZoom()">↺ 100%</button>
+        <button class="diagram-close-btn" onclick="closeDiagramModal()">✕ Tutup [Esc]</button>
+      </div>
+    </div>
+    <div class="diagram-modal-body" id="diagramModalBody">
+      <!-- Cloned SVG inserted dynamically -->
+    </div>
+  </div>
+</div>
+
+<!-- Prism.js Scripts for Syntax Highlighting -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-swift.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-dart.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-json.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-yaml.min.js"></script>
+
+<!-- Interactive Scripts: Tabs, TOC ScrollSpy, Drawers & Quiz -->
+<script>
+  function toggleCurriculumDrawer() {
+    const drawer = document.getElementById('curriculumDrawer');
+    const overlay = document.getElementById('curriculumOverlay');
+    drawer.classList.toggle('open');
+    overlay.classList.toggle('open');
+  }
+
+  function toggleMobileToc() {
+    const drawer = document.getElementById('mobileTocDrawer');
+    const overlay = document.getElementById('mobileTocOverlay');
+    drawer.classList.toggle('open');
+    overlay.classList.toggle('open');
+  }
+
+  function filterCurriculum() {
+    const query = document.getElementById('moduleSearchInput').value.toLowerCase();
+    const links = document.querySelectorAll('.curriculum-item-link');
+    links.forEach(link => {
+      const text = link.innerText.toLowerCase();
+      link.style.display = text.includes(query) ? 'flex' : 'none';
+    });
+  }
+
+  function handleTocToggleClick() {
+    if (window.innerWidth > 1200) {
+      toggleDesktopToc();
+    } else {
+      toggleMobileToc();
+    }
+  }
+
+  function toggleDesktopToc() {
+    document.body.classList.toggle('toc-collapsed');
+    const isCollapsed = document.body.classList.contains('toc-collapsed');
+    try {
+      localStorage.setItem('chiron_toc_collapsed', isCollapsed ? '1' : '0');
+    } catch (e) {}
+
+    const topbarBtn = document.getElementById('topbarTocBtn');
+    if (topbarBtn) {
+      if (isCollapsed) {
+        topbarBtn.classList.remove('active');
+        topbarBtn.title = "Tampilkan Daftar Isi (Mode Normal)";
+      } else {
+        topbarBtn.classList.add('active');
+        topbarBtn.title = "Tutup Daftar Isi (Mode Fokus Membaca)";
+      }
+    }
+  }
+
+  function toggleTocBranch(caretEl) {
+    const node = caretEl.closest('.toc-tree-node');
+    if (node) {
+      node.classList.toggle('collapsed');
+      caretEl.textContent = node.classList.contains('collapsed') ? '▸' : '▾';
+    }
+  }
+
+  function toggleAllTocBranches() {
+    const allNodes = document.querySelectorAll('.toc-tree-node');
+    let hasCollapsed = false;
+    allNodes.forEach(n => {
+      if (n.classList.contains('collapsed')) hasCollapsed = true;
+    });
+    allNodes.forEach(n => {
+      const caret = n.querySelector(':scope > .toc-node-row > .toc-caret');
+      if (hasCollapsed) {
+        n.classList.remove('collapsed');
+        if (caret) caret.textContent = '▾';
+      } else {
+        if (!n.classList.contains('root-node')) {
+          n.classList.add('collapsed');
+          if (caret) caret.textContent = '▸';
+        }
+      }
+    });
+  }
+
+  function focusCurrentTocActive() {
+    const activeLink = document.querySelector('.toc-tree-link.active');
+    if (activeLink) {
+      activeLink.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+    } else {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  }
+
+  window.addEventListener('DOMContentLoaded', () => {
+    try {
+      if (localStorage.getItem('chiron_toc_collapsed') === '1' && window.innerWidth > 1200) {
+        document.body.classList.add('toc-collapsed');
+        const topbarBtn = document.getElementById('topbarTocBtn');
+        if (topbarBtn) topbarBtn.classList.remove('active');
+      }
+    } catch (e) {}
+
+    const sectionIds = ['sec-title', 'sec-obj', 'sec-prereq', 'sec-simple', 'sec-actual', 'sub-1-bedah-flutterrootcontroller', 'sub-2-bedah-flutterrootpage', 'sub-3-pemetaan-indeks-tab', 'sec-walkthrough', 'sec-why', 'sec-example', 'sec-mistakes', 'sec-check', 'sec-completion', 'sub-solid', 'sub-blueprint', 'sub-quiz'];
+    const tocLinks = document.querySelectorAll('.toc-tree-link');
+
+    window.addEventListener('scroll', () => {
+      let currentSection = '';
+      const scrollPos = window.scrollY + 140;
+
+      sectionIds.forEach(id => {
+        const el = document.getElementById(id);
+        if (el && el.offsetTop <= scrollPos) {
+          currentSection = id;
+        }
+      });
+
+      if (currentSection) {
+        tocLinks.forEach(link => {
+          link.classList.remove('active');
+          if (link.getAttribute('href') === '#' + currentSection) {
+            link.classList.add('active');
+          }
+        });
+      }
+    });
+  });
+
+  // Diagram Lightbox Controls
+  let currentDiagramScale = 1.0;
+  function openDiagramZoom(diagramId, title) {
+    const originalEl = document.getElementById(diagramId);
+    if (!originalEl) return;
+    const svgEl = originalEl.querySelector('svg');
+    if (!svgEl) return;
+
+    const modal = document.getElementById('diagramModal');
+    const modalBody = document.getElementById('diagramModalBody');
+    const modalTitle = document.getElementById('modalDiagramTitle');
+
+    modalTitle.innerHTML = title ? '🔍 ' + title : '🔍 Pembesaran Diagram Alur';
+    modalBody.innerHTML = svgEl.outerHTML;
+    
+    currentDiagramScale = 1.0;
+    const clonedSvg = modalBody.querySelector('svg');
+    if (clonedSvg) clonedSvg.style.transform = 'scale(' + currentDiagramScale + ')';
+
+    modal.classList.add('active');
+    document.body.style.overflow = 'hidden';
+  }
+
+  function closeDiagramModal(event) {
+    if (event && event.target && event.target.closest && event.target.closest('.diagram-modal-dialog') && !event.target.classList.contains('diagram-close-btn')) {
+      return;
+    }
+    const modal = document.getElementById('diagramModal');
+    modal.classList.remove('active');
+    document.body.style.overflow = 'auto';
+  }
+
+  function zoomDiagram(factor) {
+    const modalBody = document.getElementById('diagramModalBody');
+    const svg = modalBody.querySelector('svg');
+    if (!svg) return;
+    currentDiagramScale *= factor;
+    svg.style.transform = 'scale(' + currentDiagramScale + ')';
+  }
+
+  function resetDiagramZoom() {
+    const modalBody = document.getElementById('diagramModalBody');
+    const svg = modalBody.querySelector('svg');
+    if (!svg) return;
+    currentDiagramScale = 1.0;
+    svg.style.transform = 'scale(1)';
+  }
+
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') {
+      closeDiagramModal();
+      const cDrawer = document.getElementById('curriculumDrawer');
+      if (cDrawer && cDrawer.classList.contains('open')) toggleCurriculumDrawer();
+      const tDrawer = document.getElementById('mobileTocDrawer');
+      if (tDrawer && tDrawer.classList.contains('open')) toggleMobileToc();
+    } else if (e.key === ']' && !e.ctrlKey && !e.metaKey && e.target.tagName !== 'INPUT') {
+      handleTocToggleClick();
+    }
+  });
+
+  // Quiz Evaluation Logic
+  const explanations = {
+  "1": {
+    "success": "Tepat sekali! Tahap inisialisasi cold-start bertugas mengonfigurasi SDK krusial dan runtime sistem sebelum tampilan utama dapat disajikan kepada nasabah secara aman.",
+    "danger": "Kurang tepat. Fase startup awal dirancang untuk mengonfigurasi runtime sistem, environment, dan SDK analitik/keamanan sebelum UI utama dimuat."
+  },
+  "2": {
+    "success": "Benar! Singleton konkret sulit di-mock dalam unit test karena mempertahankan shared state global yang mencemari hasil pengujian.",
+    "danger": "Kurang tepat. Kelemahan terbesar static singleton adalah hilangnya testability: Anda tidak dapat menyuntikkan mock object untuk menguji logika peluncuran secara mandiri."
+  },
+  "3": {
+    "success": "Sempurna! Inisialisasi SDK analitik non-kritis sebaiknya dialihkan ke background thread agar Time To First Meaningful Paint aplikasi tetap instan.",
+    "danger": "Kurang tepat. Untuk mencegah lag pada Main Thread, task analitik dan tracking non-kritis harus dijalankan di antrian background secara async."
+  }
+};
+
+  function submitQuiz(quizId, selectedOption, isCorrect) {
+    const card = document.getElementById('quiz-' + quizId);
+    const buttons = card.querySelectorAll('.quiz-btn');
+    const feedback = document.getElementById('feedback-' + quizId);
+
+    buttons.forEach(btn => {
+      btn.disabled = true;
+      btn.style.cursor = 'default';
+    });
+
+    if (window.event && window.event.target) {
+      window.event.target.classList.add(isCorrect ? 'correct' : 'incorrect');
+    }
+
+    feedback.className = 'quiz-feedback show ' + (isCorrect ? 'success' : 'danger');
+    feedback.innerHTML = '<strong>' + (isCorrect ? '🎉 Jawaban Tepat!' : '❌ Jawaban Salah!') + '</strong> ' + 
+      (isCorrect ? explanations[quizId].success : explanations[quizId].danger);
+  }
+</script>
+
+<!-- Chiron Annotations & Multi-IDE Launcher Engine -->
+<script src="../../../.assets/chiron-client.js"></script>
+<script src="../../../.assets/chiron-ide-launcher.js"></script>
+<script src="../../../.assets/chiron-annotations.js"></script>
+
+</body>
+</html>

@@ -1,0 +1,1203 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>03 — Technology Stack &amp; Build Configuration | Chiron Academy</title>
+  
+  <!-- Chiron Base Stylesheet -->
+  <link rel="stylesheet" href="../../../.assets/style.css">
+  
+  <!-- Prism.js Syntax Highlighting Theme (Tomorrow Night) -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css">
+  
+  <!-- Mermaid.js for Dynamic Flow Diagrams -->
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+  <script>mermaid.initialize({ startOnLoad: true, theme: 'dark' });</script>
+</head>
+<body>
+
+<!-- ========================================================================= -->
+<!-- STICKY TOP APPLICATION BAR (CROSSNOTE / VS CODE STYLE)                     -->
+<!-- ========================================================================= -->
+<nav class="app-topbar">
+  <div class="topbar-nav-row">
+    <!-- Browser-like History Navigation -->
+    <div class="nav-history-ctrls">
+      <button class="nav-ctrl-btn" onclick="history.back()" title="Kembali (Back)">◀</button>
+      <button class="nav-ctrl-btn" onclick="history.forward()" title="Maju (Forward)">▶</button>
+      <button class="nav-ctrl-btn" onclick="location.reload()" title="Segarkan (Reload)">↻</button>
+    </div>
+
+    <!-- Document Tabs Strip (Crossnote Style) -->
+    <div class="topbar-tabs-scroll" id="docTabsStrip">
+      <a class="doc-tab" href="01-application-overview.html" title="01-application-overview.html">
+        <span class="tab-icon">📄</span> 01-application-overview.html
+        <span class="tab-close" onclick="event.preventDefault(); this.parentElement.remove();">×</span>
+      </a>
+      <a class="doc-tab" href="02-repository-structure.html" title="02-repository-structure.html">
+        <span class="tab-icon">📄</span> 02-repository-structure.html
+        <span class="tab-close" onclick="event.preventDefault(); this.parentElement.remove();">×</span>
+      </a>
+      <a class="doc-tab active" href="#" title="03-technology-stack-and-build.html">
+        <span class="tab-icon">🟢</span> 03-technology-stack-and-build.html
+        <span class="tab-close" onclick="event.preventDefault();">×</span>
+      </a>
+    </div>
+
+    <!-- Right Utilities -->
+    <div class="topbar-tools">
+      <button class="tool-btn" onclick="toggleCurriculumDrawer()" title="Buka seluruh daftar modul kurikulum">
+        📚 Semua Modul
+      </button>
+      <button class="tool-btn active" id="topbarTocBtn" onclick="handleTocToggleClick()" title="Buka/Tutup Daftar Isi (Mode Fokus Membaca)">
+        📑 Daftar Isi
+      </button>
+    </div>
+  </div>
+</nav>
+
+<!-- Floating Button to Restore TOC When Dismissed (Focus Mode) -->
+<button class="toc-expand-float-btn" id="tocExpandFloatBtn" onclick="toggleDesktopToc()" title="Tampilkan Kembali Daftar Isi">
+  📑 Buka Daftar Isi
+</button>
+
+<!-- ========================================================================= -->
+<!-- TWO-COLUMN DOCUMENTATION LAYOUT (MAIN CONTENT + STICKY TOC)               -->
+<!-- ========================================================================= -->
+<div class="docs-layout" id="docsLayout">
+
+  <!-- Main Content Column -->
+  <main class="docs-content">
+
+    <!-- Header Section -->
+    <header id="sec-title">
+      <div class="badge">CHIRON CLASSROOM • SAMIR MOBILE iOS</div>
+      <h1>03 — Technology Stack &amp; Build Configuration</h1>
+      <p style="color: var(--text-muted); font-size: 1.05rem; margin-top: 0.25rem;">
+        Dokumen ini mendokumentasikan seluruh tumpukan teknologi (technology stack), manajemen dependensi pihak ketiga, skema bu...
+      </p>
+      <div class="metadata" style="margin-top: 1rem;">
+        <span>📚 Modul: <strong>03-technology-stack-and-build</strong></span>
+        <span>🎯 Scope: <strong>SAMIR Mobile (iOS Native UIKit & FChannel)</strong></span>
+        <span>⏱️ Estimasi: <strong>20 Menit</strong></span>
+        <span>🏷️ Git Branch: <strong>learn/iOS-Arch</strong></span>
+      </div>
+    </header>
+
+    <!-- BAGIAN 1: DOKUMEN PEMBELAJARAN LENGKAP -->
+    <div class="section-banner">
+      <h2>📖 Bagian 1: Dokumen Pembelajaran Lengkap & Alur Nyata</h2>
+      <span class="pill">Core Knowledge</span>
+    </div>
+
+<p>Dokumen ini mendokumentasikan seluruh tumpukan teknologi (technology stack), manajemen dependensi pihak ketiga, skema build Xcode, skrip pra-kompilasi, dan arsitektur pipeline build SAMIR iOS.</p>
+<p>Status Verifikasi: <code>[Verified]</code> (diverifikasi langsung dari <code>Podfile</code>, <code>project.pbxproj</code>, dan shared schemes).</p>
+<section id="sec-obj" class="doc-section">
+<h3>🎯 A. Learning Objective</h3>
+<p>Setelah mempelajari dokumen ini, pembaca akan mampu:</p>
+<ol>
+<li>Mengidentifikasi seluruh pustaka open-source, vendor framework closed-source, dan SDK analitik yang digunakan dalam aplikasi.</li>
+<li>Memahami 4 Xcode Shared Schemes (<code>TEST</code>, <code>PROD-TEST</code>, <code>PROD</code>, <code>IDSamirEnvironment</code>) dan perbedaan perilakunya saat kompilasi.</li>
+<li>Memahami 4 fase build script otomatis di Xcode: generasi <code>environment_preprocess.h</code>, kompilasi Flutter, generasi aset <code>R.swift</code>, dan arsitektur thinning <code>LibNetSignGenerator.framework</code>.</li>
+</ol>
+</section>
+<section id="sec-prereq" class="doc-section">
+<h3>📋 B. Prerequisites</h3>
+<ul>
+<li>Sudah membaca <a href="01-application-overview.html">01-application-overview.md</a> dan <a href="02-repository-structure.html">02-repository-structure.md</a>.</li>
+<li>Mengetahui cara kerja CocoaPods (<code>pod install</code>) dan pengaturan Target di Xcode.</li>
+</ul>
+</section>
+<section id="sec-simple" class="doc-section">
+<h3>💡 C. Simple Explanation (Analogi Pabrik Perakitan)</h3>
+<p>Bayangkan aplikasi SAMIR seperti mobil yang dirakit di pabrik:</p>
+<ul>
+<li><strong>Komponen Standar</strong>: Baut, mur, dan ban diambil dari pasar umum (pustaka open-source seperti SnapKit, Alamofire, Kingfisher).</li>
+<li><strong>Komponen Khusus / Berlisensi</strong>: Mesin keamanan anti-maling dan modul sensor wajah dipasok oleh vendor khusus dengan teknologi tertutup (TrustDecision, Advance AI, LibNetSignGenerator).</li>
+<li><strong>Lini Perakitan (Xcode Scheme)</strong>:</li>
+<li>Lini Uji Coba (<code>TEST</code>): Mobil dipasangi alat diagnosis tambahan (tombol DebugUI), mesin tidak dibatasi, dan speedometer menampilkan angka debug.</li>
+<li>Lini Produksi (<code>PROD</code>): Alat diagnosis dicopot, nama pabrik dirapikan, performa dioptimalkan secara maksimal, dan siap dijual ke publik (App Store).</li>
+</ul>
+</section>
+<section id="sec-actual" class="doc-section">
+<h3>💻 D. Actual Implementation (Daftar Stack &amp; Konfigurasi)</h3>
+<div id="sub-1-technology-stack-dependency-catalog" class="doc-subsection">
+<h4>1. Technology Stack &amp; Dependency Catalog</h4>
+</div>
+<p>Berdasarkan file <a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/learn/iOS-Arch/ios/Podfile" target="_blank" rel="noopener noreferrer">🦊 ios/Podfile <span class="branch-tag">learn/iOS-Arch</span> ↗</a>:</p>
+<h5 id="item-a-foundation-ui-engineering-open-source">A. Foundation &amp; UI Engineering (Open-Source)</h5>
+<div class="table-container"><table class="data-table"><thead><tr><th>Pustaka</th><th>Versi</th><th>Peran Teknis di Proyek</th></tr></thead><tbody><tr><td><strong>SnapKit</strong></td><td><code>5.6.0</code></td><td>DSL Auto Layout deklaratif programatik di seluruh ViewController native.</td></tr><tr><td><strong>Kingfisher</strong></td><td><code>8.6.2</code></td><td>Pemuatan dan caching gambar web asynchronous.</td></tr><tr><td><strong>KakaJSON</strong></td><td><code>~&gt; 1.1.2</code></td><td>Serialisasi dan deserialisasi JSON ke struct/model (<code>kj.model</code>).</td></tr><tr><td><strong>IQKeyboardManagerSwift</strong></td><td><code>7.0.2</code></td><td>Pengelolaan otomatis scroll view agar form input tidak tertutup keyboard.</td></tr><tr><td><strong>R.swift</strong></td><td>Latest</td><td>Kode otomatis strongly-typed untuk aset gambar (<code>R.image.*</code>) dan string.</td></tr><tr><td><strong>MJRefresh</strong></td><td>Latest</td><td>Komponen pull-to-refresh pada tabel dan scroll view.</td></tr><tr><td><strong>lottie-ios</strong></td><td>Latest</td><td>Rendering animasi vektor JSON untuk loading indicator (<code>IDAnimationJson</code>).</td></tr><tr><td><strong>MarqueeLabel</strong></td><td>Latest</td><td>Label teks berjalan untuk pengumuman atau ticker running text.</td></tr><tr><td><strong>FSPagerView</strong></td><td>Latest</td><td>Komponen banner berputar (carousel paging) di halaman Beranda.</td></tr><tr><td><strong>MBProgressHUD</strong></td><td><code>1.2.0</code></td><td>Dialog popup loading (HUD) dan toast pesan singkat.</td></tr><tr><td><strong>Then</strong></td><td><code>2.7.0</code></td><td>Syntactic sugar untuk inisialisasi properti objek secara clean.</td></tr><tr><td><strong>CryptoSwift</strong></td><td><code>1.4.2</code></td><td>Utilitas hashing & kriptografi legacy di beberapa modul pendukung.</td></tr><tr><td><strong>RxSwift & RxCocoa</strong></td><td><code>6.9.0</code></td><td>Pemrograman reaktif fungsional (<strong>khusus digunakan di <code>LoanConfirmModule</code></strong>).</td></tr></tbody></table></div>
+<h5 id="item-b-networking-core-foundation">B. Networking &amp; Core Foundation</h5>
+<div class="table-container"><table class="data-table"><thead><tr><th>Pustaka</th><th>Versi</th><th>Peran Teknis di Proyek</th></tr></thead><tbody><tr><td><strong>Alamofire</strong></td><td>Latest</td><td>Core HTTP network networking client yang di-wrap oleh <code>CZAlamofireBridge</code>.</td></tr><tr><td><strong>KeychainAccess</strong></td><td><code>4.2.2</code></td><td>Pembungkus aman iOS Keychain Services API untuk token sesi.</td></tr><tr><td><strong>XCGLogger</strong></td><td><code>7.0.1</code></td><td>Pustaka logging multi-level (Verbose, Debug, Info, Error).</td></tr></tbody></table></div>
+<h5 id="item-c-vendor-sdks-anti-fraud-closed-source-binary">C. Vendor SDKs &amp; Anti-Fraud (Closed-Source / Binary)</h5>
+<div class="table-container"><table class="data-table"><thead><tr><th>SDK / Framework</th><th>Versi / Sumber</th><th>Peran Kritis</th></tr></thead><tbody><tr><td><strong>LibNetSignGenerator</strong></td><td>Binary <code>.framework</code> lokal di <code>SamirNetworkModule/Frameworks/</code></td><td><strong>Kritis Keamanan</strong>: Menghasilkan tanda tangan request HTTP (<code>sign</code>) menggunakan <code>staticKey</code>.</td></tr><tr><td><strong>TrustDecisionPro</strong></td><td><code>4.3.1.3</code></td><td>Risk profiling & fraud scoring (<code>blackBox</code>).</td></tr><tr><td><strong>TrustDecisionLiveness-Lite</strong></td><td><code>2.5.1</code></td><td>SDK verifikasi gerakan wajah liveness.</td></tr><tr><td><strong>AAILiveness & AAINetwork</strong></td><td>Remote tarball Aliyun OSS (V3.0.7)</td><td>Deteksi liveness & perbandingan wajah Advance AI KYC.</td></tr><tr><td><strong>AppsFlyerFramework</strong></td><td><code>6.17.7</code></td><td>Atribusi pemasaran, instalasi, dan resolusi deep link.</td></tr><tr><td><strong>FirebaseAnalytics & Messaging</strong></td><td><code>11.14.0</code></td><td>Analitik perilaku user dan push notification token (FCM).</td></tr><tr><td><strong>FBSDKCoreKit</strong></td><td><code>18.0.0</code></td><td>SDK Facebook untuk atribusi event & iklan.</td></tr><tr><td><strong>TikTokBusinessSDK</strong></td><td>Latest</td><td>SDK atribusi event instalasi dari iklan TikTok.</td></tr><tr><td><strong>tingyunApp</strong></td><td><code>2.17.7</code></td><td>Application Performance Monitoring (APM) & crash reporting.</td></tr></tbody></table></div>
+<div id="sub-2-xcode-schemes-build-configurations" class="doc-subsection">
+<h4>2. Xcode Schemes &amp; Build Configurations</h4>
+</div>
+<p>Tersedia 4 scheme bersama (shared schemes) di dalam <a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/learn/iOS-Arch/ios/IDSamirLoan.xcodeproj/xcshareddata/xcschemes" target="_blank" rel="noopener noreferrer">🦊 ios/IDSamirLoan.xcodeproj/xcshareddata/xcschemes/ <span class="branch-tag">learn/iOS-Arch</span> ↗</a>:</p>
+
+<div class="mermaid-interactive-card">
+  <div class="mermaid-card-toolbar">
+    <span class="title">📊 Diagram Alur #1</span>
+    <button class="mermaid-zoom-trigger" onclick="openDiagramZoom('diag-1', 'Diagram Alur #1')">🔍 Perbesar Diagram</button>
+  </div>
+  <div class="mermaid-content-wrapper" id="diag-1">
+    <div class="mermaid">
+graph TD
+    subgraph Schemes
+        S1[TEST.xcscheme] --> C1[Config: TEST]
+        S2[PROD-TEST.xcscheme] --> C2[Config: PRODTEST]
+        S3[PROD.xcscheme] --> C3[Config: PROD]
+        S4[IDSamirEnvironment.xcscheme] --> C4[Config: Tooling Script]
+    end
+    
+    C1 --> E1[ID_ENVIRONMENT=TEST<br/>Macro TEST=1<br/>DebugUI Aktif<br/>Domain loansapp-test]
+    C2 --> E2[ID_ENVIRONMENT=PRODTEST<br/>Endpoint Prod via Test Config]
+    C3 --> E3[ID_ENVIRONMENT=PROD<br/>Optimization -O<br/>DebugUI Nonaktif<br/>Domain loansapp prod]
+    C4 --> E4[Eksekusi app_environment.sh<br/>Update environment_preprocess.h]
+    </div>
+  </div>
+</div>
+<ol>
+<li><strong><code>TEST</code></strong>:</li>
+</ol>
+<ul>
+<li>Digunakan untuk development harian dan QA testing.</li>
+<li>Mendefinisikan compiler macro <code>TEST=1</code>.</li>
+<li>Mengaktifkan menu mengambang <code>DebugUI</code> di layar untuk inspeksi payload jaringan.</li>
+<li>Menghubungkan aplikasi ke server staging: <code>https://domain-loansapp-test.samir.co.id/</code>.</li>
+<li>Optimasi kompilasi dimatikan (<code>-Onone</code>) untuk kecepatan build dan kenyamanan debugging LLDB.</li>
+</ul>
+<ol>
+<li><strong><code>PROD-TEST</code></strong>:</li>
+</ol>
+<ul>
+<li>Skema perantara untuk menguji integrasi backend produksi dengan sertifikat staging.</li>
+</ul>
+<ol>
+<li><strong><code>PROD</code></strong>:</li>
+</ol>
+<ul>
+<li>Skema resmi untuk distribusi App Store dan TestFlight.</li>
+<li>Menghubungkan ke backend produksi: <code>https://domain-loansapp.samir.co.id/</code>.</li>
+<li>Seluruh fasilitas debug dan logging dimatikan demi keamanan.</li>
+</ul>
+<ol>
+<li><strong><code>IDSamirEnvironment</code></strong>:</li>
+</ol>
+<ul>
+<li>Target agregat Xcode (<code>PBXAggregateTarget</code>) yang bertugas mengeksekusi skrip <code>app_environment.sh</code>.</li>
+<li><strong>Fungsi Utama</strong>: Memungkinkan developer atau CI pipeline menghasilkan/memperbarui file <code>environment_preprocess.h</code> secara independen tanpa harus melakukan kompilasi penuh pada seluruh biner aplikasi iOS.</li>
+<li><strong>Cara Membuat Target Serupa di Project Baru</strong>:</li>
+</ul>
+<ol>
+<li>Buka Xcode project -> Pilih file Project di Project Navigator paling atas.</li>
+<li>Pada daftar <strong>Targets</strong>, klik tombol <strong><code>+</code></strong> di bagian bawah.</li>
+<li>Pada modal template, scroll ke kategori <strong>"Cross-platform"</strong> (atau "Other") lalu pilih template <strong>"Aggregate"</strong>. Beri nama (misal: <code>IDSamirEnvironment</code>).</li>
+<li>Pilih target agregat yang baru dibuat -> buka tab <strong>"Build Phases"</strong>.</li>
+<li>Klik tombol <code>+</code> -> pilih <strong>"New Run Script Phase"</strong>.</li>
+<li>Tuliskan skrip eksekusi shell yang diinginkan, contoh:</li>
+</ol>
+<pre><code class="language-bash">        sh &quot;${PROJECT_DIR}/${PROJECT_NAME}/Application/Configuration/Environment/app_environment.sh&quot;</code></pre>
+<ol>
+<li>Hubungkan dependensi: Pada target aplikasi utama (<code>IDSamirLoan</code>), buka tab <strong>"Build Phases"</strong> -> bagian <strong>"Dependencies"</strong> -> klik <code>+</code> dan tambahkan target agregat <code>IDSamirEnvironment</code>. Dengan ini, skrip selalu dijalankan sebelum target utama dikompilasi.</li>
+</ol>
+<div id="sub-3-build-phases-custom-shell-scripts" class="doc-subsection">
+<h4>3. Build Phases &amp; Custom Shell Scripts</h4>
+</div>
+<p>Proyek Xcode <code>IDSamirLoan</code> mengeksekusi 4 skrip otomatis saat proses kompilasi berlangsung:</p>
+<h5 id="item-fase-1-pra-proses-environment-app-environmentsh">Fase 1: Pra-proses Environment (`app_environment.sh`)</h5>
+<ul>
+<li><strong>Lokasi file</strong>: <a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/learn/iOS-Arch/ios/IDSamirLoan/Application/Configuration/Environment/app_environment.sh" target="_blank" rel="noopener noreferrer">🦊 ios/IDSamirLoan/Application/Configuration/Environment/app_environment.sh <span class="branch-tag">learn/iOS-Arch</span> ↗</a></li>
+<li><strong>Fungsi</strong>: Menghitung jumlah commit git (<code>git rev-list HEAD | wc -l</code>), mengambil tanggal saat ini, dan menghasilkan file header <a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/learn/iOS-Arch/ios/IDSamirLoan/Application/environment_preprocess.h" target="_blank" rel="noopener noreferrer">🦊 ios/IDSamirLoan/Application/environment_preprocess.h <span class="branch-tag">learn/iOS-Arch</span> ↗</a>.</li>
+<li><strong>Hasil</strong>: Jika mode <code>TEST</code>, nama aplikasi diubah dinamis menjadi <code>Samir &lt;tanggal_hari_ini&gt;</code> sehingga tester dapat membedakan build hari ini dengan build kemarin.</li>
+</ul>
+<h5 id="item-fase-2-flutter-tools-build-xcode-backendsh">Fase 2: Flutter Tools Build (`xcode_backend.sh`)</h5>
+<ul>
+<li><strong>Definisi di PBX</strong>: <code>project.pbxproj:L1104</code></li>
+<li><strong>Fungsi</strong>: Mengekspor environment Flutter dari <code>../flutter/.ios/Flutter/flutter_export_environment.sh</code> dan mengompilasi kode Dart ke dalam biner framework native iOS.</li>
+</ul>
+<h5 id="item-fase-3-rswift-generation">Fase 3: R.swift Generation</h5>
+<ul>
+<li><strong>Definisi di PBX</strong>: <code>project.pbxproj:L1141</code></li>
+<li><strong>Perintah</strong>: <code>&quot;$PODS_ROOT/R.swift/rswift&quot; generate &quot;$SRCROOT/IDSamirLoan/R.generated.swift&quot;</code></li>
+<li><strong>Fungsi</strong>: Membaca folder <code>Assets.xcassets</code> dan memperbarui file <code>R.generated.swift</code> agar semua gambar dapat diakses secara type-safe (<code>R.image.icon_name()</code>).</li>
+</ul>
+<h5 id="item-fase-4-arsitektur-thinning-libnetsigngenerator-lipo--extract">Fase 4: Arsitektur Thinning LibNetSignGenerator (`lipo -extract`)</h5>
+<ul>
+<li><strong>Definisi di PBX</strong>: <code>project.pbxproj:L1153</code></li>
+<li><strong>Fungsi</strong>: Memeriksa framework vendor <code>LibNetSignGenerator.framework</code> di dalam build directory (<code>TARGET_BUILD_DIR</code>), mengekstrak hanya arsitektur yang cocok dengan target kompilasi (<code>$ARCHS</code>), dan menggabungkan kembali (lipo) agar ukuran biner tetap ramping dan tidak ditolak oleh App Store Connect karena arsitektur yang tidak digunakan.</li>
+<li><strong>Kode Skrip PBX Aktual</strong>:</li>
+</ul>
+<pre><code class="language-bash">  APP_PATH=&quot;${TARGET_BUILD_DIR}/${WRAPPER_NAME}&quot;
+
+  # Cari LibNetSignGenerator.framework di dalam bundle aplikasi
+  find &quot;$APP_PATH&quot; -name &#x27;LibNetSignGenerator.framework&#x27; -type d | while read -r FRAMEWORK
+  do
+      FRAMEWORK_EXECUTABLE_NAME=$(defaults read &quot;$FRAMEWORK/Info.plist&quot; CFBundleExecutable)
+      FRAMEWORK_EXECUTABLE_PATH=&quot;$FRAMEWORK/$FRAMEWORK_EXECUTABLE_NAME&quot;
+      echo &quot;Executable is $FRAMEWORK_EXECUTABLE_PATH&quot;
+      
+      EXTRACTED_ARCHS=()
+      for ARCH in $ARCHS
+      do
+          echo &quot;Extracting $ARCH from $FRAMEWORK_EXECUTABLE_NAME&quot;
+          lipo -extract &quot;$ARCH&quot; &quot;$FRAMEWORK_EXECUTABLE_PATH&quot; -o &quot;$FRAMEWORK_EXECUTABLE_PATH-$ARCH&quot;
+          EXTRACTED_ARCHS+=(&quot;$FRAMEWORK_EXECUTABLE_PATH-$ARCH&quot;)
+      done
+      
+      echo &quot;Merging extracted architectures: ${ARCHS}&quot;
+      lipo -o &quot;$FRAMEWORK_EXECUTABLE_PATH-merged&quot; -create &quot;${EXTRACTED_ARCHS[@]}&quot;
+      rm &quot;${EXTRACTED_ARCHS[@]}&quot;
+      
+      echo &quot;Replacing original executable with thinned version&quot;
+      rm &quot;$FRAMEWORK_EXECUTABLE_PATH&quot;
+      mv &quot;$FRAMEWORK_EXECUTABLE_PATH-merged&quot; &quot;$FRAMEWORK_EXECUTABLE_PATH&quot;
+  done</code></pre>
+<ul>
+<li><strong>Alur Eksekusi <code>lipo -extract</code> Langkah-demi-Langkah</strong>:</li>
+</ul>
+<ol>
+<li><strong>Identifikasi Binary</strong>: Membaca nama biner framework dari <code>Info.plist</code> menggunakan <code>defaults read ... CFBundleExecutable</code>.</li>
+<li><strong>Isolasi Arsitektur Target (<code>lipo -extract</code>)</strong>: Variabel <code>$ARCHS</code> dari Xcode (misal: <code>arm64</code>) diiterasi. Perintah <code>lipo -extract &quot;$ARCH&quot; ...</code> mengambil hanya slice arsitektur tersebut ke file sementara.</li>
+<li><strong>Penyatuan Kembali (<code>lipo -create</code>)</strong>: Menggabungkan kembali irisan yang dibutuhkan (<code>-create</code>) menjadi satu binary biner bersih (<code>-merged</code>).</li>
+<li>*<em>Pembersihan (</em>Thinning Replacement<em>)</em>*: Menghapus binary fat asli yang berukuran besar dan menggantinya dengan binary hasil thinning. Hal ini mencegah App Store menolak build karena arsitektur simulator (<code>x86_64</code>) yang tertinggal di dalam binary dinamis.</li>
+</ol>
+<div id="sub-4-vendor-framework-khusus-libnetsigngeneratorframework" class="doc-subsection">
+<h4>4. Vendor Framework Khusus: `LibNetSignGenerator.framework`</h4>
+</div>
+<ul>
+<li><strong>Fungsi</strong>: Pustaka biner dinamis closed-source (C++/ObjC) yang bertugas menghitung tanda tangan enkripsi (<code>sign</code>) pada setiap request jaringan HTTP (normal request, upload gambar, hingga config request). Tanda tangan ini menggunakan formula hashing yang dikombinasikan dengan <code>staticKey</code> sesi user untuk melindungi API dari request tampering, replay attacks, dan sniffing.</li>
+<li><strong>Header Publik</strong>:</li>
+<li><code>NetworkRequestSignWrapper.h</code>: Menyediakan <code>ns_initialize(appName:)</code>, <code>ns_encryptForNormal(requestJsonString:staticKey:)</code>, <code>ns_encryptWithImage(...)</code>, dan <code>ns_checkSign(...)</code>.</li>
+<li><code>NetworkRequestEventSignWrapper.h</code>: Menyediakan <code>nsEvent_encrypt(...)</code> untuk payload telemetri.</li>
+<li><strong>Cara Setup & Import di Proyek</strong>:</li>
+</ul>
+<ol>
+<li><strong>Penyimpanan Berkas</strong>: File <code>LibNetSignGenerator.framework</code> diletakkan di <code>Application/SamirNetworkModule/Frameworks/</code>.</li>
+<li><strong>Xcode Build Settings</strong>:</li>
+</ol>
+<ul>
+<li><code>FRAMEWORK_SEARCH_PATHS</code> diarahkan ke <code>&quot;$(PROJECT_DIR)/Application/SamirNetworkModule/Frameworks&quot;</code>.</li>
+<li>Ditambahkan ke fase <strong>"Link Binary With Libraries"</strong> dan <strong>"Embed Frameworks"</strong> (dengan opsi <code>CodeSignOnCopy</code>).</li>
+</ul>
+<ol>
+<li><strong>Import di Swift / ObjC</strong>:</li>
+</ol>
+<ul>
+<li>Karena framework memiliki <code>Modules/module.modulemap</code>, kode Swift cukup menuliskan <code>import LibNetSignGenerator</code>.</li>
+<li>Untuk modul ObjC / Bridging Header, disertakan baris <code>#import &lt;LibNetSignGenerator/LibNetSignGenerator.h&gt;</code>.</li>
+</ul>
+<div id="sub-5-konfigurasi-khusus-podfile-build-library-for-distribution-xcode-16-synchronized-groups" class="doc-subsection">
+<h4>5. Konfigurasi Khusus Podfile (`BUILD_LIBRARY_FOR_DISTRIBUTION` &amp; `Xcode 16 Synchronized Groups`)</h4>
+</div>
+<h5 id="item-a-mengapa-kingfisher-disetel-build-library-for-distribution-no">A. Mengapa Kingfisher Disetel `BUILD_LIBRARY_FOR_DISTRIBUTION = &#x27;NO&#x27;`?</h5>
+<p>Di baris 91-95 <a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/learn/iOS-Arch/ios/Podfile" target="_blank" rel="noopener noreferrer">🦊 ios/Podfile <span class="branch-tag">learn/iOS-Arch</span> ↗</a>:</p>
+<pre><code class="language-ruby">if target.name == &#x27;Kingfisher&#x27;
+  target.build_configurations.each do |config|
+    config.build_settings[&#x27;BUILD_LIBRARY_FOR_DISTRIBUTION&#x27;] = &#x27;NO&#x27;
+  end
+end</code></pre>
+<p><strong>Tujuan dan Alasan</strong>:</p>
+<ol>
+<li><code>BUILD_LIBRARY_FOR_DISTRIBUTION = YES</code> menginstruksikan compiler Swift untuk menghasilkan file interface publik <code>.swiftinterface</code> demi mendukung <em>Swift Module Stability</em> (biner yang dapat digunakan lintas versi compiler Swift).</li>
+<li>Namun, saat compiler mencoba menghasilkan <code>.swiftinterface</code> untuk Kingfisher versi 7/8, Swift compiler mengalami kegagalan kompilasi karena inferensi tipe generik pada pipeline pemrosesan gambar Kingfisher serta adanya atribut <code>@_implementationOnly</code> atau default arguments yang melanggar aturan stabilitas modul Swift.</li>
+<li>Karena Kingfisher dikompilasi langsung dari kode sumber di dalam workspace aplikasi kita (bukan didistribusikan sebagai biner tertutup untuk developer pihak ketiga), stabilitas modul tidak diperlukan.</li>
+<li>Menyetelnya ke <code>&#x27;NO&#x27;</code> mematikan pembuatan <code>.swiftinterface</code>, menyelesaikan error kompilasi Swift compiler secara tuntas, dan mempercepat proses build secara signifikan.</li>
+</ol>
+<h5 id="item-b-pengaturan-xcode-16-synchronized-groups-manual-vs-otomatis">B. Pengaturan Xcode 16 Synchronized Groups: Manual vs Otomatis</h5>
+<p>Di Xcode 16, Apple memperkenalkan format baru <strong>Synchronized Groups</strong> (<code>PBXFileSystemSynchronizedRootGroup</code> dengan <code>objectVersion 73</code> di <code>project.pbxproj</code>):</p>
+<ul>
+<li><strong>Perbedaan Konsep</strong>:</li>
+<li><em>Legacy Groups (<code>PBXGroup</code>)</em>: Virtual folder di Xcode. Menambah/menghapus file di disk macOS tidak otomatis mengubah struktur project di Xcode tanpa diedit di file <code>.pbxproj</code>.</li>
+<li><em>Synchronized Groups</em>: Terikat 1:1 langsung ke direktori filesystem. Setiap file yang dibuat di folder Finder langsung otomatis menjadi anggota target kompilasi Xcode.</li>
+<li><strong>Manual atau Otomatis?</strong>:</li>
+<li>Untuk proyek lama yang di-upgrade, Xcode <strong>TIDAK</strong> mengubahnya secara otomatis menjadi Synchronized Groups. Struktur grup dipertahankan manual sebagai <code>PBXGroup</code> kecuali jika developer sengaja memilih <em>Right Click -> "Convert to Synchronized Group..."</em>.</li>
+<li>Namun, saat project dibuka di Xcode 16, Xcode secara otomatis menaikkan format <code>objectVersion</code> project menjadi <code>73</code> (<code>Xcode 16.0 compatibility</code>).</li>
+<li><strong>Dampak pada CocoaPods & Monkey Patch di <code>Podfile</code></strong>:</li>
+<li>Library <code>xcodeproj</code> ruby bawaan CocoaPods versi lama akan crash dengan error: <code>[Xcodeproj] Unknown object version &#x27;73&#x27;</code> saat menjalankan <code>pod install</code>.</li>
+<li>Oleh karena itu, di baris 2-6 <code>Podfile</code> SAMIR disematkan patch manual:</li>
+</ul>
+<pre><code class="language-ruby">    require &#x27;xcodeproj&#x27;
+    compatibility_versions = Xcodeproj::Constants::COMPATIBILITY_VERSION_BY_OBJECT_VERSION.dup
+    compatibility_versions[73] ||= &#x27;Xcode 16.0&#x27;
+    Xcodeproj::Constants.send(:remove_const, :COMPATIBILITY_VERSION_BY_OBJECT_VERSION)
+    Xcodeproj::Constants.const_set(:COMPATIBILITY_VERSION_BY_OBJECT_VERSION, compatibility_versions.freeze)</code></pre>
+<ul>
+<li><strong>Rekomendasi</strong>: Pertahankan pengaturan grup sebagai <strong>Manual (Virtual Group)</strong> untuk saat ini guna mencegah konflik mapping build phase file CocoaPods.</li>
+</ul>
+</section>
+<section id="sec-walkthrough" class="doc-section">
+<h3>🪜 E. Step-by-Step Walkthrough: Cara Melakukan Build Pertama Kali</h3>
+<ol>
+<li><strong>Buka Terminal</strong>: Arahkan ke folder <code>ios/</code>.</li>
+<li><strong>Install Dependensi CocoaPods</strong>:</li>
+</ol>
+<pre><code class="language-bash">   cd /Users/samir/Documents/Workspace/SAMIR/Mobile/Develop/samir-mobile-develop/ios
+   pod install</code></pre>
+<p><em>Catatan:</em> Perintah ini juga akan menjalankan hook <code>flutter_post_install</code> yang disetel pada baris 59 <code>Podfile</code>.</p>
+<ol>
+<li><strong>Buka Workspace di Xcode</strong>:</li>
+</ol>
+<pre><code class="language-bash">   open IDSamirLoan.xcworkspace</code></pre>
+<ol>
+<li><strong>Pilih Skema</strong>:</li>
+</ol>
+<ul>
+<li>Di toolbar atas Xcode, pilih scheme <strong><code>TEST</code></strong>.</li>
+<li>Pilih destination perangkat: Simulator iPhone 15 / 16 (iOS 14.0+).</li>
+</ul>
+<ol>
+<li><strong>Jalankan Build (Cmd + R)</strong>:</li>
+</ol>
+<ul>
+<li>Xcode akan mengeksekusi <code>app_environment.sh</code>, mengompilasi Flutter, mengompilasi R.swift, menipiskan arsitektur framework, dan menjalankan aplikasi di simulator.</li>
+</ul>
+</section>
+<section id="sec-why" class="doc-section">
+<h3>⚖️ F. Why It Matters (Trade-Offs &amp; Catatan Arsitektur)</h3>
+<ul>
+<li><strong>Mengapa Podfile.lock di-ignore di Git?</strong></li>
+</ul>
+<p>Di file <code>.gitignore</code>, <code>Podfile.lock</code> tidak di-commit.</p>
+<p><em>Trade-off</em>: Ini dapat menimbulkan variasi versi minor antarmesin developer jika tidak berhati-hati saat menjalankan <code>pod update</code>. Pastikan hanya menjalankan <code>pod install</code> dan versi dependensi penting telah di-pin secara eksplisit (seperti <code>SnapKit 5.6.0</code>, <code>Kingfisher 8.6.2</code>).</p>
+<ul>
+<li><strong>Keberadaan RxSwift yang Terisolasi</strong>:</li>
+</ul>
+<p>RxSwift (<code>6.9.0</code>) hanya digunakan pada modul konfirmasi pinjaman (<code>LoanConfirmModule</code>). Modul lain menggunakan callback Presenter biasa. Ini menimbulkan overhead biner, namun memigrasikannya membutuhkan refactoring yang sangat hati-hati karena alur konfirmasi pinjaman adalah alur konversi bisnis utama.</p>
+</section>
+<section id="sec-example" class="doc-section">
+<h3>🔬 G. Practical Example (Studi Kasus Konfigurasi)</h3>
+<p>Perhatikan baris 26–55 di <a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/learn/iOS-Arch/ios/IDSamirLoan/Application/CZSwiftEnviromentLib/Classes/Base/AppEnv.swift" target="_blank" rel="noopener noreferrer">🦊 ios/IDSamirLoan/Application/CZSwiftEnviromentLib/Classes/Base/AppEnv.swift <span class="branch-tag">learn/iOS-Arch</span> ↗</a>:</p>
+<pre><code class="language-swift">extension AppEnv: AppEnvServiceProtocol {
+    var environment: AppEnvironment {
+        #if TEST
+        return .test(config: [
+            &quot;environment&quot;: &quot;TEST&quot;,
+            &quot;appName&quot;: &quot;Samir&quot;,
+            &quot;apiBaseUrl&quot;: &quot;https://domain-loansapp-test.samir.co.id/&quot;,
+            &quot;clientId&quot;: &quot;3f321e51-eabd-4266-b937-079dd20452f6&quot;,
+            // ...
+        ])
+        #else
+        return .product(config: [
+            &quot;environment&quot;: &quot;PROD&quot;,
+            &quot;appName&quot;: &quot;Samir&quot;,
+            &quot;apiBaseUrl&quot;: &quot;https://domain-loansapp.samir.co.id/&quot;,
+            &quot;clientId&quot;: &quot;850792dc-e673-4131-8d0f-b0a70b2772be&quot;,
+            &quot;webBaseUrl&quot;: &quot;https://m.samir.co.id&quot;
+            // ...
+        ])
+        #endif
+    }
+}</code></pre>
+<p>Ketika developer berpindah scheme antara <code>TEST</code> dan <code>PROD</code>, compiler Swift secara instan mengganti konfigurasi URL dasar dan ID klien tanpa perlu melakukan dekripsi file tambahan saat runtime!</p>
+</section>
+<section id="sec-mistakes" class="doc-section">
+<h3>⚠️ H. Common Mistakes &amp; Debugging</h3>
+<ul>
+<li><strong>Lupa Menjalankan CocoaPods dari Folder iOS</strong>:</li>
+<li>Menjalankan <code>pod install</code> di root repo atau di folder <code>flutter/</code> akan gagal. <code>Podfile</code> berada di <code>ios/</code>.</li>
+<li><strong>Error Kompilasi Aset <code>R.image.*</code></strong>:</li>
+<li>Jika Anda baru saja menambahkan icon gambar baru ke <code>Assets.xcassets</code> tetapi Xcode mengeluh simbol tidak ditemukan, jalankan build sekali lagi atau eksekusi <code>pod install</code> agar script generator <code>R.swift</code> memperbarui <code>R.generated.swift</code>.</li>
+<li><strong>Error Kompilasi LibNetSignGenerator di Simulator Apple Silicon</strong>:</li>
+<li>Skrip <code>lipo -extract</code> di Run Script otomatis menyesuaikan arsitektur biner. Jangan memodifikasi file <code>.framework</code> vendor secara manual.</li>
+</ul>
+</section>
+<section id="sec-check" class="doc-section">
+<h3>🧠 I. Knowledge Check</h3>
+<ol>
+<li>Sebutkan nama framework closed-source yang bertugas membuat tanda tangan (<code>sign</code>) pada request jaringan HTTP!</li>
+<li>Apa fungsi dari target agregat <code>IDSamirEnvironment</code> di dalam Xcode project?</li>
+<li>Di mana satu-satunya modul di dalam aplikasi yang memanfaatkan pustaka reaktif <code>RxSwift</code>?</li>
+</ol>
+<p><strong>Latihan Observasi</strong>:</p>
+<p>Buka file <code>ios/Podfile</code>. Periksa baris 86–97 di dalam blok <code>post_install</code>. Catat konfigurasi khusus yang diterapkan pada target <code>Kingfisher</code> (<code>BUILD_LIBRARY_FOR_DISTRIBUTION = &#x27;NO&#x27;</code>).</p>
+</section>
+<section id="sec-completion" class="doc-section">
+<h3>🏁 J. Completion Criteria</h3>
+<p>Anda telah menguasai dokumen ini jika Anda memahami peran masing-masing pustaka pihak ketiga di <code>Podfile</code>, 4 scheme Xcode, dan alur build script yang berjalan sebelum aplikasi diluncurkan.</p>
+<p>Dokumen berikutnya: <a href="../02-understanding-app-startup/01-ios-entry-point.html">02-understanding-app-startup/01-ios-entry-point.md</a>.</p>
+</section>
+
+    <!-- BAGIAN 2 & 3: ARCHITECTURAL CRITIQUE & BLUEPRINT -->
+    <div class="section-banner lab" style="margin-top: 4rem;">
+      <h2>🏛️ Bagian 2: Architecture Lab, SOLID Audit & Retention Quizzes</h2>
+      <span class="pill" style="background-color: var(--accent-warning);">Architecture Lab</span>
+    </div>
+
+
+    <!-- SEGMEN 2: ARCHITECTURAL CRITIQUE -->
+    <section class="lesson-segment" id="sub-solid">
+      <h2>🏛️ Audit SOLID & Clean Architecture: Menemukan Titik Lemah pada Implementasi Existing</h2>
+
+      <div class="callout critique">
+        <div class="callout-title">⚠️ Smells 1: Keterikatan Kuat Antar Sub-Modul & Kurangnya Inversi Dependensi</div>
+        <p>Implementasi komponen sering mengasumsikan keberadaan lingkungan runtime tertentu tanpa kontrak antarmuka yang didefinisikan secara tegas.</p>
+      </div>
+
+      <div class="callout critique">
+        <div class="callout-title">⚠️ Smells 2: Risiko Regresi & Minimnya Kontrak Pengujian Terisolasi</div>
+        <p>Perubahan pada satu service atau helper berpotensi merusak fungsionalitas di modul lain karena tingginya kohesi tersembunyi antar file.</p>
+      </div>
+    </section>
+
+    <!-- SEGMEN 3: REFACTORING BLUEPRINT -->
+    <section class="lesson-segment" id="sub-blueprint">
+      <h2>🚀 Blueprint Refactoring Standar Industri: Pola Service Locator & Interface Segregation (SOLID)</h2>
+      <p>Menerapkan prinsip Interface Segregation (ISP) dan Dependency Injection agar setiap service hanya mengekspos metode yang relevan bagi kliennya.</p>
+
+      <div class="callout best-practice">
+        <div class="callout-title">✅ Rekomendasi Solusi Arsitektur Bersih</div>
+        <pre><code class="language-swift">public protocol SessionProvider: AnyObject {
+    var currentToken: String? { get }
+    var isAuthenticated: Bool { get }
+}
+
+public final class AppSessionManager: SessionProvider {
+    public static let shared = AppSessionManager()
+    public var currentToken: String?
+    public var isAuthenticated: Bool { currentToken != nil }
+}</code></pre>
+      </div>
+
+      <h3>Keunggulan Arsitektur Refactoring Ini:</h3>
+      <ul>
+        <li><strong>100% Mockable & Testable:</strong> Memungkinkan pengujian terisolasi tanpa memicu efek samping runtime produksi.</li>
+        <li><strong>Open/Closed Principle (OCP):</strong> Penambahan fitur baru dapat dilakukan tanpa memodifikasi class yang sudah stabil.</li>
+        <li><strong>Decoupled Subsystems:</strong> Membatasi dampak regresi saat terjadi perubahan dependensi eksternal.</li>
+      </ul>
+    </section>
+
+
+    <!-- SEGMEN 4: INTERACTIVE RETENTION QUIZ -->
+    <section class="lesson-segment" id="sub-quiz">
+      <h2>🧠 Interactive Retention & Architectural Quiz</h2>
+      <p>Uji pemahaman alur kode nyata dan keputusan arsitektur Anda:</p>
+
+      <!-- KUIS 1 -->
+      <div class="quiz-card" id="quiz-1">
+        <h4>Kuis 1 (Memory Recall): Berdasarkan standar Clean Architecture, apa peran utama dari domain layer pada modul IOS?</h4>
+        <div class="quiz-options">
+          <button class="quiz-btn" onclick="submitQuiz(1, 'A', true)">
+            A. Mengisolasi aturan bisnis finansial murni agar tidak tercampur dengan UI platform
+          </button>
+          <button class="quiz-btn" onclick="submitQuiz(1, 'B', false)">
+            B. Mengatur tata letak layout dan ukuran tombol di layar aplikasi perangkat nasabah
+          </button>
+          <button class="quiz-btn" onclick="submitQuiz(1, 'C', false)">
+            C. Menyimpan file sertifikat SSL dan kunci enkripsi privat di memori kartu SIM
+          </button>
+          <button class="quiz-btn" onclick="submitQuiz(1, 'D', false)">
+            D. Mengirimkan sinyal detak jantung (heartbeat) ke menara telekomunikasi seluler
+          </button>
+        </div>
+        <div class="quiz-feedback" id="feedback-1"></div>
+      </div>
+      <!-- KUIS 2 -->
+      <div class="quiz-card" id="quiz-2">
+        <h4>Kuis 2 (Architectural Decision): Mengapa penerapan Dependency Inversion Principle (DIP) sangat krusial dalam pembuatan unit test?</h4>
+        <div class="quiz-options">
+          <button class="quiz-btn" onclick="submitQuiz(2, 'A', false)">
+            A. Mengharuskan seluruh kode ditulis menggunakan bahasa pemrograman tingkat rendah C
+          </button>
+          <button class="quiz-btn" onclick="submitQuiz(2, 'B', true)">
+            B. Memungkinkan penyuntikan test double (mock/fake) untuk menguji skenario terisolasi
+          </button>
+          <button class="quiz-btn" onclick="submitQuiz(2, 'C', false)">
+            C. Mengurangi jumlah baris kode hingga setengahnya secara otomatis saat kompilasi
+          </button>
+          <button class="quiz-btn" onclick="submitQuiz(2, 'D', false)">
+            D. Menghilangkan kebutuhan arsitektur modular pada proyek aplikasi berskala besar
+          </button>
+        </div>
+        <div class="quiz-feedback" id="feedback-2"></div>
+      </div>
+      <!-- KUIS 3 -->
+      <div class="quiz-card" id="quiz-3">
+        <h4>Kuis 3 (Debugging & Maintenance): Apa keuntungan utama membatasi dependensi antar modul ke arah satu arah (Unidirectional Dependency)?</h4>
+        <div class="quiz-options">
+          <button class="quiz-btn" onclick="submitQuiz(3, 'A', true)">
+            A. Menghilangkan circular dependency dan mempermudah pelacakan penyebab bug sistem
+          </button>
+          <button class="quiz-btn" onclick="submitQuiz(3, 'B', false)">
+            B. Memaksa seluruh antarmuka aplikasi selalu berjalan dalam orientasi layar lanskap
+          </button>
+          <button class="quiz-btn" onclick="submitQuiz(3, 'C', false)">
+            C. Menghindari kebutuhan update library pihak ketiga selama masa rilis aplikasi
+          </button>
+          <button class="quiz-btn" onclick="submitQuiz(3, 'D', false)">
+            D. Mempercepat koneksi internet pengguna saat melakukan pembayaran virtual account
+          </button>
+        </div>
+        <div class="quiz-feedback" id="feedback-3"></div>
+      </div>
+    </section>
+
+    <!-- Lesson Navigation Footer -->
+    <div class="lesson-nav-footer">
+      <a class="lesson-nav-btn prev" href="../01-project-foundation/02-repository-structure.html">
+  ◀ Modul Sebelumnya: 02 — Repository Structure
+</a>
+      <a class="lesson-nav-btn next" href="../02-understanding-app-startup/01-ios-entry-point.html">
+  Modul Selanjutnya: 01 — iOS Entry Point ▶
+</a>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+      <div>Chiron Codebase Mastery Academy • SAMIR Mobile iOS</div>
+      <div>Anchor Branch: <strong>learn/iOS-Arch</strong></div>
+    </footer>
+
+  </main>
+
+  <!-- ========================================================================= -->
+  <!-- RIGHT-HAND SIDEBAR: ON-PAGE TABLE OF CONTENTS                             -->
+  <!-- ========================================================================= -->
+  <aside class="docs-toc-sidebar" id="desktopTocSidebar">
+    <div class="toc-header-bar">
+      <span class="toc-header-label">📑 DAFTAR ISI</span>
+      <div class="toc-header-actions">
+        <button class="toc-action-btn" id="tocScrollTopBtn" title="Scroll ke Paling Atas" onclick="window.scrollTo({top: 0, behavior: 'smooth'})">▲</button>
+        <button class="toc-action-btn" id="tocToggleAllBtn" title="Buka/Tutup Semua Cabang" onclick="toggleAllTocBranches()">🔄</button>
+        <button class="toc-action-btn" id="tocResetActiveBtn" title="Fokuskan ke Topik Aktif" onclick="focusCurrentTocActive()">📑</button>
+        <button class="toc-action-btn toc-dismiss-btn" id="tocDismissBtn" title="Tutup Daftar Isi (Fokus Mode Membaca)" onclick="toggleDesktopToc()">✕</button>
+      </div>
+    </div>
+
+    <div class="toc-tree-container">
+      <div class="toc-tree-node root-node" id="toc-node-root">
+        <div class="toc-node-row">
+          <span class="toc-caret" onclick="toggleTocBranch(this)">▾</span>
+          <a class="toc-tree-link root-link" href="#sec-title" title="03 — Technology Stack &amp; Build Configuration">
+            03 — Technology Stack &amp; Build Configuration
+          </a>
+        </div>
+        <div class="toc-branch">
+          <div class="toc-node-row">
+            <span class="toc-leaf-dot"></span>
+            <a class="toc-tree-link" href="#sec-obj">A. Learning Objective</a>
+          </div>
+          <div class="toc-node-row">
+            <span class="toc-leaf-dot"></span>
+            <a class="toc-tree-link" href="#sec-prereq">B. Prerequisites</a>
+          </div>
+          <div class="toc-node-row">
+            <span class="toc-leaf-dot"></span>
+            <a class="toc-tree-link" href="#sec-simple">C. Simple Explanation (Analogi Pabrik Perakitan)</a>
+          </div>
+          <div class="toc-tree-node" id="toc-node-sec-actual">
+            <div class="toc-node-row">
+              <span class="toc-caret" onclick="toggleTocBranch(this)">▾</span>
+              <a class="toc-tree-link" href="#sec-actual">D. Actual Implementation (Daftar Stack &amp; Konfigurasi)</a>
+            </div>
+            <div class="toc-branch">
+              <div class="toc-node-row">
+                <span class="toc-leaf-dot"></span>
+                <a class="toc-tree-link" href="#sub-1-technology-stack-dependency-catalog">1. Technology Stack &amp; Dependency Catalog</a>
+              </div>
+              <div class="toc-node-row">
+                <span class="toc-leaf-dot"></span>
+                <a class="toc-tree-link" href="#sub-2-xcode-schemes-build-configurations">2. Xcode Schemes &amp; Build Configurations</a>
+              </div>
+              <div class="toc-node-row">
+                <span class="toc-leaf-dot"></span>
+                <a class="toc-tree-link" href="#sub-3-build-phases-custom-shell-scripts">3. Build Phases &amp; Custom Shell Scripts</a>
+              </div>
+              <div class="toc-node-row">
+                <span class="toc-leaf-dot"></span>
+                <a class="toc-tree-link" href="#sub-4-vendor-framework-khusus-libnetsigngeneratorframework">4. Vendor Framework Khusus: `LibNetSignGenerator.framework`</a>
+              </div>
+              <div class="toc-node-row">
+                <span class="toc-leaf-dot"></span>
+                <a class="toc-tree-link" href="#sub-5-konfigurasi-khusus-podfile-build-library-for-distribution-xcode-16-synchronized-groups">5. Konfigurasi Khusus Podfile (`BUILD_LIBRARY_FOR_DISTRIBUTION` &amp; `Xcode 16 Synchronized Groups`)</a>
+              </div>
+            </div>
+          </div>
+          <div class="toc-node-row">
+            <span class="toc-leaf-dot"></span>
+            <a class="toc-tree-link" href="#sec-walkthrough">E. Step-by-Step Walkthrough: Cara Melakukan Build Pertama Kali</a>
+          </div>
+          <div class="toc-node-row">
+            <span class="toc-leaf-dot"></span>
+            <a class="toc-tree-link" href="#sec-why">F. Why It Matters (Trade-Offs &amp; Catatan Arsitektur)</a>
+          </div>
+          <div class="toc-node-row">
+            <span class="toc-leaf-dot"></span>
+            <a class="toc-tree-link" href="#sec-example">G. Practical Example (Studi Kasus Konfigurasi)</a>
+          </div>
+          <div class="toc-node-row">
+            <span class="toc-leaf-dot"></span>
+            <a class="toc-tree-link" href="#sec-mistakes">H. Common Mistakes &amp; Debugging</a>
+          </div>
+          <div class="toc-node-row">
+            <span class="toc-leaf-dot"></span>
+            <a class="toc-tree-link" href="#sec-check">I. Knowledge Check</a>
+          </div>
+          <div class="toc-node-row">
+            <span class="toc-leaf-dot"></span>
+            <a class="toc-tree-link" href="#sec-completion">J. Completion Criteria</a>
+          </div>
+          <!-- Architecture Lab Branches -->
+          <div class="toc-tree-node" id="toc-node-lab" style="margin-top: 0.45rem;">
+            <div class="toc-node-row">
+              <span class="toc-caret" onclick="toggleTocBranch(this)">▾</span>
+              <a class="toc-tree-link" href="#sub-solid" style="font-weight: 700; color: var(--accent-warning);">
+                🏛️ Architecture Lab & Audit
+              </a>
+            </div>
+            <div class="toc-branch">
+              <div class="toc-node-row">
+                <span class="toc-leaf-dot"></span>
+                <a class="toc-tree-link" href="#sub-solid">1. Audit SOLID & Clean Arch</a>
+              </div>
+              <div class="toc-node-row">
+                <span class="toc-leaf-dot"></span>
+                <a class="toc-tree-link" href="#sub-blueprint">2. Refactoring Blueprint</a>
+              </div>
+              <div class="toc-node-row">
+                <span class="toc-leaf-dot"></span>
+                <a class="toc-tree-link" href="#sub-quiz">3. Interactive Retention Quiz</a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </aside>
+
+</div>
+
+<!-- ========================================================================= -->
+<!-- MOBILE / DRAWER TABLE OF CONTENTS OVERLAY                                 -->
+<!-- ========================================================================= -->
+<div class="mobile-toc-overlay" id="mobileTocOverlay" onclick="toggleMobileToc()"></div>
+<div class="mobile-toc-drawer" id="mobileTocDrawer">
+  <div class="toc-header-bar">
+    <span class="toc-header-label">📑 DAFTAR ISI HALAMAN</span>
+    <button class="drawer-close-btn" onclick="toggleMobileToc()">✕</button>
+  </div>
+  <div class="toc-tree-container" style="margin-top: 0.75rem;">
+    <div class="toc-tree-node root-node" id="mob-toc-node-root">
+      <div class="toc-node-row">
+        <span class="toc-caret" onclick="toggleTocBranch(this)">▾</span>
+        <a class="toc-tree-link root-link" href="#sec-title" onclick="toggleMobileToc()">
+          03 — Technology Stack &amp; Build Configuration
+        </a>
+      </div>
+      <div class="toc-branch">
+        <div class="toc-node-row">
+          <span class="toc-leaf-dot"></span>
+          <a class="toc-tree-link" href="#sec-obj" onclick="toggleMobileToc()">A. Learning Objective</a>
+        </div>
+        <div class="toc-node-row">
+          <span class="toc-leaf-dot"></span>
+          <a class="toc-tree-link" href="#sec-prereq" onclick="toggleMobileToc()">B. Prerequisites</a>
+        </div>
+        <div class="toc-node-row">
+          <span class="toc-leaf-dot"></span>
+          <a class="toc-tree-link" href="#sec-simple" onclick="toggleMobileToc()">C. Simple Explanation (Analogi Pabrik Perakitan)</a>
+        </div>
+        <div class="toc-tree-node" id="mob-toc-node-sec-actual">
+          <div class="toc-node-row">
+            <span class="toc-caret" onclick="toggleTocBranch(this)">▾</span>
+            <a class="toc-tree-link" href="#sec-actual" onclick="toggleMobileToc()">D. Actual Implementation (Daftar Stack &amp; Konfigurasi)</a>
+          </div>
+          <div class="toc-branch">
+            <div class="toc-node-row">
+              <span class="toc-leaf-dot"></span>
+              <a class="toc-tree-link" href="#sub-1-technology-stack-dependency-catalog" onclick="toggleMobileToc()">1. Technology Stack &amp; Dependency Catalog</a>
+            </div>
+            <div class="toc-node-row">
+              <span class="toc-leaf-dot"></span>
+              <a class="toc-tree-link" href="#sub-2-xcode-schemes-build-configurations" onclick="toggleMobileToc()">2. Xcode Schemes &amp; Build Configurations</a>
+            </div>
+            <div class="toc-node-row">
+              <span class="toc-leaf-dot"></span>
+              <a class="toc-tree-link" href="#sub-3-build-phases-custom-shell-scripts" onclick="toggleMobileToc()">3. Build Phases &amp; Custom Shell Scripts</a>
+            </div>
+            <div class="toc-node-row">
+              <span class="toc-leaf-dot"></span>
+              <a class="toc-tree-link" href="#sub-4-vendor-framework-khusus-libnetsigngeneratorframework" onclick="toggleMobileToc()">4. Vendor Framework Khusus: `LibNetSignGenerator.framework`</a>
+            </div>
+            <div class="toc-node-row">
+              <span class="toc-leaf-dot"></span>
+              <a class="toc-tree-link" href="#sub-5-konfigurasi-khusus-podfile-build-library-for-distribution-xcode-16-synchronized-groups" onclick="toggleMobileToc()">5. Konfigurasi Khusus Podfile (`BUILD_LIBRARY_FOR_DISTRIBUTION` &amp; `Xcode 16 Synchronized Groups`)</a>
+            </div>
+          </div>
+        </div>
+        <div class="toc-node-row">
+          <span class="toc-leaf-dot"></span>
+          <a class="toc-tree-link" href="#sec-walkthrough" onclick="toggleMobileToc()">E. Step-by-Step Walkthrough: Cara Melakukan Build Pertama Kali</a>
+        </div>
+        <div class="toc-node-row">
+          <span class="toc-leaf-dot"></span>
+          <a class="toc-tree-link" href="#sec-why" onclick="toggleMobileToc()">F. Why It Matters (Trade-Offs &amp; Catatan Arsitektur)</a>
+        </div>
+        <div class="toc-node-row">
+          <span class="toc-leaf-dot"></span>
+          <a class="toc-tree-link" href="#sec-example" onclick="toggleMobileToc()">G. Practical Example (Studi Kasus Konfigurasi)</a>
+        </div>
+        <div class="toc-node-row">
+          <span class="toc-leaf-dot"></span>
+          <a class="toc-tree-link" href="#sec-mistakes" onclick="toggleMobileToc()">H. Common Mistakes &amp; Debugging</a>
+        </div>
+        <div class="toc-node-row">
+          <span class="toc-leaf-dot"></span>
+          <a class="toc-tree-link" href="#sec-check" onclick="toggleMobileToc()">I. Knowledge Check</a>
+        </div>
+        <div class="toc-node-row">
+          <span class="toc-leaf-dot"></span>
+          <a class="toc-tree-link" href="#sec-completion" onclick="toggleMobileToc()">J. Completion Criteria</a>
+        </div>
+        <div class="toc-tree-node" id="mob-toc-node-lab" style="margin-top: 0.45rem;">
+          <div class="toc-node-row">
+            <span class="toc-caret" onclick="toggleTocBranch(this)">▾</span>
+            <a class="toc-tree-link" href="#sub-solid" onclick="toggleMobileToc()" style="font-weight: 700; color: var(--accent-warning);">
+              🏛️ Architecture Lab & Audit
+            </a>
+          </div>
+          <div class="toc-branch">
+            <div class="toc-node-row">
+              <span class="toc-leaf-dot"></span>
+              <a class="toc-tree-link" href="#sub-solid" onclick="toggleMobileToc()">1. Audit SOLID & Clean Arch</a>
+            </div>
+            <div class="toc-node-row">
+              <span class="toc-leaf-dot"></span>
+              <a class="toc-tree-link" href="#sub-blueprint" onclick="toggleMobileToc()">2. Refactoring Blueprint</a>
+            </div>
+            <div class="toc-node-row">
+              <span class="toc-leaf-dot"></span>
+              <a class="toc-tree-link" href="#sub-quiz" onclick="toggleMobileToc()">3. Interactive Retention Quiz</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ========================================================================= -->
+<!-- FULL CURRICULUM DRAWER (CATALOG OF ALL MODULES)                           -->
+<!-- ========================================================================= -->
+<div class="curriculum-drawer-overlay" id="curriculumOverlay" onclick="toggleCurriculumDrawer()"></div>
+<div class="curriculum-drawer" id="curriculumDrawer">
+  <div class="drawer-header">
+    <div class="drawer-title">📚 Kurikulum Lengkap SAMIR Mobile iOS</div>
+    <button class="drawer-close-btn" onclick="toggleCurriculumDrawer()">✕</button>
+  </div>
+  <div class="drawer-search">
+    <input type="text" id="moduleSearchInput" placeholder="🔍 Cari modul (contoh: startup, router, auth)..." oninput="filterCurriculum()">
+  </div>
+  <div class="drawer-body" id="curriculumListBody">
+    <div class="curriculum-level-group">
+      <div class="curriculum-level-title">Level 0: Learning Roadmap</div>
+      <a class="curriculum-item-link" href="../00-learning-roadmap.html">
+        <span>📄</span> Kurikulum &amp; Roadmap Pembelajaran SAMIR iOS
+      </a>
+    </div>
+    <div class="curriculum-level-group">
+      <div class="curriculum-level-title">Level 1: Project Foundation</div>
+      <a class="curriculum-item-link" href="../01-project-foundation/01-application-overview.html">
+        <span>📄</span> 01 — Application Overview
+      </a>
+      <a class="curriculum-item-link" href="../01-project-foundation/02-repository-structure.html">
+        <span>📄</span> 02 — Repository Structure
+      </a>
+      <a class="curriculum-item-link active" href="#">
+        <span>🟢</span> 03 — Technology Stack &amp; Build Configuration (Sedang Dibaca)
+      </a>
+    </div>
+    <div class="curriculum-level-group">
+      <div class="curriculum-level-title">Level 2: Understanding App Startup</div>
+      <a class="curriculum-item-link" href="../02-understanding-app-startup/01-ios-entry-point.html">
+        <span>📄</span> 01 — iOS Entry Point
+      </a>
+      <a class="curriculum-item-link" href="../02-understanding-app-startup/02-application-lifecycle.html">
+        <span>📄</span> 02 — Application Lifecycle
+      </a>
+      <a class="curriculum-item-link" href="../02-understanding-app-startup/03-startup-sequence-and-initial-routing.html">
+        <span>📄</span> 03 — Startup Sequence &amp; Initial Routing
+      </a>
+      <a class="curriculum-item-link" href="../02-understanding-app-startup/04-czmodulemanager-deep-dive.html">
+        <span>📄</span> 04 — CZModuleManager Deep Dive
+      </a>
+    </div>
+    <div class="curriculum-level-group">
+      <div class="curriculum-level-title">Level 3: Understanding Architecture</div>
+      <a class="curriculum-item-link" href="../03-understanding-architecture/01-architecture-overview.html">
+        <span>📄</span> 01 — Architecture Overview
+      </a>
+      <a class="curriculum-item-link" href="../03-understanding-architecture/02-layers-and-responsibilities.html">
+        <span>📄</span> 02 — Layers &amp; Responsibilities
+      </a>
+      <a class="curriculum-item-link" href="../03-understanding-architecture/03-dependency-direction.html">
+        <span>📄</span> 03 — Dependency Direction
+      </a>
+      <a class="curriculum-item-link" href="../03-understanding-architecture/04-shared-components-and-services.html">
+        <span>📄</span> 04 — Shared Components &amp; Services
+      </a>
+    </div>
+    <div class="curriculum-level-group">
+      <div class="curriculum-level-title">Level 4: Understanding Navigation</div>
+      <a class="curriculum-item-link" href="../04-understanding-navigation/01-feature-inventory.html">
+        <span>📄</span> 01 — Feature Inventory
+      </a>
+      <a class="curriculum-item-link" href="../04-understanding-navigation/02-navigation-fundamentals.html">
+        <span>📄</span> 02 — Navigation Fundamentals
+      </a>
+      <a class="curriculum-item-link" href="../04-understanding-navigation/03-complete-navigation-map.html">
+        <span>📄</span> 03 — Complete Navigation Map
+      </a>
+      <a class="curriculum-item-link" href="../04-understanding-navigation/04-navigation-conditions-and-edge-cases.html">
+        <span>📄</span> 04 — Navigation Conditions &amp; Edge Cases
+      </a>
+    </div>
+    <div class="curriculum-level-group">
+      <div class="curriculum-level-title">Level 5: Learning Business Flows</div>
+      <a class="curriculum-item-link" href="../05-learning-business-flows/01-user-journey-overview.html">
+        <span>📄</span> 01 — User Journey Overview
+      </a>
+      <a class="curriculum-item-link" href="../05-learning-business-flows/02-authentication-and-session-flow.html">
+        <span>📄</span> 02 — Authentication &amp; Session Flow
+      </a>
+      <a class="curriculum-item-link" href="../05-learning-business-flows/03-core-feature-flows.html">
+        <span>📄</span> 03 — Core Feature Flows
+      </a>
+      <a class="curriculum-item-link" href="../05-learning-business-flows/04-cross-feature-journeys.html">
+        <span>📄</span> 04 — Cross-Feature Journeys
+      </a>
+      <a class="curriculum-item-link" href="../05-learning-business-flows/05-production-low-level-flows.html">
+        <span>📄</span> 05 — Production Low-Level Execution Flows
+      </a>
+    </div>
+    <div class="curriculum-level-group">
+      <div class="curriculum-level-title">Level 6: Data &amp; Dependencies</div>
+      <a class="curriculum-item-link" href="../06-understanding-data-and-dependencies/01-dependency-catalog.html">
+        <span>📄</span> 01 — Dependency Catalog
+      </a>
+      <a class="curriculum-item-link" href="../06-understanding-data-and-dependencies/02-networking-and-api-flow.html">
+        <span>📄</span> 02 — Networking &amp; API Flow
+      </a>
+      <a class="curriculum-item-link" href="../06-understanding-data-and-dependencies/03-models-and-data-transformation.html">
+        <span>📄</span> 03 — Models &amp; Data Transformation
+      </a>
+      <a class="curriculum-item-link" href="../06-understanding-data-and-dependencies/04-state-management-and-persistence.html">
+        <span>📄</span> 04 — State Management &amp; Persistence
+      </a>
+      <a class="curriculum-item-link" href="../06-understanding-data-and-dependencies/05-native-flutter-integration.html">
+        <span>📄</span> 05 — Native-Flutter Integration
+      </a>
+    </div>
+    <div class="curriculum-level-group">
+      <div class="curriculum-level-title">Level 7: Debugging &amp; Maintenance</div>
+      <a class="curriculum-item-link" href="../07-learning-to-debug-and-maintain/01-error-handling.html">
+        <span>📄</span> 01 — Error Handling
+      </a>
+      <a class="curriculum-item-link" href="../07-learning-to-debug-and-maintain/02-testing-and-debugging.html">
+        <span>📄</span> Level 7
+      </a>
+      <a class="curriculum-item-link" href="../07-learning-to-debug-and-maintain/03-coupling-and-technical-debt.html">
+        <span>📄</span> Level 7
+      </a>
+      <a class="curriculum-item-link" href="../07-learning-to-debug-and-maintain/04-change-impact-analysis.html">
+        <span>📄</span> Level 7
+      </a>
+    </div>
+    <div class="curriculum-level-group">
+      <div class="curriculum-level-title">Level 8: Reference &amp; Codebase Audit</div>
+      <a class="curriculum-item-link" href="../08-reference/01-codebase-glossary.html">
+        <span>📄</span> Level 8
+      </a>
+      <a class="curriculum-item-link" href="../08-reference/02-source-code-index.html">
+        <span>📄</span> Level 8
+      </a>
+      <a class="curriculum-item-link" href="../08-reference/03-existing-documentation-audit.html">
+        <span>📄</span> Level 8
+      </a>
+      <a class="curriculum-item-link" href="../08-reference/04-open-questions-and-unverified-findings.html">
+        <span>📄</span> Level 8
+      </a>
+    </div>
+    <div class="curriculum-level-group">
+      <div class="curriculum-level-title">Visual Diagrams &amp; Sequence Maps</div>
+      <a class="curriculum-item-link" href="../diagrams/application-startup.html">
+        <span>📄</span> Diagram — Alur Peluncuran Aplikasi (Application Startup Sequence)
+      </a>
+      <a class="curriculum-item-link" href="../diagrams/architecture-overview.html">
+        <span>📄</span> Diagram — Ikhtisar Arsitektur (Architecture Overview)
+      </a>
+      <a class="curriculum-item-link" href="../diagrams/core-user-journeys.html">
+        <span>📄</span> Diagram — Alur Pengguna Utama (Core User Journeys)
+      </a>
+      <a class="curriculum-item-link" href="../diagrams/feature-dependencies.html">
+        <span>📄</span> Diagram — Dependensi Fitur &amp; Modul (Feature Dependencies)
+      </a>
+      <a class="curriculum-item-link" href="../diagrams/navigation-overview.html">
+        <span>📄</span> Diagram — Peta Navigasi Lengkap (Navigation Overview)
+      </a>
+    </div>
+    <div class="curriculum-level-group">
+      <div class="curriculum-level-title">Course Index &amp; Syllabus</div>
+      <a class="curriculum-item-link" href="../README.html">
+        <span>📄</span> SAMIR iOS — Learning Curve &amp; Engineering Guide
+      </a>
+    </div>
+  </div>
+</div>
+
+<!-- ========================================================================= -->
+<!-- FULLSCREEN MERMAID DIAGRAM LIGHTBOX MODAL                                 -->
+<!-- ========================================================================= -->
+<div id="diagramModal" class="diagram-modal" onclick="closeDiagramModal(event)">
+  <div class="diagram-modal-dialog" onclick="event.stopPropagation()">
+    <div class="diagram-modal-header">
+      <h3 id="modalDiagramTitle">🔍 Pembesaran Diagram Alur</h3>
+      <div class="diagram-modal-controls">
+        <button class="diagram-ctrl-btn" onclick="zoomDiagram(1.25)">➕ Zoom In</button>
+        <button class="diagram-ctrl-btn" onclick="zoomDiagram(0.8)">➖ Zoom Out</button>
+        <button class="diagram-ctrl-btn" onclick="resetDiagramZoom()">↺ 100%</button>
+        <button class="diagram-close-btn" onclick="closeDiagramModal()">✕ Tutup [Esc]</button>
+      </div>
+    </div>
+    <div class="diagram-modal-body" id="diagramModalBody">
+      <!-- Cloned SVG inserted dynamically -->
+    </div>
+  </div>
+</div>
+
+<!-- Prism.js Scripts for Syntax Highlighting -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-swift.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-dart.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-json.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-yaml.min.js"></script>
+
+<!-- Interactive Scripts: Tabs, TOC ScrollSpy, Drawers & Quiz -->
+<script>
+  function toggleCurriculumDrawer() {
+    const drawer = document.getElementById('curriculumDrawer');
+    const overlay = document.getElementById('curriculumOverlay');
+    drawer.classList.toggle('open');
+    overlay.classList.toggle('open');
+  }
+
+  function toggleMobileToc() {
+    const drawer = document.getElementById('mobileTocDrawer');
+    const overlay = document.getElementById('mobileTocOverlay');
+    drawer.classList.toggle('open');
+    overlay.classList.toggle('open');
+  }
+
+  function filterCurriculum() {
+    const query = document.getElementById('moduleSearchInput').value.toLowerCase();
+    const links = document.querySelectorAll('.curriculum-item-link');
+    links.forEach(link => {
+      const text = link.innerText.toLowerCase();
+      link.style.display = text.includes(query) ? 'flex' : 'none';
+    });
+  }
+
+  function handleTocToggleClick() {
+    if (window.innerWidth > 1200) {
+      toggleDesktopToc();
+    } else {
+      toggleMobileToc();
+    }
+  }
+
+  function toggleDesktopToc() {
+    document.body.classList.toggle('toc-collapsed');
+    const isCollapsed = document.body.classList.contains('toc-collapsed');
+    try {
+      localStorage.setItem('chiron_toc_collapsed', isCollapsed ? '1' : '0');
+    } catch (e) {}
+
+    const topbarBtn = document.getElementById('topbarTocBtn');
+    if (topbarBtn) {
+      if (isCollapsed) {
+        topbarBtn.classList.remove('active');
+        topbarBtn.title = "Tampilkan Daftar Isi (Mode Normal)";
+      } else {
+        topbarBtn.classList.add('active');
+        topbarBtn.title = "Tutup Daftar Isi (Mode Fokus Membaca)";
+      }
+    }
+  }
+
+  function toggleTocBranch(caretEl) {
+    const node = caretEl.closest('.toc-tree-node');
+    if (node) {
+      node.classList.toggle('collapsed');
+      caretEl.textContent = node.classList.contains('collapsed') ? '▸' : '▾';
+    }
+  }
+
+  function toggleAllTocBranches() {
+    const allNodes = document.querySelectorAll('.toc-tree-node');
+    let hasCollapsed = false;
+    allNodes.forEach(n => {
+      if (n.classList.contains('collapsed')) hasCollapsed = true;
+    });
+    allNodes.forEach(n => {
+      const caret = n.querySelector(':scope > .toc-node-row > .toc-caret');
+      if (hasCollapsed) {
+        n.classList.remove('collapsed');
+        if (caret) caret.textContent = '▾';
+      } else {
+        if (!n.classList.contains('root-node')) {
+          n.classList.add('collapsed');
+          if (caret) caret.textContent = '▸';
+        }
+      }
+    });
+  }
+
+  function focusCurrentTocActive() {
+    const activeLink = document.querySelector('.toc-tree-link.active');
+    if (activeLink) {
+      activeLink.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+    } else {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  }
+
+  window.addEventListener('DOMContentLoaded', () => {
+    try {
+      if (localStorage.getItem('chiron_toc_collapsed') === '1' && window.innerWidth > 1200) {
+        document.body.classList.add('toc-collapsed');
+        const topbarBtn = document.getElementById('topbarTocBtn');
+        if (topbarBtn) topbarBtn.classList.remove('active');
+      }
+    } catch (e) {}
+
+    const sectionIds = ['sec-title', 'sec-obj', 'sec-prereq', 'sec-simple', 'sec-actual', 'sub-1-technology-stack-dependency-catalog', 'sub-2-xcode-schemes-build-configurations', 'sub-3-build-phases-custom-shell-scripts', 'sub-4-vendor-framework-khusus-libnetsigngeneratorframework', 'sub-5-konfigurasi-khusus-podfile-build-library-for-distribution-xcode-16-synchronized-groups', 'sec-walkthrough', 'sec-why', 'sec-example', 'sec-mistakes', 'sec-check', 'sec-completion', 'sub-solid', 'sub-blueprint', 'sub-quiz'];
+    const tocLinks = document.querySelectorAll('.toc-tree-link');
+
+    window.addEventListener('scroll', () => {
+      let currentSection = '';
+      const scrollPos = window.scrollY + 140;
+
+      sectionIds.forEach(id => {
+        const el = document.getElementById(id);
+        if (el && el.offsetTop <= scrollPos) {
+          currentSection = id;
+        }
+      });
+
+      if (currentSection) {
+        tocLinks.forEach(link => {
+          link.classList.remove('active');
+          if (link.getAttribute('href') === '#' + currentSection) {
+            link.classList.add('active');
+          }
+        });
+      }
+    });
+  });
+
+  // Diagram Lightbox Controls
+  let currentDiagramScale = 1.0;
+  function openDiagramZoom(diagramId, title) {
+    const originalEl = document.getElementById(diagramId);
+    if (!originalEl) return;
+    const svgEl = originalEl.querySelector('svg');
+    if (!svgEl) return;
+
+    const modal = document.getElementById('diagramModal');
+    const modalBody = document.getElementById('diagramModalBody');
+    const modalTitle = document.getElementById('modalDiagramTitle');
+
+    modalTitle.innerHTML = title ? '🔍 ' + title : '🔍 Pembesaran Diagram Alur';
+    modalBody.innerHTML = svgEl.outerHTML;
+    
+    currentDiagramScale = 1.0;
+    const clonedSvg = modalBody.querySelector('svg');
+    if (clonedSvg) clonedSvg.style.transform = 'scale(' + currentDiagramScale + ')';
+
+    modal.classList.add('active');
+    document.body.style.overflow = 'hidden';
+  }
+
+  function closeDiagramModal(event) {
+    if (event && event.target && event.target.closest && event.target.closest('.diagram-modal-dialog') && !event.target.classList.contains('diagram-close-btn')) {
+      return;
+    }
+    const modal = document.getElementById('diagramModal');
+    modal.classList.remove('active');
+    document.body.style.overflow = 'auto';
+  }
+
+  function zoomDiagram(factor) {
+    const modalBody = document.getElementById('diagramModalBody');
+    const svg = modalBody.querySelector('svg');
+    if (!svg) return;
+    currentDiagramScale *= factor;
+    svg.style.transform = 'scale(' + currentDiagramScale + ')';
+  }
+
+  function resetDiagramZoom() {
+    const modalBody = document.getElementById('diagramModalBody');
+    const svg = modalBody.querySelector('svg');
+    if (!svg) return;
+    currentDiagramScale = 1.0;
+    svg.style.transform = 'scale(1)';
+  }
+
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') {
+      closeDiagramModal();
+      const cDrawer = document.getElementById('curriculumDrawer');
+      if (cDrawer && cDrawer.classList.contains('open')) toggleCurriculumDrawer();
+      const tDrawer = document.getElementById('mobileTocDrawer');
+      if (tDrawer && tDrawer.classList.contains('open')) toggleMobileToc();
+    } else if (e.key === ']' && !e.ctrlKey && !e.metaKey && e.target.tagName !== 'INPUT') {
+      handleTocToggleClick();
+    }
+  });
+
+  // Quiz Evaluation Logic
+  const explanations = {
+  "1": {
+    "success": "Tepat! Domain layer adalah inti logika bisnis murni yang tidak boleh memiliki dependensi ke framework presentasi seperti UIKit atau Flutter Widget.",
+    "danger": "Kurang tepat. Domain layer menampung entitas dan aturan bisnis murni tanpa mengetahui detail implementasi antarmuka pengguna."
+  },
+  "2": {
+    "success": "Benar! Dengan bergantung pada abstraksi protokol/antarmuka, kita dapat menginjeksi Mock Service di unit test tanpa memanggil server sungguhan.",
+    "danger": "Kurang tepat. DIP memungkinkan kita menukar implementasi konkret jaringan atau database dengan mock objek untuk verifikasi logika yang cepat dan deterministik."
+  },
+  "3": {
+    "success": "Sempurna! Ketergantungan satu arah mencegah dependency loop (circular import) dan menjamin modul fondasi tetap stabil ketika modul fitur diubah.",
+    "danger": "Kurang tepat. Arah dependensi yang bersih dan satu arah mencegah siklus ketergantungan melingkar dan membatasi penyebaran regresi."
+  }
+};
+
+  function submitQuiz(quizId, selectedOption, isCorrect) {
+    const card = document.getElementById('quiz-' + quizId);
+    const buttons = card.querySelectorAll('.quiz-btn');
+    const feedback = document.getElementById('feedback-' + quizId);
+
+    buttons.forEach(btn => {
+      btn.disabled = true;
+      btn.style.cursor = 'default';
+    });
+
+    if (window.event && window.event.target) {
+      window.event.target.classList.add(isCorrect ? 'correct' : 'incorrect');
+    }
+
+    feedback.className = 'quiz-feedback show ' + (isCorrect ? 'success' : 'danger');
+    feedback.innerHTML = '<strong>' + (isCorrect ? '🎉 Jawaban Tepat!' : '❌ Jawaban Salah!') + '</strong> ' + 
+      (isCorrect ? explanations[quizId].success : explanations[quizId].danger);
+  }
+</script>
+
+<!-- Chiron Annotations & Multi-IDE Launcher Engine -->
+<script src="../../../.assets/chiron-client.js"></script>
+<script src="../../../.assets/chiron-ide-launcher.js"></script>
+<script src="../../../.assets/chiron-annotations.js"></script>
+
+</body>
+</html>

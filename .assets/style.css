@@ -2397,3 +2397,93 @@ body.chiron-filter-hide-all .chiron-gutter-btn {
   box-shadow: 0 0 10px rgba(14, 165, 233, 0.35);
 }
 
+/* ==============================================================================
+   Data Table & Prev/Next Lesson Navigation Styles
+   ============================================================================== */
+
+.table-container {
+  width: 100%;
+  overflow-x: auto;
+  margin: 1.5rem 0 2rem 0;
+  border-radius: 8px;
+  border: 1px solid var(--surface-border);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.25);
+}
+
+table.data-table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+  font-size: 0.92rem;
+  background-color: var(--card-bg, #161a23);
+}
+
+table.data-table th {
+  background-color: rgba(56, 189, 248, 0.08);
+  color: var(--accent-primary, #38bdf8);
+  font-weight: 700;
+  padding: 0.85rem 1.1rem;
+  border-bottom: 2px solid var(--surface-border);
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+}
+
+table.data-table td {
+  padding: 0.75rem 1.1rem;
+  border-bottom: 1px solid var(--surface-border);
+  color: var(--text-main, #e2e8f0);
+  vertical-align: top;
+  line-height: 1.5;
+}
+
+table.data-table tr:last-child td {
+  border-bottom: none;
+}
+
+table.data-table tr:hover td {
+  background-color: rgba(255, 255, 255, 0.02);
+}
+
+/* Lesson Navigation Footer */
+.lesson-nav-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 3.5rem 0 2rem 0;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--surface-border);
+  gap: 1rem;
+}
+
+.lesson-nav-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.25rem;
+  border-radius: 8px;
+  background: var(--surface-color, #1a1e29);
+  border: 1px solid var(--surface-border);
+  color: var(--text-main, #e2e8f0);
+  font-weight: 600;
+  font-size: 0.9rem;
+  text-decoration: none;
+  transition: all 0.2s ease;
+}
+
+.lesson-nav-btn:hover {
+  background: rgba(56, 189, 248, 0.12);
+  border-color: var(--accent-primary, #38bdf8);
+  color: var(--accent-primary, #38bdf8);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(56, 189, 248, 0.2);
+}
+
+.lesson-nav-btn.prev {
+  margin-right: auto;
+}
+
+.lesson-nav-btn.next {
+  margin-left: auto;
+}
+
+

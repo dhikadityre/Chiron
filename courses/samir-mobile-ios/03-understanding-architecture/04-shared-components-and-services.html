@@ -1,0 +1,1134 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>04 — Shared Components &amp; Services | Chiron Academy</title>
+  
+  <!-- Chiron Base Stylesheet -->
+  <link rel="stylesheet" href="../../../.assets/style.css">
+  
+  <!-- Prism.js Syntax Highlighting Theme (Tomorrow Night) -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css">
+  
+  <!-- Mermaid.js for Dynamic Flow Diagrams -->
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+  <script>mermaid.initialize({ startOnLoad: true, theme: 'dark' });</script>
+</head>
+<body>
+
+<!-- ========================================================================= -->
+<!-- STICKY TOP APPLICATION BAR (CROSSNOTE / VS CODE STYLE)                     -->
+<!-- ========================================================================= -->
+<nav class="app-topbar">
+  <div class="topbar-nav-row">
+    <!-- Browser-like History Navigation -->
+    <div class="nav-history-ctrls">
+      <button class="nav-ctrl-btn" onclick="history.back()" title="Kembali (Back)">◀</button>
+      <button class="nav-ctrl-btn" onclick="history.forward()" title="Maju (Forward)">▶</button>
+      <button class="nav-ctrl-btn" onclick="location.reload()" title="Segarkan (Reload)">↻</button>
+    </div>
+
+    <!-- Document Tabs Strip (Crossnote Style) -->
+    <div class="topbar-tabs-scroll" id="docTabsStrip">
+      <a class="doc-tab" href="01-architecture-overview.html" title="01-architecture-overview.html">
+        <span class="tab-icon">📄</span> 01-architecture-overview.html
+        <span class="tab-close" onclick="event.preventDefault(); this.parentElement.remove();">×</span>
+      </a>
+      <a class="doc-tab" href="02-layers-and-responsibilities.html" title="02-layers-and-responsibilities.html">
+        <span class="tab-icon">📄</span> 02-layers-and-responsibilities.html
+        <span class="tab-close" onclick="event.preventDefault(); this.parentElement.remove();">×</span>
+      </a>
+      <a class="doc-tab" href="03-dependency-direction.html" title="03-dependency-direction.html">
+        <span class="tab-icon">📄</span> 03-dependency-direction.html
+        <span class="tab-close" onclick="event.preventDefault(); this.parentElement.remove();">×</span>
+      </a>
+      <a class="doc-tab active" href="#" title="04-shared-components-and-services.html">
+        <span class="tab-icon">🟢</span> 04-shared-components-and-services.html
+        <span class="tab-close" onclick="event.preventDefault();">×</span>
+      </a>
+    </div>
+
+    <!-- Right Utilities -->
+    <div class="topbar-tools">
+      <button class="tool-btn" onclick="toggleCurriculumDrawer()" title="Buka seluruh daftar modul kurikulum">
+        📚 Semua Modul
+      </button>
+      <button class="tool-btn active" id="topbarTocBtn" onclick="handleTocToggleClick()" title="Buka/Tutup Daftar Isi (Mode Fokus Membaca)">
+        📑 Daftar Isi
+      </button>
+    </div>
+  </div>
+</nav>
+
+<!-- Floating Button to Restore TOC When Dismissed (Focus Mode) -->
+<button class="toc-expand-float-btn" id="tocExpandFloatBtn" onclick="toggleDesktopToc()" title="Tampilkan Kembali Daftar Isi">
+  📑 Buka Daftar Isi
+</button>
+
+<!-- ========================================================================= -->
+<!-- TWO-COLUMN DOCUMENTATION LAYOUT (MAIN CONTENT + STICKY TOC)               -->
+<!-- ========================================================================= -->
+<div class="docs-layout" id="docsLayout">
+
+  <!-- Main Content Column -->
+  <main class="docs-content">
+
+    <!-- Header Section -->
+    <header id="sec-title">
+      <div class="badge">CHIRON CLASSROOM • SAMIR MOBILE iOS</div>
+      <h1>04 — Shared Components &amp; Services</h1>
+      <p style="color: var(--text-muted); font-size: 1.05rem; margin-top: 0.25rem;">
+        Komponen Bersama &amp; Layanan Lintas Modul
+      </p>
+      <div class="metadata" style="margin-top: 1rem;">
+        <span>📚 Modul: <strong>04-shared-components-and-services</strong></span>
+        <span>🎯 Scope: <strong>SAMIR Mobile (iOS Native UIKit & FChannel)</strong></span>
+        <span>⏱️ Estimasi: <strong>20 Menit</strong></span>
+        <span>🏷️ Git Branch: <strong>learn/iOS-Arch</strong></span>
+      </div>
+    </header>
+
+    <!-- BAGIAN 1: DOKUMEN PEMBELAJARAN LENGKAP -->
+    <div class="section-banner">
+      <h2>📖 Bagian 1: Dokumen Pembelajaran Lengkap & Alur Nyata</h2>
+      <span class="pill">Core Knowledge</span>
+    </div>
+
+<p>Dokumen ini mendokumentasikan secara rinci seluruh layanan bersama (shared services) di <code>SamirServiceModule</code>, pustaka komponen antarmuka bersama (<code>CZSwiftUIKit</code>), serta utilitas global (<code>CZSwiftUtils</code>) yang digunakan secara masif di seluruh modul SAMIR iOS.</p>
+<p>Status Verifikasi: <code>[Verified]</code> (diverifikasi langsung dari implementasi class di <code>SamirServiceModule</code>, <code>CZSwiftUIKit</code>, dan <code>CZSwiftUtils</code>).</p>
+<section id="sec-obj" class="doc-section">
+<h3>🎯 A. Learning Objective</h3>
+<p>Setelah mempelajari dokumen ini, pembaca akan mampu:</p>
+<ol>
+<li>Memahami API surface dari 4 protokol layanan di <code>SamirServiceModule</code> (<code>IDLoginModuleServiceProtocol</code>, <code>IDMainModuleServiceProtocol</code>, <code>IDLoanModuleServiceProtocol</code>, <code>IDRepayModuleServiceProtocol</code>).</li>
+<li>Mengetahui komponen visual bersama di <code>CZSwiftUIKit</code> (Toast, Alert, EmptyView, HUD).</li>
+<li>Menggunakan utilitas helper di <code>CZSwiftUtils</code> (Debouncer, Thread Dispatcher, JSON converter, Logger).</li>
+</ol>
+</section>
+<section id="sec-prereq" class="doc-section">
+<h3>📋 B. Prerequisites</h3>
+<ul>
+<li>Sudah membaca <a href="01-architecture-overview.html">01-architecture-overview.md</a> hingga <a href="03-dependency-direction.html">03-dependency-direction.md</a>.</li>
+<li>Mengetahui cara kerja Service Locator di Swift.</li>
+</ul>
+</section>
+<section id="sec-simple" class="doc-section">
+<h3>💡 C. Simple Explanation (Analogi Kotak Perkakas Bersama)</h3>
+<p>Bayangkan sebuah bengkel besar dengan banyak mekanik yang bekerja pada bagian mobil yang berbeda:</p>
+<ul>
+<li><strong>Kotak Perkakas Dasar (<code>CZSwiftUtils</code> & <code>CZSwiftUIKit</code>)</strong>: Obeng, tang, dan kunci pas standar yang boleh diambil oleh semua mekanik kapan saja (contoh: fungsi pemformatan mata uang Rupiah, animasi loading, tombol toast).</li>
+<li><strong>Meja Pusat Komunikasi (<code>SamirServiceModule</code>)</strong>: Loket terpusat tempat para mekanik saling bertanya status ("Apakah sparepart sudah siap?", "Apakah pemilik mobil sudah melunasi deposit?").</li>
+</ul>
+<p>Dengan meletakkan alat-alat ini di tempat bersama, mekanik tidak perlu membuat obeng atau tang baru untuk pekerjaannya sendiri.</p>
+</section>
+<section id="sec-actual" class="doc-section">
+<h3>💻 D. Actual Implementation (Katalog Layanan &amp; Komponen)</h3>
+<div id="sub-1-katalog-protokol-layanan-samirservicemodule" class="doc-subsection">
+<h4>1. Katalog Protokol Layanan (`SamirServiceModule`)</h4>
+</div>
+<p>Path: <a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/learn/iOS-Arch/ios/IDSamirLoan/Application/SamirServiceModule/Classes/IDServiceManager.swift" target="_blank" rel="noopener noreferrer">🦊 ios/IDSamirLoan/Application/SamirServiceModule/Classes/IDServiceManager.swift <span class="branch-tag">learn/iOS-Arch</span> ↗</a></p>
+<p>Tersedia fasad singleton <code>IDServiceManager</code> untuk mengakses 4 protokol utama:</p>
+<pre><code class="language-swift">// IDServiceManager.swift
+public class IDServiceManager: NSObject {
+    public class func loginService() -&gt; IDLoginModuleServiceProtocol?
+    public class func mainService() -&gt; IDMainModuleServiceProtocol?
+    public class func loanService() -&gt; IDLoanModuleServiceProtocol?
+    public class func reapyService() -&gt; IDRepayModuleServiceProtocol? // (Catatan typo historis: reapyService)
+}</code></pre>
+<h5 id="item-rincian-fungsi-per-protokol">Rincian Fungsi Per Protokol:</h5>
+<div class="table-container"><table class="data-table"><thead><tr><th>Protokol</th><th>Class Handler Konkret</th><th>Method Kunci & Kemampuan</th></tr></thead><tbody><tr><td><strong><code>IDLoginModuleServiceProtocol</code></strong></td><td><code>IDLoginModuleServiceHandler</code></td><td>- <code>isLogin() -&gt; Bool</code>: Memeriksa status login.<br/>- <code>loginInfo() -&gt; IDLoginCodeModel?</code>: Data sesi user (mid, userNo, staticKey).<br/>- <code>loginAction()</code>: Memunculkan modal popup login.<br/>- <code>reloginWhenRequestError()</code>: Reset sesi saat token kedaluwarsa (error <code>10006</code>).<br/>- <code>postLoginOutRequest(...)</code>: Logout server & lokal.</td></tr><tr><td><strong><code>IDMainModuleServiceProtocol</code></strong></td><td><code>IDMainModuleServiceHandler</code></td><td>- <code>getAppConfig() -&gt; IDAppConfigModel?</code>: Konfigurasi global dari server.<br/>- <code>requstAppConfig()</code>: Mengambil konfigurasi server terbaru secara async.</td></tr><tr><td><strong><code>IDLoanModuleServiceProtocol</code></strong></td><td><code>IDLoanModuleServiceHandler</code></td><td>- <code>jumpLoanAssess(params)</code>: Memicu navigasi ke halaman penilaian limit kuota kredit.<br/>- <code>jumpLoanConfirm(params)</code>: Memicu navigasi ke halaman konfirmasi pencairan pinjaman.</td></tr><tr><td><strong><code>IDRepayModuleServiceProtocol</code></strong></td><td><code>IDRepayModuleServiceHandler</code></td><td>- <code>jumpRepay(params)</code>: Memicu navigasi ke halaman tagihan/pelunasan.</td></tr></tbody></table></div>
+<div class="callout best-practice"><p>[!NOTE] <strong>Typo Unik di Kode Sumber</strong>: Pada <code>IDServiceManager.swift</code> baris 33, method pengakses layanan tagihan bernama <code>reapyService()</code> (bukan <code>repayService</code>). Typo ini sudah menyebar di berbagai modul sehingga harus tetap digunakan sesuai aslinya untuk menjaga kompatibilitas kompilasi.</p></div>
+<div id="sub-2-pustaka-komponen-ui-bersama-czswiftuikit" class="doc-subsection">
+<h4>2. Pustaka Komponen UI Bersama (`CZSwiftUIKit`)</h4>
+</div>
+<p>Path: <a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/learn/iOS-Arch/ios/IDSamirLoan/Application/CZSwiftUIKit/" target="_blank" rel="noopener noreferrer">🦊 ios/IDSamirLoan/Application/CZSwiftUIKit/ <span class="branch-tag">learn/iOS-Arch</span> ↗</a></p>
+<p>Folder ini berisi fondasi antarmuka in-house yang sangat kaya:</p>
+<h5 id="item-a-komponen-ui-classesczcommon">A. Komponen UI (`Classes/CZCommon/`)</h5>
+<ul>
+<li><strong><code>CZDrawSignatureView</code></strong>: Canvas interaktif berbasis CoreGraphics/Touch tracking untuk tanda tangan digital nasabah secara langsung di layar smartphone.</li>
+<li><strong><code>CZRollingNoticeView</code></strong>: Ticker vertikal animasi berjalan untuk pengumuman atau daftar pencairan nasabah terbaru (<em>live disbursement banner</em>).</li>
+<li><strong><code>CZCircleProgressView</code></strong>: Indikator lingkaran animasi untuk progres verifikasi KYC dan persentase skor kredit.</li>
+<li><strong><code>CZCustomPickView</code></strong>: Komponen bottom sheet picker untuk pemilihan tanggal atau opsi dropdown.</li>
+<li><strong><code>CZQRCodeImageFactory</code></strong>: Generator gambar QR Code instan berbasis filter <code>CIQRCodeGenerator</code>.</li>
+<li><strong><code>IDAlertView</code> / <code>IDNPopupController</code></strong>: Dialog modal konfirmasi kontrak, peringatan, dan popup interaktif.</li>
+<li><strong><code>IDEmptyView</code></strong>: Tampilan state kosong (<em>empty data</em> / <em>network error</em>) dengan tombol reload <code>id_clickEmptyBlock</code>.</li>
+<li><strong>Custom Font</strong>: <code>MosnDigitBoldFont.otf</code> (di folder <code>Assets/</code>) khusus untuk merender angka nominal pinjaman dan suku bunga dengan tipografi tebal khas finansial.</li>
+</ul>
+<h5 id="item-b-pustaka-tooling-ui-classescztools">B. Pustaka Tooling UI (`Classes/CZTools/`)</h5>
+<ul>
+<li><strong><code>CZWeakTimer</code></strong>: Pembungkus <code>Timer</code> / <code>CADisplayLink</code> dengan target lemah (<em>weak reference proxy</em>) untuk mencegah <em>retain cycle</em> dan memory leak saat polling.</li>
+<li><strong><code>CZDarkModeUtil</code> & <code>CZThemeProvider</code></strong>: Abstraksi pendeteksian mode gelap (<em>Dark Mode</em>) iOS 13+ dan penyedia palet warna dinamis.</li>
+<li><strong><code>CZWaterFallLayout</code></strong>: Layout custom <code>UICollectionView</code> berbasis grid air terjun (<em>waterfall grid</em>).</li>
+<li><strong><code>CZPhotoAlbumUtil</code></strong>: Utilitas seleksi foto galeri dan kamera dengan penanganan izin privasi runtime.</li>
+</ul>
+<h5 id="item-c-ekstensi-uikit-classesczextension">C. Ekstensi UIKit (`Classes/CZExtension/`)</h5>
+<p>Seluruh utilitas UIKit SAMIR dibungkus dalam namespace khusus <strong><code>.cz.</code></strong>:</p>
+<ul>
+<li><strong><code>UIViewController.cz.topViewController()</code></strong>: Mencari ViewController teratas yang sedang aktif di layar secara rekursif (sangat vital untuk router dan dialog modal).</li>
+<li><strong><code>UIView.showToast(withMessage:)</code></strong>: Menampilkan pop-up toast pesan singkat tanpa mengganggu interaksi UI utama.</li>
+<li><strong><code>UIColor.cz.colorWithHex(...)</code></strong>: Parsing warna heksadesimal (misal: <code>#00C288</code> untuk warna hijau SAMIR).</li>
+<li><strong><code>UIBarButtonItem.createCustomItem(...)</code></strong>: Membuat tombol navigasi bar kustom dengan hit area (<em>touch extend inset</em>) yang nyaman disentuh.</li>
+</ul>
+<div id="sub-3-audit-arsitektur-apakah-idnpopupconfig-sudah-best-practice" class="doc-subsection">
+<h4>3. Audit Arsitektur: Apakah `IDNPopupConfig` Sudah Best Practice?</h4>
+</div>
+<p>Struktur konfigurasi popup terletak di <a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/learn/iOS-Arch/ios/IDSamirLoan/Application/SamirCommonModule/Classes/IDCommon/IDCore/IDNPopup.swift" target="_blank" rel="noopener noreferrer">🦊 IDNPopup.swift:L113-142 <span class="branch-tag">learn/iOS-Arch</span> ↗</a>:</p>
+<pre><code class="language-swift">public struct IDNPopupConfig {
+    public var bgColor: UIColor = IDThemeColor.PickerBgColor
+    public var enableUserInteraction = true
+    public var animationType: IDNPopupAnimationType = .dialog
+    public var withoutAnimation = false
+    public var isDismissible = true
+    public var enableDrag = true
+    public var direction: IDNPopupAnimationDirection = .unowned
+    public var enableAutoDismiss = false
+    public var autoDismissDuration: IDNTimerDuration = .seconds(value: 2)
+    public var toastPosition: IDNToastPosition = IDNIsSupportDynamicIsLand ? .dynamicIsland : .center
+    
+    // Preset Static Styles
+    public static var dialog = IDNPopupConfig(enableDrag: false)
+    public static var bottomSheet = IDNPopupConfig(animationType: .bottomSheet)
+    public static var drawer = IDNPopupConfig(animationType: .drawer, direction: .left)
+}</code></pre>
+<h5 id="item-a-evaluasi-objektif">A. Evaluasi Objektif:</h5>
+<ol>
+<li><strong>Sisi Positif</strong>:</li>
+</ol>
+<ul>
+<li>Berbentuk <code>struct</code> (Value Type) sehingga memiliki semantik penyalinan (<em>copy-on-write</em>), mencegah mutasi data yang tidak disengaja antar instance individu.</li>
+<li>Menyediakan preset bawaan yang memudahkan pemanggilan cepat (<code>.dialog</code>, <code>.bottomSheet</code>, <code>.drawer</code>).</li>
+</ul>
+<ol>
+<li><strong>Kekurangan / Pelanggaran Best Practice (Code Smells)</strong>:</li>
+</ol>
+<ul>
+<li><strong><code>static var</code> Mutable Global State</strong>: Properti preset dideklarasikan sebagai <code>static var</code> (bukan <code>static let</code>). Jika ada kode yang menulis <code>IDNPopupConfig.dialog.bgColor = .red</code>, seluruh dialog di modul lain yang menggunakan preset tersebut akan ikut berubah warna secara global!</li>
+<li><strong>Typo pada API Publik</strong>: Banyak nama parameter dan variabel yang salah ketik pada layer animasi, seperti <code>contianerView</code> (seharusnya <code>containerView</code>) dan <code>transitonContext</code> (seharusnya <code>transitionContext</code>).</li>
+<li>*<em>Menemukan Kembali Roda (</em>Reinventing the Wheel<em>)</em>*: <code>IDNPopup</code> menempelkan view secara manual di atas <code>UIWindow</code> / subview tree alih-alih mengadopsi standar resmi Apple seperti <code>UISheetPresentationController</code> (iOS 15+) atau <code>UIViewControllerTransitioningDelegate</code>. Ini memicu masalah pada adaptasi rotasi layar, VoiceOver accessibility, dan keyboard avoidance.</li>
+<li><strong>Kopling Global</strong>: Nilai default <code>toastPosition</code> terikat langsung ke konstanta global <code>IDNIsSupportDynamicIsLand</code>.</li>
+</ul>
+<h5 id="item-b-refactoring-blueprint-standar-modern">B. Refactoring Blueprint (Standar Modern):</h5>
+<p>Gunakan <code>static let</code> atau Factory Method, serta integrasikan dengan native presentation controller:</p>
+<pre><code class="language-swift">public struct IDNPopupConfig {
+    // Gunakan static let untuk mencegah mutasi shared state
+    public static let dialog = IDNPopupConfig(enableDrag: false)
+    public static let bottomSheet = IDNPopupConfig(animationType: .bottomSheet)
+    
+    // Atau Builder Pattern / Factory Method
+    public static func makeDefault() -&gt; IDNPopupConfig { ... }
+}</code></pre>
+<div id="sub-4-bedah-arsitektur-czswiftantifraudlib-mengapa-pakai-objective-c" class="doc-subsection">
+<h4>4. Bedah Arsitektur `CZSwiftAntiFraudLib`: Mengapa Pakai Objective-C?</h4>
+</div>
+<p>Path: <a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/learn/iOS-Arch/ios/IDSamirLoan/Application/CZSwiftAntiFraudLib/" target="_blank" rel="noopener noreferrer">🦊 ios/IDSamirLoan/Application/CZSwiftAntiFraudLib/ <span class="branch-tag">learn/iOS-Arch</span> ↗</a></p>
+<p>Modul ini merupakan pustaka hybrid (gabungan <strong>Swift</strong> dan <strong>Objective-C</strong>):</p>
+<ul>
+<li><strong>File Objective-C</strong>: <code>CZCommonManager.m</code>, <code>CZDiskMemoryManager.m</code>, <code>NSData+CZEncryption.m</code>.</li>
+<li><strong>File Swift</strong>: <code>CZAntiFraudManager.swift</code>, <code>CZFpidManager.swift</code>, <code>CZDeviceManager.swift</code>, <code>CZJailbroken.swift</code>.</li>
+</ul>
+<h5 id="item-a-mengapa-menggunakan-objective-c">A. Mengapa Menggunakan Objective-C?</h5>
+<ol>
+<li><strong>Akses Langsung ke BSD POSIX & Mach Kernel C-APIs</strong>:</li>
+</ol>
+<ul>
+<li>Untuk mengumpulkan metrik keamanan hardware tingkat rendah (<code>#include &lt;mach/mach.h&gt;</code>, <code>#include &lt;sys/sysctl.h&gt;</code>, <code>mach_absolute_time()</code>, <code>host_statistics</code>), Objective-C dapat memanggil fungsi dan struct pointer C secara langsung tanpa overhead konversi.</li>
+<li>Di Swift murni, pemanggilan pointer C seperti <code>vm_statistics_data_t</code> atau <code>sysctl</code> membutuhkan syntax unsafe pointer yang sangat verbose dan rentan crash jika alignment memory tidak presisi.</li>
+</ul>
+<ol>
+<li><strong>Kriptografi Lawas & Operasi Buffer Memori</strong>:</li>
+</ol>
+<ul>
+<li><code>NSData+CZEncryption.m</code> membungkus pustaka C <code>&lt;CommonCrypto/CommonCryptor.h&gt;</code> untuk enkripsi AES secara cepat pada raw memory bytes.</li>
+</ul>
+<ol>
+<li><strong>Pustaka Fingerprint Historis</strong>:</li>
+</ol>
+<ul>
+<li>Modul deteksi anti-fraud perangkat fintech sering kali merupakan biner atau source code battle-tested yang diwarisi dari library C/ObjC lama.</li>
+</ul>
+<h5 id="item-b-cara-kerja-czswiftantifraudlib">B. Cara Kerja `CZSwiftAntiFraudLib`:</h5>
+<ol>
+<li>*<em>Pengumpulan Sinyal (</em>Telemetry Harvesting<em>)</em>*: Mengukur persentase sisa memori RAM, kapasitas disk (<code>czGetTotalDiskSpace</code>), status baterai (<code>UIDeviceBatteryState</code>), waktu boot mesin (<code>bootTime</code>), dan kecerahan layar.</li>
+<li><strong>Deteksi Root / Jailbreak (<code>CZJailbroken.swift</code>)</strong>: Memeriksa keberadaan file mencurigakan (<code>/Applications/Cydia.app</code>, <code>/bin/bash</code>), permission menulis ke direktori terlarang <code>/private</code>, dan symbolic links.</li>
+<li><strong>Penyimpanan Fingerprint</strong>: Menyimpan device token di iOS Keychain via <code>CZKeychainManager.swift</code> agar tetap bertahan saat aplikasi di-reinstall.</li>
+</ol>
+<h5 id="item-c-cara-membuat-modul-serupa-di-project-baru">C. Cara Membuat Modul Serupa di Project Baru:</h5>
+<ul>
+<li><strong>Opsi Modern (100% Swift)</strong>:</li>
+</ul>
+<p>Buat Swift Package / Framework, gunakan wrapper Swift modern untuk sysctl:</p>
+<pre><code class="language-swift">  var size = 0
+  sysctlbyname(&quot;hw.machine&quot;, nil, &amp;size, nil, 0)
+  var machine = [CChar](repeating: 0, count: size)
+  sysctlbyname(&quot;hw.machine&quot;, &amp;machine, &amp;size, nil, 0)
+  let platform = String(cString: machine)</code></pre>
+<p>Gunakan <code>CryptoKit</code> bawaan Apple (<code>AES.GCM</code>) menggantikan <code>CommonCrypto</code>.</p>
+<ul>
+<li><strong>Opsi Hybrid (ObjC + Swift)</strong>:</li>
+</ul>
+<ol>
+<li>Tambahkan file <code>.m</code> dan <code>.h</code> ke direktori proyek.</li>
+<li>Buka <code>Project Settings</code> -> <code>Build Settings</code> -> cari <strong>Objective-C Bridging Header</strong>.</li>
+<li>Daftarkan header <code>.h</code> tersebut (misal: <code>CZCommonManager.h</code>).</li>
+<li>Aktifkan <strong><code>Defines Module = YES</code></strong> agar class ObjC dapat dipanggil dari Swift via <code>import YourModule</code> atau langsung dikenali di satu target yang sama.</li>
+</ol>
+<div id="sub-3-pustaka-utilitas-bersama-czswiftutils" class="doc-subsection">
+<h4>3. Pustaka Utilitas Bersama (`CZSwiftUtils`)</h4>
+</div>
+<p>Path: <a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/learn/iOS-Arch/ios/IDSamirLoan/Application/CZSwiftUtils/" target="_blank" rel="noopener noreferrer">🦊 ios/IDSamirLoan/Application/CZSwiftUtils/ <span class="branch-tag">learn/iOS-Arch</span> ↗</a></p>
+<ul>
+<li><strong><code>CZAsyncs</code></strong>: Pembungkus <code>DispatchQueue</code> untuk eksekusi background thread dan kembali ke main thread secara aman.</li>
+<li><strong><code>CZDebouncer</code></strong>: Menahan panggilan event berulang (anti <em>double-click</em> pada tombol ajukan pinjaman).</li>
+<li><strong><code>CZRegexHelper</code></strong>: Evaluasi regex untuk format email, nomor KTP (16 digit), dan nomor telepon Indonesia (<code>+62</code> / <code>08</code>).</li>
+<li><strong><code>CZPrintLog</code></strong>: Logger kustom yang otomatis mematikan pencetakan log di konsol saat biner dikompilasi untuk mode produksi (<code>PROD</code>).</li>
+</ul>
+</section>
+<section id="sec-walkthrough" class="doc-section">
+<h3>🪜 E. Step-by-Step Walkthrough: Cara Menggunakan `IDServiceManager` di Fitur Baru</h3>
+<p>Jika Anda sedang membuat fitur di <code>SamirMineModule</code> dan ingin memeriksa apakah user sudah login sebelum membuka halaman pengaturan rekening:</p>
+<pre><code class="language-swift">// 1. Import SamirServiceModule
+import SamirServiceModule
+
+// 2. Akses loginService melalui IDServiceManager
+guard let loginService = IDServiceManager.loginService(), loginService.isLogin() else {
+    // 3. Jika belum login, picu loginAction() modal
+    IDServiceManager.loginService()?.loginAction()
+    return
+}
+
+// 4. Jika sudah login, ambil informasi user
+if let userInfo = loginService.loginInfo() {
+    print(&quot;User No: \(userInfo.userNo ?? &quot;&quot;), Mobile: \(userInfo.mobile ?? &quot;&quot;)&quot;)
+    // Lanjutkan membuka layar rekening
+}</code></pre>
+</section>
+<section id="sec-why" class="doc-section">
+<h3>⚖️ F. Why It Matters: Keuntungan Standarisasi Komponen Bersama</h3>
+<ul>
+<li><strong>Konsistensi Tampilan (Design System)</strong>:</li>
+</ul>
+<p>Penggunaan <code>CZSwiftUIKit</code> memastikan warna tombol, font, sudut lengkung (border radius), dan gaya dialog popup seragam di seluruh modul dari Beranda hingga Akun Saya.</p>
+<ul>
+<li><strong>Mencegah Duplikasi Kode</strong>:</li>
+</ul>
+<p>Fungsi-fungsi umum (seperti validasi regex nomor KTP atau pencarian top ViewController) terpusat di <code>CZSwiftUtils</code>, sehingga tidak ada tim yang membuat fungsi helper redundan.</p>
+</section>
+<section id="sec-example" class="doc-section">
+<h3>🔬 G. Practical Example: Menggunakan Debouncer pada Tombol Ajukan</h3>
+<p>Untuk mencegah nasabah menekan tombol "Ajukan Pinjaman" berkali-kali secara cepat (yang dapat menghasilkan transaksi ganda di server):</p>
+<pre><code class="language-swift">// Menggunakan CZDebouncer di ViewController
+private let debouncer = CZDebouncer(delay: 0.5)
+
+@objc private func didTapSubmitButton() {
+    debouncer.run { [weak self] in
+        self?.presenter.submitLoanApplication()
+    }
+}</code></pre>
+</section>
+<section id="sec-mistakes" class="doc-section">
+<h3>⚠️ H. Common Mistakes &amp; Debugging</h3>
+<ul>
+<li><strong>Lupa Menangani Kasus Handler <code>nil</code></strong>:</li>
+<li><em>Kesalahan</em>: Menggunakan force-unwrap pada service: <code>IDServiceManager.loginService()!.isLogin()</code>.</li>
+<li><em>Bahaya</em>: Jika runtime belum selesai menginisialisasi registry, aplikasi akan crash instan! Selalu gunakan optional chaining <code>loginService()?.isLogin() ?? false</code>.</li>
+<li><strong>Salah Panggil <code>reapyService()</code> vs <code>repayService()</code></strong>:</li>
+<li>Ingat selalu nama method di <code>IDServiceManager</code> adalah <code>reapyService()</code>.</li>
+</ul>
+</section>
+<section id="sec-check" class="doc-section">
+<h3>🧠 I. Knowledge Check</h3>
+<ol>
+<li>Apa method di <code>IDServiceManager</code> yang bertugas membuka form login secara modal?</li>
+<li>Bagaimana cara mencari ViewController yang sedang aktif di layar menggunakan <code>CZSwiftUIKit</code>?</li>
+<li>Sebutkan peran dari class <code>CZDebouncer</code> pada interaksi tombol transaksi finansial!</li>
+</ol>
+<p><strong>Latihan Observasi</strong>:</p>
+<p>Buka file <code>ios/IDSamirLoan/Application/CZSwiftUIKit/Classes/CZExtension/UIViewController+CZExtension.swift</code>. Pelajari bagaimana implementasi <code>topViewController()</code> menelusuri hierarki <code>UINavigationController</code>, <code>UITabBarController</code>, dan <code>presentedViewController</code>.</p>
+</section>
+<section id="sec-completion" class="doc-section">
+<h3>🏁 J. Completion Criteria</h3>
+<p>Anda telah menguasai dokumen ini jika Anda memahami seluruh fungsi yang tersedia di <code>IDServiceManager</code>, <code>CZSwiftUIKit</code>, dan <code>CZSwiftUtils</code>, serta dapat menggunakannya dengan aman dalam pengembangan fitur.</p>
+<p>Dokumen berikutnya: <a href="../04-understanding-navigation/01-feature-inventory.html">04-understanding-navigation/01-feature-inventory.md</a>.</p>
+</section>
+
+    <!-- BAGIAN 2 & 3: ARCHITECTURAL CRITIQUE & BLUEPRINT -->
+    <div class="section-banner lab" style="margin-top: 4rem;">
+      <h2>🏛️ Bagian 2: Architecture Lab, SOLID Audit & Retention Quizzes</h2>
+      <span class="pill" style="background-color: var(--accent-warning);">Architecture Lab</span>
+    </div>
+
+
+    <!-- SEGMEN 2: ARCHITECTURAL CRITIQUE -->
+    <section class="lesson-segment" id="sub-solid">
+      <h2>🏛️ Audit SOLID & Clean Architecture: Menemukan Titik Lemah pada Implementasi Existing</h2>
+
+      <div class="callout critique">
+        <div class="callout-title">⚠️ Smells 1: Keterikatan Kuat Antar Sub-Modul & Kurangnya Inversi Dependensi</div>
+        <p>Implementasi komponen sering mengasumsikan keberadaan lingkungan runtime tertentu tanpa kontrak antarmuka yang didefinisikan secara tegas.</p>
+      </div>
+
+      <div class="callout critique">
+        <div class="callout-title">⚠️ Smells 2: Risiko Regresi & Minimnya Kontrak Pengujian Terisolasi</div>
+        <p>Perubahan pada satu service atau helper berpotensi merusak fungsionalitas di modul lain karena tingginya kohesi tersembunyi antar file.</p>
+      </div>
+    </section>
+
+    <!-- SEGMEN 3: REFACTORING BLUEPRINT -->
+    <section class="lesson-segment" id="sub-blueprint">
+      <h2>🚀 Blueprint Refactoring Standar Industri: Pola Service Locator & Interface Segregation (SOLID)</h2>
+      <p>Menerapkan prinsip Interface Segregation (ISP) dan Dependency Injection agar setiap service hanya mengekspos metode yang relevan bagi kliennya.</p>
+
+      <div class="callout best-practice">
+        <div class="callout-title">✅ Rekomendasi Solusi Arsitektur Bersih</div>
+        <pre><code class="language-swift">public protocol SessionProvider: AnyObject {
+    var currentToken: String? { get }
+    var isAuthenticated: Bool { get }
+}
+
+public final class AppSessionManager: SessionProvider {
+    public static let shared = AppSessionManager()
+    public var currentToken: String?
+    public var isAuthenticated: Bool { currentToken != nil }
+}</code></pre>
+      </div>
+
+      <h3>Keunggulan Arsitektur Refactoring Ini:</h3>
+      <ul>
+        <li><strong>100% Mockable & Testable:</strong> Memungkinkan pengujian terisolasi tanpa memicu efek samping runtime produksi.</li>
+        <li><strong>Open/Closed Principle (OCP):</strong> Penambahan fitur baru dapat dilakukan tanpa memodifikasi class yang sudah stabil.</li>
+        <li><strong>Decoupled Subsystems:</strong> Membatasi dampak regresi saat terjadi perubahan dependensi eksternal.</li>
+      </ul>
+    </section>
+
+
+    <!-- SEGMEN 4: INTERACTIVE RETENTION QUIZ -->
+    <section class="lesson-segment" id="sub-quiz">
+      <h2>🧠 Interactive Retention & Architectural Quiz</h2>
+      <p>Uji pemahaman alur kode nyata dan keputusan arsitektur Anda:</p>
+
+      <!-- KUIS 1 -->
+      <div class="quiz-card" id="quiz-1">
+        <h4>Kuis 1 (Memory Recall): Berdasarkan standar Clean Architecture, apa peran utama dari domain layer pada modul IOS?</h4>
+        <div class="quiz-options">
+          <button class="quiz-btn" onclick="submitQuiz(1, 'A', true)">
+            A. Mengisolasi aturan bisnis finansial murni agar tidak tercampur dengan UI platform
+          </button>
+          <button class="quiz-btn" onclick="submitQuiz(1, 'B', false)">
+            B. Mengatur tata letak layout dan ukuran tombol di layar aplikasi perangkat nasabah
+          </button>
+          <button class="quiz-btn" onclick="submitQuiz(1, 'C', false)">
+            C. Menyimpan file sertifikat SSL dan kunci enkripsi privat di memori kartu SIM
+          </button>
+          <button class="quiz-btn" onclick="submitQuiz(1, 'D', false)">
+            D. Mengirimkan sinyal detak jantung (heartbeat) ke menara telekomunikasi seluler
+          </button>
+        </div>
+        <div class="quiz-feedback" id="feedback-1"></div>
+      </div>
+      <!-- KUIS 2 -->
+      <div class="quiz-card" id="quiz-2">
+        <h4>Kuis 2 (Architectural Decision): Mengapa penerapan Dependency Inversion Principle (DIP) sangat krusial dalam pembuatan unit test?</h4>
+        <div class="quiz-options">
+          <button class="quiz-btn" onclick="submitQuiz(2, 'A', false)">
+            A. Mengharuskan seluruh kode ditulis menggunakan bahasa pemrograman tingkat rendah C
+          </button>
+          <button class="quiz-btn" onclick="submitQuiz(2, 'B', true)">
+            B. Memungkinkan penyuntikan test double (mock/fake) untuk menguji skenario terisolasi
+          </button>
+          <button class="quiz-btn" onclick="submitQuiz(2, 'C', false)">
+            C. Mengurangi jumlah baris kode hingga setengahnya secara otomatis saat kompilasi
+          </button>
+          <button class="quiz-btn" onclick="submitQuiz(2, 'D', false)">
+            D. Menghilangkan kebutuhan arsitektur modular pada proyek aplikasi berskala besar
+          </button>
+        </div>
+        <div class="quiz-feedback" id="feedback-2"></div>
+      </div>
+      <!-- KUIS 3 -->
+      <div class="quiz-card" id="quiz-3">
+        <h4>Kuis 3 (Debugging & Maintenance): Apa keuntungan utama membatasi dependensi antar modul ke arah satu arah (Unidirectional Dependency)?</h4>
+        <div class="quiz-options">
+          <button class="quiz-btn" onclick="submitQuiz(3, 'A', true)">
+            A. Menghilangkan circular dependency dan mempermudah pelacakan penyebab bug sistem
+          </button>
+          <button class="quiz-btn" onclick="submitQuiz(3, 'B', false)">
+            B. Memaksa seluruh antarmuka aplikasi selalu berjalan dalam orientasi layar lanskap
+          </button>
+          <button class="quiz-btn" onclick="submitQuiz(3, 'C', false)">
+            C. Menghindari kebutuhan update library pihak ketiga selama masa rilis aplikasi
+          </button>
+          <button class="quiz-btn" onclick="submitQuiz(3, 'D', false)">
+            D. Mempercepat koneksi internet pengguna saat melakukan pembayaran virtual account
+          </button>
+        </div>
+        <div class="quiz-feedback" id="feedback-3"></div>
+      </div>
+    </section>
+
+    <!-- Lesson Navigation Footer -->
+    <div class="lesson-nav-footer">
+      <a class="lesson-nav-btn prev" href="../03-understanding-architecture/03-dependency-direction.html">
+  ◀ Modul Sebelumnya: 03 — Dependency Direction
+</a>
+      <a class="lesson-nav-btn next" href="../04-understanding-navigation/01-feature-inventory.html">
+  Modul Selanjutnya: 01 — Feature Inventory ▶
+</a>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+      <div>Chiron Codebase Mastery Academy • SAMIR Mobile iOS</div>
+      <div>Anchor Branch: <strong>learn/iOS-Arch</strong></div>
+    </footer>
+
+  </main>
+
+  <!-- ========================================================================= -->
+  <!-- RIGHT-HAND SIDEBAR: ON-PAGE TABLE OF CONTENTS                             -->
+  <!-- ========================================================================= -->
+  <aside class="docs-toc-sidebar" id="desktopTocSidebar">
+    <div class="toc-header-bar">
+      <span class="toc-header-label">📑 DAFTAR ISI</span>
+      <div class="toc-header-actions">
+        <button class="toc-action-btn" id="tocScrollTopBtn" title="Scroll ke Paling Atas" onclick="window.scrollTo({top: 0, behavior: 'smooth'})">▲</button>
+        <button class="toc-action-btn" id="tocToggleAllBtn" title="Buka/Tutup Semua Cabang" onclick="toggleAllTocBranches()">🔄</button>
+        <button class="toc-action-btn" id="tocResetActiveBtn" title="Fokuskan ke Topik Aktif" onclick="focusCurrentTocActive()">📑</button>
+        <button class="toc-action-btn toc-dismiss-btn" id="tocDismissBtn" title="Tutup Daftar Isi (Fokus Mode Membaca)" onclick="toggleDesktopToc()">✕</button>
+      </div>
+    </div>
+
+    <div class="toc-tree-container">
+      <div class="toc-tree-node root-node" id="toc-node-root">
+        <div class="toc-node-row">
+          <span class="toc-caret" onclick="toggleTocBranch(this)">▾</span>
+          <a class="toc-tree-link root-link" href="#sec-title" title="04 — Shared Components &amp; Services">
+            04 — Shared Components &amp; Services
+          </a>
+        </div>
+        <div class="toc-branch">
+          <div class="toc-node-row">
+            <span class="toc-leaf-dot"></span>
+            <a class="toc-tree-link" href="#sec-obj">A. Learning Objective</a>
+          </div>
+          <div class="toc-node-row">
+            <span class="toc-leaf-dot"></span>
+            <a class="toc-tree-link" href="#sec-prereq">B. Prerequisites</a>
+          </div>
+          <div class="toc-node-row">
+            <span class="toc-leaf-dot"></span>
+            <a class="toc-tree-link" href="#sec-simple">C. Simple Explanation (Analogi Kotak Perkakas Bersama)</a>
+          </div>
+          <div class="toc-tree-node" id="toc-node-sec-actual">
+            <div class="toc-node-row">
+              <span class="toc-caret" onclick="toggleTocBranch(this)">▾</span>
+              <a class="toc-tree-link" href="#sec-actual">D. Actual Implementation (Katalog Layanan &amp; Komponen)</a>
+            </div>
+            <div class="toc-branch">
+              <div class="toc-node-row">
+                <span class="toc-leaf-dot"></span>
+                <a class="toc-tree-link" href="#sub-1-katalog-protokol-layanan-samirservicemodule">1. Katalog Protokol Layanan (`SamirServiceModule`)</a>
+              </div>
+              <div class="toc-node-row">
+                <span class="toc-leaf-dot"></span>
+                <a class="toc-tree-link" href="#sub-2-pustaka-komponen-ui-bersama-czswiftuikit">2. Pustaka Komponen UI Bersama (`CZSwiftUIKit`)</a>
+              </div>
+              <div class="toc-node-row">
+                <span class="toc-leaf-dot"></span>
+                <a class="toc-tree-link" href="#sub-3-audit-arsitektur-apakah-idnpopupconfig-sudah-best-practice">3. Audit Arsitektur: Apakah `IDNPopupConfig` Sudah Best Practice?</a>
+              </div>
+              <div class="toc-node-row">
+                <span class="toc-leaf-dot"></span>
+                <a class="toc-tree-link" href="#sub-4-bedah-arsitektur-czswiftantifraudlib-mengapa-pakai-objective-c">4. Bedah Arsitektur `CZSwiftAntiFraudLib`: Mengapa Pakai Objective-C?</a>
+              </div>
+              <div class="toc-node-row">
+                <span class="toc-leaf-dot"></span>
+                <a class="toc-tree-link" href="#sub-3-pustaka-utilitas-bersama-czswiftutils">3. Pustaka Utilitas Bersama (`CZSwiftUtils`)</a>
+              </div>
+            </div>
+          </div>
+          <div class="toc-node-row">
+            <span class="toc-leaf-dot"></span>
+            <a class="toc-tree-link" href="#sec-walkthrough">E. Step-by-Step Walkthrough: Cara Menggunakan `IDServiceManager` di Fitur Baru</a>
+          </div>
+          <div class="toc-node-row">
+            <span class="toc-leaf-dot"></span>
+            <a class="toc-tree-link" href="#sec-why">F. Why It Matters: Keuntungan Standarisasi Komponen Bersama</a>
+          </div>
+          <div class="toc-node-row">
+            <span class="toc-leaf-dot"></span>
+            <a class="toc-tree-link" href="#sec-example">G. Practical Example: Menggunakan Debouncer pada Tombol Ajukan</a>
+          </div>
+          <div class="toc-node-row">
+            <span class="toc-leaf-dot"></span>
+            <a class="toc-tree-link" href="#sec-mistakes">H. Common Mistakes &amp; Debugging</a>
+          </div>
+          <div class="toc-node-row">
+            <span class="toc-leaf-dot"></span>
+            <a class="toc-tree-link" href="#sec-check">I. Knowledge Check</a>
+          </div>
+          <div class="toc-node-row">
+            <span class="toc-leaf-dot"></span>
+            <a class="toc-tree-link" href="#sec-completion">J. Completion Criteria</a>
+          </div>
+          <!-- Architecture Lab Branches -->
+          <div class="toc-tree-node" id="toc-node-lab" style="margin-top: 0.45rem;">
+            <div class="toc-node-row">
+              <span class="toc-caret" onclick="toggleTocBranch(this)">▾</span>
+              <a class="toc-tree-link" href="#sub-solid" style="font-weight: 700; color: var(--accent-warning);">
+                🏛️ Architecture Lab & Audit
+              </a>
+            </div>
+            <div class="toc-branch">
+              <div class="toc-node-row">
+                <span class="toc-leaf-dot"></span>
+                <a class="toc-tree-link" href="#sub-solid">1. Audit SOLID & Clean Arch</a>
+              </div>
+              <div class="toc-node-row">
+                <span class="toc-leaf-dot"></span>
+                <a class="toc-tree-link" href="#sub-blueprint">2. Refactoring Blueprint</a>
+              </div>
+              <div class="toc-node-row">
+                <span class="toc-leaf-dot"></span>
+                <a class="toc-tree-link" href="#sub-quiz">3. Interactive Retention Quiz</a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </aside>
+
+</div>
+
+<!-- ========================================================================= -->
+<!-- MOBILE / DRAWER TABLE OF CONTENTS OVERLAY                                 -->
+<!-- ========================================================================= -->
+<div class="mobile-toc-overlay" id="mobileTocOverlay" onclick="toggleMobileToc()"></div>
+<div class="mobile-toc-drawer" id="mobileTocDrawer">
+  <div class="toc-header-bar">
+    <span class="toc-header-label">📑 DAFTAR ISI HALAMAN</span>
+    <button class="drawer-close-btn" onclick="toggleMobileToc()">✕</button>
+  </div>
+  <div class="toc-tree-container" style="margin-top: 0.75rem;">
+    <div class="toc-tree-node root-node" id="mob-toc-node-root">
+      <div class="toc-node-row">
+        <span class="toc-caret" onclick="toggleTocBranch(this)">▾</span>
+        <a class="toc-tree-link root-link" href="#sec-title" onclick="toggleMobileToc()">
+          04 — Shared Components &amp; Services
+        </a>
+      </div>
+      <div class="toc-branch">
+        <div class="toc-node-row">
+          <span class="toc-leaf-dot"></span>
+          <a class="toc-tree-link" href="#sec-obj" onclick="toggleMobileToc()">A. Learning Objective</a>
+        </div>
+        <div class="toc-node-row">
+          <span class="toc-leaf-dot"></span>
+          <a class="toc-tree-link" href="#sec-prereq" onclick="toggleMobileToc()">B. Prerequisites</a>
+        </div>
+        <div class="toc-node-row">
+          <span class="toc-leaf-dot"></span>
+          <a class="toc-tree-link" href="#sec-simple" onclick="toggleMobileToc()">C. Simple Explanation (Analogi Kotak Perkakas Bersama)</a>
+        </div>
+        <div class="toc-tree-node" id="mob-toc-node-sec-actual">
+          <div class="toc-node-row">
+            <span class="toc-caret" onclick="toggleTocBranch(this)">▾</span>
+            <a class="toc-tree-link" href="#sec-actual" onclick="toggleMobileToc()">D. Actual Implementation (Katalog Layanan &amp; Komponen)</a>
+          </div>
+          <div class="toc-branch">
+            <div class="toc-node-row">
+              <span class="toc-leaf-dot"></span>
+              <a class="toc-tree-link" href="#sub-1-katalog-protokol-layanan-samirservicemodule" onclick="toggleMobileToc()">1. Katalog Protokol Layanan (`SamirServiceModule`)</a>
+            </div>
+            <div class="toc-node-row">
+              <span class="toc-leaf-dot"></span>
+              <a class="toc-tree-link" href="#sub-2-pustaka-komponen-ui-bersama-czswiftuikit" onclick="toggleMobileToc()">2. Pustaka Komponen UI Bersama (`CZSwiftUIKit`)</a>
+            </div>
+            <div class="toc-node-row">
+              <span class="toc-leaf-dot"></span>
+              <a class="toc-tree-link" href="#sub-3-audit-arsitektur-apakah-idnpopupconfig-sudah-best-practice" onclick="toggleMobileToc()">3. Audit Arsitektur: Apakah `IDNPopupConfig` Sudah Best Practice?</a>
+            </div>
+            <div class="toc-node-row">
+              <span class="toc-leaf-dot"></span>
+              <a class="toc-tree-link" href="#sub-4-bedah-arsitektur-czswiftantifraudlib-mengapa-pakai-objective-c" onclick="toggleMobileToc()">4. Bedah Arsitektur `CZSwiftAntiFraudLib`: Mengapa Pakai Objective-C?</a>
+            </div>
+            <div class="toc-node-row">
+              <span class="toc-leaf-dot"></span>
+              <a class="toc-tree-link" href="#sub-3-pustaka-utilitas-bersama-czswiftutils" onclick="toggleMobileToc()">3. Pustaka Utilitas Bersama (`CZSwiftUtils`)</a>
+            </div>
+          </div>
+        </div>
+        <div class="toc-node-row">
+          <span class="toc-leaf-dot"></span>
+          <a class="toc-tree-link" href="#sec-walkthrough" onclick="toggleMobileToc()">E. Step-by-Step Walkthrough: Cara Menggunakan `IDServiceManager` di Fitur Baru</a>
+        </div>
+        <div class="toc-node-row">
+          <span class="toc-leaf-dot"></span>
+          <a class="toc-tree-link" href="#sec-why" onclick="toggleMobileToc()">F. Why It Matters: Keuntungan Standarisasi Komponen Bersama</a>
+        </div>
+        <div class="toc-node-row">
+          <span class="toc-leaf-dot"></span>
+          <a class="toc-tree-link" href="#sec-example" onclick="toggleMobileToc()">G. Practical Example: Menggunakan Debouncer pada Tombol Ajukan</a>
+        </div>
+        <div class="toc-node-row">
+          <span class="toc-leaf-dot"></span>
+          <a class="toc-tree-link" href="#sec-mistakes" onclick="toggleMobileToc()">H. Common Mistakes &amp; Debugging</a>
+        </div>
+        <div class="toc-node-row">
+          <span class="toc-leaf-dot"></span>
+          <a class="toc-tree-link" href="#sec-check" onclick="toggleMobileToc()">I. Knowledge Check</a>
+        </div>
+        <div class="toc-node-row">
+          <span class="toc-leaf-dot"></span>
+          <a class="toc-tree-link" href="#sec-completion" onclick="toggleMobileToc()">J. Completion Criteria</a>
+        </div>
+        <div class="toc-tree-node" id="mob-toc-node-lab" style="margin-top: 0.45rem;">
+          <div class="toc-node-row">
+            <span class="toc-caret" onclick="toggleTocBranch(this)">▾</span>
+            <a class="toc-tree-link" href="#sub-solid" onclick="toggleMobileToc()" style="font-weight: 700; color: var(--accent-warning);">
+              🏛️ Architecture Lab & Audit
+            </a>
+          </div>
+          <div class="toc-branch">
+            <div class="toc-node-row">
+              <span class="toc-leaf-dot"></span>
+              <a class="toc-tree-link" href="#sub-solid" onclick="toggleMobileToc()">1. Audit SOLID & Clean Arch</a>
+            </div>
+            <div class="toc-node-row">
+              <span class="toc-leaf-dot"></span>
+              <a class="toc-tree-link" href="#sub-blueprint" onclick="toggleMobileToc()">2. Refactoring Blueprint</a>
+            </div>
+            <div class="toc-node-row">
+              <span class="toc-leaf-dot"></span>
+              <a class="toc-tree-link" href="#sub-quiz" onclick="toggleMobileToc()">3. Interactive Retention Quiz</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ========================================================================= -->
+<!-- FULL CURRICULUM DRAWER (CATALOG OF ALL MODULES)                           -->
+<!-- ========================================================================= -->
+<div class="curriculum-drawer-overlay" id="curriculumOverlay" onclick="toggleCurriculumDrawer()"></div>
+<div class="curriculum-drawer" id="curriculumDrawer">
+  <div class="drawer-header">
+    <div class="drawer-title">📚 Kurikulum Lengkap SAMIR Mobile iOS</div>
+    <button class="drawer-close-btn" onclick="toggleCurriculumDrawer()">✕</button>
+  </div>
+  <div class="drawer-search">
+    <input type="text" id="moduleSearchInput" placeholder="🔍 Cari modul (contoh: startup, router, auth)..." oninput="filterCurriculum()">
+  </div>
+  <div class="drawer-body" id="curriculumListBody">
+    <div class="curriculum-level-group">
+      <div class="curriculum-level-title">Level 0: Learning Roadmap</div>
+      <a class="curriculum-item-link" href="../00-learning-roadmap.html">
+        <span>📄</span> Kurikulum &amp; Roadmap Pembelajaran SAMIR iOS
+      </a>
+    </div>
+    <div class="curriculum-level-group">
+      <div class="curriculum-level-title">Level 1: Project Foundation</div>
+      <a class="curriculum-item-link" href="../01-project-foundation/01-application-overview.html">
+        <span>📄</span> 01 — Application Overview
+      </a>
+      <a class="curriculum-item-link" href="../01-project-foundation/02-repository-structure.html">
+        <span>📄</span> 02 — Repository Structure
+      </a>
+      <a class="curriculum-item-link" href="../01-project-foundation/03-technology-stack-and-build.html">
+        <span>📄</span> 03 — Technology Stack &amp; Build Configuration
+      </a>
+    </div>
+    <div class="curriculum-level-group">
+      <div class="curriculum-level-title">Level 2: Understanding App Startup</div>
+      <a class="curriculum-item-link" href="../02-understanding-app-startup/01-ios-entry-point.html">
+        <span>📄</span> 01 — iOS Entry Point
+      </a>
+      <a class="curriculum-item-link" href="../02-understanding-app-startup/02-application-lifecycle.html">
+        <span>📄</span> 02 — Application Lifecycle
+      </a>
+      <a class="curriculum-item-link" href="../02-understanding-app-startup/03-startup-sequence-and-initial-routing.html">
+        <span>📄</span> 03 — Startup Sequence &amp; Initial Routing
+      </a>
+      <a class="curriculum-item-link" href="../02-understanding-app-startup/04-czmodulemanager-deep-dive.html">
+        <span>📄</span> 04 — CZModuleManager Deep Dive
+      </a>
+    </div>
+    <div class="curriculum-level-group">
+      <div class="curriculum-level-title">Level 3: Understanding Architecture</div>
+      <a class="curriculum-item-link" href="../03-understanding-architecture/01-architecture-overview.html">
+        <span>📄</span> 01 — Architecture Overview
+      </a>
+      <a class="curriculum-item-link" href="../03-understanding-architecture/02-layers-and-responsibilities.html">
+        <span>📄</span> 02 — Layers &amp; Responsibilities
+      </a>
+      <a class="curriculum-item-link" href="../03-understanding-architecture/03-dependency-direction.html">
+        <span>📄</span> 03 — Dependency Direction
+      </a>
+      <a class="curriculum-item-link active" href="#">
+        <span>🟢</span> 04 — Shared Components &amp; Services (Sedang Dibaca)
+      </a>
+    </div>
+    <div class="curriculum-level-group">
+      <div class="curriculum-level-title">Level 4: Understanding Navigation</div>
+      <a class="curriculum-item-link" href="../04-understanding-navigation/01-feature-inventory.html">
+        <span>📄</span> 01 — Feature Inventory
+      </a>
+      <a class="curriculum-item-link" href="../04-understanding-navigation/02-navigation-fundamentals.html">
+        <span>📄</span> 02 — Navigation Fundamentals
+      </a>
+      <a class="curriculum-item-link" href="../04-understanding-navigation/03-complete-navigation-map.html">
+        <span>📄</span> 03 — Complete Navigation Map
+      </a>
+      <a class="curriculum-item-link" href="../04-understanding-navigation/04-navigation-conditions-and-edge-cases.html">
+        <span>📄</span> 04 — Navigation Conditions &amp; Edge Cases
+      </a>
+    </div>
+    <div class="curriculum-level-group">
+      <div class="curriculum-level-title">Level 5: Learning Business Flows</div>
+      <a class="curriculum-item-link" href="../05-learning-business-flows/01-user-journey-overview.html">
+        <span>📄</span> 01 — User Journey Overview
+      </a>
+      <a class="curriculum-item-link" href="../05-learning-business-flows/02-authentication-and-session-flow.html">
+        <span>📄</span> 02 — Authentication &amp; Session Flow
+      </a>
+      <a class="curriculum-item-link" href="../05-learning-business-flows/03-core-feature-flows.html">
+        <span>📄</span> 03 — Core Feature Flows
+      </a>
+      <a class="curriculum-item-link" href="../05-learning-business-flows/04-cross-feature-journeys.html">
+        <span>📄</span> 04 — Cross-Feature Journeys
+      </a>
+      <a class="curriculum-item-link" href="../05-learning-business-flows/05-production-low-level-flows.html">
+        <span>📄</span> 05 — Production Low-Level Execution Flows
+      </a>
+    </div>
+    <div class="curriculum-level-group">
+      <div class="curriculum-level-title">Level 6: Data &amp; Dependencies</div>
+      <a class="curriculum-item-link" href="../06-understanding-data-and-dependencies/01-dependency-catalog.html">
+        <span>📄</span> 01 — Dependency Catalog
+      </a>
+      <a class="curriculum-item-link" href="../06-understanding-data-and-dependencies/02-networking-and-api-flow.html">
+        <span>📄</span> 02 — Networking &amp; API Flow
+      </a>
+      <a class="curriculum-item-link" href="../06-understanding-data-and-dependencies/03-models-and-data-transformation.html">
+        <span>📄</span> 03 — Models &amp; Data Transformation
+      </a>
+      <a class="curriculum-item-link" href="../06-understanding-data-and-dependencies/04-state-management-and-persistence.html">
+        <span>📄</span> 04 — State Management &amp; Persistence
+      </a>
+      <a class="curriculum-item-link" href="../06-understanding-data-and-dependencies/05-native-flutter-integration.html">
+        <span>📄</span> 05 — Native-Flutter Integration
+      </a>
+    </div>
+    <div class="curriculum-level-group">
+      <div class="curriculum-level-title">Level 7: Debugging &amp; Maintenance</div>
+      <a class="curriculum-item-link" href="../07-learning-to-debug-and-maintain/01-error-handling.html">
+        <span>📄</span> 01 — Error Handling
+      </a>
+      <a class="curriculum-item-link" href="../07-learning-to-debug-and-maintain/02-testing-and-debugging.html">
+        <span>📄</span> Level 7
+      </a>
+      <a class="curriculum-item-link" href="../07-learning-to-debug-and-maintain/03-coupling-and-technical-debt.html">
+        <span>📄</span> Level 7
+      </a>
+      <a class="curriculum-item-link" href="../07-learning-to-debug-and-maintain/04-change-impact-analysis.html">
+        <span>📄</span> Level 7
+      </a>
+    </div>
+    <div class="curriculum-level-group">
+      <div class="curriculum-level-title">Level 8: Reference &amp; Codebase Audit</div>
+      <a class="curriculum-item-link" href="../08-reference/01-codebase-glossary.html">
+        <span>📄</span> Level 8
+      </a>
+      <a class="curriculum-item-link" href="../08-reference/02-source-code-index.html">
+        <span>📄</span> Level 8
+      </a>
+      <a class="curriculum-item-link" href="../08-reference/03-existing-documentation-audit.html">
+        <span>📄</span> Level 8
+      </a>
+      <a class="curriculum-item-link" href="../08-reference/04-open-questions-and-unverified-findings.html">
+        <span>📄</span> Level 8
+      </a>
+    </div>
+    <div class="curriculum-level-group">
+      <div class="curriculum-level-title">Visual Diagrams &amp; Sequence Maps</div>
+      <a class="curriculum-item-link" href="../diagrams/application-startup.html">
+        <span>📄</span> Diagram — Alur Peluncuran Aplikasi (Application Startup Sequence)
+      </a>
+      <a class="curriculum-item-link" href="../diagrams/architecture-overview.html">
+        <span>📄</span> Diagram — Ikhtisar Arsitektur (Architecture Overview)
+      </a>
+      <a class="curriculum-item-link" href="../diagrams/core-user-journeys.html">
+        <span>📄</span> Diagram — Alur Pengguna Utama (Core User Journeys)
+      </a>
+      <a class="curriculum-item-link" href="../diagrams/feature-dependencies.html">
+        <span>📄</span> Diagram — Dependensi Fitur &amp; Modul (Feature Dependencies)
+      </a>
+      <a class="curriculum-item-link" href="../diagrams/navigation-overview.html">
+        <span>📄</span> Diagram — Peta Navigasi Lengkap (Navigation Overview)
+      </a>
+    </div>
+    <div class="curriculum-level-group">
+      <div class="curriculum-level-title">Course Index &amp; Syllabus</div>
+      <a class="curriculum-item-link" href="../README.html">
+        <span>📄</span> SAMIR iOS — Learning Curve &amp; Engineering Guide
+      </a>
+    </div>
+  </div>
+</div>
+
+<!-- ========================================================================= -->
+<!-- FULLSCREEN MERMAID DIAGRAM LIGHTBOX MODAL                                 -->
+<!-- ========================================================================= -->
+<div id="diagramModal" class="diagram-modal" onclick="closeDiagramModal(event)">
+  <div class="diagram-modal-dialog" onclick="event.stopPropagation()">
+    <div class="diagram-modal-header">
+      <h3 id="modalDiagramTitle">🔍 Pembesaran Diagram Alur</h3>
+      <div class="diagram-modal-controls">
+        <button class="diagram-ctrl-btn" onclick="zoomDiagram(1.25)">➕ Zoom In</button>
+        <button class="diagram-ctrl-btn" onclick="zoomDiagram(0.8)">➖ Zoom Out</button>
+        <button class="diagram-ctrl-btn" onclick="resetDiagramZoom()">↺ 100%</button>
+        <button class="diagram-close-btn" onclick="closeDiagramModal()">✕ Tutup [Esc]</button>
+      </div>
+    </div>
+    <div class="diagram-modal-body" id="diagramModalBody">
+      <!-- Cloned SVG inserted dynamically -->
+    </div>
+  </div>
+</div>
+
+<!-- Prism.js Scripts for Syntax Highlighting -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-swift.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-dart.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-json.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-yaml.min.js"></script>
+
+<!-- Interactive Scripts: Tabs, TOC ScrollSpy, Drawers & Quiz -->
+<script>
+  function toggleCurriculumDrawer() {
+    const drawer = document.getElementById('curriculumDrawer');
+    const overlay = document.getElementById('curriculumOverlay');
+    drawer.classList.toggle('open');
+    overlay.classList.toggle('open');
+  }
+
+  function toggleMobileToc() {
+    const drawer = document.getElementById('mobileTocDrawer');
+    const overlay = document.getElementById('mobileTocOverlay');
+    drawer.classList.toggle('open');
+    overlay.classList.toggle('open');
+  }
+
+  function filterCurriculum() {
+    const query = document.getElementById('moduleSearchInput').value.toLowerCase();
+    const links = document.querySelectorAll('.curriculum-item-link');
+    links.forEach(link => {
+      const text = link.innerText.toLowerCase();
+      link.style.display = text.includes(query) ? 'flex' : 'none';
+    });
+  }
+
+  function handleTocToggleClick() {
+    if (window.innerWidth > 1200) {
+      toggleDesktopToc();
+    } else {
+      toggleMobileToc();
+    }
+  }
+
+  function toggleDesktopToc() {
+    document.body.classList.toggle('toc-collapsed');
+    const isCollapsed = document.body.classList.contains('toc-collapsed');
+    try {
+      localStorage.setItem('chiron_toc_collapsed', isCollapsed ? '1' : '0');
+    } catch (e) {}
+
+    const topbarBtn = document.getElementById('topbarTocBtn');
+    if (topbarBtn) {
+      if (isCollapsed) {
+        topbarBtn.classList.remove('active');
+        topbarBtn.title = "Tampilkan Daftar Isi (Mode Normal)";
+      } else {
+        topbarBtn.classList.add('active');
+        topbarBtn.title = "Tutup Daftar Isi (Mode Fokus Membaca)";
+      }
+    }
+  }
+
+  function toggleTocBranch(caretEl) {
+    const node = caretEl.closest('.toc-tree-node');
+    if (node) {
+      node.classList.toggle('collapsed');
+      caretEl.textContent = node.classList.contains('collapsed') ? '▸' : '▾';
+    }
+  }
+
+  function toggleAllTocBranches() {
+    const allNodes = document.querySelectorAll('.toc-tree-node');
+    let hasCollapsed = false;
+    allNodes.forEach(n => {
+      if (n.classList.contains('collapsed')) hasCollapsed = true;
+    });
+    allNodes.forEach(n => {
+      const caret = n.querySelector(':scope > .toc-node-row > .toc-caret');
+      if (hasCollapsed) {
+        n.classList.remove('collapsed');
+        if (caret) caret.textContent = '▾';
+      } else {
+        if (!n.classList.contains('root-node')) {
+          n.classList.add('collapsed');
+          if (caret) caret.textContent = '▸';
+        }
+      }
+    });
+  }
+
+  function focusCurrentTocActive() {
+    const activeLink = document.querySelector('.toc-tree-link.active');
+    if (activeLink) {
+      activeLink.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+    } else {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  }
+
+  window.addEventListener('DOMContentLoaded', () => {
+    try {
+      if (localStorage.getItem('chiron_toc_collapsed') === '1' && window.innerWidth > 1200) {
+        document.body.classList.add('toc-collapsed');
+        const topbarBtn = document.getElementById('topbarTocBtn');
+        if (topbarBtn) topbarBtn.classList.remove('active');
+      }
+    } catch (e) {}
+
+    const sectionIds = ['sec-title', 'sec-obj', 'sec-prereq', 'sec-simple', 'sec-actual', 'sub-1-katalog-protokol-layanan-samirservicemodule', 'sub-2-pustaka-komponen-ui-bersama-czswiftuikit', 'sub-3-audit-arsitektur-apakah-idnpopupconfig-sudah-best-practice', 'sub-4-bedah-arsitektur-czswiftantifraudlib-mengapa-pakai-objective-c', 'sub-3-pustaka-utilitas-bersama-czswiftutils', 'sec-walkthrough', 'sec-why', 'sec-example', 'sec-mistakes', 'sec-check', 'sec-completion', 'sub-solid', 'sub-blueprint', 'sub-quiz'];
+    const tocLinks = document.querySelectorAll('.toc-tree-link');
+
+    window.addEventListener('scroll', () => {
+      let currentSection = '';
+      const scrollPos = window.scrollY + 140;
+
+      sectionIds.forEach(id => {
+        const el = document.getElementById(id);
+        if (el && el.offsetTop <= scrollPos) {
+          currentSection = id;
+        }
+      });
+
+      if (currentSection) {
+        tocLinks.forEach(link => {
+          link.classList.remove('active');
+          if (link.getAttribute('href') === '#' + currentSection) {
+            link.classList.add('active');
+          }
+        });
+      }
+    });
+  });
+
+  // Diagram Lightbox Controls
+  let currentDiagramScale = 1.0;
+  function openDiagramZoom(diagramId, title) {
+    const originalEl = document.getElementById(diagramId);
+    if (!originalEl) return;
+    const svgEl = originalEl.querySelector('svg');
+    if (!svgEl) return;
+
+    const modal = document.getElementById('diagramModal');
+    const modalBody = document.getElementById('diagramModalBody');
+    const modalTitle = document.getElementById('modalDiagramTitle');
+
+    modalTitle.innerHTML = title ? '🔍 ' + title : '🔍 Pembesaran Diagram Alur';
+    modalBody.innerHTML = svgEl.outerHTML;
+    
+    currentDiagramScale = 1.0;
+    const clonedSvg = modalBody.querySelector('svg');
+    if (clonedSvg) clonedSvg.style.transform = 'scale(' + currentDiagramScale + ')';
+
+    modal.classList.add('active');
+    document.body.style.overflow = 'hidden';
+  }
+
+  function closeDiagramModal(event) {
+    if (event && event.target && event.target.closest && event.target.closest('.diagram-modal-dialog') && !event.target.classList.contains('diagram-close-btn')) {
+      return;
+    }
+    const modal = document.getElementById('diagramModal');
+    modal.classList.remove('active');
+    document.body.style.overflow = 'auto';
+  }
+
+  function zoomDiagram(factor) {
+    const modalBody = document.getElementById('diagramModalBody');
+    const svg = modalBody.querySelector('svg');
+    if (!svg) return;
+    currentDiagramScale *= factor;
+    svg.style.transform = 'scale(' + currentDiagramScale + ')';
+  }
+
+  function resetDiagramZoom() {
+    const modalBody = document.getElementById('diagramModalBody');
+    const svg = modalBody.querySelector('svg');
+    if (!svg) return;
+    currentDiagramScale = 1.0;
+    svg.style.transform = 'scale(1)';
+  }
+
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') {
+      closeDiagramModal();
+      const cDrawer = document.getElementById('curriculumDrawer');
+      if (cDrawer && cDrawer.classList.contains('open')) toggleCurriculumDrawer();
+      const tDrawer = document.getElementById('mobileTocDrawer');
+      if (tDrawer && tDrawer.classList.contains('open')) toggleMobileToc();
+    } else if (e.key === ']' && !e.ctrlKey && !e.metaKey && e.target.tagName !== 'INPUT') {
+      handleTocToggleClick();
+    }
+  });
+
+  // Quiz Evaluation Logic
+  const explanations = {
+  "1": {
+    "success": "Tepat! Domain layer adalah inti logika bisnis murni yang tidak boleh memiliki dependensi ke framework presentasi seperti UIKit atau Flutter Widget.",
+    "danger": "Kurang tepat. Domain layer menampung entitas dan aturan bisnis murni tanpa mengetahui detail implementasi antarmuka pengguna."
+  },
+  "2": {
+    "success": "Benar! Dengan bergantung pada abstraksi protokol/antarmuka, kita dapat menginjeksi Mock Service di unit test tanpa memanggil server sungguhan.",
+    "danger": "Kurang tepat. DIP memungkinkan kita menukar implementasi konkret jaringan atau database dengan mock objek untuk verifikasi logika yang cepat dan deterministik."
+  },
+  "3": {
+    "success": "Sempurna! Ketergantungan satu arah mencegah dependency loop (circular import) dan menjamin modul fondasi tetap stabil ketika modul fitur diubah.",
+    "danger": "Kurang tepat. Arah dependensi yang bersih dan satu arah mencegah siklus ketergantungan melingkar dan membatasi penyebaran regresi."
+  }
+};
+
+  function submitQuiz(quizId, selectedOption, isCorrect) {
+    const card = document.getElementById('quiz-' + quizId);
+    const buttons = card.querySelectorAll('.quiz-btn');
+    const feedback = document.getElementById('feedback-' + quizId);
+
+    buttons.forEach(btn => {
+      btn.disabled = true;
+      btn.style.cursor = 'default';
+    });
+
+    if (window.event && window.event.target) {
+      window.event.target.classList.add(isCorrect ? 'correct' : 'incorrect');
+    }
+
+    feedback.className = 'quiz-feedback show ' + (isCorrect ? 'success' : 'danger');
+    feedback.innerHTML = '<strong>' + (isCorrect ? '🎉 Jawaban Tepat!' : '❌ Jawaban Salah!') + '</strong> ' + 
+      (isCorrect ? explanations[quizId].success : explanations[quizId].danger);
+  }
+</script>
+
+<!-- Chiron Annotations & Multi-IDE Launcher Engine -->
+<script src="../../../.assets/chiron-client.js"></script>
+<script src="../../../.assets/chiron-ide-launcher.js"></script>
+<script src="../../../.assets/chiron-annotations.js"></script>
+
+</body>
+</html>

@@ -6,11 +6,13 @@ Selamat datang di **Chiron**. Direktori ini adalah wadah mandiri (independent re
 
 ## 📚 Katalog Kursus Aktif
 
-| Namespace | Topik Kursus | Status | File Misi | Lesson Terakhir |
-| :--- | :--- | :--- | :--- | :--- |
-| `samir-mobile` | **iOS App Startup Sequence & Initial Routing** | 🟡 Sedang Belajar | [MISSION.md](courses/samir-mobile/app-startup-sequence/MISSION.md) | [0001-startup-sequence-and-initial-routing.html](courses/samir-mobile/app-startup-sequence/lessons/0001-startup-sequence-and-initial-routing.html) |
+| Scope / Namespace | Topik Kursus | Modul | Status | File Misi | Lesson Masuk / Index |
+| :--- | :--- | :--- | :--- | :--- | :--- |
+| `samir-mobile-ios` | **SAMIR Mobile iOS Full Architecture Curriculum** | 40 Materi | 🟢 Siap Dipelajari | [MISSION.md](courses/samir-mobile-ios/MISSION.md) | [00-learning-roadmap.html](courses/samir-mobile-ios/00-learning-roadmap.html) |
+| `samir-mobile-flutter` | **SAMIR Mobile Flutter Add-to-App Curriculum** | 40 Materi | 🟢 Siap Dipelajari | [MISSION.md](courses/samir-mobile-flutter/MISSION.md) | [00-learning-roadmap.html](courses/samir-mobile-flutter/00-learning-roadmap.html) |
+| `samir-mobile` | **iOS App Startup Sequence & Initial Routing (Deep Dive)** | 1 Modul | 🟡 Sesi Khusus | [MISSION.md](courses/samir-mobile/app-startup-sequence/MISSION.md) | [0001-startup-sequence.html](courses/samir-mobile/app-startup-sequence/lessons/0001-startup-sequence-and-initial-routing.html) |
 
-> **Catatan:** Jalankan perintah `/teach <topik>` dari AI Agent untuk memulai kursus baru atau melanjutkan materi yang sudah ada.
+> **Catatan Pedagogi:** Seluruh materi berformat HTML mandiri yang diperkaya dengan **Tufte styling**, **Sticky Topbar Tabs** (Crossnote/VS Code style), **Table of Contents ScrollSpy**, **Fullscreen Mermaid Diagram Lightbox**, **Compact Action Bar 5 IDE** (GitLab, Antigravity IDE, Cursor, VS Code, Xcode), serta **Interactive Retention Quiz** dengan evaluasi instan.
 
 ---
 
@@ -18,27 +20,50 @@ Selamat datang di **Chiron**. Direktori ini adalah wadah mandiri (independent re
 
 ```text
 Chiron/
-├── .assets/                    <-- Shared CSS & layout Tufte/Dark Mode
-│   └── style.css
-├── courses/                    <-- Seluruh kurikulum & lesson
-│   ├── <nama-project>/         <-- Pembedahan kode proyek spesifik
-│   └── general/                <-- Pembelajaran konsep teknologi umum
+├── .assets/                    <-- Shared CSS, Multi-IDE Launch Engine & Compiler
+│   ├── style.css
+│   ├── chiron-ide-launcher.js
+│   ├── chiron-client.js
+│   ├── chiron-annotations.js
+│   ├── chiron_sync.py
+│   └── chiron_curriculum_compiler.py
+├── chiron_config.json          <-- Konfigurasi mapping GitLab repo ke local workspace
+├── courses/
+│   ├── samir-mobile-ios/       <-- Kurikulum Lengkap iOS Native (Level 0 - 8 & Diagrams)
+│   ├── samir-mobile-flutter/   <-- Kurikulum Lengkap Flutter Add-to-App (Level 0 - 8 & Diagrams)
+│   └── samir-mobile/           <-- Topik spesifik & learning-records mendalam
 └── README.md                   <-- Katalog ini
 ```
 
 ---
 
-## 🚀 Portabilitas & Sinkronisasi Antar-PC
+## 🚀 Cara Membaca & Menjalankan Interaktivitas
 
-1. **Commit & Push di PC 1:**
-   ```bash
-   git add .
-   git commit -m "feat(lesson): update progress belajar"
-   git push
-   ```
-2. **Pull & Baca Mandiri di PC 2 (Tanpa AI):**
-   ```bash
-   git pull
-   open courses/<namespace>/<topik>/lessons/0001-xxx.html
-   ```
-   *Anda dapat membaca materi, memeriksa diagram alur, dan mengerjakan kuis langsung di browser tanpa menyalakan AI.*
+### 1. Membaca Mandiri di Browser (Offline Tanpa AI)
+Anda dapat langsung membuka berkas materi di browser Chrome, Safari, atau Firefox:
+```bash
+# Buka Roadmap iOS
+open courses/samir-mobile-ios/00-learning-roadmap.html
+
+# Buka Roadmap Flutter
+open courses/samir-mobile-flutter/00-learning-roadmap.html
+
+# Atau buka modul Foundation pertama
+open courses/samir-mobile-ios/01-project-foundation/01-application-overview.html
+```
+
+### 2. Menjalankan Integrasi 5 IDE (Klik Buka Kode di Local Editor)
+Untuk mengaktifkan tombol pill `[🪐 Antigravity IDE] [⚡ Cursor] [💻 VS Code] [🛠️ Xcode]` agar dapat langsung melompat ke file dan baris kode di workspace lokal Anda:
+```bash
+python3 .assets/chiron_sync.py
+```
+*Daemon akan mendengarkan di `http://localhost:8765` dan melayani permintaan navigasi berkas secara instan.*
+
+---
+
+## 🔄 Mengompilasi Ulang Kurikulum (/teach)
+Jika ada pembaruan dokumen markdown pada `SAMIR/Documentation/docs-learning-curve/`, jalankan compiler otomatis:
+```bash
+python3 .assets/chiron_curriculum_compiler.py
+```
+Kompiler akan memperbarui seluruh 80 berkas materi HTML tanpa mengubah repositori sumber kode.
