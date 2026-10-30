@@ -322,17 +322,90 @@ void _openFAQ() {
 </li></ul>
 </section>
 <section id="sec-check" class="doc-section">
-<h3>🧠 I. Knowledge Check</h3>
+<h3>🧠 I. Knowledge Check & Kunci Jawaban</h3>
 <ol>
-<li>Ke layar mana pengguna diarahkan setelah verifikasi liveness wajah (<code>IDAuthLiveViewController</code>) selesai dengan sukses?
+<li><strong>Ke layar mana pengguna diarahkan setelah verifikasi liveness wajah (<code>IDAuthLiveViewController</code>) selesai dengan sukses?</strong>
+  <div class="callout best-practice" style="margin: 0.5rem 0 1rem 0;">
+    <p>Diarahkan langsung ke layar <strong>Penilaian Kuota Kredit / Credit Assessment (<code>IDQuatoAssessViewController</code>)</strong> dengan rute URL <code>samir://loan/creditAssess</code> (<code>IDRouterSchemeConstants.Loan.creditAssess.rawValue</code>).</p>
+    <p style="font-size: 0.85rem; margin-top: 0.35rem; color: var(--text-muted);"><em>Mekanisme Internal:</em> Pada <code>AuthMananger.swift:L193-198</code>, setelah rekaman biometrik diunggah, SDK memanggil <code>NetworkService.postCreateOrderRequest</code>. Jika draft order berhasil dibuat (<code>bizId</code>), event anti-fraud <code>uploadTrustDecisionCreateOrderEvent</code> dipancarkan, lalu router memanggil <code>IDRouterManager.id_perfromWithURLString("samir://loan/creditAssess", params: creditAssessParams)</code> untuk memulai polling analisa kelayakan kuota kredit.</p>
+  </div>
 </li>
-<li>Bagaimana cara layar web H5 memerintahkan aplikasi kembali langsung ke Beranda?
+<li><strong>Bagaimana cara layar web H5 memerintahkan aplikasi kembali langsung ke Beranda?</strong>
+  <div class="callout best-practice" style="margin: 0.5rem 0 1rem 0;">
+    <ul style="margin: 0.25rem 0 0 1.2rem; line-height: 1.6; font-size: 0.88rem;">
+      <li><strong>Metode 1 (JSBridge <code>callApp</code>)</strong>: Layar H5 mengeksekusi pesan JavaScript:
+        <pre style="margin: 0.3rem 0;"><code class="language-javascript">window.webkit.messageHandlers.callApp.postMessage({ method: 'goHomePage' });</code></pre>
+        Di sisi native iOS (<code>ScriptMessageHandler.swift:L262-267</code>), method <code>@objc func goHomePage</code> menangkap pesan ini dan memanggil:
+        <pre style="margin: 0.3rem 0;"><code class="language-swift">let urlString = "\(IDRouterSchemeConstants.Main.tab.rawValue)?tab=home"
+IDRouterManager.id_perfromWithURLString(urlString)</code></pre>
+      </li>
+      <li><strong>Metode 2 (URL Scheme Redirect Langsung)</strong>: H5 me-redirect window location langsung ke:
+        <pre style="margin: 0.3rem 0;"><code class="language-javascript">window.location.href = "samir://main/tab?tab=home";</code></pre>
+        <code>IDSamirMainModuleRouterHandler</code> menangkap rute ini, memanggil <code>IDTabbarManager</code> untuk beralih ke Tab 0 (<code>home</code>), serta menutup seluruh tumpukan modal/navigation stack yang sedang aktif.
+      </li>
+    </ul>
+  </div>
 </li>
-<li>Sebutkan rute URL yang digunakan untuk membuka formulir pengikatan kartu bank!
-</li></ol>
+<li><strong>Sebutkan rute URL yang digunakan untuk membuka formulir pengikatan kartu bank!</strong>
+  <div class="callout best-practice" style="margin: 0.5rem 0 1rem 0;">
+    <p>Rute URL resminya adalah <strong><code>samir://auth/bankcard</code></strong> (didefinisikan pada <code>IDRouterSchemeConstants.Auth.bankCard.rawValue</code>).</p>
+    <p style="font-size: 0.85rem; margin-top: 0.35rem; color: var(--text-muted);">Rute ini ditangani oleh <code>IDSamirAuthModuleRouterHandler</code> yang akan menginisialisasi dan mendorong <code>IDNewBankViewController</code> ke navigation stack. <em>(Catatan: Untuk mengganti/memperbarui rekening pada pinjaman aktif, rutenya adalah <code>samir://auth/changeCard</code> yang membuka <code>ChangeBankCardViewController</code>).</em></p>
+  </div>
+</li>
+</ol>
 </section>
+
+<section id="sec-navigation-essentials" class="doc-section">
+<h3>🧭 J. Navigation & Coordination Essentials (Pengetahuan Umum & Khusus iOS Engineer)</h3>
+
+<h4>🌐 A. Pengetahuan Navigasi UMUM (General Routing Architecture)</h4>
+
+<div class="callout tip" style="margin-bottom: 1.25rem;">
+  <div class="callout-title">1. Kapan harus menggunakan URL Routing (<code>CZRouterLib</code>) vs Service Method Protocol (<code>SamirServiceModule</code>)?</div>
+  <ul style="margin: 0.3rem 0 0 1.2rem; font-size: 0.88rem; line-height: 1.6;">
+    <li><strong>Gunakan URL Routing (<code>IDRouterManager.id_perfromWithURLString</code>)</strong> saat tujuannya adalah <strong>perpindahan layar visual antarmodul</strong> (misal: Beranda membuka layar KYC <code>samir://auth/identity</code>, atau Profil membuka WebView <code>samir://web/open</code>). URL router memisahkan antarmuka navigasi secara longgar (<em>loose coupling</em>) sehingga modul pemanggil tidak perlu meng-import ViewController tujuan.</li>
+    <li><strong>Gunakan Service Protocol (<code>IDServiceManager.xxxService()</code>)</strong> saat membutuhkan <strong>pertukaran data murni, query status sinkron, atau eksekusi logika bisnis tanpa pergantian layar</strong> (misal: mengecek status <code>loginService()?.isLogin()</code>, mengambil konfigurasi server <code>mainService()?.getAppConfig()</code>, atau memunculkan popup login modal via <code>loginService()?.loginAction()</code>).</li>
+  </ul>
+</div>
+
+<div class="callout tip" style="margin-bottom: 1.25rem;">
+  <div class="callout-title">2. Bagaimana cara passing parameter kompleks (bukan string primitif) antar ViewController saat routing?</div>
+  <p>Router SAMIR mendukung dictionary parameter dinamis yang dapat memuat model, closure, atau dictionary bersarang:</p>
+  <pre style="margin: 0.4rem 0;"><code class="language-swift">let params: [String: Any] = [
+    "step": 2,
+    "creditAssessParams": ["source": "home_banner", "amount": 5000000],
+    "dismissCallback": { print("Modal ditutup") }
+]
+IDRouterManager.id_perfromWithURLString("samir://auth/identity", params: params)</code></pre>
+  <p style="font-size: 0.85rem; margin-top: 0.35rem; color: var(--text-muted);">Di sisi handler (<code>IDSamirAuthModuleRouterHandler</code>), parameter dibaca dan diinjeksi langsung ke properti ViewController sebelum disajikan.</p>
+</div>
+
+<div class="callout tip" style="margin-bottom: 1.25rem;">
+  <div class="callout-title">3. Mengapa navigasi tabbar menggunakan query parameter (<code>samir://main/tab?tab=home</code> / <code>tab=repay</code> / <code>tab=mine</code>) dan bagaimana koordinasi state-nya dengan Flutter?</div>
+  <p>Karena aplikasi SAMIR mengadopsi arsitektur <em>Hybrid Shell</em>: Tab 0 (Beranda) adalah native UIKit, sedangkan Tab 1 (Repay) dan Tab 2 (Mine) menaungi Flutter view engine. Melalui rute sentral <code>samir://main/tab?tab=...</code>, <code>IDMainTabBarController</code> mengkoordinasikan visibilitas container: menyembunyikan atau menampilkan container view Flutter, menyinkronkan status tab index dengan bilah navigasi bawah, serta memastikan inset safe area tidak berkedip (<em>no UI glitching</em>).</p>
+</div>
+
+<h4>🔍 B. Pengetahuan Navigasi KHUSUS (SAMIR Domain & Low-Level Edge Cases)</h4>
+
+<div class="callout tip" style="margin-bottom: 1.25rem;">
+  <div class="callout-title">4. Mengapa pada layar <code>IDNewOCRViewController</code> terdapat pemanggilan <code>popGestureClose()</code> dan apa bahayanya jika tidak di-reset?</div>
+  <p><strong>Tujuan Bisnis:</strong> Pada tahap pemindaian e-KTP dan deteksi wajah, swipe back gesture iOS bawaan (<code>interactivePopGestureRecognizer</code>) sengaja dinonaktifkan via <code>self.popGestureClose()</code> agar nasabah tidak sengaja membatalkan proses scanning kamera yang sedang memproses data biometrik atau OCR.</p>
+  <p><strong>Risiko Gotcha:</strong> Jika navigasi berpindah ke controller lain tanpa memanggil <code>self.popGestureOpen()</code>, status gesture pop pada UINavigationController akan terus terkunci (mati) untuk seluruh layar berikutnya dalam stack navigasi.</p>
+</div>
+
+<div class="callout tip" style="margin-bottom: 1.25rem;">
+  <div class="callout-title">5. Bagaimana mekanisme "Urge Stay" (Dialog Konfirmasi Pembatalan saat Back) bekerja di tengah formulir KYC?</div>
+  <p>Ketika nasabah menekan tombol panah kembali di form kontak darurat (<code>samir://auth/contacts</code>) atau bank card (<code>samir://auth/bankcard</code>), presenter memicu event point <code>urgeStay_bankcard_1/2/3</code> dan memunculkan popup interaktif: <em>"Yakin ingin membatalkan? Kuota pinjaman Anda sebesar Rp X.000.000 siap dicairkan!"</em>. Jika pengguna memilih <em>"Lanjut Isi"</em>, dialog dismiss dan posisi input dipertahankan. Jika memilih <em>"Batalkan"</em>, presenter memanggil <code>navigationController?.popViewController</code> dan mencatat drop-off funnel di <code>IDCustomPointManager</code>.</p>
+</div>
+
+<div class="callout tip" style="margin-bottom: 1.25rem;">
+  <div class="callout-title">6. Apa yang terjadi jika rute URL yang dipanggil tidak valid atau parameter wajibnya hilang (<code>samir://auth/identity</code> tanpa <code>step</code>)?</div>
+  <p>Jika skema tidak dikenali oleh <code>CZRouterCenter</code>, router mencatat log debugging pada <code>DataCollectDebugLogManager</code> dan secara diam-diam menggagalkan navigasi (<em>fail-safe silent drop</em>) tanpa memicu crash aplikasi fatal. Jika rute valid tetapi parameter hilang, presenter controller menerapkan nilai default fallback (misal default ke <code>step = 0</code> / Registrasi Baru).</p>
+</div>
+</section>
+
 <section id="sec-completion" class="doc-section">
-<h3>🏁 J. Completion Criteria</h3>
+<h3>🏁 K. Completion Criteria</h3>
 <p>Anda telah menguasai dokumen ini jika Anda dapat menelusuri alur navigasi dari titik awal aplikasi hingga ke setiap sub-fitur tanpa membuka source code.</p>
 <p>Dokumen berikutnya: <a href="04-navigation-conditions-and-edge-cases.html">04-navigation-conditions-and-edge-cases.md</a>.</p>
 </section>
@@ -543,11 +616,15 @@ public final class RepayFlowCoordinator: Coordinator {
           </div>
           <div class="toc-node-row">
             <span class="toc-leaf-dot"></span>
-            <a class="toc-tree-link" href="#sec-check">I. Knowledge Check</a>
+            <a class="toc-tree-link" href="#sec-check">I. Knowledge Check & Kunci Jawaban</a>
           </div>
           <div class="toc-node-row">
             <span class="toc-leaf-dot"></span>
-            <a class="toc-tree-link" href="#sec-completion">J. Completion Criteria</a>
+            <a class="toc-tree-link" href="#sec-navigation-essentials">J. Navigation Essentials</a>
+          </div>
+          <div class="toc-node-row">
+            <span class="toc-leaf-dot"></span>
+            <a class="toc-tree-link" href="#sec-completion">K. Completion Criteria</a>
           </div>
           <!-- Architecture Lab Branches -->
           <div class="toc-tree-node" id="toc-node-lab" style="margin-top: 0.45rem;">
@@ -643,11 +720,15 @@ public final class RepayFlowCoordinator: Coordinator {
         </div>
         <div class="toc-node-row">
           <span class="toc-leaf-dot"></span>
-          <a class="toc-tree-link" href="#sec-check" onclick="toggleMobileToc()">I. Knowledge Check</a>
+          <a class="toc-tree-link" href="#sec-check" onclick="toggleMobileToc()">I. Knowledge Check & Kunci Jawaban</a>
         </div>
         <div class="toc-node-row">
           <span class="toc-leaf-dot"></span>
-          <a class="toc-tree-link" href="#sec-completion" onclick="toggleMobileToc()">J. Completion Criteria</a>
+          <a class="toc-tree-link" href="#sec-navigation-essentials" onclick="toggleMobileToc()">J. Navigation Essentials</a>
+        </div>
+        <div class="toc-node-row">
+          <span class="toc-leaf-dot"></span>
+          <a class="toc-tree-link" href="#sec-completion" onclick="toggleMobileToc()">K. Completion Criteria</a>
         </div>
         <div class="toc-tree-node" id="mob-toc-node-lab" style="margin-top: 0.45rem;">
           <div class="toc-node-row">
@@ -970,7 +1051,7 @@ public final class RepayFlowCoordinator: Coordinator {
       }
     } catch (e) {}
 
-    const sectionIds = ['sec-title', 'sec-obj', 'sec-prereq', 'sec-simple', 'sec-actual', 'sec-walkthrough', 'sub-1-jalur-pengguna-baru-zero-to-first-loan', 'sub-2-jalur-pengguna-memeriksa-tagihan-profil', 'sec-why', 'sec-example', 'sec-mistakes', 'sec-check', 'sec-completion', 'sub-solid', 'sub-blueprint', 'sub-quiz'];
+    const sectionIds = ['sec-title', 'sec-obj', 'sec-prereq', 'sec-simple', 'sec-actual', 'sec-walkthrough', 'sub-1-jalur-pengguna-baru-zero-to-first-loan', 'sub-2-jalur-pengguna-memeriksa-tagihan-profil', 'sec-why', 'sec-example', 'sec-mistakes', 'sec-check', 'sec-navigation-essentials', 'sec-completion', 'sub-solid', 'sub-blueprint', 'sub-quiz'];
     const tocLinks = document.querySelectorAll('.toc-tree-link');
 
     window.addEventListener('scroll', () => {
