@@ -105,25 +105,29 @@
 <h3>🎯 A. Learning Objective</h3>
 <p>Setelah mempelajari dokumen ini, pembaca akan mampu:</p>
 <ol>
-<li>Menjelaskan fungsi, peran teknis, dan alasan kebutuhan dari 17 pustaka eksternal utama di SAMIR iOS.</li>
-<li>Menilai dampak runtime (<em>runtime impact</em>) dan dampak kegagalan (<em>failure impact</em>) jika suatu SDK eksternal mengalami gangguan.</li>
-<li>Memahami risiko upgrade dependensi dan kebiasaan pemeliharaan yang aman.</li>
-</ol>
+<li>Menjelaskan fungsi, peran teknis, dan alasan kebutuhan dari 17 pustaka eksternal utama di SAMIR iOS.
+</li>
+<li>Menilai dampak runtime (<em>runtime impact</em>) dan dampak kegagalan (<em>failure impact</em>) jika suatu SDK eksternal mengalami gangguan.
+</li>
+<li>Memahami risiko upgrade dependensi dan kebiasaan pemeliharaan yang aman.
+</li></ol>
 </section>
 <section id="sec-prereq" class="doc-section">
 <h3>📋 B. Prerequisites</h3>
 <ul>
-<li>Sudah membaca <a href="../01-project-foundation/03-technology-stack-and-build.html">03-technology-stack-and-build.md</a>.</li>
-<li>Mengetahui cara kerja CocoaPods dan static linking di iOS.</li>
-</ul>
+<li>Sudah membaca <a href="../01-project-foundation/03-technology-stack-and-build.html">03-technology-stack-and-build.md</a>.
+</li>
+<li>Mengetahui cara kerja CocoaPods dan static linking di iOS.
+</li></ul>
 </section>
 <section id="sec-simple" class="doc-section">
 <h3>💡 C. Simple Explanation (Analogi Suku Cadang dan Vendor Luar)</h3>
 <p>Sebuah bank tidak memproduksi mesin ATM, kamera CCTV, dan generator listriknya sendiri:</p>
 <ul>
-<li><strong>Pustaka Open Source Standar (SnapKit, Kingfisher, Alamofire)</strong>: Seperti meja, kursi, dan telepon kantor yang dibeli dari toko umum. Mudah diperbarui dan kode sumbernya terbuka.</li>
-<li><strong>SDK Vendor Keamanan Tertutup (TrustDecision, Advance AI, LibNetSignGenerator)</strong>: Seperti brankas uang lapis baja dari perusahaan keamanan khusus militer. Kodenya terenkripsi (closed-source), cara kerjanya rahasia, dan jika rusak, seluruh operasional bank bisa terhenti.</li>
-</ul>
+<li><strong>Pustaka Open Source Standar (SnapKit, Kingfisher, Alamofire)</strong>: Seperti meja, kursi, dan telepon kantor yang dibeli dari toko umum. Mudah diperbarui dan kode sumbernya terbuka.
+</li>
+<li><strong>SDK Vendor Keamanan Tertutup (TrustDecision, Advance AI, LibNetSignGenerator)</strong>: Seperti brankas uang lapis baja dari perusahaan keamanan khusus militer. Kodenya terenkripsi (closed-source), cara kerjanya rahasia, dan jika rusak, seluruh operasional bank bisa terhenti.
+</li></ul>
 <p>Senior engineer harus memahami karakteristik setiap suku cadang tersebut agar dapat mengantisipasi risiko kegagalan.</p>
 </section>
 <section id="sec-actual" class="doc-section">
@@ -132,113 +136,164 @@
 <h4>1. <code>LibNetSignGenerator.framework</code></h4>
 </div>
 <ul>
-<li><strong>Tipe</strong>: Vendor Closed-Source Binary Framework (disimpan di <code>SamirNetworkModule/Frameworks/</code>).</li>
-<li><strong>Fungsi & Alasan Kebutuhan</strong>: <strong>Paling Kritis</strong>. Menghasilkan string tanda tangan <code>sign</code> pada setiap request HTTP in-house menggunakan algoritma enkripsi rahasia dan <code>staticKey</code>.</li>
-<li><strong>Komponen Konsumen</strong>: <code>IDNetworkSignatureHandler.swift</code>.</li>
-<li><strong>Runtime Impact</strong>: Menambah waktu komputasi mikrodetik sebelum setiap request jaringan dikirim.</li>
-<li><strong>Dampak Jika Gagal</strong>: <strong>FATAL (Catastrophic)</strong>. Seluruh request API in-house akan ditolak oleh backend server dengan error signature invalid. Aplikasi menjadi 100% tidak dapat digunakan.</li>
-<li><strong>Risiko Upgrade</strong>: Sangat tinggi. Wajib dikoordinasikan langsung dengan tim backend dan penyedia vendor.</li>
-<li><strong>Confidence</strong>: <code>[Verified]</code>.</li>
-</ul>
+<li><strong>Tipe</strong>: Vendor Closed-Source Binary Framework (disimpan di <code>SamirNetworkModule/Frameworks/</code>).
+</li>
+<li><strong>Fungsi & Alasan Kebutuhan</strong>: <strong>Paling Kritis</strong>. Menghasilkan string tanda tangan <code>sign</code> pada setiap request HTTP in-house menggunakan algoritma enkripsi rahasia dan <code>staticKey</code>.
+</li>
+<li><strong>Komponen Konsumen</strong>: <code>IDNetworkSignatureHandler.swift</code>.
+</li>
+<li><strong>Runtime Impact</strong>: Menambah waktu komputasi mikrodetik sebelum setiap request jaringan dikirim.
+</li>
+<li><strong>Dampak Jika Gagal</strong>: <strong>FATAL (Catastrophic)</strong>. Seluruh request API in-house akan ditolak oleh backend server dengan error signature invalid. Aplikasi menjadi 100% tidak dapat digunakan.
+</li>
+<li><strong>Risiko Upgrade</strong>: Sangat tinggi. Wajib dikoordinasikan langsung dengan tim backend dan penyedia vendor.
+</li>
+<li><strong>Confidence</strong>: <code>[Verified]</code>.
+</li></ul>
 <div id="sub-2-trustdecisionpro-4313-trustdecisionliveness-lite-251" class="doc-subsection">
 <h4>2. <code>TrustDecisionPro</code> (<code>4.3.1.3</code>) & <code>TrustDecisionLiveness-Lite</code> (<code>2.5.1</code>)</h4>
 </div>
 <ul>
-<li><strong>Tipe</strong>: Closed-Source Risk Profiling & Facial Motion SDK via CocoaPods.</li>
-<li><strong>Fungsi</strong>: Mengumpulkan karakteristik perangkat (sidik jari hardware, sensor orientasi, status VPN/proxy) untuk menghasilkan token risiko <code>blackBox</code>, serta mendeteksi keaslian wajah.</li>
-<li><strong>Komponen Konsumen</strong>: <code>IDTrustDecisionManager.swift</code>, <code>IDAuthLiveViewController.swift</code>.</li>
-<li><strong>Runtime Impact</strong>: Mengakses sensor perangkat saat startup (setelah izin ATT diberikan) dan saat verifikasi wajah.</li>
-<li><strong>Dampak Jika Gagal</strong>: Pengajuan pinjaman nasabah akan ditolak oleh risk engine backend karena <code>blackBox</code> kosong atau skor risiko dinilai mencurigakan.</li>
-<li><strong>Risiko Upgrade</strong>: Menengah-Tinggi. Memerlukan penyesuaian izin Info.plist (<code>NSMotionUsageDescription</code>).</li>
-<li><strong>Confidence</strong>: <code>[Verified]</code>.</li>
-</ul>
+<li><strong>Tipe</strong>: Closed-Source Risk Profiling & Facial Motion SDK via CocoaPods.
+</li>
+<li><strong>Fungsi</strong>: Mengumpulkan karakteristik perangkat (sidik jari hardware, sensor orientasi, status VPN/proxy) untuk menghasilkan token risiko <code>blackBox</code>, serta mendeteksi keaslian wajah.
+</li>
+<li><strong>Komponen Konsumen</strong>: <code>IDTrustDecisionManager.swift</code>, <code>IDAuthLiveViewController.swift</code>.
+</li>
+<li><strong>Runtime Impact</strong>: Mengakses sensor perangkat saat startup (setelah izin ATT diberikan) dan saat verifikasi wajah.
+</li>
+<li><strong>Dampak Jika Gagal</strong>: Pengajuan pinjaman nasabah akan ditolak oleh risk engine backend karena <code>blackBox</code> kosong atau skor risiko dinilai mencurigakan.
+</li>
+<li><strong>Risiko Upgrade</strong>: Menengah-Tinggi. Memerlukan penyesuaian izin Info.plist (<code>NSMotionUsageDescription</code>).
+</li>
+<li><strong>Confidence</strong>: <code>[Verified]</code>.
+</li></ul>
 <div id="sub-3-aainetwork-aailiveness-v307" class="doc-subsection">
 <h4>3. <code>AAINetwork</code> & <code>AAILiveness</code> (V3.0.7)</h4>
 </div>
 <ul>
-<li><strong>Tipe</strong>: Vendor SDK via tarball HTTP Aliyun OSS (<code>.tar.bz2</code>).</li>
-<li><strong>Fungsi</strong>: SDK deteksi keaslian wajah (Liveness Detection) dari Advance AI untuk kebutuhan e-KYC.</li>
-<li><strong>Komponen Konsumen</strong>: <code>IDAuthLiveViewController.swift</code>.</li>
-<li><strong>Runtime Impact</strong>: Membuka kamera depan dengan pemrosesan visi komputer intensif (CPU/GPU) untuk mendeteksi kedipan mata dan buka mulut.</li>
-<li><strong>Dampak Jika Gagal</strong>: Nasabah baru tidak dapat menyelesaikan tahap akhir e-KYC sehingga tidak bisa mendapatkan limit kuota.</li>
-<li><strong>Risiko Upgrade</strong>: Menengah. URL download berasal dari OSS Aliyun Indonesia; jika link mati, <code>pod install</code> akan gagal.</li>
-<li><strong>Confidence</strong>: <code>[Verified]</code>.</li>
-</ul>
+<li><strong>Tipe</strong>: Vendor SDK via tarball HTTP Aliyun OSS (<code>.tar.bz2</code>).
+</li>
+<li><strong>Fungsi</strong>: SDK deteksi keaslian wajah (Liveness Detection) dari Advance AI untuk kebutuhan e-KYC.
+</li>
+<li><strong>Komponen Konsumen</strong>: <code>IDAuthLiveViewController.swift</code>.
+</li>
+<li><strong>Runtime Impact</strong>: Membuka kamera depan dengan pemrosesan visi komputer intensif (CPU/GPU) untuk mendeteksi kedipan mata dan buka mulut.
+</li>
+<li><strong>Dampak Jika Gagal</strong>: Nasabah baru tidak dapat menyelesaikan tahap akhir e-KYC sehingga tidak bisa mendapatkan limit kuota.
+</li>
+<li><strong>Risiko Upgrade</strong>: Menengah. URL download berasal dari OSS Aliyun Indonesia; jika link mati, <code>pod install</code> akan gagal.
+</li>
+<li><strong>Confidence</strong>: <code>[Verified]</code>.
+</li></ul>
 <div id="sub-4-alamofire" class="doc-subsection">
 <h4>4. <code>Alamofire</code></h4>
 </div>
 <ul>
-<li><strong>Tipe</strong>: Open-Source HTTP Networking Library (Swift).</li>
-<li><strong>Fungsi</strong>: Mengelola session configuration, URLRequest building, header injection, dan stream data jaringan yang dibungkus oleh <code>CZAlamofireBridge</code>.</li>
-<li><strong>Komponen Konsumen</strong>: <code>CZNetworkCenter.swift</code>, <code>IDNetworkRequest.swift</code>.</li>
-<li><strong>Runtime Impact</strong>: Pengelolaan pool koneksi HTTP/1.1 dan HTTP/2.</li>
-<li><strong>Dampak Jika Gagal</strong>: Gagal melakukan request jaringan.</li>
-<li><strong>Confidence</strong>: <code>[Verified]</code>.</li>
-</ul>
+<li><strong>Tipe</strong>: Open-Source HTTP Networking Library (Swift).
+</li>
+<li><strong>Fungsi</strong>: Mengelola session configuration, URLRequest building, header injection, dan stream data jaringan yang dibungkus oleh <code>CZAlamofireBridge</code>.
+</li>
+<li><strong>Komponen Konsumen</strong>: <code>CZNetworkCenter.swift</code>, <code>IDNetworkRequest.swift</code>.
+</li>
+<li><strong>Runtime Impact</strong>: Pengelolaan pool koneksi HTTP/1.1 dan HTTP/2.
+</li>
+<li><strong>Dampak Jika Gagal</strong>: Gagal melakukan request jaringan.
+</li>
+<li><strong>Confidence</strong>: <code>[Verified]</code>.
+</li></ul>
 <div id="sub-5-snapkit-560" class="doc-subsection">
 <h4>5. <code>SnapKit</code> (<code>5.6.0</code>)</h4>
 </div>
 <ul>
-<li><strong>Tipe</strong>: Open-Source Auto Layout DSL (Swift).</li>
-<li><strong>Fungsi</strong>: Membangun 100% tampilan antarmuka (UI) secara programatik di seluruh modul native tanpa Storyboard.</li>
-<li><strong>Komponen Konsumen</strong>: Seluruh ViewController, View, dan TableViewCell di <code>Application/</code>.</li>
-<li><strong>Runtime Impact</strong>: Layout constraint solver saat rendering tampilan pertama kali.</li>
-<li><strong>Dampak Jika Gagal</strong>: Kompilasi gagal atau tampilan UI hancur.</li>
-<li><strong>Confidence</strong>: <code>[Verified]</code>.</li>
-</ul>
+<li><strong>Tipe</strong>: Open-Source Auto Layout DSL (Swift).
+</li>
+<li><strong>Fungsi</strong>: Membangun 100% tampilan antarmuka (UI) secara programatik di seluruh modul native tanpa Storyboard.
+</li>
+<li><strong>Komponen Konsumen</strong>: Seluruh ViewController, View, dan TableViewCell di <code>Application/</code>.
+</li>
+<li><strong>Runtime Impact</strong>: Layout constraint solver saat rendering tampilan pertama kali.
+</li>
+<li><strong>Dampak Jika Gagal</strong>: Kompilasi gagal atau tampilan UI hancur.
+</li>
+<li><strong>Confidence</strong>: <code>[Verified]</code>.
+</li></ul>
 <div id="sub-6-kakajson-112" class="doc-subsection">
 <h4>6. <code>KakaJSON</code> (<code>~&gt; 1.1.2</code>)</h4>
 </div>
 <ul>
-<li><strong>Tipe</strong>: Open-Source Fast JSON Serialization / Deserialization (Swift).</li>
-<li><strong>Fungsi</strong>: Mengonversi JSON dictionary dari backend menjadi struct / class model Swift (<code>kj.model</code>).</li>
-<li><strong>Komponen Konsumen</strong>: Seluruh Service Layer di <code>SamirMainModule</code>, <code>SamirLoanModule</code>, <code>SamirAuthModule</code>, <code>SamirRepayModule</code>.</li>
-<li><strong>Runtime Impact</strong>: Serialisasi data berbasis pointer memory yang sangat cepat.</li>
-<li><strong>Dampak Jika Gagal</strong>: Response API gagal diparsing, menyebabkan tampilan data kosong.</li>
-<li><strong>Confidence</strong>: <code>[Verified]</code>.</li>
-</ul>
+<li><strong>Tipe</strong>: Open-Source Fast JSON Serialization / Deserialization (Swift).
+</li>
+<li><strong>Fungsi</strong>: Mengonversi JSON dictionary dari backend menjadi struct / class model Swift (<code>kj.model</code>).
+</li>
+<li><strong>Komponen Konsumen</strong>: Seluruh Service Layer di <code>SamirMainModule</code>, <code>SamirLoanModule</code>, <code>SamirAuthModule</code>, <code>SamirRepayModule</code>.
+</li>
+<li><strong>Runtime Impact</strong>: Serialisasi data berbasis pointer memory yang sangat cepat.
+</li>
+<li><strong>Dampak Jika Gagal</strong>: Response API gagal diparsing, menyebabkan tampilan data kosong.
+</li>
+<li><strong>Confidence</strong>: <code>[Verified]</code>.
+</li></ul>
 <div id="sub-7-rxswift-rxcocoa-690" class="doc-subsection">
 <h4>7. <code>RxSwift</code> & <code>RxCocoa</code> (<code>6.9.0</code>)</h4>
 </div>
 <ul>
-<li><strong>Tipe</strong>: Functional Reactive Programming Framework (Swift).</li>
-<li><strong>Fungsi</strong>: Mengelola state reaktif, stream kalkulasi biaya, dan binding UI <strong>khusus di dalam <code>LoanConfirmModule</code></strong>.</li>
-<li><strong>Komponen Konsumen</strong>: <code>LoanConfirmViewController_Rx.swift</code>, <code>LoanConfirmViewModel.swift</code>.</li>
-<li><strong>Runtime Impact</strong>: Alokasi closure dan disposable bag pada memori.</li>
-<li><strong>Dampak Jika Gagal</strong>: Halaman konfirmasi pinjaman tidak dapat dibuka atau crash.</li>
-<li><strong>Confidence</strong>: <code>[Verified]</code>.</li>
-</ul>
+<li><strong>Tipe</strong>: Functional Reactive Programming Framework (Swift).
+</li>
+<li><strong>Fungsi</strong>: Mengelola state reaktif, stream kalkulasi biaya, dan binding UI <strong>khusus di dalam <code>LoanConfirmModule</code></strong>.
+</li>
+<li><strong>Komponen Konsumen</strong>: <code>LoanConfirmViewController_Rx.swift</code>, <code>LoanConfirmViewModel.swift</code>.
+</li>
+<li><strong>Runtime Impact</strong>: Alokasi closure dan disposable bag pada memori.
+</li>
+<li><strong>Dampak Jika Gagal</strong>: Halaman konfirmasi pinjaman tidak dapat dibuka atau crash.
+</li>
+<li><strong>Confidence</strong>: <code>[Verified]</code>.
+</li></ul>
 <div id="sub-8-appsflyerframework-6177" class="doc-subsection">
 <h4>8. <code>AppsFlyerFramework</code> (<code>6.17.7</code>)</h4>
 </div>
 <ul>
-<li><strong>Tipe</strong>: Marketing Attribution & Deep Linking SDK.</li>
-<li><strong>Fungsi</strong>: Mengatribusikan sumber instalasi aplikasi (iklan Google/Facebook/TikTok) dan mengurai deep link.</li>
-<li><strong>Komponen Konsumen</strong>: <code>IDAppsFlyerManager.swift</code>, <code>IDSamirMainModule.swift</code>.</li>
-<li><strong>Runtime Impact</strong>: Menghubungi server AppsFlyer saat aplikasi dibuka (<code>applicationDidBecomeActive</code>).</li>
-<li><strong>Dampak Jika Gagal</strong>: Kehilangan data atribusi pemasaran dan deep link iklan gagal membuka layar tujuan.</li>
-<li><strong>Confidence</strong>: <code>[Verified]</code>.</li>
-</ul>
+<li><strong>Tipe</strong>: Marketing Attribution & Deep Linking SDK.
+</li>
+<li><strong>Fungsi</strong>: Mengatribusikan sumber instalasi aplikasi (iklan Google/Facebook/TikTok) dan mengurai deep link.
+</li>
+<li><strong>Komponen Konsumen</strong>: <code>IDAppsFlyerManager.swift</code>, <code>IDSamirMainModule.swift</code>.
+</li>
+<li><strong>Runtime Impact</strong>: Menghubungi server AppsFlyer saat aplikasi dibuka (<code>applicationDidBecomeActive</code>).
+</li>
+<li><strong>Dampak Jika Gagal</strong>: Kehilangan data atribusi pemasaran dan deep link iklan gagal membuka layar tujuan.
+</li>
+<li><strong>Confidence</strong>: <code>[Verified]</code>.
+</li></ul>
 <div id="sub-9-firebaseanalytics-firebasemessaging-11140" class="doc-subsection">
 <h4>9. <code>FirebaseAnalytics</code> & <code>FirebaseMessaging</code> (<code>11.14.0</code>)</h4>
 </div>
 <ul>
-<li><strong>Tipe</strong>: Google Mobile SDK.</li>
-<li><strong>Fungsi</strong>: Pelacakan event perilaku nasabah dan pengelolaan token push notification (FCM).</li>
-<li><strong>Komponen Konsumen</strong>: <code>IDFirebaseManager.swift</code>, <code>IDFCMManager.swift</code>, <code>IDSamirMainModule.swift</code>.</li>
-<li><strong>Dampak Jika Gagal</strong>: Notifikasi push promo dan pengingat jatuh tempo tidak sampai ke ponsel pengguna.</li>
-<li><strong>Confidence</strong>: <code>[Verified]</code>.</li>
-</ul>
+<li><strong>Tipe</strong>: Google Mobile SDK.
+</li>
+<li><strong>Fungsi</strong>: Pelacakan event perilaku nasabah dan pengelolaan token push notification (FCM).
+</li>
+<li><strong>Komponen Konsumen</strong>: <code>IDFirebaseManager.swift</code>, <code>IDFCMManager.swift</code>, <code>IDSamirMainModule.swift</code>.
+</li>
+<li><strong>Dampak Jika Gagal</strong>: Notifikasi push promo dan pengingat jatuh tempo tidak sampai ke ponsel pengguna.
+</li>
+<li><strong>Confidence</strong>: <code>[Verified]</code>.
+</li></ul>
 <div id="sub-10-tingyunapp-2177" class="doc-subsection">
 <h4>10. <code>tingyunApp</code> (<code>2.17.7</code>)</h4>
 </div>
 <ul>
-<li><strong>Tipe</strong>: APM (Application Performance Monitoring) & Crash Logger SDK.</li>
-<li><strong>Fungsi</strong>: Memonitor latency jaringan, waktu startup, penggunaan memori, dan crash report ke dashboard Tingyun.</li>
-<li><strong>Komponen Konsumen</strong>: <code>main.swift</code>, <code>TYUtils.swift</code>.</li>
-<li><strong>Runtime Impact</strong>: Berjalan sejak detik ke-0 di <code>main.swift</code>.</li>
-<li><strong>Confidence</strong>: <code>[Verified]</code>.</li>
-</ul>
+<li><strong>Tipe</strong>: APM (Application Performance Monitoring) & Crash Logger SDK.
+</li>
+<li><strong>Fungsi</strong>: Memonitor latency jaringan, waktu startup, penggunaan memori, dan crash report ke dashboard Tingyun.
+</li>
+<li><strong>Komponen Konsumen</strong>: <code>main.swift</code>, <code>TYUtils.swift</code>.
+</li>
+<li><strong>Runtime Impact</strong>: Berjalan sejak detik ke-0 di <code>main.swift</code>.
+</li>
+<li><strong>Confidence</strong>: <code>[Verified]</code>.
+</li></ul>
 </section>
 <section id="sec-walkthrough" class="doc-section">
 <h3>📌 E. Tabel Rangkuman Dependensi Lengkap</h3>
@@ -250,9 +305,10 @@
 <pre><code class="language-ruby">pod &#x27;AAINetwork&#x27;, :http =&gt; &#x27;https://prod-guardian-cv.oss-ap-southeast-5.aliyuncs.com/.../AAINetwork-V1.0.2-PrivacyInfo.tar.bz2&#x27;, type: :tbz
 pod &#x27;AAILiveness&#x27;, :http =&gt; &#x27;https://prod-guardian-cv.oss-ap-southeast-5.aliyuncs.com/.../iOS-Liveness-SDK-V3.0.7.tar.bz2&#x27; , type: :tbz</code></pre>
 <ul>
-<li><strong>Risiko Infrastruktur</strong>: Dependensi ini tidak diambil dari server resmi CocoaPods Trunk, melainkan langsung dari bucket cloud Aliyun OSS di kawasan Jakarta (<code>ap-southeast-5</code>).</li>
-<li><strong>Mitigasi</strong>: Jika bucket OSS tersebut mengalami gangguan akses atau file dihapus oleh vendor, seluruh tim pengembang tidak akan dapat menjalankan <code>pod install</code>. Tim mobile disarankan menyimpan backup tarball ini di internal artifact repository (seperti Nexus atau JFrog Artifactory).</li>
-</ul>
+<li><strong>Risiko Infrastruktur</strong>: Dependensi ini tidak diambil dari server resmi CocoaPods Trunk, melainkan langsung dari bucket cloud Aliyun OSS di kawasan Jakarta (<code>ap-southeast-5</code>).
+</li>
+<li><strong>Mitigasi</strong>: Jika bucket OSS tersebut mengalami gangguan akses atau file dihapus oleh vendor, seluruh tim pengembang tidak akan dapat menjalankan <code>pod install</code>. Tim mobile disarankan menyimpan backup tarball ini di internal artifact repository (seperti Nexus atau JFrog Artifactory).
+</li></ul>
 </section>
 <section id="sec-example" class="doc-section">
 <h3>🔬 G. Practical Example: Audit Transitive Dependency</h3>
@@ -261,20 +317,28 @@ pod &#x27;AAILiveness&#x27;, :http =&gt; &#x27;https://prod-guardian-cv.oss-ap-s
 <section id="sec-mistakes" class="doc-section">
 <h3>⚠️ H. Common Mistakes & Debugging</h3>
 <ul>
-<li><strong>Menjalankan <code>pod update</code> Tanpa Konfirmasi</strong>:</li>
-<li><em>Bahaya</em>: Menjalankan <code>pod update</code> alih-alih <code>pod install</code> dapat menaikkan versi pustaka tanpa disengaja (misal: Kingfisher atau Firebase) yang dapat menimbulkan <em>breaking changes</em> pada kode Swift yang ada.</li>
-<li><em>Aturan</em>: Selalu gunakan <code>pod install</code>.</li>
-<li><strong>Arsitektur Framework Simulator (x86_64 vs arm64)</strong>:</li>
-<li>Framework binary closed-source (<code>LibNetSignGenerator</code>) kadang menimbulkan error linker saat dijalankan di Mac Apple Silicon jika skrip thinning <code>lipo</code> tidak berjalan sempurna. Pastikan Run Script fase 4 di Xcode tetap aktif.</li>
-</ul>
+<li><strong>Menjalankan <code>pod update</code> Tanpa Konfirmasi</strong>:
+<ul>
+<li><em>Bahaya</em>: Menjalankan <code>pod update</code> alih-alih <code>pod install</code> dapat menaikkan versi pustaka tanpa disengaja (misal: Kingfisher atau Firebase) yang dapat menimbulkan <em>breaking changes</em> pada kode Swift yang ada.
+</li>
+<li><em>Aturan</em>: Selalu gunakan <code>pod install</code>.
+</li></ul>
+</li>
+<li><strong>Arsitektur Framework Simulator (x86_64 vs arm64)</strong>:
+<ul>
+<li>Framework binary closed-source (<code>LibNetSignGenerator</code>) kadang menimbulkan error linker saat dijalankan di Mac Apple Silicon jika skrip thinning <code>lipo</code> tidak berjalan sempurna. Pastikan Run Script fase 4 di Xcode tetap aktif.
+</li></ul>
+</li></ul>
 </section>
 <section id="sec-check" class="doc-section">
 <h3>🧠 I. Knowledge Check</h3>
 <ol>
-<li>Mengapa <code>LibNetSignGenerator.framework</code> disebut sebagai dependensi paling kritis di SAMIR iOS?</li>
-<li>Dari mana file biner SDK <code>AAILiveness</code> diunduh saat instalasi CocoaPods?</li>
-<li>Apa tujuan dari SDK <code>tingyunApp</code> yang diinisialisasi pada <code>main.swift</code>?</li>
-</ol>
+<li>Mengapa <code>LibNetSignGenerator.framework</code> disebut sebagai dependensi paling kritis di SAMIR iOS?
+</li>
+<li>Dari mana file biner SDK <code>AAILiveness</code> diunduh saat instalasi CocoaPods?
+</li>
+<li>Apa tujuan dari SDK <code>tingyunApp</code> yang diinisialisasi pada <code>main.swift</code>?
+</li></ol>
 </section>
 <section id="sec-completion" class="doc-section">
 <h3>🏁 J. Completion Criteria</h3>

@@ -105,11 +105,14 @@
 <h3>🎯 A. Learning Objective</h3>
 <p>Setelah menyelesaikan dokumen ini, pembaca akan mampu:</p>
 <ol>
-<li>Memetakan 4 fase utama perjalanan pengguna di dalam modul Flutter SAMIR.</li>
-<li>Memahami perbedaan tampilan antarmuka Tagihan dan Profil pada status Guest vs Logged-In.</li>
-<li>Menjelaskan siklus pelunasan pinjaman: dari pemantauan jatuh tempo hingga perolehan kode bayar.</li>
-<li>Mengetahui alur pasca-pelunasan di mana pengguna diarahkan kembali ke Beranda Native untuk pengajuan baru.</li>
-</ol>
+<li>Memetakan 4 fase utama perjalanan pengguna di dalam modul Flutter SAMIR.
+</li>
+<li>Memahami perbedaan tampilan antarmuka Tagihan dan Profil pada status Guest vs Logged-In.
+</li>
+<li>Menjelaskan siklus pelunasan pinjaman: dari pemantauan jatuh tempo hingga perolehan kode bayar.
+</li>
+<li>Mengetahui alur pasca-pelunasan di mana pengguna diarahkan kembali ke Beranda Native untuk pengajuan baru.
+</li></ol>
 </section>
 <section id="sec-prereq" class="doc-section">
 <h3>📋 B. Prerequisites</h3>
@@ -119,11 +122,14 @@
 <h3>💡 C. Simple Explanation (Analogi & Konsep Sederhana)</h3>
 <p>Bayangkan seorang pelanggan yang menyewa kendaraan di perusahaan rental mobil:</p>
 <ol>
-<li><strong>Fase Pengenalan</strong>: Calon pelanggan melihat etalase layanan dan membaca syarat ketentuan di loket informasi (Tab Saya - Status Guest).</li>
-<li><strong>Fase Berjalan</strong>: Setelah mobil dibawa pulang, pelanggan memantau sisa hari sewa dan tagihan bahan bakar melalui aplikasi (Tab Tagihan - Kontrak Aktif).</li>
-<li><strong>Fase Pelunasan</strong>: Pada tanggal jatuh tempo, pelanggan meminta nomor rekening Virtual Account untuk mentransfer biaya sewa (Pengambilan Kode Bayar VA).</li>
-<li><strong>Fase Selesai & Sewa Kembali</strong>: Setelah pembayaran terkonfirmasi, tagihan menjadi Rp 0, dan pelanggan ditawari untuk menyewa kendaraan model terbaru di loket utama (Kembali ke Beranda Native).</li>
-</ol>
+<li><strong>Fase Pengenalan</strong>: Calon pelanggan melihat etalase layanan dan membaca syarat ketentuan di loket informasi (Tab Saya - Status Guest).
+</li>
+<li><strong>Fase Berjalan</strong>: Setelah mobil dibawa pulang, pelanggan memantau sisa hari sewa dan tagihan bahan bakar melalui aplikasi (Tab Tagihan - Kontrak Aktif).
+</li>
+<li><strong>Fase Pelunasan</strong>: Pada tanggal jatuh tempo, pelanggan meminta nomor rekening Virtual Account untuk mentransfer biaya sewa (Pengambilan Kode Bayar VA).
+</li>
+<li><strong>Fase Selesai & Sewa Kembali</strong>: Setelah pembayaran terkonfirmasi, tagihan menjadi Rp 0, dan pelanggan ditawari untuk menyewa kendaraan model terbaru di loket utama (Kembali ke Beranda Native).
+</li></ol>
 </section>
 <section id="sec-actual" class="doc-section">
 <h3>💻 D. Actual Implementation (Bukti di Kode Sumber)</h3>
@@ -166,74 +172,102 @@ journey
 <h4>Fase 1: Tamu / Pengguna Belum Login (<em>Guest State</em>)</h4>
 </div>
 <ul>
-<li><strong>Kondisi Data</strong>: <code>Global.isLogin == false</code>, <code>Global.mid == null</code>.</li>
-<li><strong>Tampilan di Tab Tagihan (<code>RepayHomePage</code>)</strong>:</li>
-<li>Menampilkan komponen <code>RepayEmptyState</code> dengan ilustrasi dompet dan tombol besar <em>"Masuk / Daftar"</em>.</li>
-<li>Mengetuk tombol memanggil <code>FlutterNativeChannelRoute.openNativeRoute(&#x27;repayLoginAction&#x27;)</code> untuk memunculkan antarmuka login OTP native.</li>
-<li><strong>Tampilan di Tab Saya (<code>MineHomePage</code>)</strong>:</li>
-<li>Header menampilkan avatar abu-abu default dengan teks placeholder <em>"Masuk/Daftar"</em>.</li>
-<li>Seluruh menu umum (Pusat Bantuan, Tentang Kami) tetap dapat diakses, namun menu khusus akun (Kupon, Riwayat) akan memicu guard otentikasi.</li>
-</ul>
+<li><strong>Kondisi Data</strong>: <code>Global.isLogin == false</code>, <code>Global.mid == null</code>.
+</li>
+<li><strong>Tampilan di Tab Tagihan (<code>RepayHomePage</code>)</strong>:
+<ul>
+<li>Menampilkan komponen <code>RepayEmptyState</code> dengan ilustrasi dompet dan tombol besar <em>"Masuk / Daftar"</em>.
+</li>
+<li>Mengetuk tombol memanggil <code>FlutterNativeChannelRoute.openNativeRoute(&#x27;repayLoginAction&#x27;)</code> untuk memunculkan antarmuka login OTP native.
+</li></ul>
+</li>
+<li><strong>Tampilan di Tab Saya (<code>MineHomePage</code>)</strong>:
+<ul>
+<li>Header menampilkan avatar abu-abu default dengan teks placeholder <em>"Masuk/Daftar"</em>.
+</li>
+<li>Seluruh menu umum (Pusat Bantuan, Tentang Kami) tetap dapat diakses, namun menu khusus akun (Kupon, Riwayat) akan memicu guard otentikasi.
+</li></ul>
+</li></ul>
 <div id="sub-fase-2-pemantauan-pinjaman-aktif-active-loan-monitoring" class="doc-subsection">
 <h4>Fase 2: Pemantauan Pinjaman Aktif (<em>Active Loan Monitoring</em>)</h4>
 </div>
 <ul>
-<li><strong>Kondisi Data</strong>: Nasabah telah disetujui pinjamannya di Beranda Native (Tab 0) dan dana telah dicairkan ke rekening bank nasabah.</li>
-<li><strong>Tampilan di Tab Tagihan</strong>:</li>
-<li>Menampilkan kartu pinjaman berjalan (<code>RepayOrderCard</code>):</li>
-<li>Pokok pinjaman + bunga berjalan.</li>
-<li>Jumlah hari keterlambatan (jika menunggak) dan nominal denda penalti.</li>
-<li>Tanggal jatuh tempo presisi.</li>
-<li>Jika tanggal pembayaran sudah dekat, Flutter meminta native untuk menampilkan pop-up insentif: <code>requestRepayBenefitPopup(&#x27;repay_home&#x27;)</code>.</li>
-</ul>
+<li><strong>Kondisi Data</strong>: Nasabah telah disetujui pinjamannya di Beranda Native (Tab 0) dan dana telah dicairkan ke rekening bank nasabah.
+</li>
+<li><strong>Tampilan di Tab Tagihan</strong>:
+<ul>
+<li>Menampilkan kartu pinjaman berjalan (<code>RepayOrderCard</code>):
+<ul>
+<li>Pokok pinjaman + bunga berjalan.
+</li>
+<li>Jumlah hari keterlambatan (jika menunggak) dan nominal denda penalti.
+</li>
+<li>Tanggal jatuh tempo presisi.
+</li></ul>
+</li>
+<li>Jika tanggal pembayaran sudah dekat, Flutter meminta native untuk menampilkan pop-up insentif: <code>requestRepayBenefitPopup(&#x27;repay_home&#x27;)</code>.
+</li></ul>
+</li></ul>
 <div id="sub-fase-3-pengambilan-kode-bayar-payment-execution" class="doc-subsection">
 <h4>Fase 3: Pengambilan Kode Bayar (<em>Payment Execution</em>)</h4>
 </div>
 <ul>
-<li>Nasabah menekan tombol <em>"Bayar Sekarang"</em>.</li>
-<li>Layar memanggil API <code>queryAbroadDeDuctList</code> untuk mengambil daftar Virtual Account resmi yang dialokasikan khusus untuk nasabah tersebut (BCA VA, BNI VA, Mandiri VA, BRI VA, Permata VA, atau gerai kasir Alfamart/Indomaret).</li>
-<li>Nasabah menyalin nomor kode bayar dengan sekali ketuk untuk dimasukkan ke aplikasi Mobile Banking atau diserahkan ke kasir minimarket.</li>
-</ul>
+<li>Nasabah menekan tombol <em>"Bayar Sekarang"</em>.
+</li>
+<li>Layar memanggil API <code>queryAbroadDeDuctList</code> untuk mengambil daftar Virtual Account resmi yang dialokasikan khusus untuk nasabah tersebut (BCA VA, BNI VA, Mandiri VA, BRI VA, Permata VA, atau gerai kasir Alfamart/Indomaret).
+</li>
+<li>Nasabah menyalin nomor kode bayar dengan sekali ketuk untuk dimasukkan ke aplikasi Mobile Banking atau diserahkan ke kasir minimarket.
+</li></ul>
 <div id="sub-fase-4-pasca-pelunasan-siklus-berulang-settled-state" class="doc-subsection">
 <h4>Fase 4: Pasca-Pelunasan & Siklus Berulang (<em>Settled State</em>)</h4>
 </div>
 <ul>
-<li>Begitu transfer pembayaran diverifikasi oleh sistem backend:</li>
-<li>Host native mengirimkan sinyal method channel <code>refreshRepayHome</code>.</li>
-<li><code>RepayHomePage</code> memuat ulang data dan menampilkan status tagihan bersih (tidak ada pinjaman aktif).</li>
-<li>Ditampilkan kartu promo atau tombol <em>"Ajukan Pinjaman Baru"</em>.</li>
-<li>Mengetuk tombol tersebut mengeksekusi <code>repayHomeAction</code>, mengembalikan nasabah ke Tab 0 Beranda Native untuk mencairkan limit berikutnya.</li>
-</ul>
+<li>Begitu transfer pembayaran diverifikasi oleh sistem backend:
+<ul>
+<li>Host native mengirimkan sinyal method channel <code>refreshRepayHome</code>.
+</li>
+<li><code>RepayHomePage</code> memuat ulang data dan menampilkan status tagihan bersih (tidak ada pinjaman aktif).
+</li>
+<li>Ditampilkan kartu promo atau tombol <em>"Ajukan Pinjaman Baru"</em>.
+</li>
+<li>Mengetuk tombol tersebut mengeksekusi <code>repayHomeAction</code>, mengembalikan nasabah ke Tab 0 Beranda Native untuk mencairkan limit berikutnya.
+</li></ul>
+</li></ul>
 </section>
 <section id="sec-why" class="doc-section">
 <h3>⚖️ F. Why It Matters (Trade-Offs & Implikasi Teknis)</h3>
 <ul>
-<li><strong>Mengurangi Beban Kognitif Pengguna</strong>:</li>
-</ul>
+<li><strong>Mengurangi Beban Kognitif Pengguna</strong>:
+</li></ul>
 <p>Dengan memisahkan modul Pengajuan (Tab 0 Native) dan modul Penagihan (Tab 1 Flutter), antarmuka SAMIR tidak membingungkan pengguna: saat butuh uang, buka Tab 0; saat ingin membayar, buka Tab 1. Pemisahan domain ini juga mempermudah optimasi performa karena query data penagihan tidak pernah mengganggu antrian query scoring kredit di Beranda.</p>
 </section>
 <section id="sec-example" class="doc-section">
 <h3>🔬 G. Practical Example (Skenario Penggunaan Nyata)</h3>
 <p>Jika nasabah memiliki 2 pinjaman aktif sekaligus (misalnya produk cicilan kilat dan produk modal usaha):</p>
 <ul>
-<li><code>RepayHomePage</code> merender dua kartu <code>RepayOrderCard</code> terpisah di dalam <code>ListView</code>.</li>
-<li>Header di bagian atas secara otomatis menjumlahkan total nominal kedua tagihan tersebut ke dalam satu angka ringkasan jatuh tempo tercepat.</li>
-</ul>
+<li><code>RepayHomePage</code> merender dua kartu <code>RepayOrderCard</code> terpisah di dalam <code>ListView</code>.
+</li>
+<li>Header di bagian atas secara otomatis menjumlahkan total nominal kedua tagihan tersebut ke dalam satu angka ringkasan jatuh tempo tercepat.
+</li></ul>
 </section>
 <section id="sec-mistakes" class="doc-section">
 <h3>⚠️ H. Common Mistakes & Debugging</h3>
 <ul>
-<li><strong>Berasumsi Pengguna Selalu Terotentikasi di Flutter</strong>:</li>
-<li>Jangan pernah memanggil API <code>repayment/repayOrderList</code> sebelum memastikan <code>_nativeState.isLogin == true</code>. Mengirimkan request tanpa token akan menghasilkan error respon <code>10006</code> yang memicu pembersihan sesi secara paksa.</li>
-</ul>
+<li><strong>Berasumsi Pengguna Selalu Terotentikasi di Flutter</strong>:
+<ul>
+<li>Jangan pernah memanggil API <code>repayment/repayOrderList</code> sebelum memastikan <code>_nativeState.isLogin == true</code>. Mengirimkan request tanpa token akan menghasilkan error respon <code>10006</code> yang memicu pembersihan sesi secara paksa.
+</li></ul>
+</li></ul>
 </section>
 <section id="sec-check" class="doc-section">
 <h3>🧠 I. Knowledge Check</h3>
 <ol>
-<li>Apa yang ditampilkan pada Tab Tagihan ketika pengguna membuka aplikasi dalam status belum login?</li>
-<li>Bagaimana cara modul Flutter mengetahui bahwa pembayaran yang dilakukan nasabah di ATM/M-Banking telah berhasil?</li>
-<li>Tombol apa yang digunakan oleh nasabah yang sudah lunas untuk kembali mengajukan pinjaman di Beranda Native?</li>
-</ol>
+<li>Apa yang ditampilkan pada Tab Tagihan ketika pengguna membuka aplikasi dalam status belum login?
+</li>
+<li>Bagaimana cara modul Flutter mengetahui bahwa pembayaran yang dilakukan nasabah di ATM/M-Banking telah berhasil?
+</li>
+<li>Tombol apa yang digunakan oleh nasabah yang sudah lunas untuk kembali mengajukan pinjaman di Beranda Native?
+</li></ol>
 <p><strong>Latihan Observasi</strong>:</p>
 <p>Buka file <a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/learn/Flutter-Arch/flutter/lib/pages/repay/home/repay_home_page.dart" target="_blank" rel="noopener noreferrer">🦊 flutter/lib/pages/repay/home/repay_home_page.dart <span class="branch-tag">learn/Flutter-Arch</span> ↗</a>. Amati getter <code>_nativeState</code> dan <code>_model</code> pada baris 56–58 serta bagaimana <code>_initialNativeState</code> digunakan sebagai fallback saat booting.</p>
 </section>

@@ -105,12 +105,16 @@
 <h3>🎯 A. Learning Objective</h3>
 <p>Setelah menyelesaikan dokumen ini, pembaca akan mampu:</p>
 <ol>
-<li>Menyebutkan 2 instansi <code>MethodChannel</code> kanonikal yang digunakan pada modul Flutter SAMIR.</li>
-<li>Memetakan seluruh method yang dipanggil dari Flutter ke Native (arah Outbound).</li>
-<li>Memetakan seluruh method yang dipanggil dari Native ke Flutter (arah Inbound).</li>
-<li>Menjelaskan struktur payload argumen dan tipe data kembalian pada setiap method.</li>
-<li>Memahami penanganan eksepsi <code>PlatformException</code> dan <code>MissingPluginException</code>.</li>
-</ol>
+<li>Menyebutkan 2 instansi <code>MethodChannel</code> kanonikal yang digunakan pada modul Flutter SAMIR.
+</li>
+<li>Memetakan seluruh method yang dipanggil dari Flutter ke Native (arah Outbound).
+</li>
+<li>Memetakan seluruh method yang dipanggil dari Native ke Flutter (arah Inbound).
+</li>
+<li>Menjelaskan struktur payload argumen dan tipe data kembalian pada setiap method.
+</li>
+<li>Memahami penanganan eksepsi <code>PlatformException</code> dan <code>MissingPluginException</code>.
+</li></ol>
 </section>
 <section id="sec-prereq" class="doc-section">
 <h3>📋 B. Prerequisites</h3>
@@ -120,10 +124,12 @@
 <h3>💡 C. Simple Explanation (Analogi & Konsep Sederhana)</h3>
 <p>Bayangkan saluran pipa komunikasi telegraf antara dua stasiun:</p>
 <ul>
-<li><strong>Pipa 1: Saluran Operasional (<code>samir_native_channel</code>)</strong>: Saluran utama untuk perintah taktis (buka pintu rute baru, sembunyikan bilah navigasi, ambil kunci otentikasi sesi).</li>
-<li><strong>Pipa 2: Saluran Intelijen (<code>samir_tracking_channel</code>)</strong>: Saluran khusus untuk mengirimkan laporan analitik dan pengamatan aktivitas pengguna tanpa mengganggu komunikasi operasional.</li>
-<li>Masing-masing stasiun memiliki operator yang terlatih untuk merespons kode sandi tertentu dalam format yang telah disepakati bersama.</li>
-</ul>
+<li><strong>Pipa 1: Saluran Operasional (<code>samir_native_channel</code>)</strong>: Saluran utama untuk perintah taktis (buka pintu rute baru, sembunyikan bilah navigasi, ambil kunci otentikasi sesi).
+</li>
+<li><strong>Pipa 2: Saluran Intelijen (<code>samir_tracking_channel</code>)</strong>: Saluran khusus untuk mengirimkan laporan analitik dan pengamatan aktivitas pengguna tanpa mengganggu komunikasi operasional.
+</li>
+<li>Masing-masing stasiun memiliki operator yang terlatih untuk merespons kode sandi tertentu dalam format yang telah disepakati bersama.
+</li></ul>
 </section>
 <section id="sec-actual" class="doc-section">
 <h3>💻 D. Actual Implementation (Bukti di Kode Sumber)</h3>
@@ -216,26 +222,34 @@ sequenceDiagram
 }</code></pre>
 <p>Fitur ketahanan:</p>
 <ol>
-<li><strong>Pencegahan Silent Failure</strong>: Menangkap dan mencetak tag log khusus <code>[NativeChannel]</code> sehingga developer dapat langsung melihat apakah kegagalan berasal dari kesalahan di kode Swift/Kotlin atau di Dart.</li>
-<li><strong>MissingPluginException Shield</strong>: Jika modul Flutter dijalankan di lingkungan pengujian tanpa host native terdaftar, pemanggilan method penting (seperti <code>getNativeAppEnv</code> dan <code>getNativeRequestParams</code>) ditangkap secara elegan dengan blok <code>catch (_)</code> untuk mengaktifkan nilai cadangan (<em>fallback defaults</em>).</li>
-</ol>
+<li><strong>Pencegahan Silent Failure</strong>: Menangkap dan mencetak tag log khusus <code>[NativeChannel]</code> sehingga developer dapat langsung melihat apakah kegagalan berasal dari kesalahan di kode Swift/Kotlin atau di Dart.
+</li>
+<li><strong>MissingPluginException Shield</strong>: Jika modul Flutter dijalankan di lingkungan pengujian tanpa host native terdaftar, pemanggilan method penting (seperti <code>getNativeAppEnv</code> dan <code>getNativeRequestParams</code>) ditangkap secara elegan dengan blok <code>catch (_)</code> untuk mengaktifkan nilai cadangan (<em>fallback defaults</em>).
+</li></ol>
 </section>
 <section id="sec-check" class="doc-section">
 <h3>⚠️ I. Common Mistakes & Debugging</h3>
 <ul>
-<li><strong>Mengirim Nilai Non-Primitive di Parameter <code>openNativeRoute</code></strong>:</li>
-<li><code>MethodChannel</code> hanya mendukung serialisasi objek JSON primitif. Mengirimkan objek kompleks Dart yang belum diubah ke <code>Map&lt;String, dynamic&gt;</code> akan memicu crash fatal.</li>
-<li><strong>Mengubah String Nama Method Tanpa Menyinkronkan Sisi Native</strong>:</li>
-<li>Mengganti <code>&#x27;getRootPageData&#x27;</code> menjadi <code>&#x27;getUserData&#x27;</code> di Flutter tanpa mengubah <code>FlutterNativeChannel+method.swift</code> akan menghasilkan <code>MissingPluginException</code>.</li>
-</ul>
+<li><strong>Mengirim Nilai Non-Primitive di Parameter <code>openNativeRoute</code></strong>:
+<ul>
+<li><code>MethodChannel</code> hanya mendukung serialisasi objek JSON primitif. Mengirimkan objek kompleks Dart yang belum diubah ke <code>Map&lt;String, dynamic&gt;</code> akan memicu crash fatal.
+</li></ul>
+</li>
+<li><strong>Mengubah String Nama Method Tanpa Menyinkronkan Sisi Native</strong>:
+<ul>
+<li>Mengganti <code>&#x27;getRootPageData&#x27;</code> menjadi <code>&#x27;getUserData&#x27;</code> di Flutter tanpa mengubah <code>FlutterNativeChannel+method.swift</code> akan menghasilkan <code>MissingPluginException</code>.
+</li></ul>
+</li></ul>
 </section>
 <section id="sec-completion" class="doc-section">
 <h3>🧠 J. Knowledge Check</h3>
 <ol>
-<li>Sebutkan nama dua saluran <code>MethodChannel</code> resmi yang digunakan pada modul Flutter SAMIR!</li>
-<li>Method apa yang dikirimkan oleh host native ke Flutter saat nasabah berpindah ke Tab Tagihan?</li>
-<li>Nilai apa yang dikembalikan oleh Flutter ke host native setelah rute di <code>showFlutterRoute</code> selesai dirender?</li>
-</ol>
+<li>Sebutkan nama dua saluran <code>MethodChannel</code> resmi yang digunakan pada modul Flutter SAMIR!
+</li>
+<li>Method apa yang dikirimkan oleh host native ke Flutter saat nasabah berpindah ke Tab Tagihan?
+</li>
+<li>Nilai apa yang dikembalikan oleh Flutter ke host native setelah rute di <code>showFlutterRoute</code> selesai dirender?
+</li></ol>
 <p><strong>Latihan Observasi</strong>:</p>
 <p>Buka file <a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/learn/Flutter-Arch/flutter/lib/common/platform/flutter_native_route_dispatcher.dart" target="_blank" rel="noopener noreferrer">🦊 flutter/lib/common/platform/flutter_native_route_dispatcher.dart <span class="branch-tag">learn/Flutter-Arch</span> ↗</a>. Periksa fungsi <code>_handleNativeCall</code> pada baris 36–49 dan catat 3 klausa <code>case</code> yang ditangani di dalamnya.</p>
 </section>

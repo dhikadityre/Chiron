@@ -1,0 +1,55 @@
+{
+  "version": "1.0",
+  "lesson": "courses/samir-mobile-ios/04-understanding-navigation/02-navigation-fundamentals.html",
+  "updated_at": "2026-10-28T06:49:52.656361+00:00",
+  "total_annotations": 0,
+  "notes_count": 0,
+  "ai_questions_count": 0,
+  "annotations": [],
+  "resolved_history": [
+    {
+      "id": "anno-1793160935041-mmpbz",
+      "type": "ai_question",
+      "content": "tolong berikan sample cazra kerjanya agar saya lebih kebayang",
+      "created_at": "2026-10-28T04:15:35.042Z",
+      "status": "resolved",
+      "anchor": {
+        "exact": "// 🔍 IF #4: Apakah target alias sudah memiliki tanda '?' ?\n            if routerUrl.contains(\"?\") {\n                absoluteUrl = routerUrl.appending(\"&\\(urlParams)\") // Sambung dengan &\n            } else {\n                absoluteUrl = routerUrl.appending(\"?\\(urlParams)\") // Sambung dengan ?\n            }",
+        "prefix": "   if urlParams.count > 0 {\n            ",
+        "suffix": "\n        } else {\n            absoluteUr",
+        "selector": "div.docs-layout > main.docs-content > section.doc-section > div.doc-subpoint-block > pre.language-swift > code.language-swift"
+      },
+      "isOrphaned": true,
+      "resolved_at": "2026-10-28T06:49:52.656361+00:00"
+    },
+    {
+      "id": "anno-1793161005529-c9k5g",
+      "type": "ai_question",
+      "content": "kenapa ada validasi ini? ekspetaszsimya kita dapat menerima apa dan menolak apa? berikan saya contohnya",
+      "created_at": "2026-10-28T04:16:45.529Z",
+      "status": "resolved",
+      "anchor": {
+        "exact": "^\\\\S+$",
+        "prefix": "uter = CZRouter.initWithSchemeParttern(\"",
+        "suffix": "\", withHostParttern: \"^\\\\S+$\")\n    filte",
+        "selector": "div.docs-layout > main.docs-content > section.doc-section > div.doc-subpoint-block > pre.language-swift > code.language-swift > span.token > span.token"
+      },
+      "isOrphaned": true,
+      "resolved_at": "2026-10-28T06:49:52.656361+00:00"
+    },
+    {
+      "id": "anno-1793169489063-ih1ev",
+      "type": "ai_question",
+      "content": "use case nyata yg saya maksud adalah ada contohnya di production sehingga saya dapat melakukan tracing dan mencobanya langsung",
+      "created_at": "2026-10-28T06:38:09.063Z",
+      "status": "resolved",
+      "anchor": {
+        "exact": "📱 H. Use Case Nyata: Navigasi Screen-to-Screen & Callback Patterns",
+        "prefix": "dUrl, \"navTitle\": \"Pusat Bantuan\"]\n)\n💬\n",
+        "suffix": "\n\nDi arsitektur modular SAMIR iOS, route",
+        "selector": "div.docs-layout > main.docs-content > section.doc-section > h3"
+      },
+      "resolved_at": "2026-10-28T06:49:52.656361+00:00"
+    }
+  ]
+}

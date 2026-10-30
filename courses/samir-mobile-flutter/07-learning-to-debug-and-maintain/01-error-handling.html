@@ -101,11 +101,14 @@
 <h3>🎯 A. Learning Objective</h3>
 <p>Setelah menyelesaikan dokumen ini, pembaca akan mampu:</p>
 <ol>
-<li>Membedakan 3 tingkatan kesalahan: Transport Level (Dio), Protocol Level (HTTP Status), dan Application Business Level (<code>BaseResponse.code</code>).</li>
-<li>Menjelaskan logika fungsi <code>_createErrorResponse()</code> dalam membungkus <code>DioException</code>.</li>
-<li>Mengetahui cara kerja notifikasi visual <code>showToast</code> yang dapat dipanggil tanpa <code>BuildContext</code>.</li>
-<li>Menjelaskan penanganan kesalahan otentikasi (Error 10006) vs kesalahan validasi bisnis umum.</li>
-</ol>
+<li>Membedakan 3 tingkatan kesalahan: Transport Level (Dio), Protocol Level (HTTP Status), dan Application Business Level (<code>BaseResponse.code</code>).
+</li>
+<li>Menjelaskan logika fungsi <code>_createErrorResponse()</code> dalam membungkus <code>DioException</code>.
+</li>
+<li>Mengetahui cara kerja notifikasi visual <code>showToast</code> yang dapat dipanggil tanpa <code>BuildContext</code>.
+</li>
+<li>Menjelaskan penanganan kesalahan otentikasi (Error 10006) vs kesalahan validasi bisnis umum.
+</li></ol>
 </section>
 <section id="sec-prereq" class="doc-section">
 <h3>📋 B. Prerequisites</h3>
@@ -115,10 +118,12 @@
 <h3>💡 C. Simple Explanation (Analogi & Konsep Sederhana)</h3>
 <p>Bayangkan Anda memesan makanan melalui telepon ke restoran:</p>
 <ol>
-<li><strong>Kesalahan Jaringan (Transport Error)</strong>: Sinyal telepon terputus atau nomor restoran sibuk (<strong><code>DioExceptionType.connectionTimeout</code></strong>). Anda tahu masalahnya ada pada saluran kabel telepon.</li>
-<li><strong>Kesalahan Protokol (HTTP Error)</strong>: Operator restoran mengangkat telepon tetapi salah menyambungkan ke saluran fax (<strong>HTTP 502 / 404</strong>).</li>
-<li><strong>Kesalahan Bisnis (Business Error)</strong>: Saluran telepon jernih, pesanan Anda diterima, namun koki mengatakan: <em>"Maaf, menu sup ayam hari ini sudah habis"</em> (<strong><code>BaseResponse.code != &#x27;200&#x27;</code></strong>). Telepon berhasil, tetapi transaksi tidak dapat diproses.</li>
-</ol>
+<li><strong>Kesalahan Jaringan (Transport Error)</strong>: Sinyal telepon terputus atau nomor restoran sibuk (<strong><code>DioExceptionType.connectionTimeout</code></strong>). Anda tahu masalahnya ada pada saluran kabel telepon.
+</li>
+<li><strong>Kesalahan Protokol (HTTP Error)</strong>: Operator restoran mengangkat telepon tetapi salah menyambungkan ke saluran fax (<strong>HTTP 502 / 404</strong>).
+</li>
+<li><strong>Kesalahan Bisnis (Business Error)</strong>: Saluran telepon jernih, pesanan Anda diterima, namun koki mengatakan: <em>"Maaf, menu sup ayam hari ini sudah habis"</em> (<strong><code>BaseResponse.code != &#x27;200&#x27;</code></strong>). Telepon berhasil, tetapi transaksi tidak dapat diproses.
+</li></ol>
 </section>
 <section id="sec-actual" class="doc-section">
 <h3>💻 D. Actual Implementation (Bukti di Kode Sumber)</h3>
@@ -177,9 +182,10 @@
 }</code></pre>
 <p>Keuntungan arsitektur ini:</p>
 <ul>
-<li>Mengubah eksepsi tingkat rendah Dart yang berpotensi memicu unhandled crash menjadi objek <code>BaseResponse</code> yang ramah tipe data.</li>
-<li>Layer <code>Service</code> tidak perlu menangani puluhan tipe exception yang berbeda; cukup memeriksa <code>BaseResponse.code</code>.</li>
-</ul>
+<li>Mengubah eksepsi tingkat rendah Dart yang berpotensi memicu unhandled crash menjadi objek <code>BaseResponse</code> yang ramah tipe data.
+</li>
+<li>Layer <code>Service</code> tidak perlu menangani puluhan tipe exception yang berbeda; cukup memeriksa <code>BaseResponse.code</code>.
+</li></ul>
 <div id="sub-3-filter-respon-bisnis-getresponse" class="doc-subsection">
 <h4>3. Filter Respon Bisnis: <code>_getResponse()</code></h4>
 </div>
@@ -206,56 +212,69 @@
 </div>
 <p>File <a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/learn/Flutter-Arch/flutter/lib/common/utils/toast.dart" target="_blank" rel="noopener noreferrer">🦊 flutter/lib/common/utils/toast.dart <span class="branch-tag">learn/Flutter-Arch</span> ↗</a> memanfaatkan <code>navigatorKey</code> dari GoRouter:</p>
 <ul>
-<li><code>showToast(String? message)</code> dapat dipanggil dari mana saja di dalam kode Dart tanpa perlu meneruskan objek <code>BuildContext</code>.</li>
-<li>Toast muncul di bagian tengah-bawah layar dengan latar belakang gelap transparan dan teks putih kontras tinggi selama 2 detik.</li>
-</ul>
+<li><code>showToast(String? message)</code> dapat dipanggil dari mana saja di dalam kode Dart tanpa perlu meneruskan objek <code>BuildContext</code>.
+</li>
+<li>Toast muncul di bagian tengah-bawah layar dengan latar belakang gelap transparan dan teks putih kontras tinggi selama 2 detik.
+</li></ul>
 </section>
 <section id="sec-walkthrough" class="doc-section">
 <h3>🪜 E. Step-by-Step Walkthrough: Penanganan Error Koneksi Terputus</h3>
 <ol>
-<li>Pengguna membuka tab Tagihan saat berada di dalam terowongan kereta bawah tanah (sinyal hilang total).</li>
-<li><code>RepayHomeService</code> mengeksekusi POST ke <code>ServerApi.repayList</code>.</li>
-<li>Dio mendeteksi socket gagal terhubung dan melempar <code>DioExceptionType.connectionError</code>.</li>
-<li><code>HttpClient.post</code> menangkap error di blok <code>catch (e)</code>.</li>
-<li><code>_createErrorResponse</code> membungkus error menjadi <code>BaseResponse(code: &#x27;Network&#x27;, msg: &#x27;No internet connection&#x27;)</code>.</li>
-<li><code>showToast(&#x27;No internet connection&#x27;)</code> menampilkan pesan peringatan di layar.</li>
-<li><code>RepayHomePage</code> mendeteksi data null dan menampilkan kartu status kosong dengan tombol <em>"Coba Lagi"</em> (<code>AppRefreshIndicator</code>).</li>
-</ol>
+<li>Pengguna membuka tab Tagihan saat berada di dalam terowongan kereta bawah tanah (sinyal hilang total).
+</li>
+<li><code>RepayHomeService</code> mengeksekusi POST ke <code>ServerApi.repayList</code>.
+</li>
+<li>Dio mendeteksi socket gagal terhubung dan melempar <code>DioExceptionType.connectionError</code>.
+</li>
+<li><code>HttpClient.post</code> menangkap error di blok <code>catch (e)</code>.
+</li>
+<li><code>_createErrorResponse</code> membungkus error menjadi <code>BaseResponse(code: &#x27;Network&#x27;, msg: &#x27;No internet connection&#x27;)</code>.
+</li>
+<li><code>showToast(&#x27;No internet connection&#x27;)</code> menampilkan pesan peringatan di layar.
+</li>
+<li><code>RepayHomePage</code> mendeteksi data null dan menampilkan kartu status kosong dengan tombol <em>"Coba Lagi"</em> (<code>AppRefreshIndicator</code>).
+</li></ol>
 </section>
 <section id="sec-why" class="doc-section">
 <h3>⚖️ F. Why It Matters (Trade-Offs & Implikasi Teknis)</h3>
 <ul>
-<li><strong>Menjamin UI Tidak Pernah Mengalami "Freeze"</strong>:</li>
-</ul>
+<li><strong>Menjamin UI Tidak Pernah Mengalami "Freeze"</strong>:
+</li></ul>
 <p>Jika exception jaringan tidak ditangkap di layer client, <code>Future</code> di layer widget akan berada dalam status <em>uncompleted</em> atau melempar runtime error ke zona root (<code>FlutterError.onError</code>). Pengguna akan terjebak melihat spinner berputar tanpa henti. Dengan pola <code>_createErrorResponse</code>, loading overlay selalu dijamin tertutup di blok <code>finally</code>/interceptor.</p>
 </section>
 <section id="sec-example" class="doc-section">
 <h3>🔬 G. Practical Example (Skenario Penggunaan Nyata)</h3>
 <p>Jika nasabah memasukkan nominal pembayaran melebihi sisa pokok pinjaman:</p>
 <ul>
-<li>Backend merespon dengan status HTTP 200, tetapi payload:</li>
-</ul>
+<li>Backend merespon dengan status HTTP 200, tetapi payload:
+</li></ul>
 <p><code>{&quot;code&quot;: &quot;30041&quot;, &quot;msg&quot;: &quot;Nominal pembayaran melebihi total sisa pinjaman&quot;, &quot;data&quot;: null}</code>.</p>
 <ul>
-<li><code>_getResponse()</code> mendeteksi <code>code != &#x27;200&#x27;</code>.</li>
-<li>Pesan <code>&quot;Nominal pembayaran melebihi total sisa pinjaman&quot;</code> langsung dimunculkan ke nasabah via Toast.</li>
-<li>Nasabah langsung memahami kesalahan input tanpa kebingungan teknis.</li>
-</ul>
+<li><code>_getResponse()</code> mendeteksi <code>code != &#x27;200&#x27;</code>.
+</li>
+<li>Pesan <code>&quot;Nominal pembayaran melebihi total sisa pinjaman&quot;</code> langsung dimunculkan ke nasabah via Toast.
+</li>
+<li>Nasabah langsung memahami kesalahan input tanpa kebingungan teknis.
+</li></ul>
 </section>
 <section id="sec-mistakes" class="doc-section">
 <h3>⚠️ H. Common Mistakes & Debugging</h3>
 <ul>
-<li><strong>Mengabaikan Respon Bernilai Null di Service</strong>:</li>
-<li>Karena <code>_getResponse()</code> mengembalikan <code>baseResponse.data</code> yang dapat bernilai <code>null</code> saat error terjadi, class model yang mem-parsing data wajib memiliki factory null-safe: <code>RepayHomeModel.fromJson(responseData is Map ? responseData : null)</code>.</li>
-</ul>
+<li><strong>Mengabaikan Respon Bernilai Null di Service</strong>:
+<ul>
+<li>Karena <code>_getResponse()</code> mengembalikan <code>baseResponse.data</code> yang dapat bernilai <code>null</code> saat error terjadi, class model yang mem-parsing data wajib memiliki factory null-safe: <code>RepayHomeModel.fromJson(responseData is Map ? responseData : null)</code>.
+</li></ul>
+</li></ul>
 </section>
 <section id="sec-check" class="doc-section">
 <h3>🧠 I. Knowledge Check</h3>
 <ol>
-<li>Apa fungsi dari method <code>_createErrorResponse()</code> di <code>HttpClient</code>?</li>
-<li>Bagaimana <code>showToast()</code> dapat menampilkan pesan di layar tanpa membutuhkan parameter <code>BuildContext</code>?</li>
-<li>Apa tindakan yang diambil sistem saat server mengembalikan kode bisnis <code>10006</code>?</li>
-</ol>
+<li>Apa fungsi dari method <code>_createErrorResponse()</code> di <code>HttpClient</code>?
+</li>
+<li>Bagaimana <code>showToast()</code> dapat menampilkan pesan di layar tanpa membutuhkan parameter <code>BuildContext</code>?
+</li>
+<li>Apa tindakan yang diambil sistem saat server mengembalikan kode bisnis <code>10006</code>?
+</li></ol>
 <p><strong>Latihan Observasi</strong>:</p>
 <p>Buka file <a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/learn/Flutter-Arch/flutter/lib/common/http/http_client.dart" target="_blank" rel="noopener noreferrer">🦊 flutter/lib/common/http/http_client.dart <span class="branch-tag">learn/Flutter-Arch</span> ↗</a>. Periksa penanganan <code>returnBaseResponse</code> pada fungsi <code>post()</code> di baris 98–130.</p>
 </section>

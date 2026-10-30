@@ -101,25 +101,29 @@
 <h3>🎯 A. Learning Objective</h3>
 <p>Setelah mempelajari dokumen ini, pembaca akan mampu:</p>
 <ol>
-<li>Memahami API surface dari 4 protokol layanan di <code>SamirServiceModule</code> (<code>IDLoginModuleServiceProtocol</code>, <code>IDMainModuleServiceProtocol</code>, <code>IDLoanModuleServiceProtocol</code>, <code>IDRepayModuleServiceProtocol</code>).</li>
-<li>Mengetahui komponen visual bersama di <code>CZSwiftUIKit</code> (Toast, Alert, EmptyView, HUD).</li>
-<li>Menggunakan utilitas helper di <code>CZSwiftUtils</code> (Debouncer, Thread Dispatcher, JSON converter, Logger).</li>
-</ol>
+<li>Memahami API surface dari 4 protokol layanan di <code>SamirServiceModule</code> (<code>IDLoginModuleServiceProtocol</code>, <code>IDMainModuleServiceProtocol</code>, <code>IDLoanModuleServiceProtocol</code>, <code>IDRepayModuleServiceProtocol</code>).
+</li>
+<li>Mengetahui komponen visual bersama di <code>CZSwiftUIKit</code> (Toast, Alert, EmptyView, HUD).
+</li>
+<li>Menggunakan utilitas helper di <code>CZSwiftUtils</code> (Debouncer, Thread Dispatcher, JSON converter, Logger).
+</li></ol>
 </section>
 <section id="sec-prereq" class="doc-section">
 <h3>📋 B. Prerequisites</h3>
 <ul>
-<li>Sudah membaca <a href="01-architecture-overview.html">01-architecture-overview.md</a> hingga <a href="03-dependency-direction.html">03-dependency-direction.md</a>.</li>
-<li>Mengetahui cara kerja Service Locator di Swift.</li>
-</ul>
+<li>Sudah membaca <a href="01-architecture-overview.html">01-architecture-overview.md</a> hingga <a href="03-dependency-direction.html">03-dependency-direction.md</a>.
+</li>
+<li>Mengetahui cara kerja Service Locator di Swift.
+</li></ul>
 </section>
 <section id="sec-simple" class="doc-section">
 <h3>💡 C. Simple Explanation (Analogi Kotak Perkakas Bersama)</h3>
 <p>Bayangkan sebuah bengkel besar dengan banyak mekanik yang bekerja pada bagian mobil yang berbeda:</p>
 <ul>
-<li><strong>Kotak Perkakas Dasar (<code>CZSwiftUtils</code> & <code>CZSwiftUIKit</code>)</strong>: Obeng, tang, dan kunci pas standar yang boleh diambil oleh semua mekanik kapan saja (contoh: fungsi pemformatan mata uang Rupiah, animasi loading, tombol toast).</li>
-<li><strong>Meja Pusat Komunikasi (<code>SamirServiceModule</code>)</strong>: Loket terpusat tempat para mekanik saling bertanya status ("Apakah sparepart sudah siap?", "Apakah pemilik mobil sudah melunasi deposit?").</li>
-</ul>
+<li><strong>Kotak Perkakas Dasar (<code>CZSwiftUtils</code> & <code>CZSwiftUIKit</code>)</strong>: Obeng, tang, dan kunci pas standar yang boleh diambil oleh semua mekanik kapan saja (contoh: fungsi pemformatan mata uang Rupiah, animasi loading, tombol toast).
+</li>
+<li><strong>Meja Pusat Komunikasi (<code>SamirServiceModule</code>)</strong>: Loket terpusat tempat para mekanik saling bertanya status ("Apakah sparepart sudah siap?", "Apakah pemilik mobil sudah melunasi deposit?").
+</li></ul>
 <p>Dengan meletakkan alat-alat ini di tempat bersama, mekanik tidak perlu membuat obeng atau tang baru untuk pekerjaannya sendiri.</p>
 </section>
 <section id="sec-actual" class="doc-section">
@@ -136,40 +140,94 @@ public class IDServiceManager: NSObject {
     public class func loanService() -&gt; IDLoanModuleServiceProtocol?
     public class func reapyService() -&gt; IDRepayModuleServiceProtocol? // (Catatan typo historis: reapyService)
 }</code></pre>
-<h5 id="item-rincian-fungsi-per-protokol">Rincian Fungsi Per Protokol:</h5>
+<div class="doc-subpoint-block" id="item-rincian-fungsi-per-protokol">
+<h5>Rincian Fungsi Per Protokol:</h5>
 <div class="table-container"><table class="data-table"><thead><tr><th>Protokol</th><th>Class Handler Konkret</th><th>Method Kunci & Kemampuan</th></tr></thead><tbody><tr><td><strong><code>IDLoginModuleServiceProtocol</code></strong></td><td><code>IDLoginModuleServiceHandler</code></td><td>- <code>isLogin() -&gt; Bool</code>: Memeriksa status login.<br/>- <code>loginInfo() -&gt; IDLoginCodeModel?</code>: Data sesi user (mid, userNo, staticKey).<br/>- <code>loginAction()</code>: Memunculkan modal popup login.<br/>- <code>reloginWhenRequestError()</code>: Reset sesi saat token kedaluwarsa (error <code>10006</code>).<br/>- <code>postLoginOutRequest(...)</code>: Logout server & lokal.</td></tr><tr><td><strong><code>IDMainModuleServiceProtocol</code></strong></td><td><code>IDMainModuleServiceHandler</code></td><td>- <code>getAppConfig() -&gt; IDAppConfigModel?</code>: Konfigurasi global dari server.<br/>- <code>requstAppConfig()</code>: Mengambil konfigurasi server terbaru secara async.</td></tr><tr><td><strong><code>IDLoanModuleServiceProtocol</code></strong></td><td><code>IDLoanModuleServiceHandler</code></td><td>- <code>jumpLoanAssess(params)</code>: Memicu navigasi ke halaman penilaian limit kuota kredit.<br/>- <code>jumpLoanConfirm(params)</code>: Memicu navigasi ke halaman konfirmasi pencairan pinjaman.</td></tr><tr><td><strong><code>IDRepayModuleServiceProtocol</code></strong></td><td><code>IDRepayModuleServiceHandler</code></td><td>- <code>jumpRepay(params)</code>: Memicu navigasi ke halaman tagihan/pelunasan.</td></tr></tbody></table></div>
 <div class="callout best-practice"><p>[!NOTE] <strong>Typo Unik di Kode Sumber</strong>: Pada <code>IDServiceManager.swift</code> baris 33, method pengakses layanan tagihan bernama <code>reapyService()</code> (bukan <code>repayService</code>). Typo ini sudah menyebar di berbagai modul sehingga harus tetap digunakan sesuai aslinya untuk menjaga kompatibilitas kompilasi.</p></div>
+
+<div class="callout tip" style="margin-top: 1.25rem;">
+  <div class="callout-title">💡 Architectural Deep Dive: Mengapa <code>SamirLoginModule</code> Tidak Terdaftar di <code>IDModuleList.plist</code>?</div>
+  <p>Saat mengaudit konfigurasi modul, Anda mungkin menyadari bahwa <code>SamirLoginModule</code> tidak tercantum di <code>IDModuleList.plist</code>. Mengapa demikian, dan bagaimana navigasi serta pertukaran data tetap berjalan mulus?</p>
+  <ol style="margin: 0.5rem 0 0 1.2rem; font-size: 0.88rem; line-height: 1.6;">
+    <li><strong>Pemisahan <code>IDModuleList.plist</code> vs <code>IDServiceList.plist</code></strong>:
+      <ul>
+        <li><code>IDModuleList.plist</code> khusus untuk modul yang mengadopsi <code>CZModuleProtocol</code> (memerlukan delegasi AppDelegate, push notification, deep link init, dan registrasi URL string scheme <code>samir://...</code>).</li>
+        <li><code>SamirLoginModule</code> dirancang murni sebagai <strong>Headless / Modal Service Module</strong>, bukan modul tab independen. Karena itu, ia didaftarkan di <strong><code>IDServiceList.plist</code></strong> dan <strong><code>IDServiceHandlers.plist</code></strong> memetakan protokol <code>IDLoginModuleServiceProtocol</code> langsung ke implementor konkretnya <code>IDLoginModuleServiceHandler</code>.</li>
+      </ul>
+    </li>
+    <li><strong>Mekanisme Navigasi Berbasis Layanan (Service-Driven Navigation)</strong>:
+      <ul>
+        <li>Alih-alih melakukan URL routing atau push navigation di stack <code>UINavigationController</code>, modul lain cukup memanggil:
+          <pre style="margin: 0.4rem 0;"><code class="language-swift">IDServiceManager.loginService()?.loginAction()</code></pre>
+        </li>
+        <li>Di balik layar, <code>IDLoginManager.shared</code> mencari ViewController teratas yang sedang aktif via <code>UIViewController.cz.topViewController()</code>, membuat <code>IDContainerViewController</code> dan <code>LoginViewV2Controller</code>, lalu menampilkannya secara <strong>Modal Presentation (Custom Transition)</strong> di atas layar apa pun yang sedang dibuka nasabah (Home, Detail Pinjaman, Pengaturan, atau H5 WebView).</li>
+      </ul>
+    </li>
+    <li><strong>Mekanisme Passing Data & Sinkronisasi Event</strong>:
+      <ul>
+        <li><strong>Method Protocols</strong>: Data sesi diambil langsung melalui <code>IDServiceManager.loginService()?.loginInfo()</code> (mengembalikan <code>IDLoginCodeModel</code>) dan pengecekan sesi via <code>isLogin() -&gt; Bool</code>.</li>
+        <li><strong>Broadcast Notifications</strong>: Modul login memancarkan sinyal peristiwa via <code>NotificationCenter</code>:
+          <ul>
+            <li><code>IDN_SamirLoginModule_LoginSuccess_Notification</code>: Ditangkap modul lain (seperti <code>SamirLoanModule</code>) untuk me-refresh data limit kuota pinjaman.</li>
+            <li><code>IDN_SamirLoginModule_LoginOut_Notification</code>: Menandakan pengguna telah logout.</li>
+          </ul>
+        </li>
+        <li><strong>Secure Persistence</strong>: Kredensial disimpan terenkripsi di <code>IDLoginManager.shared.userModel</code> menggunakan CryptoKit AES-256 (<code>CZSwiftStorageLib</code> / Keychain).</li>
+      </ul>
+    </li>
+  </ol>
+</div>
+</div>
 <div id="sub-2-pustaka-komponen-ui-bersama-czswiftuikit" class="doc-subsection">
 <h4>2. Pustaka Komponen UI Bersama (<code>CZSwiftUIKit</code>)</h4>
 </div>
 <p>Path: <a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/learn/iOS-Arch/ios/IDSamirLoan/Application/CZSwiftUIKit/" target="_blank" rel="noopener noreferrer">🦊 ios/IDSamirLoan/Application/CZSwiftUIKit/ <span class="branch-tag">learn/iOS-Arch</span> ↗</a></p>
 <p>Folder ini berisi fondasi antarmuka in-house yang sangat kaya:</p>
-<h5 id="item-a-komponen-ui-classesczcommon">A. Komponen UI (<code>Classes/CZCommon/</code>)</h5>
+<div class="doc-subpoint-block" id="item-a-komponen-ui-classesczcommon">
+<h5>A. Komponen UI (<code>Classes/CZCommon/</code>)</h5>
 <ul>
-<li><strong><code>CZDrawSignatureView</code></strong>: Canvas interaktif berbasis CoreGraphics/Touch tracking untuk tanda tangan digital nasabah secara langsung di layar smartphone.</li>
-<li><strong><code>CZRollingNoticeView</code></strong>: Ticker vertikal animasi berjalan untuk pengumuman atau daftar pencairan nasabah terbaru (<em>live disbursement banner</em>).</li>
-<li><strong><code>CZCircleProgressView</code></strong>: Indikator lingkaran animasi untuk progres verifikasi KYC dan persentase skor kredit.</li>
-<li><strong><code>CZCustomPickView</code></strong>: Komponen bottom sheet picker untuk pemilihan tanggal atau opsi dropdown.</li>
-<li><strong><code>CZQRCodeImageFactory</code></strong>: Generator gambar QR Code instan berbasis filter <code>CIQRCodeGenerator</code>.</li>
-<li><strong><code>IDAlertView</code> / <code>IDNPopupController</code></strong>: Dialog modal konfirmasi kontrak, peringatan, dan popup interaktif.</li>
-<li><strong><code>IDEmptyView</code></strong>: Tampilan state kosong (<em>empty data</em> / <em>network error</em>) dengan tombol reload <code>id_clickEmptyBlock</code>.</li>
-<li><strong>Custom Font</strong>: <code>MosnDigitBoldFont.otf</code> (di folder <code>Assets/</code>) khusus untuk merender angka nominal pinjaman dan suku bunga dengan tipografi tebal khas finansial.</li>
-</ul>
-<h5 id="item-b-pustaka-tooling-ui-classescztools">B. Pustaka Tooling UI (<code>Classes/CZTools/</code>)</h5>
+<li><strong><code>CZDrawSignatureView</code></strong>: Canvas interaktif berbasis CoreGraphics/Touch tracking untuk tanda tangan digital nasabah secara langsung di layar smartphone.
+</li>
+<li><strong><code>CZRollingNoticeView</code></strong>: Ticker vertikal animasi berjalan untuk pengumuman atau daftar pencairan nasabah terbaru (<em>live disbursement banner</em>).
+</li>
+<li><strong><code>CZCircleProgressView</code></strong>: Indikator lingkaran animasi untuk progres verifikasi KYC dan persentase skor kredit.
+</li>
+<li><strong><code>CZCustomPickView</code></strong>: Komponen bottom sheet picker untuk pemilihan tanggal atau opsi dropdown.
+</li>
+<li><strong><code>CZQRCodeImageFactory</code></strong>: Generator gambar QR Code instan berbasis filter <code>CIQRCodeGenerator</code>.
+</li>
+<li><strong><code>IDAlertView</code> / <code>IDNPopupController</code></strong>: Dialog modal konfirmasi kontrak, peringatan, dan popup interaktif.
+</li>
+<li><strong><code>IDEmptyView</code></strong>: Tampilan state kosong (<em>empty data</em> / <em>network error</em>) dengan tombol reload <code>id_clickEmptyBlock</code>.
+</li>
+<li><strong>Custom Font</strong>: <code>MosnDigitBoldFont.otf</code> (di folder <code>Assets/</code>) khusus untuk merender angka nominal pinjaman dan suku bunga dengan tipografi tebal khas finansial.
+</li></ul>
+</div>
+<div class="doc-subpoint-block" id="item-b-pustaka-tooling-ui-classescztools">
+<h5>B. Pustaka Tooling UI (<code>Classes/CZTools/</code>)</h5>
 <ul>
-<li><strong><code>CZWeakTimer</code></strong>: Pembungkus <code>Timer</code> / <code>CADisplayLink</code> dengan target lemah (<em>weak reference proxy</em>) untuk mencegah <em>retain cycle</em> dan memory leak saat polling.</li>
-<li><strong><code>CZDarkModeUtil</code> & <code>CZThemeProvider</code></strong>: Abstraksi pendeteksian mode gelap (<em>Dark Mode</em>) iOS 13+ dan penyedia palet warna dinamis.</li>
-<li><strong><code>CZWaterFallLayout</code></strong>: Layout custom <code>UICollectionView</code> berbasis grid air terjun (<em>waterfall grid</em>).</li>
-<li><strong><code>CZPhotoAlbumUtil</code></strong>: Utilitas seleksi foto galeri dan kamera dengan penanganan izin privasi runtime.</li>
-</ul>
-<h5 id="item-c-ekstensi-uikit-classesczextension">C. Ekstensi UIKit (<code>Classes/CZExtension/</code>)</h5>
+<li><strong><code>CZWeakTimer</code></strong>: Pembungkus <code>Timer</code> / <code>CADisplayLink</code> dengan target lemah (<em>weak reference proxy</em>) untuk mencegah <em>retain cycle</em> dan memory leak saat polling.
+</li>
+<li><strong><code>CZDarkModeUtil</code> & <code>CZThemeProvider</code></strong>: Abstraksi pendeteksian mode gelap (<em>Dark Mode</em>) iOS 13+ dan penyedia palet warna dinamis.
+</li>
+<li><strong><code>CZWaterFallLayout</code></strong>: Layout custom <code>UICollectionView</code> berbasis grid air terjun (<em>waterfall grid</em>).
+</li>
+<li><strong><code>CZPhotoAlbumUtil</code></strong>: Utilitas seleksi foto galeri dan kamera dengan penanganan izin privasi runtime.
+</li></ul>
+</div>
+<div class="doc-subpoint-block" id="item-c-ekstensi-uikit-classesczextension">
+<h5>C. Ekstensi UIKit (<code>Classes/CZExtension/</code>)</h5>
 <p>Seluruh utilitas UIKit SAMIR dibungkus dalam namespace khusus <strong><code>.cz.</code></strong>:</p>
 <ul>
-<li><strong><code>UIViewController.cz.topViewController()</code></strong>: Mencari ViewController teratas yang sedang aktif di layar secara rekursif (sangat vital untuk router dan dialog modal).</li>
-<li><strong><code>UIView.showToast(withMessage:)</code></strong>: Menampilkan pop-up toast pesan singkat tanpa mengganggu interaksi UI utama.</li>
-<li><strong><code>UIColor.cz.colorWithHex(...)</code></strong>: Parsing warna heksadesimal (misal: <code>#00C288</code> untuk warna hijau SAMIR).</li>
-<li><strong><code>UIBarButtonItem.createCustomItem(...)</code></strong>: Membuat tombol navigasi bar kustom dengan hit area (<em>touch extend inset</em>) yang nyaman disentuh.</li>
-</ul>
+<li><strong><code>UIViewController.cz.topViewController()</code></strong>: Mencari ViewController teratas yang sedang aktif di layar secara rekursif (sangat vital untuk router dan dialog modal).
+</li>
+<li><strong><code>UIView.showToast(withMessage:)</code></strong>: Menampilkan pop-up toast pesan singkat tanpa mengganggu interaksi UI utama.
+</li>
+<li><strong><code>UIColor.cz.colorWithHex(...)</code></strong>: Parsing warna heksadesimal (misal: <code>#00C288</code> untuk warna hijau SAMIR).
+</li>
+<li><strong><code>UIBarButtonItem.createCustomItem(...)</code></strong>: Membuat tombol navigasi bar kustom dengan hit area (<em>touch extend inset</em>) yang nyaman disentuh.
+</li></ul>
+</div>
 <div id="sub-3-audit-arsitektur-apakah-idnpopupconfig-sudah-best-practice" class="doc-subsection">
 <h4>3. Audit Arsitektur: Apakah <code>IDNPopupConfig</code> Sudah Best Practice?</h4>
 </div>
@@ -191,24 +249,30 @@ public class IDServiceManager: NSObject {
     public static var bottomSheet = IDNPopupConfig(animationType: .bottomSheet)
     public static var drawer = IDNPopupConfig(animationType: .drawer, direction: .left)
 }</code></pre>
-<h5 id="item-a-evaluasi-objektif">A. Evaluasi Objektif:</h5>
+<div class="doc-subpoint-block" id="item-a-evaluasi-objektif">
+<h5>A. Evaluasi Objektif:</h5>
 <ol>
-<li><strong>Sisi Positif</strong>:</li>
-</ol>
+<li><strong>Sisi Positif</strong>:
 <ul>
-<li>Berbentuk <code>struct</code> (Value Type) sehingga memiliki semantik penyalinan (<em>copy-on-write</em>), mencegah mutasi data yang tidak disengaja antar instance individu.</li>
-<li>Menyediakan preset bawaan yang memudahkan pemanggilan cepat (<code>.dialog</code>, <code>.bottomSheet</code>, <code>.drawer</code>).</li>
-</ul>
-<ol>
-<li><strong>Kekurangan / Pelanggaran Best Practice (Code Smells)</strong>:</li>
-</ol>
+<li>Berbentuk <code>struct</code> (Value Type) sehingga memiliki semantik penyalinan (<em>copy-on-write</em>), mencegah mutasi data yang tidak disengaja antar instance individu.
+</li>
+<li>Menyediakan preset bawaan yang memudahkan pemanggilan cepat (<code>.dialog</code>, <code>.bottomSheet</code>, <code>.drawer</code>).
+</li></ul>
+</li>
+<li><strong>Kekurangan / Pelanggaran Best Practice (Code Smells)</strong>:
 <ul>
-<li><strong><code>static var</code> Mutable Global State</strong>: Properti preset dideklarasikan sebagai <code>static var</code> (bukan <code>static let</code>). Jika ada kode yang menulis <code>IDNPopupConfig.dialog.bgColor = .red</code>, seluruh dialog di modul lain yang menggunakan preset tersebut akan ikut berubah warna secara global!</li>
-<li><strong>Typo pada API Publik</strong>: Banyak nama parameter dan variabel yang salah ketik pada layer animasi, seperti <code>contianerView</code> (seharusnya <code>containerView</code>) dan <code>transitonContext</code> (seharusnya <code>transitionContext</code>).</li>
-<li>*<em>Menemukan Kembali Roda (</em>Reinventing the Wheel<em>)</em>*: <code>IDNPopup</code> menempelkan view secara manual di atas <code>UIWindow</code> / subview tree alih-alih mengadopsi standar resmi Apple seperti <code>UISheetPresentationController</code> (iOS 15+) atau <code>UIViewControllerTransitioningDelegate</code>. Ini memicu masalah pada adaptasi rotasi layar, VoiceOver accessibility, dan keyboard avoidance.</li>
-<li><strong>Kopling Global</strong>: Nilai default <code>toastPosition</code> terikat langsung ke konstanta global <code>IDNIsSupportDynamicIsLand</code>.</li>
-</ul>
-<h5 id="item-b-refactoring-blueprint-standar-modern">B. Refactoring Blueprint (Standar Modern):</h5>
+<li><strong><code>static var</code> Mutable Global State</strong>: Properti preset dideklarasikan sebagai <code>static var</code> (bukan <code>static let</code>). Jika ada kode yang menulis <code>IDNPopupConfig.dialog.bgColor = .red</code>, seluruh dialog di modul lain yang menggunakan preset tersebut akan ikut berubah warna secara global!
+</li>
+<li><strong>Typo pada API Publik</strong>: Banyak nama parameter dan variabel yang salah ketik pada layer animasi, seperti <code>contianerView</code> (seharusnya <code>containerView</code>) dan <code>transitonContext</code> (seharusnya <code>transitionContext</code>).
+</li>
+<li>*<em>Menemukan Kembali Roda (</em>Reinventing the Wheel<em>)</em>*: <code>IDNPopup</code> menempelkan view secara manual di atas <code>UIWindow</code> / subview tree alih-alih mengadopsi standar resmi Apple seperti <code>UISheetPresentationController</code> (iOS 15+) atau <code>UIViewControllerTransitioningDelegate</code>. Ini memicu masalah pada adaptasi rotasi layar, VoiceOver accessibility, dan keyboard avoidance.
+</li>
+<li><strong>Kopling Global</strong>: Nilai default <code>toastPosition</code> terikat langsung ke konstanta global <code>IDNIsSupportDynamicIsLand</code>.
+</li></ul>
+</li></ol>
+</div>
+<div class="doc-subpoint-block" id="item-b-refactoring-blueprint-standar-modern">
+<h5>B. Refactoring Blueprint (Standar Modern):</h5>
 <p>Gunakan <code>static let</code> atau Factory Method, serta integrasikan dengan native presentation controller:</p>
 <pre><code class="language-swift">public struct IDNPopupConfig {
     // Gunakan static let untuk mencegah mutasi shared state
@@ -218,45 +282,53 @@ public class IDServiceManager: NSObject {
     // Atau Builder Pattern / Factory Method
     public static func makeDefault() -&gt; IDNPopupConfig { ... }
 }</code></pre>
+</div>
 <div id="sub-4-bedah-arsitektur-czswiftantifraudlib-mengapa-pakai-objective-c" class="doc-subsection">
 <h4>4. Bedah Arsitektur <code>CZSwiftAntiFraudLib</code>: Mengapa Pakai Objective-C?</h4>
 </div>
 <p>Path: <a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/learn/iOS-Arch/ios/IDSamirLoan/Application/CZSwiftAntiFraudLib/" target="_blank" rel="noopener noreferrer">🦊 ios/IDSamirLoan/Application/CZSwiftAntiFraudLib/ <span class="branch-tag">learn/iOS-Arch</span> ↗</a></p>
 <p>Modul ini merupakan pustaka hybrid (gabungan <strong>Swift</strong> dan <strong>Objective-C</strong>):</p>
 <ul>
-<li><strong>File Objective-C</strong>: <code>CZCommonManager.m</code>, <code>CZDiskMemoryManager.m</code>, <code>NSData+CZEncryption.m</code>.</li>
-<li><strong>File Swift</strong>: <code>CZAntiFraudManager.swift</code>, <code>CZFpidManager.swift</code>, <code>CZDeviceManager.swift</code>, <code>CZJailbroken.swift</code>.</li>
-</ul>
-<h5 id="item-a-mengapa-menggunakan-objective-c">A. Mengapa Menggunakan Objective-C?</h5>
+<li><strong>File Objective-C</strong>: <code>CZCommonManager.m</code>, <code>CZDiskMemoryManager.m</code>, <code>NSData+CZEncryption.m</code>.
+</li>
+<li><strong>File Swift</strong>: <code>CZAntiFraudManager.swift</code>, <code>CZFpidManager.swift</code>, <code>CZDeviceManager.swift</code>, <code>CZJailbroken.swift</code>.
+</li></ul>
+<div class="doc-subpoint-block" id="item-a-mengapa-menggunakan-objective-c">
+<h5>A. Mengapa Menggunakan Objective-C?</h5>
 <ol>
-<li><strong>Akses Langsung ke BSD POSIX & Mach Kernel C-APIs</strong>:</li>
-</ol>
+<li><strong>Akses Langsung ke BSD POSIX & Mach Kernel C-APIs</strong>:
 <ul>
-<li>Untuk mengumpulkan metrik keamanan hardware tingkat rendah (<code>#include &lt;mach/mach.h&gt;</code>, <code>#include &lt;sys/sysctl.h&gt;</code>, <code>mach_absolute_time()</code>, <code>host_statistics</code>), Objective-C dapat memanggil fungsi dan struct pointer C secara langsung tanpa overhead konversi.</li>
-<li>Di Swift murni, pemanggilan pointer C seperti <code>vm_statistics_data_t</code> atau <code>sysctl</code> membutuhkan syntax unsafe pointer yang sangat verbose dan rentan crash jika alignment memory tidak presisi.</li>
-</ul>
+<li>Untuk mengumpulkan metrik keamanan hardware tingkat rendah (<code>#include &lt;mach/mach.h&gt;</code>, <code>#include &lt;sys/sysctl.h&gt;</code>, <code>mach_absolute_time()</code>, <code>host_statistics</code>), Objective-C dapat memanggil fungsi dan struct pointer C secara langsung tanpa overhead konversi.
+</li>
+<li>Di Swift murni, pemanggilan pointer C seperti <code>vm_statistics_data_t</code> atau <code>sysctl</code> membutuhkan syntax unsafe pointer yang sangat verbose dan rentan crash jika alignment memory tidak presisi.
+</li></ul>
+</li>
+<li><strong>Kriptografi Lawas & Operasi Buffer Memori</strong>:
+<ul>
+<li><code>NSData+CZEncryption.m</code> membungkus pustaka C <code>&lt;CommonCrypto/CommonCryptor.h&gt;</code> untuk enkripsi AES secara cepat pada raw memory bytes.
+</li></ul>
+</li>
+<li><strong>Pustaka Fingerprint Historis</strong>:
+<ul>
+<li>Modul deteksi anti-fraud perangkat fintech sering kali merupakan biner atau source code battle-tested yang diwarisi dari library C/ObjC lama.
+</li></ul>
+</li></ol>
+</div>
+<div class="doc-subpoint-block" id="item-b-cara-kerja-czswiftantifraudlib">
+<h5>B. Cara Kerja <code>CZSwiftAntiFraudLib</code>:</h5>
 <ol>
-<li><strong>Kriptografi Lawas & Operasi Buffer Memori</strong>:</li>
-</ol>
+<li>*<em>Pengumpulan Sinyal (</em>Telemetry Harvesting<em>)</em>*: Mengukur persentase sisa memori RAM, kapasitas disk (<code>czGetTotalDiskSpace</code>), status baterai (<code>UIDeviceBatteryState</code>), waktu boot mesin (<code>bootTime</code>), dan kecerahan layar.
+</li>
+<li><strong>Deteksi Root / Jailbreak (<code>CZJailbroken.swift</code>)</strong>: Memeriksa keberadaan file mencurigakan (<code>/Applications/Cydia.app</code>, <code>/bin/bash</code>), permission menulis ke direktori terlarang <code>/private</code>, dan symbolic links.
+</li>
+<li><strong>Penyimpanan Fingerprint</strong>: Menyimpan device token di iOS Keychain via <code>CZKeychainManager.swift</code> agar tetap bertahan saat aplikasi di-reinstall.
+</li></ol>
+</div>
+<div class="doc-subpoint-block" id="item-c-cara-membuat-modul-serupa-di-project-baru">
+<h5>C. Cara Membuat Modul Serupa di Project Baru:</h5>
 <ul>
-<li><code>NSData+CZEncryption.m</code> membungkus pustaka C <code>&lt;CommonCrypto/CommonCryptor.h&gt;</code> untuk enkripsi AES secara cepat pada raw memory bytes.</li>
-</ul>
-<ol>
-<li><strong>Pustaka Fingerprint Historis</strong>:</li>
-</ol>
-<ul>
-<li>Modul deteksi anti-fraud perangkat fintech sering kali merupakan biner atau source code battle-tested yang diwarisi dari library C/ObjC lama.</li>
-</ul>
-<h5 id="item-b-cara-kerja-czswiftantifraudlib">B. Cara Kerja <code>CZSwiftAntiFraudLib</code>:</h5>
-<ol>
-<li>*<em>Pengumpulan Sinyal (</em>Telemetry Harvesting<em>)</em>*: Mengukur persentase sisa memori RAM, kapasitas disk (<code>czGetTotalDiskSpace</code>), status baterai (<code>UIDeviceBatteryState</code>), waktu boot mesin (<code>bootTime</code>), dan kecerahan layar.</li>
-<li><strong>Deteksi Root / Jailbreak (<code>CZJailbroken.swift</code>)</strong>: Memeriksa keberadaan file mencurigakan (<code>/Applications/Cydia.app</code>, <code>/bin/bash</code>), permission menulis ke direktori terlarang <code>/private</code>, dan symbolic links.</li>
-<li><strong>Penyimpanan Fingerprint</strong>: Menyimpan device token di iOS Keychain via <code>CZKeychainManager.swift</code> agar tetap bertahan saat aplikasi di-reinstall.</li>
-</ol>
-<h5 id="item-c-cara-membuat-modul-serupa-di-project-baru">C. Cara Membuat Modul Serupa di Project Baru:</h5>
-<ul>
-<li><strong>Opsi Modern (100% Swift)</strong>:</li>
-</ul>
+<li><strong>Opsi Modern (100% Swift)</strong>:
+</li></ul>
 <p>Buat Swift Package / Framework, gunakan wrapper Swift modern untuk sysctl:</p>
 <pre><code class="language-swift">  var size = 0
   sysctlbyname(&quot;hw.machine&quot;, nil, &amp;size, nil, 0)
@@ -265,24 +337,31 @@ public class IDServiceManager: NSObject {
   let platform = String(cString: machine)</code></pre>
 <p>Gunakan <code>CryptoKit</code> bawaan Apple (<code>AES.GCM</code>) menggantikan <code>CommonCrypto</code>.</p>
 <ul>
-<li><strong>Opsi Hybrid (ObjC + Swift)</strong>:</li>
-</ul>
+<li><strong>Opsi Hybrid (ObjC + Swift)</strong>:
 <ol>
-<li>Tambahkan file <code>.m</code> dan <code>.h</code> ke direktori proyek.</li>
-<li>Buka <code>Project Settings</code> -> <code>Build Settings</code> -> cari <strong>Objective-C Bridging Header</strong>.</li>
-<li>Daftarkan header <code>.h</code> tersebut (misal: <code>CZCommonManager.h</code>).</li>
-<li>Aktifkan <strong><code>Defines Module = YES</code></strong> agar class ObjC dapat dipanggil dari Swift via <code>import YourModule</code> atau langsung dikenali di satu target yang sama.</li>
-</ol>
+<li>Tambahkan file <code>.m</code> dan <code>.h</code> ke direktori proyek.
+</li>
+<li>Buka <code>Project Settings</code> -> <code>Build Settings</code> -> cari <strong>Objective-C Bridging Header</strong>.
+</li>
+<li>Daftarkan header <code>.h</code> tersebut (misal: <code>CZCommonManager.h</code>).
+</li>
+<li>Aktifkan <strong><code>Defines Module = YES</code></strong> agar class ObjC dapat dipanggil dari Swift via <code>import YourModule</code> atau langsung dikenali di satu target yang sama.
+</li></ol>
+</li></ul>
+</div>
 <div id="sub-3-pustaka-utilitas-bersama-czswiftutils" class="doc-subsection">
 <h4>3. Pustaka Utilitas Bersama (<code>CZSwiftUtils</code>)</h4>
 </div>
 <p>Path: <a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/learn/iOS-Arch/ios/IDSamirLoan/Application/CZSwiftUtils/" target="_blank" rel="noopener noreferrer">🦊 ios/IDSamirLoan/Application/CZSwiftUtils/ <span class="branch-tag">learn/iOS-Arch</span> ↗</a></p>
 <ul>
-<li><strong><code>CZAsyncs</code></strong>: Pembungkus <code>DispatchQueue</code> untuk eksekusi background thread dan kembali ke main thread secara aman.</li>
-<li><strong><code>CZDebouncer</code></strong>: Menahan panggilan event berulang (anti <em>double-click</em> pada tombol ajukan pinjaman).</li>
-<li><strong><code>CZRegexHelper</code></strong>: Evaluasi regex untuk format email, nomor KTP (16 digit), dan nomor telepon Indonesia (<code>+62</code> / <code>08</code>).</li>
-<li><strong><code>CZPrintLog</code></strong>: Logger kustom yang otomatis mematikan pencetakan log di konsol saat biner dikompilasi untuk mode produksi (<code>PROD</code>).</li>
-</ul>
+<li><strong><code>CZAsyncs</code></strong>: Pembungkus <code>DispatchQueue</code> untuk eksekusi background thread dan kembali ke main thread secara aman.
+</li>
+<li><strong><code>CZDebouncer</code></strong>: Menahan panggilan event berulang (anti <em>double-click</em> pada tombol ajukan pinjaman).
+</li>
+<li><strong><code>CZRegexHelper</code></strong>: Evaluasi regex untuk format email, nomor KTP (16 digit), dan nomor telepon Indonesia (<code>+62</code> / <code>08</code>).
+</li>
+<li><strong><code>CZPrintLog</code></strong>: Logger kustom yang otomatis mematikan pencetakan log di konsol saat biner dikompilasi untuk mode produksi (<code>PROD</code>).
+</li></ul>
 </section>
 <section id="sec-walkthrough" class="doc-section">
 <h3>🪜 E. Step-by-Step Walkthrough: Cara Menggunakan <code>IDServiceManager</code> di Fitur Baru</h3>
@@ -306,12 +385,12 @@ if let userInfo = loginService.loginInfo() {
 <section id="sec-why" class="doc-section">
 <h3>⚖️ F. Why It Matters: Keuntungan Standarisasi Komponen Bersama</h3>
 <ul>
-<li><strong>Konsistensi Tampilan (Design System)</strong>:</li>
-</ul>
+<li><strong>Konsistensi Tampilan (Design System)</strong>:
+</li></ul>
 <p>Penggunaan <code>CZSwiftUIKit</code> memastikan warna tombol, font, sudut lengkung (border radius), dan gaya dialog popup seragam di seluruh modul dari Beranda hingga Akun Saya.</p>
 <ul>
-<li><strong>Mencegah Duplikasi Kode</strong>:</li>
-</ul>
+<li><strong>Mencegah Duplikasi Kode</strong>:
+</li></ul>
 <p>Fungsi-fungsi umum (seperti validasi regex nomor KTP atau pencarian top ViewController) terpusat di <code>CZSwiftUtils</code>, sehingga tidak ada tim yang membuat fungsi helper redundan.</p>
 </section>
 <section id="sec-example" class="doc-section">
@@ -329,20 +408,28 @@ private let debouncer = CZDebouncer(delay: 0.5)
 <section id="sec-mistakes" class="doc-section">
 <h3>⚠️ H. Common Mistakes & Debugging</h3>
 <ul>
-<li><strong>Lupa Menangani Kasus Handler <code>nil</code></strong>:</li>
-<li><em>Kesalahan</em>: Menggunakan force-unwrap pada service: <code>IDServiceManager.loginService()!.isLogin()</code>.</li>
-<li><em>Bahaya</em>: Jika runtime belum selesai menginisialisasi registry, aplikasi akan crash instan! Selalu gunakan optional chaining <code>loginService()?.isLogin() ?? false</code>.</li>
-<li><strong>Salah Panggil <code>reapyService()</code> vs <code>repayService()</code></strong>:</li>
-<li>Ingat selalu nama method di <code>IDServiceManager</code> adalah <code>reapyService()</code>.</li>
-</ul>
+<li><strong>Lupa Menangani Kasus Handler <code>nil</code></strong>:
+<ul>
+<li><em>Kesalahan</em>: Menggunakan force-unwrap pada service: <code>IDServiceManager.loginService()!.isLogin()</code>.
+</li>
+<li><em>Bahaya</em>: Jika runtime belum selesai menginisialisasi registry, aplikasi akan crash instan! Selalu gunakan optional chaining <code>loginService()?.isLogin() ?? false</code>.
+</li></ul>
+</li>
+<li><strong>Salah Panggil <code>reapyService()</code> vs <code>repayService()</code></strong>:
+<ul>
+<li>Ingat selalu nama method di <code>IDServiceManager</code> adalah <code>reapyService()</code>.
+</li></ul>
+</li></ul>
 </section>
 <section id="sec-check" class="doc-section">
 <h3>🧠 I. Knowledge Check</h3>
 <ol>
-<li>Apa method di <code>IDServiceManager</code> yang bertugas membuka form login secara modal?</li>
-<li>Bagaimana cara mencari ViewController yang sedang aktif di layar menggunakan <code>CZSwiftUIKit</code>?</li>
-<li>Sebutkan peran dari class <code>CZDebouncer</code> pada interaksi tombol transaksi finansial!</li>
-</ol>
+<li>Apa method di <code>IDServiceManager</code> yang bertugas membuka form login secara modal?
+</li>
+<li>Bagaimana cara mencari ViewController yang sedang aktif di layar menggunakan <code>CZSwiftUIKit</code>?
+</li>
+<li>Sebutkan peran dari class <code>CZDebouncer</code> pada interaksi tombol transaksi finansial!
+</li></ol>
 <p><strong>Latihan Observasi</strong>:</p>
 <p>Buka file <code>ios/IDSamirLoan/Application/CZSwiftUIKit/Classes/CZExtension/UIViewController+CZExtension.swift</code>. Pelajari bagaimana implementasi <code>topViewController()</code> menelusuri hierarki <code>UINavigationController</code>, <code>UITabBarController</code>, dan <code>presentedViewController</code>.</p>
 </section>

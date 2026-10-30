@@ -101,28 +101,35 @@
 <h3>🎯 A. Learning Objective</h3>
 <p>Setelah mempelajari dokumen ini, pembaca akan mampu:</p>
 <ol>
-<li>Memahami pembagian layer: Presentation (<code>ViewController</code> & <code>View</code>), Business/Presentation Logic (<code>Presenter</code>), Data/Network (<code>Service</code>), dan State/Schema (<code>Model</code>).</li>
-<li>Mengetahui fitur bawaan dari <code>IDBaseViewController</code> (nav bar style, pop gesture toggle, tracking view duration).</li>
-<li>Memahami perbedaan antara pola Presenter standar vs pola MVVM-Rx di <code>LoanConfirmModule</code>.</li>
-</ol>
+<li>Memahami pembagian layer: Presentation (<code>ViewController</code> & <code>View</code>), Business/Presentation Logic (<code>Presenter</code>), Data/Network (<code>Service</code>), dan State/Schema (<code>Model</code>).
+</li>
+<li>Mengetahui fitur bawaan dari <code>IDBaseViewController</code> (nav bar style, pop gesture toggle, tracking view duration).
+</li>
+<li>Memahami perbedaan antara pola Presenter standar vs pola MVVM-Rx di <code>LoanConfirmModule</code>.
+</li></ol>
 </section>
 <section id="sec-prereq" class="doc-section">
 <h3>📋 B. Prerequisites</h3>
 <ul>
-<li>Sudah membaca <a href="01-architecture-overview.html">01-architecture-overview.md</a>.</li>
-<li>Mengetahui pola desain MVC, MVP, dan MVVM pada pengembangan iOS.</li>
-</ul>
+<li>Sudah membaca <a href="01-architecture-overview.html">01-architecture-overview.md</a>.
+</li>
+<li>Mengetahui pola desain MVC, MVP, dan MVVM pada pengembangan iOS.
+</li></ul>
 </section>
 <section id="sec-simple" class="doc-section">
 <h3>💡 C. Simple Explanation (Analogi Restoran Berbintang)</h3>
 <p>Bayangkan sebuah restoran yang melayani pesanan makanan:</p>
 <ul>
-<li><strong>Pelayan (ViewController)</strong>: Menghadapi pelanggan, mencatat menu yang dipilih pelanggan di layar, mengatur dekorasi meja, dan menampilkan piring makanan.</li>
-<li><strong>Kepala Pelayan / Maître d' (Presenter)</strong>: Menerima pesanan dari pelayan, memvalidasi apakah pelanggan memenuhi syarat (misal: usia cukup untuk menu tertentu), lalu menyuruh bagian gudang mengambil bahan baku.</li>
-<li><strong>Bagian Pengadaan / Gudang (Service)</strong>: Menghubungi supplier melalui telepon (<strong>Network API Request</strong>) dan mengambil bahan makanan dalam kardus (<strong>JSON Response</strong>).</li>
-<li><strong>Kardus Makanan Terdaftar (Model)</strong>: Struktur data rapi yang berisi label bahan makanan, tanggal kadaluwarsa, dan takaran.</li>
-<li><strong>Piring & Hiasan Meja (View / TableViewCell)</strong>: Elemen visual tempat menyajikan data agar terlihat menarik bagi pelanggan.</li>
-</ul>
+<li><strong>Pelayan (ViewController)</strong>: Menghadapi pelanggan, mencatat menu yang dipilih pelanggan di layar, mengatur dekorasi meja, dan menampilkan piring makanan.
+</li>
+<li><strong>Kepala Pelayan / Maître d' (Presenter)</strong>: Menerima pesanan dari pelayan, memvalidasi apakah pelanggan memenuhi syarat (misal: usia cukup untuk menu tertentu), lalu menyuruh bagian gudang mengambil bahan baku.
+</li>
+<li><strong>Bagian Pengadaan / Gudang (Service)</strong>: Menghubungi supplier melalui telepon (<strong>Network API Request</strong>) dan mengambil bahan makanan dalam kardus (<strong>JSON Response</strong>).
+</li>
+<li><strong>Kardus Makanan Terdaftar (Model)</strong>: Struktur data rapi yang berisi label bahan makanan, tanggal kadaluwarsa, dan takaran.
+</li>
+<li><strong>Piring & Hiasan Meja (View / TableViewCell)</strong>: Elemen visual tempat menyajikan data agar terlihat menarik bagi pelanggan.
+</li></ul>
 </section>
 <section id="sec-actual" class="doc-section">
 <h3>💻 D. Actual Implementation (Rincian Tanggung Jawab Layer)</h3>
@@ -182,21 +189,27 @@ classDiagram
 <p>Semua controller mewarisi base class <a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/learn/iOS-Arch/ios/IDSamirLoan/Application/SamirCommonModule/Classes/IDBase/IDBaseViewController.swift" target="_blank" rel="noopener noreferrer">🦊 ios/IDSamirLoan/Application/SamirCommonModule/Classes/IDBase/IDBaseViewController.swift <span class="branch-tag">learn/iOS-Arch</span> ↗</a>.</p>
 <p>Fitur standar yang disediakan otomatis oleh base controller:</p>
 <ul>
-<li><strong>Navigation Bar Styling</strong>: Properti <code>idNavType</code> (<code>.idNavTypeWhite</code>, <code>.idNavTypeClear</code>, <code>.idNavTypeNormal</code>).</li>
-<li><strong>Interactive Pop Gesture</strong>: Fungsi <code>popGestureClose()</code> untuk mematikan gesture swipe back saat pengisian formulir kritis (misal: verifikasi wajah atau input PIN) dan <code>popGestureOpen()</code> untuk mengaktifkannya kembali.</li>
-<li><strong>Duration Tracking</strong>: Otomatis merekam <code>startTimeStamp</code> saat <code>viewWillAppear</code> dan <code>endTimeStamp</code> saat <code>viewWillDisappear</code> untuk dikirim ke sistem pelaporan risiko fraud (<code>IDCustomPointManager.reportRiskViewRealtime</code>).</li>
-<li><strong>Empty & Error State</strong>: Callback <code>id_clickEmptyBlock</code> untuk reload saat jaringan bermasalah.</li>
-</ul>
+<li><strong>Navigation Bar Styling</strong>: Properti <code>idNavType</code> (<code>.idNavTypeWhite</code>, <code>.idNavTypeClear</code>, <code>.idNavTypeNormal</code>).
+</li>
+<li><strong>Interactive Pop Gesture</strong>: Fungsi <code>popGestureClose()</code> untuk mematikan gesture swipe back saat pengisian formulir kritis (misal: verifikasi wajah atau input PIN) dan <code>popGestureOpen()</code> untuk mengaktifkannya kembali.
+</li>
+<li><strong>Duration Tracking</strong>: Otomatis merekam <code>startTimeStamp</code> saat <code>viewWillAppear</code> dan <code>endTimeStamp</code> saat <code>viewWillDisappear</code> untuk dikirim ke sistem pelaporan risiko fraud (<code>IDCustomPointManager.reportRiskViewRealtime</code>).
+</li>
+<li><strong>Empty & Error State</strong>: Callback <code>id_clickEmptyBlock</code> untuk reload saat jaringan bermasalah.
+</li></ul>
 <div id="sub-2-presenter-layer-presenter" class="doc-subsection">
 <h4>2. Presenter Layer (<code>Presenter</code>)</h4>
 </div>
 <p>Presenter di SAMIR bertindak sebagai koordinator logika presentasi:</p>
 <ul>
-<li><strong>Validasi Input</strong>: Memeriksa format nomor KTP (16 digit), validasi nomor rekening, atau batas usia legal (<code>wetherAgeInLegalRange</code> di <code>IDNewAuthPresenter</code>).</li>
-<li><strong>State Machine & Polling</strong>: Mengelola status berkala (contoh: polling keputusan analisa kuota di <code>IDAssessPresenter.startPolling</code>).</li>
-<li><strong>Pelaporan Analitik</strong>: Memicu event klik tombol atau impresi layar ke <code>IDCustomPointManager</code> atau <code>IDDataReportUtils</code>.</li>
-</ul>
-<h5 id="item-pola-komposisi-presenter-mengapa-di-idnewauthpresenter-terdapat-2-presenter-lain">Pola Komposisi Presenter: Mengapa di <code>IDNewAuthPresenter</code> Terdapat 2 Presenter Lain?</h5>
+<li><strong>Validasi Input</strong>: Memeriksa format nomor KTP (16 digit), validasi nomor rekening, atau batas usia legal (<code>wetherAgeInLegalRange</code> di <code>IDNewAuthPresenter</code>).
+</li>
+<li><strong>State Machine & Polling</strong>: Mengelola status berkala (contoh: polling keputusan analisa kuota di <code>IDAssessPresenter.startPolling</code>).
+</li>
+<li><strong>Pelaporan Analitik</strong>: Memicu event klik tombol atau impresi layar ke <code>IDCustomPointManager</code> atau <code>IDDataReportUtils</code>.
+</li></ul>
+<div class="doc-subpoint-block" id="item-pola-komposisi-presenter-mengapa-di-idnewauthpresenter-terdapat-2-presenter-lain">
+<h5>Pola Komposisi Presenter: Mengapa di <code>IDNewAuthPresenter</code> Terdapat 2 Presenter Lain?</h5>
 <p>Di dalam <a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/learn/iOS-Arch/ios/IDSamirLoan/Application/SamirAuthModule/Classes/IDPresenterV2/IDNewAuthPresenter.swift" target="_blank" rel="noopener noreferrer">🦊 IDNewAuthPresenter.swift:L33-43 <span class="branch-tag">learn/iOS-Arch</span> ↗</a>, didefinisikan dua child presenter:</p>
 <pre><code class="language-swift">lazy var resourcePresenter: IDAuthResourcePresenter = { [unowned self] in
     let presenter = IDAuthResourcePresenter()
@@ -211,116 +224,205 @@ lazy var bankPresenter: IDAuthBankPresenter = { [unowned self] in
 }()</code></pre>
 <p><strong>Mengapa Dibuat Demikian?</strong></p>
 <ol>
-<li><strong>Pencegahan "God Presenter" (Separation of Concerns / SRP)</strong>:</li>
-</ol>
+<li><strong>Pencegahan "God Presenter" (Separation of Concerns / SRP)</strong>:
 <ul>
-<li>Alur KYC autentikasi V2 mencakup 5 langkah besar (<code>.ocr</code>, <code>.basic</code>, <code>.job</code>, <code>.contact</code>, <code>.bank</code>, <code>.changeBank</code>). Jika seluruh logika ditaruh di satu file, ukurannya bisa menembus lebih dari 3.000 baris.</li>
-</ul>
-<ol>
-<li>*<em>Pola Komposisi (</em>Composite Presenter Pattern<em>)</em>*:</li>
-</ol>
+<li>Alur KYC autentikasi V2 mencakup 5 langkah besar (<code>.ocr</code>, <code>.basic</code>, <code>.job</code>, <code>.contact</code>, <code>.bank</code>, <code>.changeBank</code>). Jika seluruh logika ditaruh di satu file, ukurannya bisa menembus lebih dari 3.000 baris.
+</li></ul>
+</li>
+<li>*<em>Pola Komposisi (</em>Composite Presenter Pattern<em>)</em>*:
 <ul>
-<li><code>IDNewAuthPresenter</code> bertindak sebagai <em>Orkestrator Utama</em> (mengelola navigasi antarlangkah, tableview datasource/delegate, validasi form, dan submission).</li>
-<li><strong><code>resourcePresenter</code> (Spesialis Kamus Data & Wilayah)</strong>: Bertanggung jawab khusus mengunduh dan menyajikan data berjenjang (<em>cascading selection</em>) untuk provinsi, kota, kecamatan, serta kamus opsi (agama, jenis pekerjaan, status perkawinan).</li>
-<li><strong><code>bankPresenter</code> (Spesialis Rekening Bank)</strong>: Bertanggung jawab khusus mencari daftar nama bank, menyaring bank populer (<em>hot banks</em>), dan mengelola pencarian akun bank nasabah.</li>
-</ul>
-<ol>
-<li><strong>Reusability</strong>: <code>IDAuthResourcePresenter</code> dan <code>IDAuthBankPresenter</code> merupakan modul independen yang sudah matang dan dapat digunakan ulang di luar layar KYC tanpa menduplikasi kode.</li>
-</ol>
+<li><code>IDNewAuthPresenter</code> bertindak sebagai <em>Orkestrator Utama</em> (mengelola navigasi antarlangkah, tableview datasource/delegate, validasi form, dan submission).
+</li>
+<li><strong><code>resourcePresenter</code> (Spesialis Kamus Data & Wilayah)</strong>: Bertanggung jawab khusus mengunduh dan menyajikan data berjenjang (<em>cascading selection</em>) untuk provinsi, kota, kecamatan, serta kamus opsi (agama, jenis pekerjaan, status perkawinan).
+</li>
+<li><strong><code>bankPresenter</code> (Spesialis Rekening Bank)</strong>: Bertanggung jawab khusus mencari daftar nama bank, menyaring bank populer (<em>hot banks</em>), dan mengelola pencarian akun bank nasabah.
+</li></ul>
+</li>
+<li><strong>Reusability</strong>: <code>IDAuthResourcePresenter</code> dan <code>IDAuthBankPresenter</code> merupakan modul independen yang sudah matang dan dapat digunakan ulang di luar layar KYC tanpa menduplikasi kode.
+</li></ol>
+</div>
 <div id="sub-3-service-layer-service" class="doc-subsection">
 <h4>3. Service Layer (<code>Service</code>)</h4>
 </div>
 <p>Service murni bertanggung jawab atas interaksi I/O jaringan:</p>
 <ul>
-<li>Memanggil <code>IDNetworkRequest.id_startPOSTRequest(...)</code>.</li>
-<li>Mengurai response dictionary menggunakan pustaka KakaJSON:</li>
-</ul>
+<li>Memanggil <code>IDNetworkRequest.id_startPOSTRequest(...)</code>.
+</li>
+<li>Mengurai response dictionary menggunakan pustaka KakaJSON:
+</li></ul>
 <pre><code class="language-swift">  if let resultDict = req.responseObject as? [String: Any] {
       let model = resultDict.kj.model(IDAssessModel.self)
       success(model)
   }</code></pre>
 <ul>
-<li>Menangani pemetaan error jaringan ke format yang dimengerti Presenter.</li>
-</ul>
+<li>Menangani pemetaan error jaringan ke format yang dimengerti Presenter.
+</li></ul>
 <div id="sub-4-model-layer-model" class="doc-subsection">
 <h4>4. Model Layer (<code>Model</code>)</h4>
 </div>
 <p>Struct atau Class yang mengadopsi protokol <code>Convertible</code> dari KakaJSON:</p>
 <ul>
-<li>Mendefinisikan schema payload backend.</li>
-<li>Mendukung mapping custom key jika nama properti JSON berbeda dari nama properti Swift.</li>
-</ul>
+<li>Mendefinisikan schema payload backend.
+</li>
+<li>Mendukung mapping custom key jika nama properti JSON berbeda dari nama properti Swift.
+</li></ul>
 <div id="sub-5-kasus-khusus-loanconfirmmodule-arsitektur-reaktif-mvvm-rx" class="doc-subsection">
 <h4>5. Kasus Khusus: <code>LoanConfirmModule</code> (Arsitektur Reaktif MVVM-Rx)</h4>
 </div>
 <p>Path: <a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/learn/iOS-Arch/ios/IDSamirLoan/Application/SamirLoanModule/Classes/LoanConfirmModule/" target="_blank" rel="noopener noreferrer">🦊 ios/IDSamirLoan/Application/SamirLoanModule/Classes/LoanConfirmModule/ <span class="branch-tag">learn/iOS-Arch</span> ↗</a></p>
 <p>Di modul ini, alur data tidak menggunakan delegate Presenter, melainkan stream reaktif berbasis Clean MVVM + RxSwift:</p>
-<h5 id="item-a-kontrak-input-output-loanconfirmviewmodeltype">A. Kontrak Input-Output (<code>LoanConfirmViewModelType</code>)</h5>
+<div class="doc-subpoint-block" id="item-a-kontrak-input-output-loanconfirmviewmodeltype">
+<h5>A. Kontrak Input-Output (<code>LoanConfirmViewModelType</code>)</h5>
 <p>Arsitektur ViewModel memisahkan secara tegas antara aksi pengguna (<em>Input</em>) dan state UI (<em>Output</em>):</p>
-<ul>
-<li><strong><code>LoanConfirmViewModelInput</code></strong>:</li>
+<ul class="viewmodel-contract-list">
+<li>
+  <strong><code>LoanConfirmViewModelInput</code></strong>:
+  <p>Menggunakan <code>PublishSubject</code> untuk menerima event UI: <code>confirmTap</code>, <code>selectCoupon</code>, <code>selectProduct</code>, <code>toggleTermsAgreement</code>, <code>refreshTrial</code>, <code>submitCycleLoanOrder</code>.</p>
+  <div class="callout best-practice">
+    <div class="callout-title">💡 Mengapa Menggunakan <code>PublishSubject</code> untuk Input?</div>
+    <ol>
+      <li><strong>Karakteristik Zero-Buffer</strong>: <code>PublishSubject</code> hanya memancarkan event baru ke subscriber yang sedang aktif saat event terjadi, tanpa menyimpan riwayat (<em>no initial/replay cache</em>).</li>
+      <li><strong>Aksi Pengguna adalah Transient Event</strong>: Interaksi seperti ketukan tombol (<code>confirmTap</code>) atau toggle persetujuan adalah kejadian sesaat, bukan status permanen.</li>
+      <li><strong>Pencegahan Pemicuan Hantu (<em>Ghost Triggers</em>)</strong>: Berbeda dari <code>BehaviorSubject</code> / <code>BehaviorRelay</code> yang selalu mengingat 1 nilai terakhir. Jika <code>confirmTap</code> menggunakan <code>BehaviorSubject</code>, maka setiap kali ada observer baru yang binding (misal layar dibuka kembali atau orientasi layar berubah), event ketukan terakhir akan langsung dipancarkan ulang secara otomatis—yang bisa memicu pengajuan pinjaman ganda tanpa sentuhan pengguna!</li>
+    </ol>
+    <div class="callout-subheading" style="margin-top: 1rem; padding-top: 0.75rem; border-top: 1px dashed rgba(255,255,255,0.15);">
+      <p><strong>🔬 Cara Kerja Teknikal di Balik Layar (Under-the-Hood Mechanics):</strong></p>
+      <ul>
+        <li><strong>Struktur Data Internal</strong>: Di dalam source code RxSwift, <code>PublishSubject</code> menyimpan subscriber dalam sebuah koleksi thread-safe <code>_observers = Bag&lt;AnyObserver&lt;Element&gt;&gt;()</code>. Yang terpenting: class ini <strong>sama sekali tidak memiliki variabel penyimpan nilai</strong> (tidak ada <code>_value</code> seperti pada <code>BehaviorSubject</code>, dan tidak ada antrean array seperti pada <code>ReplaySubject</code>).</li>
+        <li><strong>Saat <code>subscribe()</code></strong>: Observer baru hanya didaftarkan ke dalam <code>Bag</code>. Tidak ada event yang dipancarkan sama sekali saat inisialisasi langganan.</li>
+        <li><strong>Saat <code>confirmTap.onNext(())</code> Dipanggil</strong>:
+          <ol style="margin-top: 0.35rem;">
+            <li>Memperoleh kunci thread via <code>RecursiveLock()</code>.</li>
+            <li>Mengambil snapshot dari subscriber yang aktif di dalam <code>Bag</code>.</li>
+            <li>Melepas kunci lock dan mengeksekusi perulangan sinkron: <code>for observer in observers { observer.on(.next(value)) }</code>.</li>
+            <li>Begitu seluruh subscriber menerima event, objek event langsung <strong>dilepas dan dibersihkan dari memori</strong> tanpa meninggalkan residu buffer apa pun.</li>
+          </ol>
+        </li>
+        <li><strong>Jembatan Imperatif ke Reaktif</strong>: <code>PublishSubject</code> bertindak sebagai adaptor yang mengubah pemanggilan fungsi imperatif UIKit (misal <code>@objc func confirmButtonTapped()</code>) menjadi aliran reaktif deklaratif (<code>confirmTap.withLatestFrom(...)</code>) dengan isolasi memori yang steril.</li>
+      </ul>
+    </div>
+  </div>
+</li>
+<li>
+  <strong><code>LoanConfirmViewModelOutput</code></strong>:
+  <p>Menggunakan <strong><code>Driver&lt;T&gt;</code></strong> untuk aliran data yang diobservasi oleh View: <code>isLoading</code>, <code>error</code>, <code>loanData</code>, <code>selectedCoupon</code>, <code>trialResult</code>, <code>canSubmit</code>, <code>showIncomeUpdate</code>.</p>
+  <div class="callout best-practice">
+    <div class="callout-title">💡 Mengapa Menggunakan <code>Driver&lt;T&gt;</code> untuk Output?</div>
+    <ol>
+      <li><strong>Jaminan Main Thread</strong>: Dipastikan berjalan di <code>MainScheduler.instance</code>. Developer tidak perlu khawatir terjadi UI glitch atau crash UIKit akibat pembaruan dari thread latar belakang.</li>
+      <li><strong>Tidak Pernah Mengirim Error (<code>Never Errors</code>)</strong>: Stream <code>Observable</code> standar akan mati permanen jika terjadi error uncaught (misal parsing gagal). <code>Driver</code> mewajibkan penanganan error saat konversi (<code>asDriver(onErrorJustReturn: ...)</code>), sehingga stream tidak akan putus dan UI tidak akan membeku (<em>freeze</em>).</li>
+      <li><strong>Sharing Replay Otomatis</strong>: Memiliki sifat <code>share(replay: 1, scope: .whileConnected)</code> bawaan. Multiple subscription tidak memicu duplikasi network call.</li>
+    </ol>
+    <div class="callout-subheading" style="margin-top: 1rem; padding-top: 0.75rem; border-top: 1px dashed rgba(255,255,255,0.15);">
+      <p><strong>Alternatif Selain <code>Driver&lt;T&gt;</code>:</strong></p>
+      <ul>
+        <li><strong><code>Signal&lt;T&gt;</code> (RxCocoa)</strong>: Serupa dengan <code>Driver</code> (Main Thread & Never Error), namun <code>Signal</code> <strong>tidak mereplay</strong> nilai terakhir. Sangat ideal untuk <em>one-off UI actions</em> seperti menampilkan Alert/Toast atau memicu transisi layar.</li>
+        <li><strong><code>Observable&lt;T&gt;</code> Manual</strong>: Bisa menggunakan <code>Observable</code> biasa, tetapi wajib menulis boilerplate manual: <code>.observe(on: MainScheduler.instance).catchAndReturn(...).share(replay: 1)</code>. Ini rawan <em>human error</em> jika ada tim yang lupa.</li>
+        <li><strong>Modern Swift Concurrency</strong>: Di iOS modern (iOS 15+), alternatif first-party tanpa library eksternal adalah kombinasi <code>@MainActor</code> class dengan <code>AsyncStream&lt;T&gt;</code> atau Combine <code>@Published</code>.</li>
+      </ul>
+    </div>
+  </div>
+</li>
 </ul>
-<p>Menggunakan <code>PublishSubject</code> untuk menerima event UI: <code>confirmTap</code>, <code>selectCoupon</code>, <code>selectProduct</code>, <code>toggleTermsAgreement</code>, <code>refreshTrial</code>, <code>submitCycleLoanOrder</code>.</p>
-<ul>
-<li><strong><code>LoanConfirmViewModelOutput</code></strong>:</li>
-</ul>
-<p>Menggunakan <strong><code>Driver&lt;T&gt;</code></strong> untuk aliran data yang diobservasi oleh View: <code>isLoading</code>, <code>error</code>, <code>loanData</code>, <code>selectedCoupon</code>, <code>trialResult</code>, <code>canSubmit</code>, <code>showIncomeUpdate</code>.</p>
-<h5 id="item-b-kapan-memakai-subscribe-dan-kapan-memakai-drive">B. Kapan Memakai <code>subscribe</code> dan Kapan Memakai <code>drive</code>?</h5>
+</div>
+<div class="doc-subpoint-block" id="item-b-kapan-memakai-subscribe-dan-kapan-memakai-drive">
+<h5>B. Kapan Memakai <code>subscribe</code> dan Kapan Memakai <code>drive</code>?</h5>
 <div class="table-container"><table class="data-table"><thead><tr><th>Skenario Penggunaan</th><th>Rekomendasi</th><th>Alasan Teknis</th></tr></thead><tbody><tr><td><strong>Binding ke Elemen UI</strong> (<code>UILabel</code>, <code>UIButton</code>, <code>HUD</code>, <code>TableView</code>)</td><td><strong><code>drive</code></strong></td><td>1. <strong>Pasti dieksekusi di Main Thread</strong> (<code>MainScheduler</code>). Tidak perlu menulis <code>.observe(on: MainScheduler.instance)</code>.<br/>2. <strong>Tidak Pernah Error</strong>: <code>Driver</code> menjamin stream tidak akan putus akibat error uncaught, sehingga UI tidak membeku.<br/>3. <strong>Sharing Replay Otomatis</strong>: Memiliki sifat <code>share(replay: 1, scope: .whileConnected)</code> sehingga multiple binding ke label/tombol tidak memicu duplicate network request.</td></tr><tr><td><strong>Logika Data, Domain, Service, & Network API</strong></td><td><strong><code>subscribe</code></strong></td><td>1. <strong>Dapat Berjalan di Background</strong>: Operasi I/O, parsing JSON, atau komputasi berat membutuhkan background thread (<code>ConcurrentDispatchQueueScheduler</code>).<br/>2. <strong>Penanganan Error Alami</strong>: Perlu menangkap event <code>.error(Error)</code> dari HTTP request untuk retry atau logging.<br/>3. <strong>Menerima Input di ViewModel</strong>: Observasi event <code>PublishSubject</code> di level internal ViewModel.</td></tr></tbody></table></div>
+</div>
+<div class="doc-subpoint-block" id="item-bedah-konkret-mengapa-multiple-binding-tanpa-driver-memicu-duplicate-network-request">
+<h5>Bedah Konkret: Mengapa Multiple Binding Tanpa Driver Memicu Duplicate Network Request?</h5>
+<p>Dalam RxSwift, <code>Observable</code> standar bersifat <strong>Cold</strong>. Setiap kali ada kode <code>.subscribe()</code>, seluruh pipeline dari awal akan dieksekusi ulang dari nol.</p>
+<p>Perhatikan skenario bahaya berikut jika tanpa <code>Driver</code> / <code>share</code>:</p>
+<pre><code class="language-swift">// Di ViewModel / Service:
+let loanDataObservable = service.fetchLoanConfirmData() // Network API Request
+
+// Di ViewController:
+loanDataObservable.subscribe(onNext: { labelNominal.text = $0.amount }) // 🚨 Request HTTP #1 dikirim!
+loanDataObservable.subscribe(onNext: { labelTenor.text = $0.tenor })     // 🚨 Request HTTP #2 dikirim!
+loanDataObservable.subscribe(onNext: { btnSubmit.isEnabled = $0.canApply }) // 🚨 Request HTTP #3 dikirim!</code></pre>
+<p><strong>Dampaknya</strong>: Hanya untuk memperbarui 3 elemen di layar yang sama, aplikasi mengirim <strong>3 kali HTTP GET request identik</strong> ke server SAMIR!</p>
+<p>Dengan <code>Driver</code> (yang membungkus <code>share(replay: 1, scope: .whileConnected)</code>):</p>
+<ul>
+<li>Network request hanya dieksekusi <strong>1 kali</strong>.
+</li>
+<li>Hasil response disimpan dalam buffer (1 item terakhir).
+</li>
+<li>Ketiga komponen UI (<code>labelNominal</code>, <code>labelTenor</code>, <code>btnSubmit</code>) bersama-sama <strong>berbagi (share)</strong> data yang sama dari buffer tanpa memicu panggilan jaringan tambahan.
+</li></ul>
 <p><em>Aturan Praktis (Rule of Thumb)</em>:</p>
 <ul>
-<li>Di dalam <strong><code>ViewController</code></strong>: Gunakan <code>viewModel.output.someData.drive(...)</code> saat memperbarui tampilan.</li>
-<li>Di dalam <strong><code>Service</code> / Internal <code>ViewModel</code></strong>: Gunakan <code>.subscribe(...)</code> saat menangani pipeline asinkron dan error.</li>
-</ul>
-<h5 id="item-c-inventaris-arsitektur-codebase-mana-yang-menggunakan-viewmodel-vs-presenter">C. Inventaris Arsitektur Codebase: Mana yang Menggunakan <code>viewModel</code> vs <code>presenter</code>?</h5>
+<li>Di dalam <strong><code>ViewController</code></strong>: Gunakan <code>viewModel.output.someData.drive(...)</code> saat memperbarui tampilan.
+</li>
+<li>Di dalam <strong><code>Service</code> / Internal <code>ViewModel</code></strong>: Gunakan <code>.subscribe(...)</code> saat menangani pipeline asinkron dan error.
+</li></ul>
+</div>
+<div class="doc-subpoint-block" id="item-c-inventaris-arsitektur-codebase-mana-yang-menggunakan-viewmodel-vs-presenter">
+<h5>C. Inventaris Arsitektur Codebase: Mana yang Menggunakan <code>viewModel</code> vs <code>presenter</code>?</h5>
 <p>Berdasarkan audit komprehensif di seluruh direktori <code>IDSamirLoan</code>:</p>
 <ol>
-<li><strong>Menggunakan <code>ViewModel</code> (MVVM + RxSwift)</strong>:</li>
-</ol>
+<li><strong>Menggunakan <code>ViewModel</code> (MVVM + RxSwift)</strong>:
 <ul>
-<li><strong>HANYA 1 MODUL</strong>: <code>SamirLoanModule/Classes/LoanConfirmModule/</code></li>
-<li><code>LoanConfirmViewModel.swift</code> & <code>LoanConfirmViewModelType.swift</code></li>
-<li>Dikonsumsi oleh <code>LoanConfirmViewController_Rx.swift</code></li>
-<li><em>Status</em>: Modul ini merupakan satu-satunya area modern/reaktif di aplikasi, dibangun secara khusus untuk menangani kompleksitas kalkulasi bunga, tenor dinamis, dan kupon diskon.</li>
-</ul>
-<ol>
-<li><strong>Menggunakan <code>Presenter</code> (Pola MVP / MVC Konvensional)</strong>:</li>
-</ol>
+<li><strong>HANYA 1 MODUL</strong>: <code>SamirLoanModule/Classes/LoanConfirmModule/</code>
 <ul>
-<li><strong>SELURUH MODUL LAINNYA</strong>:</li>
-<li><code>SamirLoginModule</code>: <code>LoginV2Presenter</code>, <code>IDLoginPresenter</code></li>
-<li><code>SamirAuthModule</code>: <code>IDNewAuthPresenter</code> (V2), <code>IDAuthResourcePresenter</code>, <code>IDAuthBankPresenter</code>, <code>IDAuthLivePresenter</code>, <code>IDAuthPointPresenter</code></li>
-<li><code>SamirLoanModule</code> (di luar confirm): <code>IDLoanPresenter</code>, <code>IDAssessPresenter</code></li>
-<li><code>SamirRepayModule</code>: <code>IDRepayPresenter</code></li>
-<li><code>SamirMineModule</code>: <code>IDMinePresenter</code>, <code>IDMineCloseAccountPresenter</code></li>
-<li><code>SamirCommonModule</code>: <code>IDBasePresenter</code></li>
-</ul>
+<li><code>LoanConfirmViewModel.swift</code> & <code>LoanConfirmViewModelType.swift</code>
+</li>
+<li>Dikonsumsi oleh <code>LoanConfirmViewController_Rx.swift</code>
+</li></ul>
+</li>
+<li><em>Status</em>: Modul ini merupakan satu-satunya area modern/reaktif di aplikasi, dibangun secara khusus untuk menangani kompleksitas kalkulasi bunga, tenor dinamis, dan kupon diskon.
+</li></ul>
+</li>
+<li><strong>Menggunakan <code>Presenter</code> (Pola MVP / MVC Konvensional)</strong>:
+<ul>
+<li><strong>SELURUH MODUL LAINNYA</strong>:
+<ul>
+<li><code>SamirLoginModule</code>: <code>LoginV2Presenter</code>, <code>IDLoginPresenter</code>
+</li>
+<li><code>SamirAuthModule</code>: <code>IDNewAuthPresenter</code> (V2), <code>IDAuthResourcePresenter</code>, <code>IDAuthBankPresenter</code>, <code>IDAuthLivePresenter</code>, <code>IDAuthPointPresenter</code>
+</li>
+<li><code>SamirLoanModule</code> (di luar confirm): <code>IDLoanPresenter</code>, <code>IDAssessPresenter</code>
+</li>
+<li><code>SamirRepayModule</code>: <code>IDRepayPresenter</code>
+</li>
+<li><code>SamirMineModule</code>: <code>IDMinePresenter</code>, <code>IDMineCloseAccountPresenter</code>
+</li>
+<li><code>SamirCommonModule</code>: <code>IDBasePresenter</code>
+</li></ul>
+</li></ul>
+</li></ol>
+</div>
 </section>
 <section id="sec-walkthrough" class="doc-section">
 <h3>🪜 E. Step-by-Step Walkthrough: Alur Pengisian Formulir Kontak Darurat</h3>
 <p>Mari kita lihat bagaimana layer-layer ini bekerja sama saat user mengisi kontak darurat di <code>SamirAuthModule</code>:</p>
 <ol>
-<li><strong>User Action</strong>: User memilih hubungan keluarga dan nomor kontak di <a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/learn/iOS-Arch/ios/IDSamirLoan/Application/SamirAuthModule/Classes/IDViewControllerV2/IDNewAuthContactViewController.swift" target="_blank" rel="noopener noreferrer">🦊 IDNewAuthContactViewController.swift <span class="branch-tag">learn/iOS-Arch</span> ↗</a>.</li>
-<li><strong>Controller ke Presenter</strong>: Controller memanggil <code>presenter.submitEmergencyContacts(data)</code>.</li>
-<li><strong>Validasi Presenter</strong>: <code>IDNewAuthPresenter</code> memeriksa apakah nomor kontak valid dan tidak sama dengan nomor ponsel akun sendiri.</li>
-<li><strong>Presenter ke Service</strong>: Jika valid, Presenter memanggil <code>IDAuthAPI.saveContactInfo(...)</code> di <code>IDNetworkService</code>.</li>
-<li><strong>Eksekusi Jaringan</strong>: Service membungkus data ke JSON, menandatangani request via <code>IDNetworkSignatureHandler</code>, dan mengirim ke server.</li>
-<li><strong>Response & UI Update</strong>:</li>
-</ol>
+<li><strong>User Action</strong>: User memilih hubungan keluarga dan nomor kontak di <a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/learn/iOS-Arch/ios/IDSamirLoan/Application/SamirAuthModule/Classes/IDViewControllerV2/IDNewAuthContactViewController.swift" target="_blank" rel="noopener noreferrer">🦊 IDNewAuthContactViewController.swift <span class="branch-tag">learn/iOS-Arch</span> ↗</a>.
+</li>
+<li><strong>Controller ke Presenter</strong>: Controller memanggil <code>presenter.submitEmergencyContacts(data)</code>.
+</li>
+<li><strong>Validasi Presenter</strong>: <code>IDNewAuthPresenter</code> memeriksa apakah nomor kontak valid dan tidak sama dengan nomor ponsel akun sendiri.
+</li>
+<li><strong>Presenter ke Service</strong>: Jika valid, Presenter memanggil <code>IDAuthAPI.saveContactInfo(...)</code> di <code>IDNetworkService</code>.
+</li>
+<li><strong>Eksekusi Jaringan</strong>: Service membungkus data ke JSON, menandatangani request via <code>IDNetworkSignatureHandler</code>, dan mengirim ke server.
+</li>
+<li><strong>Response & UI Update</strong>:
 <ul>
-<li>Jika berhasil (<code>code == &quot;200&quot;</code>), Presenter menyuruh Controller: <code>view.didSuccessSaveContacts()</code>.</li>
-<li>Controller melakukan navigasi ke langkah berikutnya via router: <code>IDRouterManager.id_perfromWithURLString(IDRouterSchemeConstants.Auth.bankCard.rawValue)</code>.</li>
-</ul>
+<li>Jika berhasil (<code>code == &quot;200&quot;</code>), Presenter menyuruh Controller: <code>view.didSuccessSaveContacts()</code>.
+</li>
+<li>Controller melakukan navigasi ke langkah berikutnya via router: <code>IDRouterManager.id_perfromWithURLString(IDRouterSchemeConstants.Auth.bankCard.rawValue)</code>.
+</li></ul>
+</li></ol>
 </section>
 <section id="sec-why" class="doc-section">
 <h3>⚖️ F. Why It Matters (Trade-Offs & Analisis Desain)</h3>
 <ul>
-<li><strong>Mengapa Pola Presenter Dipilih daripada MVVM Standar?</strong></li>
-</ul>
+<li><strong>Mengapa Pola Presenter Dipilih daripada MVVM Standar?</strong>
+</li></ul>
 <p>Presenter buatan sendiri tidak memerlukan pustaka pihak ketiga eksternal (seperti RxSwift atau Combine), sehingga mudah dipahami oleh developer dari berbagai latar belakang pengalaman.</p>
 <ul>
-<li><strong>Konsekuensi Monolitik pada Controller</strong>:</li>
-</ul>
+<li><strong>Konsekuensi Monolitik pada Controller</strong>:
+</li></ul>
 <p>Meskipun logika bisnis sudah dipindahkan ke Presenter, beberapa ViewController (seperti <code>IDHomeViewController</code>) tetap membengkak hingga ribuan baris karena banyaknya konfigurasi tampilan programatik SnapKit dan manajemen subview popup.</p>
 </section>
 <section id="sec-example" class="doc-section">
@@ -348,21 +450,78 @@ override func setupViews() {
 <section id="sec-mistakes" class="doc-section">
 <h3>⚠️ H. Common Mistakes & Debugging</h3>
 <ul>
-<li><strong>Memory Leak pada Presenter / Closure</strong>:</li>
-<li><em>Kesalahan</em>: Presenter memegang referensi kuat (<em>strong reference</em>) ke ViewController, atau closure callback tidak menggunakan <code>[weak self]</code>.</li>
-<li><em>Pencegahan</em>: Selalu gunakan <code>weak var view: IDSomeViewProtocol?</code> di Presenter dan <code>[weak self]</code> di blok network callback.</li>
-<li><strong>Memanggil Endpoint Jaringan Langsung dari ViewController</strong>:</li>
-<li><em>Kesalahan</em>: Menulis <code>IDNetworkRequest.id_startPOSTRequest</code> langsung di dalam <code>viewDidLoad()</code>.</li>
-<li><em>Aturan</em>: Semua panggilan jaringan wajib diisolasi di layer <code>Service</code> dan dikoordinasikan oleh <code>Presenter</code> atau <code>ViewModel</code>.</li>
-</ul>
+<li><strong>Memory Leak & Retain Cycle pada Presenter / Closure</strong>:
+<ul>
+<li><em>Kesalahan</em>: <code>ViewController</code> memegang referensi kuat (<code>strong</code>) ke <code>Presenter</code>, lalu <code>Presenter</code> juga memegang referensi kuat balik ke <code>ViewController</code>. Ini menciptakan siklus saling tahan (<em>Strong Reference Cycle / Retain Cycle</em>). Akibatnya, saat pengguna menekan tombol "Back" (pop / dismiss), <code>ViewController</code> tidak akan pernah dihapus dari memori RAM (<code>deinit</code> tidak pernah dipanggil), menyebabkan penumpukan memory leak yang berujung <em>Out of Memory (OOM) Crash</em>.
+</li>
+<li><em>Pencegahan</em>:
+<ol>
+<li>Selalu deklarasikan referensi View di Presenter dengan kata kunci <strong><code>weak</code></strong>: <code>weak var currentVC: UIViewController?</code> atau <code>weak var view: IDSomeViewProtocol?</code>.
+</li>
+<li>Selalu gunakan <strong><code>[weak self]</code></strong> pada closure asinkron atau network callback di Presenter.
+</li></ol>
+</li></ul>
+</li></ul>
+<div class="doc-subpoint-block" id="item-sample-nyata-di-production-idnewauthpresenterswift">
+<h5>📱 Sample Nyata di Production: <code>IDNewAuthPresenter.swift</code></h5>
+<p>Pola pencegahan retain cycle yang benar dapat dilihat langsung pada modul autentikasi SAMIR di <a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/learn/iOS-Arch/ios/IDSamirLoan/Application/SamirAuthModule/Classes/IDPresenterV2/IDNewAuthPresenter.swift#L31" target="_blank" rel="noopener noreferrer">🦊 ios/IDSamirLoan/Application/SamirAuthModule/Classes/IDPresenterV2/IDNewAuthPresenter.swift <span class="branch-tag">learn/iOS-Arch</span> ↗</a>:</p>
+<pre><code class="language-swift">  // File: IDNewAuthPresenter.swift (Baris 29-32 &amp; 640-650)
+  class IDNewAuthPresenter: NSObject {
+      
+      // ✅ KUNCI 1: Menggunakan &#x27;weak&#x27; agar Presenter tidak menahan ViewController di memori
+      weak var currentVC: UIViewController?
+      
+      func postRealNameRequest(dic: [String: String]) {
+          self.currentVC?.showHud()
+          
+          // ✅ KUNCI 2: Menggunakan &#x27;[weak self]&#x27; pada closure callback network
+          self.networkService.postRealNameRequest(params: dic) { [weak self] status, custId, errorMsg in
+              // Jika user menekan tombol &#x27;Back&#x27; saat request sedang terbang di jaringan,
+              // &#x27;self&#x27; sudah bernilai nil sehingga tidak terjadi kebocoran memori atau crash!
+              self?.currentVC?.hideHud()
+              
+              if status {
+                  self?.postMemInfoRequest()
+              } else {
+                  if let msg = errorMsg {
+                      self?.currentVC?.showToast(withMessage: msg)
+                  }
+              }
+          }
+      }
+  }</code></pre>
+<p>Dan pada ViewController pemiliknya:</p>
+<pre><code class="language-swift">  // File: IDNewAuthViewController.swift
+  class IDNewAuthViewController: IDBaseViewController {
+      lazy var presenter: IDNewAuthPresenter = {
+          let presenter = IDNewAuthPresenter()
+          presenter.currentVC = self // Aman, karena currentVC berstatus &#x27;weak&#x27;
+          return presenter
+      }()
+      
+      deinit {
+          print(&quot;✅ IDNewAuthViewController berhasil di-deallokasi dari RAM!&quot;)
+      }
+  }</code></pre>
+<ul>
+<li><strong>Memanggil Endpoint Jaringan Langsung dari ViewController</strong>:
+<ul>
+<li><em>Kesalahan</em>: Menulis <code>IDNetworkRequest.id_startPOSTRequest</code> langsung di dalam <code>viewDidLoad()</code>.
+</li>
+<li><em>Aturan</em>: Semua panggilan jaringan wajib diisolasi di layer <code>Service</code> dan dikoordinasikan oleh <code>Presenter</code> atau <code>ViewModel</code>.
+</li></ul>
+</li></ul>
+</div>
 </section>
 <section id="sec-check" class="doc-section">
 <h3>🧠 I. Knowledge Check</h3>
 <ol>
-<li>Properti apa di <code>IDBaseViewController</code> yang digunakan untuk mengubah gaya tampilan navigation bar?</li>
-<li>Apa pustaka parsing JSON utama yang digunakan di layer Service?</li>
-<li>Mengapa <code>LoanConfirmViewController_Rx</code> berbeda arsitekturnya dibanding controller lainnya?</li>
-</ol>
+<li>Properti apa di <code>IDBaseViewController</code> yang digunakan untuk mengubah gaya tampilan navigation bar?
+</li>
+<li>Apa pustaka parsing JSON utama yang digunakan di layer Service?
+</li>
+<li>Mengapa <code>LoanConfirmViewController_Rx</code> berbeda arsitekturnya dibanding controller lainnya?
+</li></ol>
 <p><strong>Latihan Observasi</strong>:</p>
 <p>Buka file <code>ios/IDSamirLoan/Application/SamirAuthModule/Classes/IDPresenterV2/IDNewAuthPresenter.swift</code>. Periksa bagaimana presenter ini dipecah menggunakan Swift <code>extension</code> (misal: <code>+OCR.swift</code>, <code>+Job.swift</code>, <code>+Bank.swift</code>) untuk membagi tanggung jawab verifikasi.</p>
 </section>

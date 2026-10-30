@@ -101,11 +101,14 @@
 <h3>🎯 A. Learning Objective</h3>
 <p>Setelah menyelesaikan dokumen ini, pembaca akan mampu:</p>
 <ol>
-<li>Mengidentifikasi 5 area utang teknis utama di dalam modul Flutter SAMIR.</li>
-<li>Memahami risiko keamanan dari <code>badCertificateCallback</code> yang belum dipagari environment guard di <code>http_client.dart</code>.</li>
-<li>Menganalisis keterbatasan state singleton statis <code>Global</code> terhadap konkurensi dan pengujian otomatis.</li>
-<li>Mengetahui rekomendasi perbaikan terencana (<em>refactoring blueprint</em>) untuk modernisasi modul.</li>
-</ol>
+<li>Mengidentifikasi 5 area utang teknis utama di dalam modul Flutter SAMIR.
+</li>
+<li>Memahami risiko keamanan dari <code>badCertificateCallback</code> yang belum dipagari environment guard di <code>http_client.dart</code>.
+</li>
+<li>Menganalisis keterbatasan state singleton statis <code>Global</code> terhadap konkurensi dan pengujian otomatis.
+</li>
+<li>Mengetahui rekomendasi perbaikan terencana (<em>refactoring blueprint</em>) untuk modernisasi modul.
+</li></ol>
 </section>
 <section id="sec-prereq" class="doc-section">
 <h3>📋 B. Prerequisites</h3>
@@ -115,11 +118,14 @@
 <h3>💡 C. Simple Explanation (Analogi & Konsep Sederhana)</h3>
 <p>Bayangkan sebuah jembatan gantung yang dibangun dengan cepat untuk membuka akses jalan:</p>
 <ul>
-<li>Jembatan tersebut berfungsi dengan sangat baik dan berhasil dilalui ribuan kendaraan setiap hari.</li>
-<li>Namun, insinyur jembatan mencatat beberapa baut yang masih menggunakan kawat pengikat sementara dan tiang penopang kayu yang belum dicor beton permanen (<strong>Technical Debt</strong>).</li>
-<li>Jika beban jembatan bertambah sepuluh kali lipat atau terjadi badai besar, baut-baut kawat tersebut berisiko retak.</li>
-<li>Audit ini bertindak sebagai inspeksi struktural tahunan untuk menandai tiang dan baut mana saja yang wajib diperkuat sebelum jembatan diperlebar.</li>
-</ul>
+<li>Jembatan tersebut berfungsi dengan sangat baik dan berhasil dilalui ribuan kendaraan setiap hari.
+</li>
+<li>Namun, insinyur jembatan mencatat beberapa baut yang masih menggunakan kawat pengikat sementara dan tiang penopang kayu yang belum dicor beton permanen (<strong>Technical Debt</strong>).
+</li>
+<li>Jika beban jembatan bertambah sepuluh kali lipat atau terjadi badai besar, baut-baut kawat tersebut berisiko retak.
+</li>
+<li>Audit ini bertindak sebagai inspeksi struktural tahunan untuk menandai tiang dan baut mana saja yang wajib diperkuat sebelum jembatan diperlebar.
+</li></ul>
 </section>
 <section id="sec-actual" class="doc-section">
 <h3>📌 D. Temuan Audit Utang Teknis (Technical Debt Register)</h3>
@@ -127,9 +133,10 @@
 <h4>1. Temuan 1: Bypass Sertifikat SSL Tanpa Guard Environment (Tingkat Risiko: TINGGI)</h4>
 </div>
 <ul>
-<li><strong>Lokasi Kode</strong>: <a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/learn/Flutter-Arch/flutter/lib/common/http/http_client.dart" target="_blank" rel="noopener noreferrer">🦊 flutter/lib/common/http/http_client.dart <span class="branch-tag">learn/Flutter-Arch</span> ↗</a> (baris 46–49).</li>
-<li><strong>Implementasi Saat Ini</strong>:</li>
-</ul>
+<li><strong>Lokasi Kode</strong>: <a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/learn/Flutter-Arch/flutter/lib/common/http/http_client.dart" target="_blank" rel="noopener noreferrer">🦊 flutter/lib/common/http/http_client.dart <span class="branch-tag">learn/Flutter-Arch</span> ↗</a> (baris 46–49).
+</li>
+<li><strong>Implementasi Saat Ini</strong>:
+</li></ul>
 <pre><code class="language-dart">  client.badCertificateCallback =
       (io.X509Certificate cert, String host, int port) {
         return true; // &lt;--- SELALU RETURN TRUE DI SEMUA ENVIRONMENT!
@@ -140,12 +147,12 @@
     }
   }</code></pre>
 <ul>
-<li><strong>Analisis Dampak</strong>:</li>
-</ul>
+<li><strong>Analisis Dampak</strong>:
+</li></ul>
 <p>Meskipun fitur proxy dipagari oleh <code>!AppEnv.isProd</code>, callback <code>badCertificateCallback</code> dibiarkan aktif <strong>tanpa pengecekan <code>AppEnv.isProd</code></strong>. Artinya, pada build Production resmi di App Store / Google Play, biner Flutter tetap menerima sertifikat SSL yang tidak valid (<em>invalid/expired/self-signed cert</em>). Ini merupakan celah keamanan Man-in-the-Middle (MITM) jika DNS pengguna dibajak.</p>
 <ul>
-<li><strong>Rekomendasi Refactoring</strong>:</li>
-</ul>
+<li><strong>Rekomendasi Refactoring</strong>:
+</li></ul>
 <pre><code class="language-dart">  client.badCertificateCallback = (cert, host, port) {
     return !AppEnv.isProd; // Hanya izinkan bypass pada mode non-PROD!
   };</code></pre>
@@ -153,61 +160,71 @@
 <h4>2. Temuan 2: Mutable Static Singleton pada <code>Global</code> (Tingkat Risiko: SEDANG)</h4>
 </div>
 <ul>
-<li><strong>Lokasi Kode</strong>: <a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/learn/Flutter-Arch/flutter/lib/common/global.dart" target="_blank" rel="noopener noreferrer">🦊 flutter/lib/common/global.dart <span class="branch-tag">learn/Flutter-Arch</span> ↗</a>.</li>
-<li><strong>Implementasi Saat Ini</strong>:</li>
-</ul>
+<li><strong>Lokasi Kode</strong>: <a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/learn/Flutter-Arch/flutter/lib/common/global.dart" target="_blank" rel="noopener noreferrer">🦊 flutter/lib/common/global.dart <span class="branch-tag">learn/Flutter-Arch</span> ↗</a>.
+</li>
+<li><strong>Implementasi Saat Ini</strong>:
+</li></ul>
 <p>Seluruh atribut seperti <code>Global.mid</code>, <code>Global.userNo</code>, dan <code>Global.dynamicSignKey</code> adalah variabel statis publik yang dapat dimodifikasi secara bebas oleh file manapun tanpa setter khusus.</p>
 <ul>
-<li><strong>Analisis Dampak</strong>:</li>
-<li>Tidak ada reaktivitas: Mengubah <code>Global.mid</code> tidak memicu notifikasi visual ke widget yang sedang aktif.</li>
-<li>Kesulitan Unit Testing: Tes otomatis yang berjalan berurutan dapat saling mencemari state memori (<em>state leakage</em>) jika developer lupa memanggil <code>Global.clearUser()</code> di setiap <code>tearDown()</code>.</li>
-<li><strong>Rekomendasi Refactoring</strong>:</li>
-</ul>
+<li><strong>Analisis Dampak</strong>:
+<ul>
+<li>Tidak ada reaktivitas: Mengubah <code>Global.mid</code> tidak memicu notifikasi visual ke widget yang sedang aktif.
+</li>
+<li>Kesulitan Unit Testing: Tes otomatis yang berjalan berurutan dapat saling mencemari state memori (<em>state leakage</em>) jika developer lupa memanggil <code>Global.clearUser()</code> di setiap <code>tearDown()</code>.
+</li></ul>
+</li>
+<li><strong>Rekomendasi Refactoring</strong>:
+</li></ul>
 <p>Bungkus <code>Global</code> ke dalam pola Singleton terenkapsulasi atau gunakan <code>ChangeNotifier</code> untuk properti otentikasi.</p>
 <div id="sub-3-temuan-3-kunci-rahasia-statis-hardcoded-tingkat-risiko-sedang" class="doc-subsection">
 <h4>3. Temuan 3: Kunci Rahasia Statis Hardcoded (Tingkat Risiko: SEDANG)</h4>
 </div>
 <ul>
-<li><strong>Lokasi Kode</strong>: <a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/learn/Flutter-Arch/flutter/lib/common/http/sign_utils.dart" target="_blank" rel="noopener noreferrer">🦊 flutter/lib/common/http/sign_utils.dart <span class="branch-tag">learn/Flutter-Arch</span> ↗</a> (baris 7–14).</li>
-<li><strong>Implementasi Saat Ini</strong>:</li>
-</ul>
+<li><strong>Lokasi Kode</strong>: <a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/learn/Flutter-Arch/flutter/lib/common/http/sign_utils.dart" target="_blank" rel="noopener noreferrer">🦊 flutter/lib/common/http/sign_utils.dart <span class="branch-tag">learn/Flutter-Arch</span> ↗</a> (baris 7–14).
+</li>
+<li><strong>Implementasi Saat Ini</strong>:
+</li></ul>
 <p>String fallback salt <code>&#x27;766b035b-8d2f-454a-abad-4e8ab138a99a&#x27;</code> dan <code>&#x27;qwer1234_&#x27;</code> ditulis langsung (<em>hardcoded plaintext</em>) di dalam file Dart.</p>
 <ul>
-<li><strong>Analisis Dampak</strong>:</li>
-</ul>
+<li><strong>Analisis Dampak</strong>:
+</li></ul>
 <p>Penyerang yang melakukan reverse engineering terhadap biner <code>App.framework</code> menggunakan decompilator Dart (seperti Darter / Ghidra) dapat dengan mudah mengekstrak string ini dan merekayasa tanda tangan request.</p>
 <ul>
-<li><strong>Rekomendasi Refactoring</strong>:</li>
-</ul>
+<li><strong>Rekomendasi Refactoring</strong>:
+</li></ul>
 <p>Simpan salt rahasia di dalam biner terenkripsi C++ di sisi Native (via NDK / Obfuscated C helper), lalu ambil nilainya melalui MethodChannel yang dilindungi enkripsi memori.</p>
 <div id="sub-4-temuan-4-ketiadaan-offline-cache-penanganan-jaringan-lemah-tingkat-risiko-rendah" class="doc-subsection">
 <h4>4. Temuan 4: Ketiadaan Offline Cache & Penanganan Jaringan Lemah (Tingkat Risiko: RENDAH)</h4>
 </div>
 <ul>
-<li><strong>Implementasi Saat Ini</strong>:</li>
-</ul>
+<li><strong>Implementasi Saat Ini</strong>:
+</li></ul>
 <p>Modul Flutter sepenuhnya mendelegasikan persistensi ke memori runtime. Jika koneksi terputus sesaat, halaman langsung menampilkan error tanpa fallback data transaksi terakhir.</p>
 <ul>
-<li><strong>Analisis Dampak</strong>:</li>
-</ul>
+<li><strong>Analisis Dampak</strong>:
+</li></ul>
 <p>Pengalaman pengguna (UX) terdegradasi saat nasabah berada di basemen parkir atau area sinyal buruk. Nasabah tidak dapat melihat nomor Virtual Account yang sebenarnya sudah pernah diambil sebelumnya.</p>
 <ul>
-<li><strong>Rekomendasi Refactoring</strong>:</li>
-</ul>
+<li><strong>Rekomendasi Refactoring</strong>:
+</li></ul>
 <p>Sediakan cache ringan in-memory atau disk terenkripsi untuk menyimpan respon terakhir daftar tagihan aktif selama 15 menit.</p>
 <div id="sub-5-temuan-5-kesenjangan-cakupan-pengujian-otomatis-test-coverage-gap" class="doc-subsection">
 <h4>5. Temuan 5: Kesenjangan Cakupan Pengujian Otomatis (<em>Test Coverage Gap</em>)</h4>
 </div>
 <ul>
-<li><strong>Lokasi</strong>: <a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/learn/Flutter-Arch/flutter/test" target="_blank" rel="noopener noreferrer">🦊 flutter/test/ <span class="branch-tag">learn/Flutter-Arch</span> ↗</a>.</li>
-<li><strong>Implementasi Saat Ini</strong>:</li>
-</ul>
+<li><strong>Lokasi</strong>: <a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/learn/Flutter-Arch/flutter/test" target="_blank" rel="noopener noreferrer">🦊 flutter/test/ <span class="branch-tag">learn/Flutter-Arch</span> ↗</a>.
+</li>
+<li><strong>Implementasi Saat Ini</strong>:
+</li></ul>
 <p>Direktori <code>test/</code> belum memiliki unit test otomatis untuk memvalidasi fungsi krusial:</p>
 <ul>
-<li>Algoritma hashing <code>signParamMap</code> tidak diuji terhadap vektor uji standar (<em>test vectors</em>).</li>
-<li>Peta rute <code>routers.dart</code> belum memiliki test navigasi simulasi.</li>
-<li><strong>Rekomendasi Refactoring</strong>:</li>
-</ul>
+<li>Algoritma hashing <code>signParamMap</code> tidak diuji terhadap vektor uji standar (<em>test vectors</em>).
+</li>
+<li>Peta rute <code>routers.dart</code> belum memiliki test navigasi simulasi.
+</li></ul>
+<ul>
+<li><strong>Rekomendasi Refactoring</strong>:
+</li></ul>
 <p>Tambahkan minimal 10 unit test otomatis untuk <code>sign_utils.dart</code>, <code>param_utils.dart</code>, dan parsing model JSON <code>RepayHomeModel</code>.</p>
 </section>
 <section id="sec-walkthrough" class="doc-section">
@@ -217,16 +234,18 @@
 <section id="sec-why" class="doc-section">
 <h3>⚖️ F. Why It Matters (Trade-Offs & Implikasi Teknis)</h3>
 <ul>
-<li>Mengaudit utang teknis bukan berarti kode saat ini buruk; sebagian besar kompromi di atas diambil untuk mempercepat rilis awal produk (<em>time-to-market</em>). Namun, seiring bertambahnya jumlah nasabah aktif dan meningkatnya audit kepatuhan OJK, memperbaiki celah keamanan seperti <code>SEC-01</code> menjadi kewajiban mutlak sebelum audit eksternal perbankan.</li>
-</ul>
+<li>Mengaudit utang teknis bukan berarti kode saat ini buruk; sebagian besar kompromi di atas diambil untuk mempercepat rilis awal produk (<em>time-to-market</em>). Namun, seiring bertambahnya jumlah nasabah aktif dan meningkatnya audit kepatuhan OJK, memperbaiki celah keamanan seperti <code>SEC-01</code> menjadi kewajiban mutlak sebelum audit eksternal perbankan.
+</li></ul>
 </section>
 <section id="sec-example" class="doc-section">
 <h3>🧠 G. Knowledge Check</h3>
 <ol>
-<li>Mengapa implementasi <code>badCertificateCallback</code> saat ini dinilai memiliki risiko keamanan tinggi?</li>
-<li>Apa potensi kendala yang dihadapi engineer saat menulis unit test otomatis dengan implementasi <code>Global</code> saat ini?</li>
-<li>Apa string fallback kunci rahasia yang masih tertulis hardcoded di <code>sign_utils.dart</code>?</li>
-</ol>
+<li>Mengapa implementasi <code>badCertificateCallback</code> saat ini dinilai memiliki risiko keamanan tinggi?
+</li>
+<li>Apa potensi kendala yang dihadapi engineer saat menulis unit test otomatis dengan implementasi <code>Global</code> saat ini?
+</li>
+<li>Apa string fallback kunci rahasia yang masih tertulis hardcoded di <code>sign_utils.dart</code>?
+</li></ol>
 <p><strong>Latihan Observasi</strong>:</p>
 <p>Buka file <a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/learn/Flutter-Arch/flutter/lib/common/http/http_client.dart" target="_blank" rel="noopener noreferrer">🦊 flutter/lib/common/http/http_client.dart <span class="branch-tag">learn/Flutter-Arch</span> ↗</a>. Periksa baris 46–49 dan buktikan apakah ada kondisi <code>if (!AppEnv.isProd)</code> yang membungkus <code>badCertificateCallback</code>.</p>
 </section>

@@ -105,28 +105,35 @@
 <h3>🎯 A. Learning Objective</h3>
 <p>Setelah mempelajari dokumen ini, pembaca akan mampu:</p>
 <ol>
-<li>Memetakan 4 lapisan persistensi data di SAMIR iOS berdasarkan tingkat keamanan dan kebutuhan akses.</li>
-<li>Memahami alur kerja enkripsi dan dekripsi model sesi menggunakan <code>CryptoKit.AES.GCM</code>.</li>
-<li>Mengidentifikasi kunci apa saja yang aman disimpan di <code>UserDefaults</code> dan data apa saja yang <strong>dilarang keras</strong> disimpan di sana.</li>
-<li>Menjelaskan bagaimana method channel <code>getRootPageData</code> membagikan state sesi native ke widget Flutter.</li>
-</ol>
+<li>Memetakan 4 lapisan persistensi data di SAMIR iOS berdasarkan tingkat keamanan dan kebutuhan akses.
+</li>
+<li>Memahami alur kerja enkripsi dan dekripsi model sesi menggunakan <code>CryptoKit.AES.GCM</code>.
+</li>
+<li>Mengidentifikasi kunci apa saja yang aman disimpan di <code>UserDefaults</code> dan data apa saja yang <strong>dilarang keras</strong> disimpan di sana.
+</li>
+<li>Menjelaskan bagaimana method channel <code>getRootPageData</code> membagikan state sesi native ke widget Flutter.
+</li></ol>
 </section>
 <section id="sec-prereq" class="doc-section">
 <h3>📋 B. Prerequisites</h3>
 <ul>
-<li>Sudah membaca <a href="../05-learning-business-flows/02-authentication-and-session-flow.html">02-authentication-and-session-flow.md</a>.</li>
-<li>Mengetahui konsep iOS Keychain Services, Sandbox Application Directory, dan thread safety pada caching.</li>
-</ul>
+<li>Sudah membaca <a href="../05-learning-business-flows/02-authentication-and-session-flow.html">02-authentication-and-session-flow.md</a>.
+</li>
+<li>Mengetahui konsep iOS Keychain Services, Sandbox Application Directory, dan thread safety pada caching.
+</li></ul>
 </section>
 <section id="sec-simple" class="doc-section">
 <h3>💡 C. Simple Explanation (Analogi Tingkat Keamanan Brankas Bank)</h3>
 <p>Sebuah kantor perbankan menyimpan dokumen dengan 4 tingkat brankas:</p>
 <ol>
-<li><strong>Papan Pengumuman Lobi (<code>UserDefaults</code>)</strong>: Siapa saja boleh melihat (papan pengumuman apakah ada iklan hari ini, catatan nomor loket antrean yang tertunda).</li>
-<li><strong>Lemari Arsip Kerja Harian (In-Memory Cache RAM)</strong>: Dokumen kerja yang sedang dipegang staf saat melayani nasabah. Cepat diakses, tetapi hilang saat kantor tutup (<strong>aplikasi di-kill</strong>).</li>
-<li><strong>Brankas Rahasia Berlian (<code>Application Support</code> + Enkripsi AES-GCM)</strong>: Tempat menyimpan identitas lengkap nasabah dan kunci transaksi (<code>staticKey</code>). Dikunci rapat dengan algoritma enkripsi modern.</li>
-<li><strong>Bunker Bawah Tanah Tahan Gempa (<code>iOS Keychain</code>)</strong>: Tempat menyimpan nomor registrasi brankas perangkat (<code>UUID</code>, ID Instalasi). Data di bunker ini <strong>tetap utuh meskipun aplikasi dihapus dan diinstal ulang</strong>!</li>
-</ol>
+<li><strong>Papan Pengumuman Lobi (<code>UserDefaults</code>)</strong>: Siapa saja boleh melihat (papan pengumuman apakah ada iklan hari ini, catatan nomor loket antrean yang tertunda).
+</li>
+<li><strong>Lemari Arsip Kerja Harian (In-Memory Cache RAM)</strong>: Dokumen kerja yang sedang dipegang staf saat melayani nasabah. Cepat diakses, tetapi hilang saat kantor tutup (<strong>aplikasi di-kill</strong>).
+</li>
+<li><strong>Brankas Rahasia Berlian (<code>Application Support</code> + Enkripsi AES-GCM)</strong>: Tempat menyimpan identitas lengkap nasabah dan kunci transaksi (<code>staticKey</code>). Dikunci rapat dengan algoritma enkripsi modern.
+</li>
+<li><strong>Bunker Bawah Tanah Tahan Gempa (<code>iOS Keychain</code>)</strong>: Tempat menyimpan nomor registrasi brankas perangkat (<code>UUID</code>, ID Instalasi). Data di bunker ini <strong>tetap utuh meskipun aplikasi dihapus dan diinstal ulang</strong>!
+</li></ol>
 </section>
 <section id="sec-actual" class="doc-section">
 <h3>💻 D. Actual Implementation: 4 Lapisan Persistensi Data</h3>
@@ -175,34 +182,44 @@ graph TD
 </div>
 <p>Path: <a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/learn/iOS-Arch/ios/IDSamirLoan/Application/SamirLoginModule/Classes/IDPresenter/IDLoginManager.swift:L172-206" target="_blank" rel="noopener noreferrer">🦊 ios/IDSamirLoan/Application/SamirLoginModule/Classes/IDPresenter/IDLoginManager.swift <span class="branch-tag">learn/iOS-Arch</span> ↗</a></p>
 <ul>
-<li><strong>File</strong>: <code>idn_userFile.plist</code> di dalam <code>FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask)</code>.</li>
-<li><strong>Data yang Disimpan</strong>: Objek <code>IDLoginCodeModel</code> (berisi <code>mid</code>, <code>userNo</code>, <code>staticKey</code>, nomor HP).</li>
-<li><strong>Mekanisme Enkripsi</strong>:</li>
-</ul>
+<li><strong>File</strong>: <code>idn_userFile.plist</code> di dalam <code>FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask)</code>.
+</li>
+<li><strong>Data yang Disimpan</strong>: Objek <code>IDLoginCodeModel</code> (berisi <code>mid</code>, <code>userNo</code>, <code>staticKey</code>, nomor HP).
+</li>
+<li><strong>Mekanisme Enkripsi</strong>:
 <ol>
-<li>Data di-archive via <code>NSKeyedArchiver</code>.</li>
-<li>Kunci enkripsi diturunkan via SHA-256 dari bundle id:</li>
-</ol>
+<li>Data di-archive via <code>NSKeyedArchiver</code>.
+</li>
+<li>Kunci enkripsi diturunkan via SHA-256 dari bundle id:
+</li></ol>
+</li></ul>
 <p><code>&quot;IDSamirLoan.LoginUser.AES256.v1.\(Bundle.cz.appBundleIdentifier)&quot;</code>.</p>
-<ol>
-<li>Dienkripsi menggunakan <code>CryptoKit.AES.GCM.seal</code>.</li>
-<li>Header string <code>ID_LOGIN_USER_AES256_V1\n</code> disematkan di awal data binary.</li>
-</ol>
+<ol start="3">
+<li>Dienkripsi menggunakan <code>CryptoKit.AES.GCM.seal</code>.
+</li>
+<li>Header string <code>ID_LOGIN_USER_AES256_V1\n</code> disematkan di awal data binary.
+</li></ol>
 <ul>
-<li><strong>Tingkat Keamanan</strong>: <strong>Sangat Tinggi</strong>. Jika file diekstrak dari perangkat yang di-jailbreak, penyerang hanya melihat byte teracak (<em>ciphertext</em>) tanpa bisa membaca nomor HP atau <code>staticKey</code>.</li>
-</ul>
+<li><strong>Tingkat Keamanan</strong>: <strong>Sangat Tinggi</strong>. Jika file diekstrak dari perangkat yang di-jailbreak, penyerang hanya melihat byte teracak (<em>ciphertext</em>) tanpa bisa membaca nomor HP atau <code>staticKey</code>.
+</li></ul>
 <div id="sub-2-lapisan-2-ios-keychain-services-czkeychainmanager" class="doc-subsection">
 <h4>2. Lapisan 2: iOS Keychain Services (<code>CZKeychainManager</code>)</h4>
 </div>
 <p>Path: <a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/learn/iOS-Arch/ios/IDSamirLoan/Application/CZSwiftAntiFraudLib/Classes/CZCommon/CZKeychainManager.swift" target="_blank" rel="noopener noreferrer">🦊 ios/IDSamirLoan/Application/CZSwiftAntiFraudLib/Classes/CZCommon/CZKeychainManager.swift <span class="branch-tag">learn/iOS-Arch</span> ↗</a></p>
 <ul>
-<li><strong>Peran</strong>: Menyimpan pengenal unik perangkat yang tidak boleh berubah meskipun aplikasi dihapus dan dipasang kembali oleh pengguna (<em>device fingerprinting persistence</em>).</li>
-<li><strong>Service Name</strong>: Bundle Identifier aplikasi (<code>com.samir.loan</code>).</li>
-<li><strong>Data yang Disimpan</strong>:</li>
-<li><code>uuid</code>: Pengenal hardware unik untuk mitigasi penipuan akun ganda (<em>multi-accounting fraud</em>).</li>
-<li><code>secure.installation_id</code>: ID unik instalasi Firebase.</li>
-<li><code>secure.liveness_token</code>: Kredensial lisensi SDK deteksi wajah.</li>
-</ul>
+<li><strong>Peran</strong>: Menyimpan pengenal unik perangkat yang tidak boleh berubah meskipun aplikasi dihapus dan dipasang kembali oleh pengguna (<em>device fingerprinting persistence</em>).
+</li>
+<li><strong>Service Name</strong>: Bundle Identifier aplikasi (<code>com.samir.loan</code>).
+</li>
+<li><strong>Data yang Disimpan</strong>:
+<ul>
+<li><code>uuid</code>: Pengenal hardware unik untuk mitigasi penipuan akun ganda (<em>multi-accounting fraud</em>).
+</li>
+<li><code>secure.installation_id</code>: ID unik instalasi Firebase.
+</li>
+<li><code>secure.liveness_token</code>: Kredensial lisensi SDK deteksi wajah.
+</li></ul>
+</li></ul>
 <div id="sub-3-lapisan-3-pengaturan-non-sensitif-userdefaults" class="doc-subsection">
 <h4>3. Lapisan 3: Pengaturan Non-Sensitif (<code>UserDefaults</code>)</h4>
 </div>
@@ -213,10 +230,12 @@ graph TD
 <h4>4. Lapisan 4: Pengelolaan State di Memori (In-Memory RAM)</h4>
 </div>
 <ul>
-<li><strong><code>IDLoginManager.shared.userModel</code></strong>: Singleton instance yang di-cache di memori agar presenter tidak perlu melakukan operasi I/O dekripsi file disk pada setiap frame tampilan.</li>
-<li><strong><code>CZModuleManager.cachedServiceDict</code></strong>: Singleton cache untuk handler protokol layanan, dilindungi oleh antrean serial <code>serviceCacheQueue</code> untuk mencegah <em>race condition</em> multithreading.</li>
-<li><strong><code>CZMultiCache</code></strong>: Pustaka caching dua tingkat (Memory Cache berbasis <code>NSCache</code> dengan LRU eviction + Disk Cache terenkripsi).</li>
-</ul>
+<li><strong><code>IDLoginManager.shared.userModel</code></strong>: Singleton instance yang di-cache di memori agar presenter tidak perlu melakukan operasi I/O dekripsi file disk pada setiap frame tampilan.
+</li>
+<li><strong><code>CZModuleManager.cachedServiceDict</code></strong>: Singleton cache untuk handler protokol layanan, dilindungi oleh antrean serial <code>serviceCacheQueue</code> untuk mencegah <em>race condition</em> multithreading.
+</li>
+<li><strong><code>CZMultiCache</code></strong>: Pustaka caching dua tingkat (Memory Cache berbasis <code>NSCache</code> dengan LRU eviction + Disk Cache terenkripsi).
+</li></ul>
 </section>
 <section id="sec-walkthrough" class="doc-section">
 <h3>🪜 E. Step-by-Step Walkthrough: Sinkronisasi State ke Flutter</h3>
@@ -285,10 +304,12 @@ public func serviceForProtocol(_ serviceProtocolName: String) -&gt; CZBaseServic
 </div>
 <p><code>CZSwiftStorageLib</code> adalah pustaka manajemen cache in-house yang mengimplementasikan arsitektur <em>two-tier caching</em> (Memory + Disk):</p>
 <ul>
-<li><strong><code>CZMemoryStorage&lt;Value: Codable&gt;</code></strong>: Cache RAM berbasis algoritma <strong>LRU (Least Recently Used)</strong> menggunakan struktur data <em>doubly-linked list</em> (<code>CZLinkedNode</code>) dan dictionary lookup <code>O(1)</code>. Memiliki batas biaya (<code>totalCostLimit</code>) dan batas kuantitas (<code>totalCountLimit</code>).</li>
-<li><strong><code>CZDiskStorage&lt;Value: Codable&gt;</code></strong>: Penyimpanan disk berbasis file yang meng-encode model <code>Codable</code> ke dalam file terpisah dengan nama file berbasis hash SHA-256 dari key di folder Caches.</li>
-<li><strong><code>CZMultiCache&lt;Value: Codable&gt;</code></strong>: Lapisan fasad gabungan (<code>CZCacheProtocol</code>). Saat membaca data (<code>object(forKey:)</code>), ia mencari di memori (L1). Jika <em>cache miss</em>, ia membaca dari disk (L2) dan langsung mempromosikan nilainya kembali ke L1 cache memori.</li>
-</ul>
+<li><strong><code>CZMemoryStorage&lt;Value: Codable&gt;</code></strong>: Cache RAM berbasis algoritma <strong>LRU (Least Recently Used)</strong> menggunakan struktur data <em>doubly-linked list</em> (<code>CZLinkedNode</code>) dan dictionary lookup <code>O(1)</code>. Memiliki batas biaya (<code>totalCostLimit</code>) dan batas kuantitas (<code>totalCountLimit</code>).
+</li>
+<li><strong><code>CZDiskStorage&lt;Value: Codable&gt;</code></strong>: Penyimpanan disk berbasis file yang meng-encode model <code>Codable</code> ke dalam file terpisah dengan nama file berbasis hash SHA-256 dari key di folder Caches.
+</li>
+<li><strong><code>CZMultiCache&lt;Value: Codable&gt;</code></strong>: Lapisan fasad gabungan (<code>CZCacheProtocol</code>). Saat membaca data (<code>object(forKey:)</code>), ia mencari di memori (L1). Jika <em>cache miss</em>, ia membaca dari disk (L2) dan langsung mempromosikan nilainya kembali ke L1 cache memori.
+</li></ul>
 <p><strong>Di Mana Saja Digunakan di SAMIR?</strong></p>
 <p>Pustaka ini dirancang sebagai pustaka cache umum (<code>CZCache</code>). Namun di lapisan bisnis SAMIR, persistensi model pengguna utama (<code>IDLoginCodeModel</code>) didelegasikan langsung ke enkripsi <code>CryptoKit.AES.GCM</code> di <code>IDLoginManager</code>, sedangkan flag preferensi disimpan via <code>UserDefaults</code>, dan kredensial hardware disimpan via <code>CZKeychainManager</code>.</p>
 <div id="sub-2-cara-membuat-pustaka-storage-serupa-di-proyek-baru" class="doc-subsection">
@@ -296,8 +317,8 @@ public func serviceForProtocol(_ serviceProtocolName: String) -&gt; CZBaseServic
 </div>
 <p>Jika Anda ingin membangun modul storage performa tinggi dari nol di proyek baru:</p>
 <ol>
-<li><strong>Definisikan Kontrak Abstraksi (<code>CacheProtocol</code>)</strong>:</li>
-</ol>
+<li><strong>Definisikan Kontrak Abstraksi (<code>CacheProtocol</code>)</strong>:
+</li></ol>
 <pre><code class="language-swift">   public protocol CacheProtocol {
        associatedtype Value: Codable
        func set(_ value: Value, forKey key: String)
@@ -305,20 +326,20 @@ public func serviceForProtocol(_ serviceProtocolName: String) -&gt; CZBaseServic
        func remove(forKey key: String)
        func removeAll()
    }</code></pre>
-<ol>
-<li><strong>Implementasikan Memory Cache (L1)</strong>:</li>
-</ol>
+<ol start="2">
+<li><strong>Implementasikan Memory Cache (L1)</strong>:
+</li></ol>
 <p>Gunakan <code>NSCache&lt;NSString, AnyObject&gt;</code> bawaan Apple (sudah thread-safe dan otomatis mengosongkan RAM saat memory warning), atau bangun custom Doubly-Linked List + Hash Map jika membutuhkan kontrol LRU yang ketat.</p>
-<ol>
-<li><strong>Implementasikan Disk Cache (L2)</strong>:</li>
-</ol>
+<ol start="3">
+<li><strong>Implementasikan Disk Cache (L2)</strong>:
+</li></ol>
 <p>Gunakan <code>FileManager</code> untuk menulis data ke direktori <code>Application Support</code> atau <code>Caches</code>:</p>
 <pre><code class="language-swift">   let fileURL = cacheDirectory.appendingPathComponent(key.sha256())
    let data = try JSONEncoder().encode(value)
    try data.write(to: fileURL)</code></pre>
-<ol>
-<li><strong>Gabungkan Menjadi <code>MultiTierCache</code></strong>:</li>
-</ol>
+<ol start="4">
+<li><strong>Gabungkan Menjadi <code>MultiTierCache</code></strong>:
+</li></ol>
 <pre><code class="language-swift">   public class TwoLevelCache&lt;T: Codable&gt;: CacheProtocol {
        private let memoryCache: MemoryCache&lt;T&gt;
        private let diskCache: DiskCache&lt;T&gt;
@@ -344,20 +365,28 @@ public func serviceForProtocol(_ serviceProtocolName: String) -&gt; CZBaseServic
 <section id="sec-check" class="doc-section">
 <h3>⚠️ I. Common Mistakes & Debugging</h3>
 <ul>
-<li><strong>Menyimpan Kredensial Baru di UserDefaults</strong>:</li>
-<li><em>Kesalahan</em>: Menambahkan <code>UserDefaults.standard.set(token, forKey: &quot;user_auth_token&quot;)</code>.</li>
-<li><em>Bahaya</em>: Pelanggaran kepatuhan audit keamanan fintech. Semua token autentikasi <strong>wajib</strong> melalui <code>saveUserModel</code>.</li>
-<li><strong>Crash <code>AES.GCM.open</code> Karena Bundle ID Berubah</strong>:</li>
-<li>Jika Anda mengubah <code>PRODUCT_BUNDLE_IDENTIFIER</code> di Xcode, kunci turunan SHA-256 akan berubah, sehingga data sesi lama tidak dapat didekripsi. Fungsi <code>decryptUserModelDataIfNeeded</code> menangani ini dengan memicu re-login alih-alih melempar unhandled crash.</li>
-</ul>
+<li><strong>Menyimpan Kredensial Baru di UserDefaults</strong>:
+<ul>
+<li><em>Kesalahan</em>: Menambahkan <code>UserDefaults.standard.set(token, forKey: &quot;user_auth_token&quot;)</code>.
+</li>
+<li><em>Bahaya</em>: Pelanggaran kepatuhan audit keamanan fintech. Semua token autentikasi <strong>wajib</strong> melalui <code>saveUserModel</code>.
+</li></ul>
+</li>
+<li><strong>Crash <code>AES.GCM.open</code> Karena Bundle ID Berubah</strong>:
+<ul>
+<li>Jika Anda mengubah <code>PRODUCT_BUNDLE_IDENTIFIER</code> di Xcode, kunci turunan SHA-256 akan berubah, sehingga data sesi lama tidak dapat didekripsi. Fungsi <code>decryptUserModelDataIfNeeded</code> menangani ini dengan memicu re-login alih-alih melempar unhandled crash.
+</li></ul>
+</li></ul>
 </section>
 <section id="sec-completion" class="doc-section">
 <h3>🧠 J. Knowledge Check</h3>
 <ol>
-<li>Di mana lokasi fisik file sesi pengguna <code>idn_userFile.plist</code> disimpan di sandbox iOS?</li>
-<li>Data apa yang disimpan di dalam iOS Keychain dan mengapa data tersebut tidak ditaruh di UserDefaults?</li>
-<li>Bagaimana runtime Flutter mengambil data sesi pengguna dari Native iOS?</li>
-</ol>
+<li>Di mana lokasi fisik file sesi pengguna <code>idn_userFile.plist</code> disimpan di sandbox iOS?
+</li>
+<li>Data apa yang disimpan di dalam iOS Keychain dan mengapa data tersebut tidak ditaruh di UserDefaults?
+</li>
+<li>Bagaimana runtime Flutter mengambil data sesi pengguna dari Native iOS?
+</li></ol>
 </section>
 <section id="sec-k-completion-criteria" class="doc-section">
 <h3>🏁 K. Completion Criteria</h3>

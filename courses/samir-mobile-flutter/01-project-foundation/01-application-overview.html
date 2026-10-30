@@ -97,11 +97,14 @@
 <h3>🎯 A. Learning Objective</h3>
 <p>Setelah menyelesaikan dokumen ini, pembaca akan mampu:</p>
 <ol>
-<li>Menjelaskan peran modul Flutter SAMIR sebagai modul Add-to-App yang di-embed ke dalam aplikasi host native iOS dan Android.</li>
-<li>Mengidentifikasi fitur dan halaman mana saja yang didelegasikan ke Flutter (Tab Tagihan/Repay dan Tab Saya/Mine).</li>
-<li>Menyebutkan profil teknis modul (Nama paket, versi Flutter/Dart SDK, orientasi, dan bahasa antarmuka).</li>
-<li>Memahami batasan dan interaksi modul Flutter dengan aplikasi host native.</li>
-</ol>
+<li>Menjelaskan peran modul Flutter SAMIR sebagai modul Add-to-App yang di-embed ke dalam aplikasi host native iOS dan Android.
+</li>
+<li>Mengidentifikasi fitur dan halaman mana saja yang didelegasikan ke Flutter (Tab Tagihan/Repay dan Tab Saya/Mine).
+</li>
+<li>Menyebutkan profil teknis modul (Nama paket, versi Flutter/Dart SDK, orientasi, dan bahasa antarmuka).
+</li>
+<li>Memahami batasan dan interaksi modul Flutter dengan aplikasi host native.
+</li></ol>
 </section>
 <section id="sec-prereq" class="doc-section">
 <h3>📋 B. Prerequisites</h3>
@@ -111,10 +114,12 @@
 <h3>💡 C. Simple Explanation (Analogi & Konsep Sederhana)</h3>
 <p>Bayangkan sebuah pusat perbelanjaan modern (Aplikasi Host Native):</p>
 <ul>
-<li><strong>Lantai 1 (Beranda / Pengajuan Pinjaman)</strong> dan <strong>Ruang Verifikasi KTP (e-KYC)</strong> dikelola langsung oleh tim internal gedung dengan standar pengamanan ketat (Native Swift di iOS dan Native Kotlin di Android).</li>
-<li>Namun, <strong>Layanan Pelanggan (Saya / Mine)</strong> dan <strong>Loket Kasir / Tagihan (Repay)</strong> menggunakan sistem waralaba yang terstandar dari mitra spesialis (Modul Flutter).</li>
-<li>Pengunjung gedung tidak menyadari perbedaan ini karena loket tersebut terpasang rapi di dalam gedung tanpa sekat yang mencolok.</li>
-</ul>
+<li><strong>Lantai 1 (Beranda / Pengajuan Pinjaman)</strong> dan <strong>Ruang Verifikasi KTP (e-KYC)</strong> dikelola langsung oleh tim internal gedung dengan standar pengamanan ketat (Native Swift di iOS dan Native Kotlin di Android).
+</li>
+<li>Namun, <strong>Layanan Pelanggan (Saya / Mine)</strong> dan <strong>Loket Kasir / Tagihan (Repay)</strong> menggunakan sistem waralaba yang terstandar dari mitra spesialis (Modul Flutter).
+</li>
+<li>Pengunjung gedung tidak menyadari perbedaan ini karena loket tersebut terpasang rapi di dalam gedung tanpa sekat yang mencolok.
+</li></ul>
 <p>Dengan pendekatan <strong>Flutter Add-to-App</strong>, tim engineering SAMIR tidak perlu menulis ulang logika perhitungan denda, daftar tagihan, nomor virtual account, dan menu bantuan pengguna dua kali untuk iOS dan Android. Satu codebase Flutter melayani kedua platform secara presisi.</p>
 </section>
 <section id="sec-actual" class="doc-section">
@@ -136,18 +141,31 @@
 │   [Native Swift]  │  [Flutter Engine] │ [Flutter Engine│
 └───────────────────┴───────────────────┴────────────────┘</code></pre>
 <ul>
-<li><strong>Tab 0 (Beranda / Home)</strong>:</li>
-<li><strong>Platform</strong>: Native Swift (<code>IDHomeViewController</code>).</li>
-<li><strong>Fungsi</strong>: Penilaian limit pinjaman, simulasi kredit, pengajuan awal, dan pengecekan verifikasi KYC.</li>
-<li><strong>Tab 1 (Tagihan / Repay)</strong>:</li>
-<li><strong>Platform</strong>: Flutter Module (<code>RepayHomePage</code>).</li>
-<li><strong>Host Native</strong>: <code>IDRepayViewController</code> membungkus FlutterViewController.</li>
-<li><strong>Fungsi</strong>: Menampilkan daftar kontrak pinjaman yang sedang berjalan, status pelunasan, jadwal angsuran, nomor kode bayar / Virtual Account (VA), dan pop-up insentif pembayaran.</li>
-<li><strong>Tab 2 (Saya / Mine)</strong>:</li>
-<li><strong>Platform</strong>: Flutter Module (<code>MineHomePage</code>).</li>
-<li><strong>Host Native</strong>: <code>IDMineViewController</code> membungkus FlutterViewController.</li>
-<li><strong>Fungsi</strong>: Profil nasabah, riwayat pesanan pinjaman (<code>/samir/loan-record</code>), daftar kupon (<code>/samir/coupon/list</code>), pusat bantuan FAQ (<code>/samir/faq</code>), pengaturan akun (<code>samir://mine/setting</code>), dan kanal pengaduan customer service.</li>
-</ul>
+<li><strong>Tab 0 (Beranda / Home)</strong>:
+<ul>
+<li><strong>Platform</strong>: Native Swift (<code>IDHomeViewController</code>).
+</li>
+<li><strong>Fungsi</strong>: Penilaian limit pinjaman, simulasi kredit, pengajuan awal, dan pengecekan verifikasi KYC.
+</li></ul>
+</li>
+<li><strong>Tab 1 (Tagihan / Repay)</strong>:
+<ul>
+<li><strong>Platform</strong>: Flutter Module (<code>RepayHomePage</code>).
+</li>
+<li><strong>Host Native</strong>: <code>IDRepayViewController</code> membungkus FlutterViewController.
+</li>
+<li><strong>Fungsi</strong>: Menampilkan daftar kontrak pinjaman yang sedang berjalan, status pelunasan, jadwal angsuran, nomor kode bayar / Virtual Account (VA), dan pop-up insentif pembayaran.
+</li></ul>
+</li>
+<li><strong>Tab 2 (Saya / Mine)</strong>:
+<ul>
+<li><strong>Platform</strong>: Flutter Module (<code>MineHomePage</code>).
+</li>
+<li><strong>Host Native</strong>: <code>IDMineViewController</code> membungkus FlutterViewController.
+</li>
+<li><strong>Fungsi</strong>: Profil nasabah, riwayat pesanan pinjaman (<code>/samir/loan-record</code>), daftar kupon (<code>/samir/coupon/list</code>), pusat bantuan FAQ (<code>/samir/faq</code>), pengaturan akun (<code>samir://mine/setting</code>), dan kanal pengaduan customer service.
+</li></ul>
+</li></ul>
 <div id="sub-3-konfigurasi-add-to-app-di-host-ios" class="doc-subsection">
 <h4>3. Konfigurasi Add-to-App di Host iOS</h4>
 </div>
@@ -164,63 +182,73 @@ end</code></pre>
 <section id="sec-walkthrough" class="doc-section">
 <h3>🪜 E. Step-by-Step Walkthrough (Siklus Hidup Modul)</h3>
 <ol>
-<li><strong>Host Bootstrapping</strong>:</li>
-</ol>
+<li><strong>Host Bootstrapping</strong>:
+</li></ol>
 <p>Saat aplikasi host (misal iOS) dinyalakan, <code>IDSamirMainModule</code> menginisialisasi singleton <code>FlutterEngineManager</code> dan menjalankan <code>run(withEntrypoint: nil)</code> untuk melakukan proses <strong>prewarming</strong> engine.</p>
-<ol>
-<li><strong>Flutter Initialization</strong>:</li>
-</ol>
+<ol start="2">
+<li><strong>Flutter Initialization</strong>:
+</li></ol>
 <p>Engine mengeksekusi <code>main()</code> di <a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/learn/Flutter-Arch/flutter/lib/main.dart" target="_blank" rel="noopener noreferrer">🦊 flutter/lib/main.dart <span class="branch-tag">learn/Flutter-Arch</span> ↗</a>. Flutter menyiapkan binding, menginisialisasi environment, HTTP client, dan listener MethodChannel.</p>
-<ol>
-<li><strong>Notify Native Ready</strong>:</li>
-</ol>
+<ol start="3">
+<li><strong>Notify Native Ready</strong>:
+</li></ol>
 <p>Setelah frame pertama selesai digambar (<code>WidgetsBinding.instance.endOfFrame</code>), Flutter memanggil method channel <code>flutterReady</code> ke native host.</p>
-<ol>
-<li><strong>Tab Attachment</strong>:</li>
-</ol>
+<ol start="4">
+<li><strong>Tab Attachment</strong>:
+</li></ol>
 <p>Ketika user membuka Tab Tagihan atau Tab Saya, UIViewController native hanya melampirkan view dari FlutterEngine yang sudah aktif, tanpa membuat ulang engine baru.</p>
-<ol>
-<li><strong>Bidirectional Communication</strong>:</li>
-</ol>
+<ol start="5">
+<li><strong>Bidirectional Communication</strong>:
+</li></ol>
 <p>Jika user menekan menu yang membutuhkan aksi native (misal: verifikasi e-KTP atau pembukaan browser luar), Flutter mengirimkan sinyal navigasi ke host via <code>FlutterNativeChannelRoute.openNativeRoute()</code>.</p>
 </section>
 <section id="sec-why" class="doc-section">
 <h3>⚖️ F. Why It Matters (Trade-Offs & Implikasi Teknis)</h3>
 <ul>
-<li><strong>Mengapa Single Engine Add-to-App?</strong></li>
-</ul>
+<li><strong>Mengapa Single Engine Add-to-App?</strong>
+</li></ul>
 <p>Menjalankan dua engine Flutter terpisah untuk Tab 1 dan Tab 2 akan melipatgandakan penggunaan memori RAM (sekitar 30–50 MB per engine tambahan) dan menyebabkan inkonsistensi status login. Dengan menggunakan <strong>satu engine bersama</strong> yang dikendalikan oleh <code>FlutterRootPage</code> dan <code>IndexedStack</code>, penggunaan memori sangat hemat dan pergantian tab berlangsung instan (0 ms freeze).</p>
 <ul>
-<li><strong>Mengapa Sesi Otentikasi Dikuasai Native?</strong></li>
-</ul>
+<li><strong>Mengapa Sesi Otentikasi Dikuasai Native?</strong>
+</li></ul>
 <p>Aplikasi finansial menyimpan kredensial sensitif di iOS Keychain dengan enkripsi tingkat perangkat keras (<code>CryptoKit</code> AES-GCM). Flutter tidak menyimpan token secara permanen di storage lokal, melainkan menerima salinan data sesi di memori RAM via MethodChannel <code>getRootPageData</code>.</p>
 </section>
 <section id="sec-example" class="doc-section">
 <h3>🔬 G. Practical Example (Skenario Penggunaan Nyata)</h3>
 <p>Ketika user telah login di Native Home (Tab 0) dan kemudian menekan Tab Tagihan (Tab 1):</p>
 <ol>
-<li>Native <code>IDRepayViewController</code> tampil di layar.</li>
-<li>Native mengirim pesan <code>showFlutterRoute</code> dengan rute <code>/repay</code> melalui MethodChannel.</li>
-<li>Flutter menerima pesan tersebut di <code>FlutterNativeRouteDispatcher._showFlutterRoute()</code> dan menginstruksikan <code>FlutterRootController.select(&#x27;/repay&#x27;)</code>.</li>
-<li><code>IndexedStack</code> di <code>FlutterRootPage</code> langsung menampilkan <code>RepayHomePage</code> dan memicu refresh data tagihan terbaru.</li>
-</ol>
+<li>Native <code>IDRepayViewController</code> tampil di layar.
+</li>
+<li>Native mengirim pesan <code>showFlutterRoute</code> dengan rute <code>/repay</code> melalui MethodChannel.
+</li>
+<li>Flutter menerima pesan tersebut di <code>FlutterNativeRouteDispatcher._showFlutterRoute()</code> dan menginstruksikan <code>FlutterRootController.select(&#x27;/repay&#x27;)</code>.
+</li>
+<li><code>IndexedStack</code> di <code>FlutterRootPage</code> langsung menampilkan <code>RepayHomePage</code> dan memicu refresh data tagihan terbaru.
+</li></ol>
 </section>
 <section id="sec-mistakes" class="doc-section">
 <h3>⚠️ H. Common Mistakes & Debugging</h3>
 <ul>
-<li><strong>Kesalahan Menjalankan Flutter Secara Terpisah (<code>flutter run</code>)</strong>:</li>
-<li>Modul ini dirancang dengan asumsi host native menyediakan parameter perangkat dan environment via MethodChannel. Menjalankan modul secara standalone tanpa native host akan menggunakan data fallback (<code>AppEnv.devAppId</code>, host dummy).</li>
-<li><strong>Kesalahan State Desinkronisasi</strong>:</li>
-<li>Jika token login di native telah di-refresh atau dihapus (logout), tetapi native lupa memanggil sinyal refresh ke Flutter, layar Flutter mungkin menampilkan data usang hingga sinyal <code>refreshMineHome</code> atau <code>refreshRepayHome</code> dipicu.</li>
-</ul>
+<li><strong>Kesalahan Menjalankan Flutter Secara Terpisah (<code>flutter run</code>)</strong>:
+<ul>
+<li>Modul ini dirancang dengan asumsi host native menyediakan parameter perangkat dan environment via MethodChannel. Menjalankan modul secara standalone tanpa native host akan menggunakan data fallback (<code>AppEnv.devAppId</code>, host dummy).
+</li></ul>
+</li>
+<li><strong>Kesalahan State Desinkronisasi</strong>:
+<ul>
+<li>Jika token login di native telah di-refresh atau dihapus (logout), tetapi native lupa memanggil sinyal refresh ke Flutter, layar Flutter mungkin menampilkan data usang hingga sinyal <code>refreshMineHome</code> atau <code>refreshRepayHome</code> dipicu.
+</li></ul>
+</li></ul>
 </section>
 <section id="sec-check" class="doc-section">
 <h3>🧠 I. Knowledge Check</h3>
 <ol>
-<li>Berapa versi Flutter SDK dan Dart SDK resmi yang digunakan pada modul <code>flutter_app_project</code>?</li>
-<li>Sebutkan dua tab utama aplikasi SAMIR yang sepenuhnya dirender menggunakan modul Flutter!</li>
-<li>Mengapa persistensi data sesi utama (token login) dipercayakan pada host native dan bukan pada SQLite/SharedPreferences di Flutter?</li>
-</ol>
+<li>Berapa versi Flutter SDK dan Dart SDK resmi yang digunakan pada modul <code>flutter_app_project</code>?
+</li>
+<li>Sebutkan dua tab utama aplikasi SAMIR yang sepenuhnya dirender menggunakan modul Flutter!
+</li>
+<li>Mengapa persistensi data sesi utama (token login) dipercayakan pada host native dan bukan pada SQLite/SharedPreferences di Flutter?
+</li></ol>
 <p><strong>Latihan Observasi</strong>:</p>
 <p>Buka file <a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/learn/Flutter-Arch/flutter/pubspec.yaml" target="_blank" rel="noopener noreferrer">🦊 flutter/pubspec.yaml <span class="branch-tag">learn/Flutter-Arch</span> ↗</a>. Cari section <code>dependencies:</code> dan catat empat pustaka pihak ketiga utama selain framework Flutter.</p>
 </section>

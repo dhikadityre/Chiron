@@ -114,10 +114,12 @@ graph TD
 <h4>Mengapa Urutan Ini Efektif?</h4>
 </div>
 <ul>
-<li>Anda tidak dapat memahami <strong>Arsitektur (Level 3)</strong> sebelum mengetahui <strong>cara aplikasi di-boot dan modul di-load (Level 2)</strong>.</li>
-<li>Anda tidak dapat menelusuri <strong>Alur Bisnis (Level 5)</strong> sebelum memahami <strong>URL Router dan peta fitur (Level 4)</strong>.</li>
-<li>Anda tidak dapat melakukan <strong>Debugging dan Refactoring (Level 7)</strong> dengan aman sebelum memahami <strong>pipeline data, penandatanganan request, dan integrasi Flutter (Level 6)</strong>.</li>
-</ul>
+<li>Anda tidak dapat memahami <strong>Arsitektur (Level 3)</strong> sebelum mengetahui <strong>cara aplikasi di-boot dan modul di-load (Level 2)</strong>.
+</li>
+<li>Anda tidak dapat menelusuri <strong>Alur Bisnis (Level 5)</strong> sebelum memahami <strong>URL Router dan peta fitur (Level 4)</strong>.
+</li>
+<li>Anda tidak dapat melakukan <strong>Debugging dan Refactoring (Level 7)</strong> dengan aman sebelum memahami <strong>pipeline data, penandatanganan request, dan integrasi Flutter (Level 6)</strong>.
+</li></ul>
 </section>
 <section id="sec-level-1-kenali-aplikasi-struktur-folder-build-tooling" class="doc-section">
 <h3>📌 Level 1 — Kenali Aplikasi, Struktur Folder, & Build Tooling</h3>
@@ -129,41 +131,50 @@ graph TD
 <h4>B. Pengetahuan yang Diperoleh</h4>
 </div>
 <ul>
-<li>Mengetahui identitas aplikasi: Bundle ID <code>com.samir.loan</code>, target minimal iOS 14.0, Swift 5.0.</li>
-<li>Mengetahui letak file source code native (<code>IDSamirLoan/Application</code>), modul Flutter hybrid (<code>flutter/</code>), dan pustaka internal <code>CZ*</code>.</li>
-<li>Memahami 4 Xcode Schemes (<code>TEST</code>, <code>PROD-TEST</code>, <code>PROD</code>, <code>IDSamirEnvironment</code>).</li>
-<li>Mengetahui dependensi eksternal utama melalui <code>Podfile</code>.</li>
-</ul>
+<li>Mengetahui identitas aplikasi: Bundle ID <code>com.samir.loan</code>, target minimal iOS 14.0, Swift 5.0.
+</li>
+<li>Mengetahui letak file source code native (<code>IDSamirLoan/Application</code>), modul Flutter hybrid (<code>flutter/</code>), dan pustaka internal <code>CZ*</code>.
+</li>
+<li>Memahami 4 Xcode Schemes (<code>TEST</code>, <code>PROD-TEST</code>, <code>PROD</code>, <code>IDSamirEnvironment</code>).
+</li>
+<li>Mengetahui dependensi eksternal utama melalui <code>Podfile</code>.
+</li></ul>
 <div id="sub-c-dokumen-yang-harus-dibaca" class="doc-subsection">
 <h4>C. Dokumen yang Harus Dibaca</h4>
 </div>
 <ol>
-<li><a href="01-project-foundation/01-application-overview.html">01-application-overview.md</a></li>
-<li><a href="01-project-foundation/02-repository-structure.html">02-repository-structure.md</a></li>
-<li><a href="01-project-foundation/03-technology-stack-and-build.html">03-technology-stack-and-build.md</a></li>
-</ol>
+<li><a href="01-project-foundation/01-application-overview.html">01-application-overview.md</a>
+</li>
+<li><a href="01-project-foundation/02-repository-structure.html">02-repository-structure.md</a>
+</li>
+<li><a href="01-project-foundation/03-technology-stack-and-build.html">03-technology-stack-and-build.md</a>
+</li></ol>
 <div id="sub-d-konsep-kunci-sebelum-melanjutkan" class="doc-subsection">
 <h4>D. Konsep Kunci Sebelum Melanjutkan</h4>
 </div>
 <ul>
-<li>Workspace CocoaPods (<code>IDSamirLoan.xcworkspace</code>) vs Xcode Project file (<code>IDSamirLoan.xcodeproj</code>).</li>
-<li>Mekanisme Build Configuration di Xcode (Preprocessor Macros <code>#if TEST</code>).</li>
-</ul>
+<li>Workspace CocoaPods (<code>IDSamirLoan.xcworkspace</code>) vs Xcode Project file (<code>IDSamirLoan.xcodeproj</code>).
+</li>
+<li>Mekanisme Build Configuration di Xcode (Preprocessor Macros <code>#if TEST</code>).
+</li></ul>
 <div id="sub-e-pertanyaan-yang-harus-bisa-dijawab-setelah-selesai" class="doc-subsection">
 <h4>E. Pertanyaan yang Harus Bisa Dijawab Setelah Selesai</h4>
 </div>
 <ol>
-<li>Mengapa developer harus selalu membuka <code>IDSamirLoan.xcworkspace</code> dan bukan <code>IDSamirLoan.xcodeproj</code>?</li>
-<li>Apa perbedaan konfigurasi antara Scheme <code>TEST</code> dan <code>PROD</code>?</li>
-<li>Di mana letak source code modul Flutter dan bagaimana CocoaPods menghubungkannya ke proyek iOS?</li>
-</ol>
+<li>Mengapa developer harus selalu membuka <code>IDSamirLoan.xcworkspace</code> dan bukan <code>IDSamirLoan.xcodeproj</code>?
+</li>
+<li>Apa perbedaan konfigurasi antara Scheme <code>TEST</code> dan <code>PROD</code>?
+</li>
+<li>Di mana letak source code modul Flutter dan bagaimana CocoaPods menghubungkannya ke proyek iOS?
+</li></ol>
 <div id="sub-f-latihan-eksplorasi-source-code-observasional" class="doc-subsection">
 <h4>F. Latihan Eksplorasi Source Code (Observasional)</h4>
 </div>
 <ul>
-<li>Buka terminal di root repo, amati isi <code>ios/Podfile</code> pada baris 14–20 untuk melihat integrasi <code>podhelper.rb</code> Flutter.</li>
-<li>Buka <code>ios/IDSamirLoan.xcodeproj/project.pbxproj</code>, cari baris <code>IPHONEOS_DEPLOYMENT_TARGET</code> dan pastikan nilainya adalah <code>14.0</code>.</li>
-</ul>
+<li>Buka terminal di root repo, amati isi <code>ios/Podfile</code> pada baris 14–20 untuk melihat integrasi <code>podhelper.rb</code> Flutter.
+</li>
+<li>Buka <code>ios/IDSamirLoan.xcodeproj/project.pbxproj</code>, cari baris <code>IPHONEOS_DEPLOYMENT_TARGET</code> dan pastikan nilainya adalah <code>14.0</code>.
+</li></ul>
 <div id="sub-g-kriteria-kelulusan-level-1" class="doc-subsection">
 <h4>G. Kriteria Kelulusan Level 1</h4>
 </div>
@@ -179,44 +190,56 @@ graph TD
 <h4>B. Pengetahuan yang Diperoleh</h4>
 </div>
 <ul>
-<li>Peran <code>main.swift</code> sebagai satu-satunya entry point aplikasi (serta inisialisasi Tingyun APM).</li>
-<li>Bagaimana <code>CZModuleHandler.ModuleManagerApplicationMain</code> memuat daftar modul dari <code>IDModuleList.plist</code> dan <code>IDServiceList.plist</code>.</li>
-<li>Bagaimana <code>CZAppDelegate</code> mendistribusikan event lifecycle UIApplication ke seluruh modul terdaftar via <code>CZModuleManager</code>.</li>
-<li>Tahapan inisialisasi di <code>IDSamirMainModule</code>: migrasi data, network setup, prewarming FlutterEngine, dan inisialisasi window.</li>
-<li>Logika penentuan tampilan awal: <code>IDLaunchViewController</code> (splash countdown 3 detik) vs <code>IDMainTabBarController</code>.</li>
-</ul>
+<li>Peran <code>main.swift</code> sebagai satu-satunya entry point aplikasi (serta inisialisasi Tingyun APM).
+</li>
+<li>Bagaimana <code>CZModuleHandler.ModuleManagerApplicationMain</code> memuat daftar modul dari <code>IDModuleList.plist</code> dan <code>IDServiceList.plist</code>.
+</li>
+<li>Bagaimana <code>CZAppDelegate</code> mendistribusikan event lifecycle UIApplication ke seluruh modul terdaftar via <code>CZModuleManager</code>.
+</li>
+<li>Tahapan inisialisasi di <code>IDSamirMainModule</code>: migrasi data, network setup, prewarming FlutterEngine, dan inisialisasi window.
+</li>
+<li>Logika penentuan tampilan awal: <code>IDLaunchViewController</code> (splash countdown 3 detik) vs <code>IDMainTabBarController</code>.
+</li></ul>
 <div id="sub-c-dokumen-yang-harus-dibaca" class="doc-subsection">
 <h4>C. Dokumen yang Harus Dibaca</h4>
 </div>
 <ol>
-<li><a href="02-understanding-app-startup/01-ios-entry-point.html">01-ios-entry-point.md</a></li>
-<li><a href="02-understanding-app-startup/02-application-lifecycle.html">02-application-lifecycle.md</a></li>
-<li><a href="02-understanding-app-startup/03-startup-sequence-and-initial-routing.html">03-startup-sequence-and-initial-routing.md</a></li>
-<li><a href="02-understanding-app-startup/04-czmodulemanager-deep-dive.html">04-czmodulemanager-deep-dive.md</a></li>
-<li>Diagram: <a href="diagrams/application-startup.html">application-startup.md</a></li>
-</ol>
+<li><a href="02-understanding-app-startup/01-ios-entry-point.html">01-ios-entry-point.md</a>
+</li>
+<li><a href="02-understanding-app-startup/02-application-lifecycle.html">02-application-lifecycle.md</a>
+</li>
+<li><a href="02-understanding-app-startup/03-startup-sequence-and-initial-routing.html">03-startup-sequence-and-initial-routing.md</a>
+</li>
+<li><a href="02-understanding-app-startup/04-czmodulemanager-deep-dive.html">04-czmodulemanager-deep-dive.md</a>
+</li>
+<li>Diagram: <a href="diagrams/application-startup.html">application-startup.md</a>
+</li></ol>
 <div id="sub-d-konsep-kunci-sebelum-melanjutkan" class="doc-subsection">
 <h4>D. Konsep Kunci Sebelum Melanjutkan</h4>
 </div>
 <ul>
-<li>Pola Delegate pada iOS (<code>UIApplicationDelegate</code>).</li>
-<li>Dynamic class instantiation via <code>NSClassFromString</code> di Swift/Objective-C runtime.</li>
-</ul>
+<li>Pola Delegate pada iOS (<code>UIApplicationDelegate</code>).
+</li>
+<li>Dynamic class instantiation via <code>NSClassFromString</code> di Swift/Objective-C runtime.
+</li></ul>
 <div id="sub-e-pertanyaan-yang-harus-bisa-dijawab-setelah-selesai" class="doc-subsection">
 <h4>E. Pertanyaan yang Harus Bisa Dijawab Setelah Selesai</h4>
 </div>
 <ol>
-<li>File mana yang dieksekusi pertama kali oleh iOS runtime: <code>main.swift</code> atau <code>IDSamirMainModule.swift</code>?</li>
-<li>Bagaimana cara modul fitur seperti <code>SamirLoanModule</code> menerima event <code>applicationDidBecomeActive</code> tanpa menyentuh <code>CZAppDelegate</code>?</li>
-<li>Kondisi apa yang menyebabkan layar splash dilewati (skip) dan langsung membuka tab bar?</li>
-</ol>
+<li>File mana yang dieksekusi pertama kali oleh iOS runtime: <code>main.swift</code> atau <code>IDSamirMainModule.swift</code>?
+</li>
+<li>Bagaimana cara modul fitur seperti <code>SamirLoanModule</code> menerima event <code>applicationDidBecomeActive</code> tanpa menyentuh <code>CZAppDelegate</code>?
+</li>
+<li>Kondisi apa yang menyebabkan layar splash dilewati (skip) dan langsung membuka tab bar?
+</li></ol>
 <div id="sub-f-latihan-eksplorasi-source-code" class="doc-subsection">
 <h4>F. Latihan Eksplorasi Source Code</h4>
 </div>
 <ul>
-<li>Buka <code>ios/IDSamirLoan/main.swift</code>, amati pemanggilan <code>ApplicationLauncher.performLaunchSetup()</code> dan <code>CZModuleHandler.ModuleManagerApplicationMain</code>.</li>
-<li>Buka <code>ios/IDSamirLoan/Application/SamirMainModule/Classes/IDModule/IDSamirMainModule.swift</code>, periksa method <code>application(_:didFinishLaunchingWithOptions:)</code> pada baris 54–75.</li>
-</ul>
+<li>Buka <code>ios/IDSamirLoan/main.swift</code>, amati pemanggilan <code>ApplicationLauncher.performLaunchSetup()</code> dan <code>CZModuleHandler.ModuleManagerApplicationMain</code>.
+</li>
+<li>Buka <code>ios/IDSamirLoan/Application/SamirMainModule/Classes/IDModule/IDSamirMainModule.swift</code>, periksa method <code>application(_:didFinishLaunchingWithOptions:)</code> pada baris 54–75.
+</li></ul>
 <div id="sub-g-kriteria-kelulusan-level-2" class="doc-subsection">
 <h4>G. Kriteria Kelulusan Level 2</h4>
 </div>
@@ -232,43 +255,54 @@ graph TD
 <h4>B. Pengetahuan yang Diperoleh</h4>
 </div>
 <ul>
-<li>Memahami arsitektur <strong>Modular Monolith</strong>: pemisahan kode secara logis ke dalam folder independen tanpa saling import langsung.</li>
-<li>Pola Presenter buatan sendiri (<code>ViewController</code> + <code>Presenter</code> + <code>Service</code> + <code>Model</code>).</li>
-<li>Protokol Layanan Lintas Modul (<code>SamirServiceModule</code>): memanggil fungsi bisnis modul lain melalui <code>IDServiceManager</code> (contoh: memeriksa status login dari modul pinjaman).</li>
-<li>Peran <code>CZSwiftUIKit</code> dan utility bersama.</li>
-</ul>
+<li>Memahami arsitektur <strong>Modular Monolith</strong>: pemisahan kode secara logis ke dalam folder independen tanpa saling import langsung.
+</li>
+<li>Pola Presenter buatan sendiri (<code>ViewController</code> + <code>Presenter</code> + <code>Service</code> + <code>Model</code>).
+</li>
+<li>Protokol Layanan Lintas Modul (<code>SamirServiceModule</code>): memanggil fungsi bisnis modul lain melalui <code>IDServiceManager</code> (contoh: memeriksa status login dari modul pinjaman).
+</li>
+<li>Peran <code>CZSwiftUIKit</code> dan utility bersama.
+</li></ul>
 <div id="sub-c-dokumen-yang-harus-dibaca" class="doc-subsection">
 <h4>C. Dokumen yang Harus Dibaca</h4>
 </div>
 <ol>
-<li><a href="03-understanding-architecture/01-architecture-overview.html">01-architecture-overview.md</a></li>
-<li><a href="03-understanding-architecture/02-layers-and-responsibilities.html">02-layers-and-responsibilities.md</a></li>
-<li><a href="03-understanding-architecture/03-dependency-direction.html">03-dependency-direction.md</a></li>
-<li><a href="03-understanding-architecture/04-shared-components-and-services.html">04-shared-components-and-services.md</a></li>
-<li>Diagram: <a href="diagrams/architecture-overview.html">architecture-overview.md</a></li>
-</ol>
+<li><a href="03-understanding-architecture/01-architecture-overview.html">01-architecture-overview.md</a>
+</li>
+<li><a href="03-understanding-architecture/02-layers-and-responsibilities.html">02-layers-and-responsibilities.md</a>
+</li>
+<li><a href="03-understanding-architecture/03-dependency-direction.html">03-dependency-direction.md</a>
+</li>
+<li><a href="03-understanding-architecture/04-shared-components-and-services.html">04-shared-components-and-services.md</a>
+</li>
+<li>Diagram: <a href="diagrams/architecture-overview.html">architecture-overview.md</a>
+</li></ol>
 <div id="sub-d-konsep-kunci-sebelum-melanjutkan" class="doc-subsection">
 <h4>D. Konsep Kunci Sebelum Melanjutkan</h4>
 </div>
 <ul>
-<li>Inversion of Control (IoC) & Service Locator Pattern.</li>
-<li>Clean separation between presentation layer and business/network logic.</li>
-</ul>
+<li>Inversion of Control (IoC) & Service Locator Pattern.
+</li>
+<li>Clean separation between presentation layer and business/network logic.
+</li></ul>
 <div id="sub-e-pertanyaan-yang-harus-bisa-dijawab-setelah-selesai" class="doc-subsection">
 <h4>E. Pertanyaan yang Harus Bisa Dijawab Setelah Selesai</h4>
 </div>
 <ol>
-<li>Jika <code>SamirLoanModule</code> ingin mengetahui apakah pengguna sudah login, bagaimana kodenya memanggil modul login tanpa melakukan <code>import SamirLoginModule</code>?</li>
-<li>Apa tanggung jawab sebuah <code>Presenter</code> di codebase ini dan di mana network service dipanggil?</li>
-<li>Apa kelebihan dan kelemahan penggunaan <code>NSClassFromString</code> pada registry modul?</li>
-</ol>
+<li>Jika <code>SamirLoanModule</code> ingin mengetahui apakah pengguna sudah login, bagaimana kodenya memanggil modul login tanpa melakukan <code>import SamirLoginModule</code>?
+</li>
+<li>Apa tanggung jawab sebuah <code>Presenter</code> di codebase ini dan di mana network service dipanggil?
+</li>
+<li>Apa kelebihan dan kelemahan penggunaan <code>NSClassFromString</code> pada registry modul?
+</li></ol>
 <div id="sub-f-latihan-eksplorasi-source-code" class="doc-subsection">
 <h4>F. Latihan Eksplorasi Source Code</h4>
 </div>
 <ul>
-<li>Buka <code>ios/IDSamirLoan/Application/SamirServiceModule/Classes/IDServiceManager.swift</code>, telusuri method <code>loginService()</code> dan lihat bagaimana protokol <code>IDLoginModuleServiceProtocol</code> di-resolve secara dinamis.</li>
-<li>Buka <code>ios/IDSamirLoan/Application/SamirLoanModule/Classes/IDPresenter/IDAssessPresenter.swift</code> dan identifikasi interaksinya dengan <code>IDAssessService</code>.</li>
-</ul>
+<li>Buka <code>ios/IDSamirLoan/Application/SamirServiceModule/Classes/IDServiceManager.swift</code>, telusuri method <code>loginService()</code> dan lihat bagaimana protokol <code>IDLoginModuleServiceProtocol</code> di-resolve secara dinamis.
+</li>
+<li>Buka <code>ios/IDSamirLoan/Application/SamirLoanModule/Classes/IDPresenter/IDAssessPresenter.swift</code> dan identifikasi interaksinya dengan <code>IDAssessService</code>.
+</li></ul>
 <div id="sub-g-kriteria-kelulusan-level-3" class="doc-subsection">
 <h4>G. Kriteria Kelulusan Level 3</h4>
 </div>
@@ -284,43 +318,54 @@ graph TD
 <h4>B. Pengetahuan yang Diperoleh</h4>
 </div>
 <ul>
-<li>Bagaimana URL Scheme <code>samir://</code> di-parse dan di-routing oleh <code>CZRouterCenter</code>.</li>
-<li>Mengetahui seluruh endpoint route yang terdaftar di <code>IDRouterSchemeConstants</code> (Auth, Loan, Main, Web, Repay, Mine).</li>
-<li>Peta navigasi dari Home ke KYC, Credit Assessment, Loan Confirmation, Voucher, dan WebView.</li>
-<li>Penanganan deep links (AppsFlyer, Push Notification) dan route filtering.</li>
-</ul>
+<li>Bagaimana URL Scheme <code>samir://</code> di-parse dan di-routing oleh <code>CZRouterCenter</code>.
+</li>
+<li>Mengetahui seluruh endpoint route yang terdaftar di <code>IDRouterSchemeConstants</code> (Auth, Loan, Main, Web, Repay, Mine).
+</li>
+<li>Peta navigasi dari Home ke KYC, Credit Assessment, Loan Confirmation, Voucher, dan WebView.
+</li>
+<li>Penanganan deep links (AppsFlyer, Push Notification) dan route filtering.
+</li></ul>
 <div id="sub-c-dokumen-yang-harus-dibaca" class="doc-subsection">
 <h4>C. Dokumen yang Harus Dibaca</h4>
 </div>
 <ol>
-<li><a href="04-understanding-navigation/01-feature-inventory.html">01-feature-inventory.md</a></li>
-<li><a href="04-understanding-navigation/02-navigation-fundamentals.html">02-navigation-fundamentals.md</a></li>
-<li><a href="04-understanding-navigation/03-complete-navigation-map.html">03-complete-navigation-map.md</a></li>
-<li><a href="04-understanding-navigation/04-navigation-conditions-and-edge-cases.html">04-navigation-conditions-and-edge-cases.md</a></li>
-<li>Diagram: <a href="diagrams/navigation-overview.html">navigation-overview.md</a></li>
-</ol>
+<li><a href="04-understanding-navigation/01-feature-inventory.html">01-feature-inventory.md</a>
+</li>
+<li><a href="04-understanding-navigation/02-navigation-fundamentals.html">02-navigation-fundamentals.md</a>
+</li>
+<li><a href="04-understanding-navigation/03-complete-navigation-map.html">03-complete-navigation-map.md</a>
+</li>
+<li><a href="04-understanding-navigation/04-navigation-conditions-and-edge-cases.html">04-navigation-conditions-and-edge-cases.md</a>
+</li>
+<li>Diagram: <a href="diagrams/navigation-overview.html">navigation-overview.md</a>
+</li></ol>
 <div id="sub-d-konsep-kunci-sebelum-melanjutkan" class="doc-subsection">
 <h4>D. Konsep Kunci Sebelum Melanjutkan</h4>
 </div>
 <ul>
-<li>Pattern URL Routing (Scheme, Host, Path, Query Parameters).</li>
-<li>Regex matching pada router table.</li>
-</ul>
+<li>Pattern URL Routing (Scheme, Host, Path, Query Parameters).
+</li>
+<li>Regex matching pada router table.
+</li></ul>
 <div id="sub-e-pertanyaan-yang-harus-bisa-dijawab-setelah-selesai" class="doc-subsection">
 <h4>E. Pertanyaan yang Harus Bisa Dijawab Setelah Selesai</h4>
 </div>
 <ol>
-<li>Apa yang terjadi jika dua modul berbeda mendaftarkan host yang sama pada <code>CZRouterCenter</code>?</li>
-<li>Bagaimana sebuah halaman Web H5 memerintahkan aplikasi native untuk membuka halaman formulir identitas KTP?</li>
-<li>Bagaimana aplikasi menangani deep link yang membutuhkan autentikasi ketika pengguna belum melakukan login?</li>
-</ol>
+<li>Apa yang terjadi jika dua modul berbeda mendaftarkan host yang sama pada <code>CZRouterCenter</code>?
+</li>
+<li>Bagaimana sebuah halaman Web H5 memerintahkan aplikasi native untuk membuka halaman formulir identitas KTP?
+</li>
+<li>Bagaimana aplikasi menangani deep link yang membutuhkan autentikasi ketika pengguna belum melakukan login?
+</li></ol>
 <div id="sub-f-latihan-eksplorasi-source-code" class="doc-subsection">
 <h4>F. Latihan Eksplorasi Source Code</h4>
 </div>
 <ul>
-<li>Buka <code>ios/IDSamirLoan/Application/SamirRouterModule/Classes/IDRouterConstants.swift</code>, catat semua enum route.</li>
-<li>Buka <code>ios/IDSamirLoan/Application/SamirAuthModule/Classes/IDRouter/IDSamirAuthModuleRouterHandler.swift</code> dan telusuri bagaimana parameter <code>isEdit</code> dan <code>step</code> dioper ke <code>IDNewOCRViewController</code>.</li>
-</ul>
+<li>Buka <code>ios/IDSamirLoan/Application/SamirRouterModule/Classes/IDRouterConstants.swift</code>, catat semua enum route.
+</li>
+<li>Buka <code>ios/IDSamirLoan/Application/SamirAuthModule/Classes/IDRouter/IDSamirAuthModuleRouterHandler.swift</code> dan telusuri bagaimana parameter <code>isEdit</code> dan <code>step</code> dioper ke <code>IDNewOCRViewController</code>.
+</li></ul>
 <div id="sub-g-kriteria-kelulusan-level-4" class="doc-subsection">
 <h4>G. Kriteria Kelulusan Level 4</h4>
 </div>
@@ -336,45 +381,58 @@ graph TD
 <h4>B. Pengetahuan yang Diperoleh</h4>
 </div>
 <ul>
-<li>Alur Otentikasi & Sesi: Request OTP, verifikasi SMS/WA, penanganan 2FA, enkripsi user info, dan token fcm.</li>
-<li>Alur KYC (Verifikasi Identitas): OCR KTP (<code>IDNewOCRViewController</code>), data pribadi, info pekerjaan, kontak darurat, rekening bank, dan liveness detection (Advance AI / TrustDecision).</li>
-<li>Alur Penilaian Kuota (Credit Assessment) & Polling: Polling interval status analisa risiko.</li>
-<li>Alur Konfirmasi Pinjaman (<code>LoanConfirmModule</code>): Penggunaan RxSwift, pemilihan voucher diskon, dan persetujuan kontrak digital.</li>
-<li>Alur Pembayaran Tagihan: Menampilkan daftar tagihan, kode bayar (VA/minimarket), dan detail pelunasan.</li>
-</ul>
+<li>Alur Otentikasi & Sesi: Request OTP, verifikasi SMS/WA, penanganan 2FA, enkripsi user info, dan token fcm.
+</li>
+<li>Alur KYC (Verifikasi Identitas): OCR KTP (<code>IDNewOCRViewController</code>), data pribadi, info pekerjaan, kontak darurat, rekening bank, dan liveness detection (Advance AI / TrustDecision).
+</li>
+<li>Alur Penilaian Kuota (Credit Assessment) & Polling: Polling interval status analisa risiko.
+</li>
+<li>Alur Konfirmasi Pinjaman (<code>LoanConfirmModule</code>): Penggunaan RxSwift, pemilihan voucher diskon, dan persetujuan kontrak digital.
+</li>
+<li>Alur Pembayaran Tagihan: Menampilkan daftar tagihan, kode bayar (VA/minimarket), dan detail pelunasan.
+</li></ul>
 <div id="sub-c-dokumen-yang-harus-dibaca" class="doc-subsection">
 <h4>C. Dokumen yang Harus Dibaca</h4>
 </div>
 <ol>
-<li><a href="05-learning-business-flows/01-user-journey-overview.html">01-user-journey-overview.md</a></li>
-<li><a href="05-learning-business-flows/02-authentication-and-session-flow.html">02-authentication-and-session-flow.md</a></li>
-<li><a href="05-learning-business-flows/03-core-feature-flows.html">03-core-feature-flows.md</a></li>
-<li><a href="05-learning-business-flows/04-cross-feature-journeys.html">04-cross-feature-journeys.md</a></li>
-<li><a href="05-learning-business-flows/05-production-low-level-flows.html">05-production-low-level-flows.md</a> <em>(Bedah Low-Level Flow berdasarkan skill /ios-explain-flow)</em></li>
-<li>Diagram: <a href="diagrams/core-user-journeys.html">core-user-journeys.md</a></li>
-</ol>
+<li><a href="05-learning-business-flows/01-user-journey-overview.html">01-user-journey-overview.md</a>
+</li>
+<li><a href="05-learning-business-flows/02-authentication-and-session-flow.html">02-authentication-and-session-flow.md</a>
+</li>
+<li><a href="05-learning-business-flows/03-core-feature-flows.html">03-core-feature-flows.md</a>
+</li>
+<li><a href="05-learning-business-flows/04-cross-feature-journeys.html">04-cross-feature-journeys.md</a>
+</li>
+<li><a href="05-learning-business-flows/05-production-low-level-flows.html">05-production-low-level-flows.md</a> <em>(Bedah Low-Level Flow berdasarkan skill /ios-explain-flow)</em>
+</li>
+<li>Diagram: <a href="diagrams/core-user-journeys.html">core-user-journeys.md</a>
+</li></ol>
 <div id="sub-d-konsep-kunci-sebelum-melanjutkan" class="doc-subsection">
 <h4>D. Konsep Kunci Sebelum Melanjutkan</h4>
 </div>
 <ul>
-<li>State machine transaksi pinjaman online.</li>
-<li>Asynchronous polling dengan timer interval dinamis.</li>
-</ul>
+<li>State machine transaksi pinjaman online.
+</li>
+<li>Asynchronous polling dengan timer interval dinamis.
+</li></ul>
 <div id="sub-e-pertanyaan-yang-harus-bisa-dijawab-setelah-selesai" class="doc-subsection">
 <h4>E. Pertanyaan yang Harus Bisa Dijawab Setelah Selesai</h4>
 </div>
 <ol>
-<li>Dokumen data apa saja yang wajib dikirim ke backend sebelum pengajuan pinjaman pertama kali disetujui?</li>
-<li>Bagaimana mekanisme otomatis aplikasi saat token sesi kedaluwarsa (error code <code>10006</code>) di tengah transaksi?</li>
-<li>Mengapa modul <code>LoanConfirmModule</code> menggunakan RxSwift sementara modul lainnya menggunakan callback Presenter standar?</li>
-</ol>
+<li>Dokumen data apa saja yang wajib dikirim ke backend sebelum pengajuan pinjaman pertama kali disetujui?
+</li>
+<li>Bagaimana mekanisme otomatis aplikasi saat token sesi kedaluwarsa (error code <code>10006</code>) di tengah transaksi?
+</li>
+<li>Mengapa modul <code>LoanConfirmModule</code> menggunakan RxSwift sementara modul lainnya menggunakan callback Presenter standar?
+</li></ol>
 <div id="sub-f-latihan-eksplorasi-source-code" class="doc-subsection">
 <h4>F. Latihan Eksplorasi Source Code</h4>
 </div>
 <ul>
-<li>Buka <code>ios/IDSamirLoan/Application/SamirLoanModule/Classes/IDPresenter/IDAssessPresenter.swift</code>, cari fungsi <code>requestAssessData</code> dan <code>requstPollingStatus</code>.</li>
-<li>Buka <code>ios/IDSamirLoan/Application/SamirLoanModule/Classes/LoanConfirmModule/Controllers/LoanConfirmViewController_Rx.swift</code> dan telusuri binding tombol submit.</li>
-</ul>
+<li>Buka <code>ios/IDSamirLoan/Application/SamirLoanModule/Classes/IDPresenter/IDAssessPresenter.swift</code>, cari fungsi <code>requestAssessData</code> dan <code>requstPollingStatus</code>.
+</li>
+<li>Buka <code>ios/IDSamirLoan/Application/SamirLoanModule/Classes/LoanConfirmModule/Controllers/LoanConfirmViewController_Rx.swift</code> dan telusuri binding tombol submit.
+</li></ul>
 <div id="sub-g-kriteria-kelulusan-level-5" class="doc-subsection">
 <h4>G. Kriteria Kelulusan Level 5</h4>
 </div>
@@ -390,46 +448,60 @@ graph TD
 <h4>B. Pengetahuan yang Diperoleh</h4>
 </div>
 <ul>
-<li>Arsitektur Jaringan: <code>IDNetworkRequest</code> (subclass <code>CZBaseRequest</code>), <code>CZAlamofireBridge</code>, dan parameter global default (<code>ApiParamsHelper</code>).</li>
-<li>Penandatanganan Request: Penggunaan vendor library closed-source <code>LibNetSignGenerator.framework</code> menggunakan <code>staticKey</code> login.</li>
-<li>Transformasi Data: Serialisasi JSON ke model menggunakan <code>KakaJSON</code> (<code>kj.model</code>).</li>
-<li>Keamanan & Persistensi: Enkripsi file sesi pengguna <code>idn_userFile.plist</code> menggunakan <code>CryptoKit.AES.GCM</code> dan penyimpanan token di Keychain.</li>
-<li><strong>Integrasi Hybrid Flutter</strong>: <code>FlutterEngineManager</code> (single engine prewarming), routing <code>/mine</code> dan <code>/repay</code>, serta komunikasi via <code>FlutterNativeChannel</code> (<code>samir_native_channel</code> & <code>samir_tracking_channel</code>).</li>
-</ul>
+<li>Arsitektur Jaringan: <code>IDNetworkRequest</code> (subclass <code>CZBaseRequest</code>), <code>CZAlamofireBridge</code>, dan parameter global default (<code>ApiParamsHelper</code>).
+</li>
+<li>Penandatanganan Request: Penggunaan vendor library closed-source <code>LibNetSignGenerator.framework</code> menggunakan <code>staticKey</code> login.
+</li>
+<li>Transformasi Data: Serialisasi JSON ke model menggunakan <code>KakaJSON</code> (<code>kj.model</code>).
+</li>
+<li>Keamanan & Persistensi: Enkripsi file sesi pengguna <code>idn_userFile.plist</code> menggunakan <code>CryptoKit.AES.GCM</code> dan penyimpanan token di Keychain.
+</li>
+<li><strong>Integrasi Hybrid Flutter</strong>: <code>FlutterEngineManager</code> (single engine prewarming), routing <code>/mine</code> dan <code>/repay</code>, serta komunikasi via <code>FlutterNativeChannel</code> (<code>samir_native_channel</code> & <code>samir_tracking_channel</code>).
+</li></ul>
 <div id="sub-c-dokumen-yang-harus-dibaca" class="doc-subsection">
 <h4>C. Dokumen yang Harus Dibaca</h4>
 </div>
 <ol>
-<li><a href="06-understanding-data-and-dependencies/01-dependency-catalog.html">01-dependency-catalog.md</a></li>
-<li><a href="06-understanding-data-and-dependencies/02-networking-and-api-flow.html">02-networking-and-api-flow.md</a></li>
-<li><a href="06-understanding-data-and-dependencies/03-models-and-data-transformation.html">03-models-and-data-transformation.md</a></li>
-<li><a href="06-understanding-data-and-dependencies/04-state-management-and-persistence.html">04-state-management-and-persistence.md</a></li>
-<li><a href="06-understanding-data-and-dependencies/05-native-flutter-integration.html">05-native-flutter-integration.md</a></li>
-<li>Diagram: <a href="diagrams/feature-dependencies.html">feature-dependencies.md</a></li>
-</ol>
+<li><a href="06-understanding-data-and-dependencies/01-dependency-catalog.html">01-dependency-catalog.md</a>
+</li>
+<li><a href="06-understanding-data-and-dependencies/02-networking-and-api-flow.html">02-networking-and-api-flow.md</a>
+</li>
+<li><a href="06-understanding-data-and-dependencies/03-models-and-data-transformation.html">03-models-and-data-transformation.md</a>
+</li>
+<li><a href="06-understanding-data-and-dependencies/04-state-management-and-persistence.html">04-state-management-and-persistence.md</a>
+</li>
+<li><a href="06-understanding-data-and-dependencies/05-native-flutter-integration.html">05-native-flutter-integration.md</a>
+</li>
+<li>Diagram: <a href="diagrams/feature-dependencies.html">feature-dependencies.md</a>
+</li></ol>
 <div id="sub-d-konsep-kunci-sebelum-melanjutkan" class="doc-subsection">
 <h4>D. Konsep Kunci Sebelum Melanjutkan</h4>
 </div>
 <ul>
-<li>Request payload signing & cryptographic HMAC/AES.</li>
-<li>Flutter Platform Channels (MethodChannel & BinaryMessenger).</li>
-</ul>
+<li>Request payload signing & cryptographic HMAC/AES.
+</li>
+<li>Flutter Platform Channels (MethodChannel & BinaryMessenger).
+</li></ul>
 <div id="sub-e-pertanyaan-yang-harus-bisa-dijawab-setelah-selesai" class="doc-subsection">
 <h4>E. Pertanyaan yang Harus Bisa Dijawab Setelah Selesai</h4>
 </div>
 <ol>
-<li>Apa bahayanya jika seorang developer menambahkan field baru ke <code>ApiParamsHelper.getDefaultParams()</code> tanpa koordinasi dengan tim backend?</li>
-<li>Di mana <code>FlutterEngine</code> dihidupkan dan bagaimana tab bar native mengontrol visibilitas tampilan Flutter?</li>
-<li>Bagaimana data sesi login dibagikan dari Native Swift ke dalam layar Flutter Repay dan Mine?</li>
-</ol>
+<li>Apa bahayanya jika seorang developer menambahkan field baru ke <code>ApiParamsHelper.getDefaultParams()</code> tanpa koordinasi dengan tim backend?
+</li>
+<li>Di mana <code>FlutterEngine</code> dihidupkan dan bagaimana tab bar native mengontrol visibilitas tampilan Flutter?
+</li>
+<li>Bagaimana data sesi login dibagikan dari Native Swift ke dalam layar Flutter Repay dan Mine?
+</li></ol>
 <div id="sub-f-latihan-eksplorasi-source-code" class="doc-subsection">
 <h4>F. Latihan Eksplorasi Source Code</h4>
 </div>
 <ul>
-<li>Buka <code>ios/IDSamirLoan/Application/SamirNetworkModule/Classes/Signature/IDNetworkSignatureHandler.swift</code> dan amati enkripsi <code>NetworkRequestSignWrapper.ns_encrypt</code>.</li>
-<li>Buka <code>ios/IDSamirLoan/Application/SamirCommonModule/Classes/FChannel/FlutterEngineManager.swift</code> dan amati method <code>installPersistentRoot(in:)</code>.</li>
-<li>Buka <code>flutter/lib/main.dart</code> dan <code>flutter/lib/pages/root/flutter_root_page.dart</code>.</li>
-</ul>
+<li>Buka <code>ios/IDSamirLoan/Application/SamirNetworkModule/Classes/Signature/IDNetworkSignatureHandler.swift</code> dan amati enkripsi <code>NetworkRequestSignWrapper.ns_encrypt</code>.
+</li>
+<li>Buka <code>ios/IDSamirLoan/Application/SamirCommonModule/Classes/FChannel/FlutterEngineManager.swift</code> dan amati method <code>installPersistentRoot(in:)</code>.
+</li>
+<li>Buka <code>flutter/lib/main.dart</code> dan <code>flutter/lib/pages/root/flutter_root_page.dart</code>.
+</li></ul>
 <div id="sub-g-kriteria-kelulusan-level-6" class="doc-subsection">
 <h4>G. Kriteria Kelulusan Level 6</h4>
 </div>
@@ -445,42 +517,52 @@ graph TD
 <h4>B. Pengetahuan yang Diperoleh</h4>
 </div>
 <ul>
-<li>Memanfaatkan in-app <code>DebugUI</code> pada Scheme <code>TEST</code> untuk membaca request, response payload, dan event analitik secara realtime.</li>
-<li>Penanganan error: Membedakan error konektivitas HTTP vs kode error bisnis backend (<code>200</code>, <code>10006</code>, dll).</li>
-<li>Audit Technical Debt: Risiko ~1.700 force-unwrap (<code>!</code>), isolasi RxSwift hanya di satu modul, hardcoded credentials/secrets, dan duplikasi kode.</li>
-<li>Analisis Dampak Perubahan (Change Impact Analysis): Checklist sebelum melakukan refactoring atau modifikasi modul fondasi.</li>
-</ul>
+<li>Memanfaatkan in-app <code>DebugUI</code> pada Scheme <code>TEST</code> untuk membaca request, response payload, dan event analitik secara realtime.
+</li>
+<li>Penanganan error: Membedakan error konektivitas HTTP vs kode error bisnis backend (<code>200</code>, <code>10006</code>, dll).
+</li>
+<li>Audit Technical Debt: Risiko ~1.700 force-unwrap (<code>!</code>), isolasi RxSwift hanya di satu modul, hardcoded credentials/secrets, dan duplikasi kode.
+</li>
+<li>Analisis Dampak Perubahan (Change Impact Analysis): Checklist sebelum melakukan refactoring atau modifikasi modul fondasi.
+</li></ul>
 <div id="sub-c-dokumen-yang-harus-dibaca" class="doc-subsection">
 <h4>C. Dokumen yang Harus Dibaca</h4>
 </div>
 <ol>
-<li><a href="07-learning-to-debug-and-maintain/01-error-handling.html">01-error-handling.md</a></li>
-<li><a href="07-learning-to-debug-and-maintain/02-testing-and-debugging.html">02-testing-and-debugging.md</a></li>
-<li><a href="07-learning-to-debug-and-maintain/03-coupling-and-technical-debt.html">03-coupling-and-technical-debt.md</a></li>
-<li><a href="07-learning-to-debug-and-maintain/04-change-impact-analysis.html">04-change-impact-analysis.md</a></li>
-</ol>
+<li><a href="07-learning-to-debug-and-maintain/01-error-handling.html">01-error-handling.md</a>
+</li>
+<li><a href="07-learning-to-debug-and-maintain/02-testing-and-debugging.html">02-testing-and-debugging.md</a>
+</li>
+<li><a href="07-learning-to-debug-and-maintain/03-coupling-and-technical-debt.html">03-coupling-and-technical-debt.md</a>
+</li>
+<li><a href="07-learning-to-debug-and-maintain/04-change-impact-analysis.html">04-change-impact-analysis.md</a>
+</li></ol>
 <div id="sub-d-konsep-kunci-sebelum-melanjutkan" class="doc-subsection">
 <h4>D. Konsep Kunci Sebelum Melanjutkan</h4>
 </div>
 <ul>
-<li>Defensive programming vs fail-fast force-unwrapping.</li>
-<li>Blast radius analysis pada arsitektur modular.</li>
-</ul>
+<li>Defensive programming vs fail-fast force-unwrapping.
+</li>
+<li>Blast radius analysis pada arsitektur modular.
+</li></ul>
 <div id="sub-e-pertanyaan-yang-harus-bisa-dijawab-setelah-selesai" class="doc-subsection">
 <h4>E. Pertanyaan yang Harus Bisa Dijawab Setelah Selesai</h4>
 </div>
 <ol>
-<li>Jika pengguna mengalami crash mendadak saat membuka halaman Beranda, titik kode mana yang harus pertama kali diinvestigasi?</li>
-<li>Mengapa build <code>PROD</code> menonaktifkan fitur DebugUI secara total?</li>
-<li>Langkah apa saja yang wajib dilakukan sebelum mengubah kode di <code>CZNetworkCenter</code> atau <code>SamirServiceModule</code>?</li>
-</ol>
+<li>Jika pengguna mengalami crash mendadak saat membuka halaman Beranda, titik kode mana yang harus pertama kali diinvestigasi?
+</li>
+<li>Mengapa build <code>PROD</code> menonaktifkan fitur DebugUI secara total?
+</li>
+<li>Langkah apa saja yang wajib dilakukan sebelum mengubah kode di <code>CZNetworkCenter</code> atau <code>SamirServiceModule</code>?
+</li></ol>
 <div id="sub-f-latihan-eksplorasi-source-code" class="doc-subsection">
 <h4>F. Latihan Eksplorasi Source Code</h4>
 </div>
 <ul>
-<li>Buka <code>ios/IDSamirLoan/Application/Debug/DebugUI.swift</code>, amati bagaimana floating button dipasang saat <code>CZPreBuildMacro.cz_buildTest()</code> bernilai true.</li>
-<li>Lakukan penelusuran kata kunci <code>fatalError</code> atau force-unwrap <code>!</code> di salah satu modul presenter untuk mengidentifikasi potensi crash.</li>
-</ul>
+<li>Buka <code>ios/IDSamirLoan/Application/Debug/DebugUI.swift</code>, amati bagaimana floating button dipasang saat <code>CZPreBuildMacro.cz_buildTest()</code> bernilai true.
+</li>
+<li>Lakukan penelusuran kata kunci <code>fatalError</code> atau force-unwrap <code>!</code> di salah satu modul presenter untuk mengidentifikasi potensi crash.
+</li></ul>
 <div id="sub-g-kriteria-kelulusan-level-7" class="doc-subsection">
 <h4>G. Kriteria Kelulusan Level 7</h4>
 </div>
@@ -496,20 +578,26 @@ graph TD
 <h4>B. Pengetahuan yang Diperoleh</h4>
 </div>
 <ul>
-<li>Pemahaman menyeluruh terhadap seluruh istilah internal (contoh: <code>bizId</code>, <code>mid</code>, <code>repayPlan</code>, <code>blackBox</code>, <code>shuntList</code>).</li>
-<li>Indeks file dan class lengkap dengan lokasinya.</li>
-<li>Rekonsiliasi antara dokumentasi lama (<code>docs-samir</code>) dengan source code aktual.</li>
-<li>Daftar temuan yang belum terverifikasi untuk dikonfirmasi ke Product Manager atau Tech Lead.</li>
-</ul>
+<li>Pemahaman menyeluruh terhadap seluruh istilah internal (contoh: <code>bizId</code>, <code>mid</code>, <code>repayPlan</code>, <code>blackBox</code>, <code>shuntList</code>).
+</li>
+<li>Indeks file dan class lengkap dengan lokasinya.
+</li>
+<li>Rekonsiliasi antara dokumentasi lama (<code>docs-samir</code>) dengan source code aktual.
+</li>
+<li>Daftar temuan yang belum terverifikasi untuk dikonfirmasi ke Product Manager atau Tech Lead.
+</li></ul>
 <div id="sub-c-dokumen-yang-harus-dibaca" class="doc-subsection">
 <h4>C. Dokumen yang Harus Dibaca</h4>
 </div>
 <ol>
-<li><a href="08-reference/01-codebase-glossary.html">01-codebase-glossary.md</a></li>
-<li><a href="08-reference/02-source-code-index.html">02-source-code-index.md</a></li>
-<li><a href="08-reference/03-existing-documentation-audit.html">03-existing-documentation-audit.md</a></li>
-<li><a href="08-reference/04-open-questions-and-unverified-findings.html">04-open-questions-and-unverified-findings.md</a></li>
-</ol>
+<li><a href="08-reference/01-codebase-glossary.html">01-codebase-glossary.md</a>
+</li>
+<li><a href="08-reference/02-source-code-index.html">02-source-code-index.md</a>
+</li>
+<li><a href="08-reference/03-existing-documentation-audit.html">03-existing-documentation-audit.md</a>
+</li>
+<li><a href="08-reference/04-open-questions-and-unverified-findings.html">04-open-questions-and-unverified-findings.md</a>
+</li></ol>
 <div id="sub-d-kriteria-kelulusan-akhir" class="doc-subsection">
 <h4>D. Kriteria Kelulusan Akhir</h4>
 </div>

@@ -101,11 +101,14 @@
 <h3>🎯 A. Learning Objective</h3>
 <p>Setelah menyelesaikan dokumen ini, pembaca akan mampu:</p>
 <ol>
-<li>Membaca dan menelusuri diagram graf perpindahan navigasi di dalam modul Flutter.</li>
-<li>Membedakan rute yang diselesaikan secara internal di Flutter vs rute yang didelegasikan ke host native.</li>
-<li>Menjelaskan skema delegasi URL native (<code>samir://...</code>, web path <code>/samir/...</code>, dan string aksi khusus).</li>
-<li>Menelusuri alur navigasi dari titik masuk Tab Bar native hingga kembali lagi ke root.</li>
-</ol>
+<li>Membaca dan menelusuri diagram graf perpindahan navigasi di dalam modul Flutter.
+</li>
+<li>Membedakan rute yang diselesaikan secara internal di Flutter vs rute yang didelegasikan ke host native.
+</li>
+<li>Menjelaskan skema delegasi URL native (<code>samir://...</code>, web path <code>/samir/...</code>, dan string aksi khusus).
+</li>
+<li>Menelusuri alur navigasi dari titik masuk Tab Bar native hingga kembali lagi ke root.
+</li></ol>
 </section>
 <section id="sec-prereq" class="doc-section">
 <h3>📋 B. Prerequisites</h3>
@@ -115,10 +118,12 @@
 <h3>💡 C. Simple Explanation (Analogi & Konsep Sederhana)</h3>
 <p>Bayangkan sebuah bandara internasional:</p>
 <ul>
-<li><strong>Terminal 1 & Terminal 2</strong>: Dikelola oleh otoritas penerbangan lokal (Tab Bar Native).</li>
-<li><strong>Lounge Khusus Flutter</strong>: Penumpang dapat berpindah santai di antara ruang santai Tagihan dan ruang santai Profil tanpa melewati pemeriksaan paspor ulang.</li>
-<li>Namun, jika penumpang ingin menuju <strong>Gerbang Keberangkatan Internasional (KYC / Form Pinjaman Baru)</strong> atau <strong>Pusat Bantuan Imigrasi (Live Chat CS)</strong>, ada pintu lorong khusus (<strong><code>openNativeRoute</code></strong>) yang mengarahkan mereka kembali ke bawah kendali petugas imigrasi bandara native.</li>
-</ul>
+<li><strong>Terminal 1 & Terminal 2</strong>: Dikelola oleh otoritas penerbangan lokal (Tab Bar Native).
+</li>
+<li><strong>Lounge Khusus Flutter</strong>: Penumpang dapat berpindah santai di antara ruang santai Tagihan dan ruang santai Profil tanpa melewati pemeriksaan paspor ulang.
+</li>
+<li>Namun, jika penumpang ingin menuju <strong>Gerbang Keberangkatan Internasional (KYC / Form Pinjaman Baru)</strong> atau <strong>Pusat Bantuan Imigrasi (Live Chat CS)</strong>, ada pintu lorong khusus (<strong><code>openNativeRoute</code></strong>) yang mengarahkan mereka kembali ke bawah kendali petugas imigrasi bandara native.
+</li></ul>
 </section>
 <section id="sec-actual" class="doc-section">
 <h3>💻 D. Actual Implementation (Bukti di Kode Sumber)</h3>
@@ -202,38 +207,45 @@ graph TD
 <section id="sec-why" class="doc-section">
 <h3>⚖️ F. Why It Matters (Trade-Offs & Implikasi Teknis)</h3>
 <ul>
-<li><strong>Pola Hybrid Router</strong>:</li>
-</ul>
+<li><strong>Pola Hybrid Router</strong>:
+</li></ul>
 <p>Flutter tidak berusaha menangani seluruh URL website atau SDK pihak ketiga (seperti Zendesk Chat) secara internal. Dengan mendelegasikan aksi ke <code>openNativeRoute</code>, Flutter tetap ringan, tidak memerlukan dependency plugin native yang membengkak, dan membiarkan modul native menangani fungsionalitas kompleks yang sudah teruji.</p>
 <ul>
-<li><strong>Pembersihan Stack Otomatis Saat Berpindah Tab</strong>:</li>
-</ul>
+<li><strong>Pembersihan Stack Otomatis Saat Berpindah Tab</strong>:
+</li></ul>
 <p>Jika pengguna sedang membuka <code>/mine/personal</code> lalu mengetuk Tab Tagihan di native, method <code>showFlutterRoute(&#x27;/repay&#x27;)</code> memanggil <code>Routers.go(&#x27;/repay&#x27;)</code>. <code>GoRouter.go</code> seketika mereset tumpukan rute, sehingga jika pengguna kemudian kembali ke Tab Saya, layar akan menampilkan halaman awal <code>MineHomePage</code>, bukan tersangkut di halaman personal.</p>
 </section>
 <section id="sec-example" class="doc-section">
 <h3>🔬 G. Practical Example (Skenario Penggunaan Nyata)</h3>
 <p>Seorang pengguna yang pinjamannya telah lunas melihat tampilan kosong di <code>RepayHomePage</code> dengan tombol <em>"Ajukan Pinjaman Baru"</em>:</p>
 <ol>
-<li>Pengguna mengetuk tombol tersebut.</li>
-<li><code>RepayHomePage</code> mengeksekusi <code>FlutterNativeChannelRoute.openNativeRoute(&#x27;repayHomeAction&#x27;)</code>.</li>
-<li>Host native iOS menangkap perintah tersebut pada <code>FlutterNativeChannel+route.swift</code> dan memindahkan <code>selectedIndex</code> tab bar native ke <code>0</code>.</li>
-<li>Layar seketika beralih ke Beranda Native (<code>IDHomeViewController</code>) tempat limit pinjaman dapat diajukan kembali.</li>
-</ol>
+<li>Pengguna mengetuk tombol tersebut.
+</li>
+<li><code>RepayHomePage</code> mengeksekusi <code>FlutterNativeChannelRoute.openNativeRoute(&#x27;repayHomeAction&#x27;)</code>.
+</li>
+<li>Host native iOS menangkap perintah tersebut pada <code>FlutterNativeChannel+route.swift</code> dan memindahkan <code>selectedIndex</code> tab bar native ke <code>0</code>.
+</li>
+<li>Layar seketika beralih ke Beranda Native (<code>IDHomeViewController</code>) tempat limit pinjaman dapat diajukan kembali.
+</li></ol>
 </section>
 <section id="sec-mistakes" class="doc-section">
 <h3>⚠️ H. Common Mistakes & Debugging</h3>
 <ul>
-<li><strong>Salah Menulis Skema Delegasi</strong>:</li>
-<li>Mengirimkan string rute tanpa skema (misal menulis <code>&#x27;mine/setting&#x27;</code> alih-alih <code>&#x27;samir://mine/setting&#x27;</code>) akan menyebabkan router native gagal mencocokkan pola regex URL dan aksi diabaikan tanpa error log.</li>
-</ul>
+<li><strong>Salah Menulis Skema Delegasi</strong>:
+<ul>
+<li>Mengirimkan string rute tanpa skema (misal menulis <code>&#x27;mine/setting&#x27;</code> alih-alih <code>&#x27;samir://mine/setting&#x27;</code>) akan menyebabkan router native gagal mencocokkan pola regex URL dan aksi diabaikan tanpa error log.
+</li></ul>
+</li></ul>
 </section>
 <section id="sec-check" class="doc-section">
 <h3>🧠 I. Knowledge Check</h3>
 <ol>
-<li>Apa fungsi method channel yang dipanggil oleh Flutter saat pengguna menekan tombol "Hubungi CS"?</li>
-<li>Halaman apa di modul Flutter yang bertindak sebagai satu-satunya rute sekunder yang di-push?</li>
-<li>Sebutkan tindakan yang diambil oleh native host ketika menerima perintah <code>repayHomeAction</code> dari Flutter!</li>
-</ol>
+<li>Apa fungsi method channel yang dipanggil oleh Flutter saat pengguna menekan tombol "Hubungi CS"?
+</li>
+<li>Halaman apa di modul Flutter yang bertindak sebagai satu-satunya rute sekunder yang di-push?
+</li>
+<li>Sebutkan tindakan yang diambil oleh native host ketika menerima perintah <code>repayHomeAction</code> dari Flutter!
+</li></ol>
 <p><strong>Latihan Observasi</strong>:</p>
 <p>Buka file <a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/learn/Flutter-Arch/flutter/lib/pages/mine/home/mine_home_page.dart" target="_blank" rel="noopener noreferrer">🦊 flutter/lib/pages/mine/home/mine_home_page.dart <span class="branch-tag">learn/Flutter-Arch</span> ↗</a>. Telusuri konstanta <code>_routeHistory</code> hingga <code>_routeMessage</code> pada baris 39–48 dan bandingkan dengan tabel di dokumen ini.</p>
 </section>

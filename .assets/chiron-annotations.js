@@ -21,8 +21,11 @@
   let activeAnnotations = [];
   let pendingSelection = null; // { exact, prefix, suffix, selector, range }
   let currentFilter = 'all'; // 'all' | 'notes' | 'ai' | 'hide_all'
-  let currentDrawerTab = 'all'; // 'all' | 'notes' | 'ai'
-  const lessonPath = window.location.pathname.replace(/^\//, '');
+  let lessonPath = window.location.pathname.replace(/^\//, '');
+  const coursesIdx = lessonPath.indexOf('courses/');
+  if (coursesIdx !== -1) {
+    lessonPath = lessonPath.substring(coursesIdx);
+  }
 
   /* ============================================================================
      1. DOM INITIALIZATION & INJECTION OF FLOATING & DRAWER ELEMENTS
@@ -857,6 +860,8 @@
     window.dispatchEvent(new CustomEvent('chiron:annotations-loaded', {
       detail: { annotations: activeAnnotations }
     }));
+  }
+
   /* ============================================================================
      10. W3C FUZZY TEXT-QUOTE ANCHORING & REHYDRATION ENGINE
      ============================================================================ */
@@ -1060,15 +1065,208 @@
   }
 
   /* ============================================================================
+     13. INTERACTIVE DIAGRAM LIGHTBOX PAN & ZOOM CONTROLLER
+     ============================================================================ */
+
+  function initDiagramPanZoom() {
+    const modal = document.getElementById('diagramModal');
+    const modalBody = document.getElementById('diagramModalBody');
+    if (!modal || !modalBody) return;
+
+    let currentScale = 1.0;
+    let panX = 0;
+    let panY = 0;
+    let isDragging = false;
+    let startX = 0;
+    let startY = 0;
+
+    function applyTransform(withTransition = false) {
+      const svg = modalBody.querySelector('svg');
+      if (!svg) return;
+      svg.style.transition = withTransition ? 'transform 0.15s cubic-bezier(0.2, 0, 0, 1)' : 'none';
+      svg.style.transformOrigin = 'center center';
+      svg.style.transform = `translate(${panX}px, ${panY}px) scale(${currentScale})`;
+    }
+
+    // Expose / override global functions
+    window.openDiagramZoom = function (diagramId, title) {
+      const originalEl = document.getElementById(diagramId);
+      if (!originalEl) return;
+      const svgEl = originalEl.querySelector('svg');
+      if (!svgEl) return;
+
+      const modalTitle = document.getElementById('modalDiagramTitle');
+      if (modalTitle) {
+        modalTitle.innerHTML = title ? '🔍 ' + title : '🔍 Pembesaran Diagram Alur';
+      }
+
+      modalBody.innerHTML = svgEl.outerHTML;
+      currentScale = 1.0;
+      panX = 0;
+      panY = 0;
+      applyTransform(false);
+
+      // Inject hint if needed
+      const controls = modal.querySelector('.diagram-modal-controls');
+      if (controls && !controls.querySelector('.diagram-nav-hint')) {
+        const hint = document.createElement('span');
+        hint.className = 'diagram-nav-hint';
+        hint.style.cssText = 'font-size:0.78rem; color:var(--text-muted, #94a3b8); margin-right:0.6rem; display:inline-flex; align-items:center; gap:0.3rem;';
+        hint.innerHTML = '🖱️ <em>Geser/Drag untuk navigasi • Scroll untuk zoom</em>';
+        controls.insertBefore(hint, controls.firstChild);
+      }
+
+      modal.classList.add('active');
+      document.body.style.overflow = 'hidden';
+    };
+
+    window.closeDiagramModal = function (event) {
+      if (event && event.target && event.target.closest && event.target.closest('.diagram-modal-dialog') && !event.target.classList.contains('diagram-close-btn')) {
+        return;
+      }
+      modal.classList.remove('active');
+      document.body.style.overflow = 'auto';
+      isDragging = false;
+      modalBody.classList.remove('is-panning');
+    };
+
+    window.zoomDiagram = function (factor) {
+      currentScale = Math.max(0.2, Math.min(10.0, currentScale * factor));
+      applyTransform(true);
+    };
+
+    window.resetDiagramZoom = function () {
+      currentScale = 1.0;
+      panX = 0;
+      panY = 0;
+      applyTransform(true);
+    };
+
+    // Mouse drag handlers
+    modalBody.addEventListener('mousedown', (e) => {
+      if (e.button !== 0) return; // Only left click
+      isDragging = true;
+      startX = e.clientX - panX;
+      startY = e.clientY - panY;
+      modalBody.classList.add('is-panning');
+      e.preventDefault();
+    });
+
+    window.addEventListener('mousemove', (e) => {
+      if (!isDragging) return;
+      panX = e.clientX - startX;
+      panY = e.clientY - startY;
+      applyTransform(false);
+    });
+
+    window.addEventListener('mouseup', () => {
+      if (isDragging) {
+        isDragging = false;
+        modalBody.classList.remove('is-panning');
+      }
+    });
+
+    // Mouse wheel zoom
+    modalBody.addEventListener('wheel', (e) => {
+      e.preventDefault();
+      const zoomFactor = e.deltaY < 0 ? 1.15 : 0.87;
+      window.zoomDiagram(zoomFactor);
+    }, { passive: false });
+
+    // Touch support (Mobile / iPad)
+    let touchStartX = 0;
+    let touchStartY = 0;
+    let initialPinchDist = null;
+    let initialPinchScale = 1.0;
+
+    modalBody.addEventListener('touchstart', (e) => {
+      if (e.touches.length === 1) {
+        isDragging = true;
+        touchStartX = e.touches[0].clientX - panX;
+        touchStartY = e.touches[0].clientY - panY;
+      } else if (e.touches.length === 2) {
+        isDragging = false;
+        initialPinchDist = Math.hypot(
+          e.touches[0].clientX - e.touches[1].clientX,
+          e.touches[0].clientY - e.touches[1].clientY
+        );
+        initialPinchScale = currentScale;
+      }
+    }, { passive: true });
+
+    modalBody.addEventListener('touchmove', (e) => {
+      if (e.touches.length === 1 && isDragging) {
+        panX = e.touches[0].clientX - touchStartX;
+        panY = e.touches[0].clientY - touchStartY;
+        applyTransform(false);
+      } else if (e.touches.length === 2 && initialPinchDist) {
+        const currentDist = Math.hypot(
+          e.touches[0].clientX - e.touches[1].clientX,
+          e.touches[0].clientY - e.touches[1].clientY
+        );
+        const factor = currentDist / initialPinchDist;
+        currentScale = Math.max(0.2, Math.min(10.0, initialPinchScale * factor));
+        applyTransform(false);
+      }
+    }, { passive: true });
+
+    modalBody.addEventListener('touchend', () => {
+      isDragging = false;
+      initialPinchDist = null;
+    });
+
+    // Keyboard navigation when modal is active
+    document.addEventListener('keydown', (e) => {
+      if (!modal.classList.contains('active')) return;
+      const step = 40;
+      if (e.key === 'ArrowLeft') {
+        panX += step;
+        applyTransform(true);
+      } else if (e.key === 'ArrowRight') {
+        panX -= step;
+        applyTransform(true);
+      } else if (e.key === 'ArrowUp') {
+        panY += step;
+        applyTransform(true);
+      } else if (e.key === 'ArrowDown') {
+        panY -= step;
+        applyTransform(true);
+      } else if (e.key === '+' || e.key === '=') {
+        window.zoomDiagram(1.2);
+      } else if (e.key === '-' || e.key === '_') {
+        window.zoomDiagram(0.8);
+      } else if (e.key === '0') {
+        window.resetDiagramZoom();
+      }
+    });
+
+    // Double-click to reset or zoom
+    modalBody.addEventListener('dblclick', () => {
+      if (currentScale !== 1.0 || panX !== 0 || panY !== 0) {
+        window.resetDiagramZoom();
+      } else {
+        window.zoomDiagram(1.5);
+      }
+    });
+  }
+
+  /* ============================================================================
      12. LIFECYCLE BOOTSTRAP & WINDOW FOCUS LIVE RELOAD
      ============================================================================ */
 
-  document.addEventListener('DOMContentLoaded', () => {
+  function bootstrap() {
     initUI();
     injectGutterTriggers();
     attachSelectionListener();
     loadAndRenderExisting();
-  });
+    initDiagramPanZoom();
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', bootstrap);
+  } else {
+    bootstrap();
+  }
 
   // Window Focus: Saat pengguna beralih dari IDE ke browser, reload highlight secara hening
   window.addEventListener('focus', () => {

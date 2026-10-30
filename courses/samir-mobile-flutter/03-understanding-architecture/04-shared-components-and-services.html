@@ -101,12 +101,16 @@
 <h3>🎯 A. Learning Objective</h3>
 <p>Setelah menyelesaikan dokumen ini, pembaca akan mampu:</p>
 <ol>
-<li>Memahami peranan <code>BasePage</code> sebagai Scaffold terstandarisasi untuk semua layar sekunder di Flutter SAMIR.</li>
-<li>Menggunakan <code>NavTitleBar</code> untuk konfigurasi judul, tombol kembali, dan tombol aksi di bilah atas.</li>
-<li>Menjelaskan mekanisme kerja <code>AppLoadingOverlay</code> yang dikendalikan oleh <code>LoadingInterceptor</code> Dio.</li>
-<li>Memahami keunggulan <code>AppDialogHost</code> yang memisahkan dialog bisnis dari tumpukan navigasi GoRouter.</li>
-<li>Menggunakan <code>AppSocialMediaSection</code> untuk standarisasi informasi kanal resmi CS dan media sosial SAMIR.</li>
-</ol>
+<li>Memahami peranan <code>BasePage</code> sebagai Scaffold terstandarisasi untuk semua layar sekunder di Flutter SAMIR.
+</li>
+<li>Menggunakan <code>NavTitleBar</code> untuk konfigurasi judul, tombol kembali, dan tombol aksi di bilah atas.
+</li>
+<li>Menjelaskan mekanisme kerja <code>AppLoadingOverlay</code> yang dikendalikan oleh <code>LoadingInterceptor</code> Dio.
+</li>
+<li>Memahami keunggulan <code>AppDialogHost</code> yang memisahkan dialog bisnis dari tumpukan navigasi GoRouter.
+</li>
+<li>Menggunakan <code>AppSocialMediaSection</code> untuk standarisasi informasi kanal resmi CS dan media sosial SAMIR.
+</li></ol>
 </section>
 <section id="sec-prereq" class="doc-section">
 <h3>📋 B. Prerequisites</h3>
@@ -116,10 +120,12 @@
 <h3>💡 C. Simple Explanation (Analogi & Konsep Sederhana)</h3>
 <p>Bayangkan merancang seragam dan perlengkapan standar untuk staf bank:</p>
 <ul>
-<li><strong><code>BasePage</code></strong> adalah setelan jas resmi yang sudah dilengkapi name tag dan lencana bank; setiap teller baru cukup mengenakannya tanpa perlu menjahit baju dari nol.</li>
-<li><strong><code>AppLoadingOverlay</code></strong> adalah tirai penutup kaca loket otomatis: ketika teller sedang mengambil uang dari brankas pusat (request API), tirai turun secara halus agar nasabah tahu proses sedang berlangsung.</li>
-<li><strong><code>AppDialogHost</code></strong> adalah ruang konsultasi terpisah: jika ada berkas penting yang perlu ditandatangani nasabah, berkas tersebut diajukan di meja khusus tanpa mengganggu antrean loket utama.</li>
-</ul>
+<li><strong><code>BasePage</code></strong> adalah setelan jas resmi yang sudah dilengkapi name tag dan lencana bank; setiap teller baru cukup mengenakannya tanpa perlu menjahit baju dari nol.
+</li>
+<li><strong><code>AppLoadingOverlay</code></strong> adalah tirai penutup kaca loket otomatis: ketika teller sedang mengambil uang dari brankas pusat (request API), tirai turun secara halus agar nasabah tahu proses sedang berlangsung.
+</li>
+<li><strong><code>AppDialogHost</code></strong> adalah ruang konsultasi terpisah: jika ada berkas penting yang perlu ditandatangani nasabah, berkas tersebut diajukan di meja khusus tanpa mengganggu antrean loket utama.
+</li></ul>
 </section>
 <section id="sec-actual" class="doc-section">
 <h3>💻 D. Actual Implementation (Bukti di Kode Sumber)</h3>
@@ -150,10 +156,12 @@
 }</code></pre>
 <p>Keuntungan utama <code>BasePage</code>:</p>
 <ol>
-<li><strong>Otomatisasi Navigation Bar</strong>: Jika properti <code>title</code> diisi teks (misal: <code>&quot;Pengaturan Akun&quot;</code>), <code>BasePage</code> otomatis merakit <code>NavTitleBar</code> lengkap dengan tombol kembali dan style font Lato.</li>
-<li><strong>Status Bar Overlay Konsisten</strong>: Membungkus antarmuka dengan <code>AnnotatedRegion&lt;SystemUiOverlayStyle&gt;</code> agar warna jam dan ikon baterai selalu hitam kontras di atas tema terang.</li>
-<li><strong>Penanganan Back Terpadu</strong>: Callback <code>onBack</code> dapat di-override untuk intercept tombol kembali (misal menampilkan dialog konfirmasi <em>"Batalkan perubahan?"</em> sebelum menutup halaman).</li>
-</ol>
+<li><strong>Otomatisasi Navigation Bar</strong>: Jika properti <code>title</code> diisi teks (misal: <code>&quot;Pengaturan Akun&quot;</code>), <code>BasePage</code> otomatis merakit <code>NavTitleBar</code> lengkap dengan tombol kembali dan style font Lato.
+</li>
+<li><strong>Status Bar Overlay Konsisten</strong>: Membungkus antarmuka dengan <code>AnnotatedRegion&lt;SystemUiOverlayStyle&gt;</code> agar warna jam dan ikon baterai selalu hitam kontras di atas tema terang.
+</li>
+<li><strong>Penanganan Back Terpadu</strong>: Callback <code>onBack</code> dapat di-override untuk intercept tombol kembali (misal menampilkan dialog konfirmasi <em>"Batalkan perubahan?"</em> sebelum menutup halaman).
+</li></ol>
 <div id="sub-2-loading-spinner-global-apploadingoverlay" class="doc-subsection">
 <h4>2. Loading Spinner Global: <code>AppLoadingOverlay</code></h4>
 </div>
@@ -165,11 +173,14 @@
 }</code></pre>
 <p>Alur kerja:</p>
 <ul>
-<li>Ketika <code>httpClient.post(..., showLoading: true)</code> dipanggil, <code>LoadingInterceptor</code> otomatis memanggil <code>Loading.show()</code>.</li>
-<li><code>AppLoadingOverlay</code> menampilkan lapisan transparan gelap (<em>modal barrier</em>) dengan indikator loading berputar di tengah layar.</li>
-<li>Lapisan ini mencegah pengguna mengetuk tombol lain secara tidak sengaja (<em>double-click prevention</em>) saat request sedang terbang ke server.</li>
-<li>Begitu response diterima atau timeout terjadi, <code>LoadingInterceptor</code> memanggil <code>Loading.hide()</code> untuk menghapus overlay.</li>
-</ul>
+<li>Ketika <code>httpClient.post(..., showLoading: true)</code> dipanggil, <code>LoadingInterceptor</code> otomatis memanggil <code>Loading.show()</code>.
+</li>
+<li><code>AppLoadingOverlay</code> menampilkan lapisan transparan gelap (<em>modal barrier</em>) dengan indikator loading berputar di tengah layar.
+</li>
+<li>Lapisan ini mencegah pengguna mengetuk tombol lain secara tidak sengaja (<em>double-click prevention</em>) saat request sedang terbang ke server.
+</li>
+<li>Begitu response diterima atau timeout terjadi, <code>LoadingInterceptor</code> memanggil <code>Loading.hide()</code> untuk menghapus overlay.
+</li></ul>
 <div id="sub-3-dialog-terisolasi-appdialoghost-appdialog" class="doc-subsection">
 <h4>3. Dialog Terisolasi: <code>AppDialogHost</code> & <code>AppDialog</code></h4>
 </div>
@@ -181,20 +192,25 @@
 }</code></pre>
 <p>Mengapa ini penting?</p>
 <ul>
-<li>Di Flutter standar, dialog ditampilkan via <code>showDialog()</code>, yang memasukkan dialog sebagai <code>Route</code> baru ke dalam <code>Navigator</code>.</li>
-<li>Jika <code>GoRouter.go(&#x27;/root&#x27;)</code> dipanggil saat dialog masih terbuka, rute dialog bisa menyebabkan bentrok navigasi atau tersangkut di stack.</li>
-<li><code>AppDialogHost</code> membungkus aplikasi di luar GoRouter. Dialog bisnis dapat ditampilkan dan ditutup secara independen tanpa memengaruhi riwayat URL routing.</li>
-</ul>
+<li>Di Flutter standar, dialog ditampilkan via <code>showDialog()</code>, yang memasukkan dialog sebagai <code>Route</code> baru ke dalam <code>Navigator</code>.
+</li>
+<li>Jika <code>GoRouter.go(&#x27;/root&#x27;)</code> dipanggil saat dialog masih terbuka, rute dialog bisa menyebabkan bentrok navigasi atau tersangkut di stack.
+</li>
+<li><code>AppDialogHost</code> membungkus aplikasi di luar GoRouter. Dialog bisnis dapat ditampilkan dan ditutup secara independen tanpa memengaruhi riwayat URL routing.
+</li></ul>
 <div id="sub-4-kanal-resmi-appsocialmediasection" class="doc-subsection">
 <h4>4. Kanal Resmi: <code>AppSocialMediaSection</code></h4>
 </div>
 <p>File <a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/learn/Flutter-Arch/flutter/lib/common/widgets/contact/app_social_media_section.dart" target="_blank" rel="noopener noreferrer">🦊 flutter/lib/common/widgets/contact/app_social_media_section.dart <span class="branch-tag">learn/Flutter-Arch</span> ↗</a> menyediakan komponen standar untuk menampilkan tautan resmi:</p>
 <ul>
-<li>WhatsApp Customer Care</li>
-<li>Akun Instagram resmi SAMIR (<code>@samir_co_id</code>)</li>
-<li>Halaman Facebook</li>
-<li>Call center / Telepon pengaduan</li>
-</ul>
+<li>WhatsApp Customer Care
+</li>
+<li>Akun Instagram resmi SAMIR (<code>@samir_co_id</code>)
+</li>
+<li>Halaman Facebook
+</li>
+<li>Call center / Telepon pengaduan
+</li></ul>
 <p>Komponen ini digunakan secara seragam di bagian bawah tab Tagihan (<code>RepayHomePage</code>) dan tab Profil (<code>MineHomePage</code>).</p>
 </section>
 <section id="sec-walkthrough" class="doc-section">
@@ -223,46 +239,56 @@ class FaqDetailPage extends StatelessWidget {
 }</code></pre>
 <p>Hasil:</p>
 <ul>
-<li>Status bar perangkat otomatis terkonfigurasi.</li>
-<li>Header atas otomatis menampilkan tombol kembali yang memanggil <code>Routers.pop()</code>.</li>
-<li>Latar belakang halaman diwarnai putih bersih sesuai design system SAMIR.</li>
-</ul>
+<li>Status bar perangkat otomatis terkonfigurasi.
+</li>
+<li>Header atas otomatis menampilkan tombol kembali yang memanggil <code>Routers.pop()</code>.
+</li>
+<li>Latar belakang halaman diwarnai putih bersih sesuai design system SAMIR.
+</li></ul>
 </section>
 <section id="sec-why" class="doc-section">
 <h3>⚖️ F. Why It Matters (Trade-Offs & Implikasi Teknis)</h3>
 <ul>
-<li><strong>Eliminasi Kode Boilerplate</strong>:</li>
-</ul>
+<li><strong>Eliminasi Kode Boilerplate</strong>:
+</li></ul>
 <p>Tanpa <code>BasePage</code>, setiap engineer harus mendeklarasikan <code>Scaffold</code>, <code>AppBar</code>, <code>AnnotatedRegion</code>, <code>WillPopScope/PopScope</code>, dan penyesuaian padding status bar secara berulang di setiap file halaman. <code>BasePage</code> mereduksi duplikasi kode hingga lebih dari 60 baris per halaman.</p>
 <ul>
-<li><strong>Konsistensi UI Antara iOS & Android</strong>:</li>
-</ul>
+<li><strong>Konsistensi UI Antara iOS & Android</strong>:
+</li></ul>
 <p>Komponen <code>NavTitleBar</code> memastikan tombol kembali dan penempatan judul berada di koordinat yang estetis dan proporsional di kedua platform, menghindari inkonsistensi layout bawaan <code>AppBar</code> Material yang berbeda antara iOS (tengah) dan Android (kiri).</p>
 </section>
 <section id="sec-example" class="doc-section">
 <h3>🔬 G. Practical Example (Skenario Penggunaan Nyata)</h3>
 <p>Jika desainer UI memutuskan untuk memperbarui warna latar belakang seluruh halaman sekunder dari putih ke abu-abu terang (<code>#F7F8FA</code>):</p>
 <ul>
-<li>Cukup ubah default parameter <code>backgroundColor</code> di dalam <code>BasePage</code>.</li>
-<li>Seluruh halaman sekunder aplikasi seketika mengadopsi warna baru secara serempak.</li>
-</ul>
+<li>Cukup ubah default parameter <code>backgroundColor</code> di dalam <code>BasePage</code>.
+</li>
+<li>Seluruh halaman sekunder aplikasi seketika mengadopsi warna baru secara serempak.
+</li></ul>
 </section>
 <section id="sec-mistakes" class="doc-section">
 <h3>⚠️ H. Common Mistakes & Debugging</h3>
 <ul>
-<li><strong>Menggunakan <code>Scaffold</code> Biasa Alih-Alih <code>BasePage</code></strong>:</li>
-<li>Menyebabkan status bar perangkat berubah menjadi putih (ikon tak terlihat) dan tombol back tidak mengikuti aturan navigasi <code>NativeRouteChrome</code>.</li>
-<li><strong>Menampilkan Dialog dengan <code>showDialog()</code> Bawaan Navigator</strong>:</li>
-<li>Dapat memicu konflik stack dengan GoRouter. Selalu gunakan <code>AppDialog.show()</code> yang disediakan modul SAMIR.</li>
-</ul>
+<li><strong>Menggunakan <code>Scaffold</code> Biasa Alih-Alih <code>BasePage</code></strong>:
+<ul>
+<li>Menyebabkan status bar perangkat berubah menjadi putih (ikon tak terlihat) dan tombol back tidak mengikuti aturan navigasi <code>NativeRouteChrome</code>.
+</li></ul>
+</li>
+<li><strong>Menampilkan Dialog dengan <code>showDialog()</code> Bawaan Navigator</strong>:
+<ul>
+<li>Dapat memicu konflik stack dengan GoRouter. Selalu gunakan <code>AppDialog.show()</code> yang disediakan modul SAMIR.
+</li></ul>
+</li></ul>
 </section>
 <section id="sec-check" class="doc-section">
 <h3>🧠 I. Knowledge Check</h3>
 <ol>
-<li>Apa keuntungan menggunakan <code>AppDialogHost</code> dibandingkan <code>showDialog()</code> standar bawaan Flutter?</li>
-<li>Bagaimana cara kerja otomatisasi loading spinner saat API request dikirim melalui <code>HttpClient</code>?</li>
-<li>Sebutkan dua komponen utama yang dibungkus di dalam <code>MyApp.builder</code> di <code>main.dart</code>!</li>
-</ol>
+<li>Apa keuntungan menggunakan <code>AppDialogHost</code> dibandingkan <code>showDialog()</code> standar bawaan Flutter?
+</li>
+<li>Bagaimana cara kerja otomatisasi loading spinner saat API request dikirim melalui <code>HttpClient</code>?
+</li>
+<li>Sebutkan dua komponen utama yang dibungkus di dalam <code>MyApp.builder</code> di <code>main.dart</code>!
+</li></ol>
 <p><strong>Latihan Observasi</strong>:</p>
 <p>Buka file <a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/learn/Flutter-Arch/flutter/lib/pages/mine/personal/mine_personal_page.dart" target="_blank" rel="noopener noreferrer">🦊 flutter/lib/pages/mine/personal/mine_personal_page.dart <span class="branch-tag">learn/Flutter-Arch</span> ↗</a>. Amati bagaimana class ini menggunakan <code>BasePage</code> sebagai root widget-nya.</p>
 </section>

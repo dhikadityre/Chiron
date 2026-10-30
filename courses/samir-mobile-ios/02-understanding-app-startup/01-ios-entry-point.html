@@ -101,27 +101,33 @@
 <h3>🎯 A. Learning Objective</h3>
 <p>Setelah mempelajari dokumen ini, pembaca akan mampu:</p>
 <ol>
-<li>Menunjukkan file titik masuk (entry point) sebenarnya di aplikasi SAMIR iOS.</li>
-<li>Memahami peran <code>ApplicationLauncher</code> dalam mengonfigurasi APM Tingyun di dalam <code>autoreleasepool</code>.</li>
-<li>Menjelaskan mengapa <code>CZModuleHandler.ModuleManagerApplicationMain</code> menggantikan pemanggilan standar <code>@main</code> atau <code>UIApplicationMain</code>.</li>
-<li>Mengidentifikasi bahwa <code>Application/main.m</code> adalah file mati (dead code) yang sepenuhnya dikomentari.</li>
-</ol>
+<li>Menunjukkan file titik masuk (entry point) sebenarnya di aplikasi SAMIR iOS.
+</li>
+<li>Memahami peran <code>ApplicationLauncher</code> dalam mengonfigurasi APM Tingyun di dalam <code>autoreleasepool</code>.
+</li>
+<li>Menjelaskan mengapa <code>CZModuleHandler.ModuleManagerApplicationMain</code> menggantikan pemanggilan standar <code>@main</code> atau <code>UIApplicationMain</code>.
+</li>
+<li>Mengidentifikasi bahwa <code>Application/main.m</code> adalah file mati (dead code) yang sepenuhnya dikomentari.
+</li></ol>
 </section>
 <section id="sec-prereq" class="doc-section">
 <h3>📋 B. Prerequisites</h3>
 <ul>
-<li>Sudah menyelesaikan kurikulum <a href="../01-project-foundation/01-application-overview.html">Level 1: Project Foundation</a>.</li>
-<li>Mengetahui konsep siklus hidup proses Unix / C (<code>argc</code>, <code>argv</code>, <code>main()</code> function) dan <code>UIApplicationMain</code>.</li>
-</ul>
+<li>Sudah menyelesaikan kurikulum <a href="../01-project-foundation/01-application-overview.html">Level 1: Project Foundation</a>.
+</li>
+<li>Mengetahui konsep siklus hidup proses Unix / C (<code>argc</code>, <code>argv</code>, <code>main()</code> function) dan <code>UIApplicationMain</code>.
+</li></ul>
 </section>
 <section id="sec-simple" class="doc-section">
 <h3>💡 C. Simple Explanation (Analogi Sakelar Utama Gedung)</h3>
 <p>Sebelum lampu, pendingin ruangan, dan lift di sebuah gedung dinyalakan:</p>
 <ol>
-<li>Petugas keamanan menyalakan generator darurat dan kamera CCTV terlebih dahulu (<strong>Tingyun APM</strong> diinisialisasi untuk memantau performa dan mendeteksi crash sejak detik ke-0).</li>
-<li>Manajer gedung membuka buku catatan daftar staf dan divisi yang bertugas hari ini (<strong><code>CZModuleManager</code> membaca <code>IDModuleList.plist</code> dan <code>IDServiceList.plist</code></strong>).</li>
-<li>Setelah semua divisi terdaftar, pintu utama gedung dibuka untuk umum (<strong><code>UIApplicationMain</code> dihidupkan dengan <code>CZAppDelegate</code></strong>).</li>
-</ol>
+<li>Petugas keamanan menyalakan generator darurat dan kamera CCTV terlebih dahulu (<strong>Tingyun APM</strong> diinisialisasi untuk memantau performa dan mendeteksi crash sejak detik ke-0).
+</li>
+<li>Manajer gedung membuka buku catatan daftar staf dan divisi yang bertugas hari ini (<strong><code>CZModuleManager</code> membaca <code>IDModuleList.plist</code> dan <code>IDServiceList.plist</code></strong>).
+</li>
+<li>Setelah semua divisi terdaftar, pintu utama gedung dibuka untuk umum (<strong><code>UIApplicationMain</code> dihidupkan dengan <code>CZAppDelegate</code></strong>).
+</li></ol>
 <p>Di SAMIR iOS, urutan ini diatur dengan sangat ketat di file <code>main.swift</code>.</p>
 </section>
 <section id="sec-actual" class="doc-section">
@@ -191,24 +197,24 @@ let _ = CZModuleHandler.ModuleManagerApplicationMain(
 </div>
 <p>Banyak developer terbiasa dengan atribut <code>@main</code> atau <code>@UIApplicationMain</code> pada <code>AppDelegate.swift</code>. Mengapa di proyek ini file <code>main.swift</code> dieksekusi pertama kali?</p>
 <ol>
-<li><strong>Aturan Standar Kompiler Swift untuk Entry Point</strong>:</li>
-</ol>
+<li><strong>Aturan Standar Kompiler Swift untuk Entry Point</strong>:
 <ul>
-<li>Dalam bahasa Swift, file bernama khusus <strong><code>main.swift</code></strong> adalah satu-satunya file yang diizinkan memiliki ekspresi kode tingkat atas (<em>top-level code execution</em>).</li>
-<li>Saat Swift compiler mengompilasi file-file biner, compiler otomatis menghasilkan fungsi entry point C standar <code>int main(int argc, char *argv[])</code> di level Mach-O binary (<code>LC_MAIN</code>) yang langsung mengarahkan instruksi CPU pertama ke baris-baris teratas di dalam <code>main.swift</code>.</li>
-</ul>
-<ol>
-<li><strong>Komentar Eksperimen <code>@main</code></strong>:</li>
-</ol>
+<li>Dalam bahasa Swift, file bernama khusus <strong><code>main.swift</code></strong> adalah satu-satunya file yang diizinkan memiliki ekspresi kode tingkat atas (<em>top-level code execution</em>).
+</li>
+<li>Saat Swift compiler mengompilasi file-file biner, compiler otomatis menghasilkan fungsi entry point C standar <code>int main(int argc, char *argv[])</code> di level Mach-O binary (<code>LC_MAIN</code>) yang langsung mengarahkan instruksi CPU pertama ke baris-baris teratas di dalam <code>main.swift</code>.
+</li></ul>
+</li>
+<li><strong>Komentar Eksperimen <code>@main</code></strong>:
+</li></ol>
 <p>Di baris 11-16 <code>main.swift</code>, terlihat developer pernah mencoba pola baru:</p>
 <pre><code class="language-swift">   //@main
    //struct IDSamirLoan {
    //    static func main() { ... }
    //}</code></pre>
 <p>Struktur ini <strong>dikomentari</strong>. Jika <code>@main</code> diaktifkan berdampingan dengan <code>main.swift</code>, compiler Swift akan melempar error konflik <em>duplicate entry point</em>.</p>
-<ol>
-<li><strong>Apakah Benar <code>main.swift</code> yang Di-hit Pertama Kali?</strong>:</li>
-</ol>
+<ol start="3">
+<li><strong>Apakah Benar <code>main.swift</code> yang Di-hit Pertama Kali?</strong>:
+</li></ol>
 <p><strong>BENAR 100%</strong>. Begitu kernel iOS dan dynamic loader (<code>dyld</code>) selesai me-load binary aplikasi ke memori, kontrol eksekusi langsung masuk ke baris 35 <code>main.swift</code>:</p>
 <pre><code class="language-swift">   autoreleasepool {
        ApplicationLauncher.performLaunchSetup() // Inisialisasi APM Tingyun
@@ -220,13 +226,13 @@ let _ = CZModuleHandler.ModuleManagerApplicationMain(
 </div>
 <p>Parameter <code>&quot;IDModuleList&quot;</code> dioper dari <code>main.swift</code> ke <code>CZModuleManager.shared.setup(...)</code>:</p>
 <ol>
-<li><strong>Lokasi Fisik File</strong>:</li>
-</ol>
+<li><strong>Lokasi Fisik File</strong>:
+</li></ol>
 <p>File konfigurasi tersimpan dalam format XML Property List di:</p>
 <p><a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/learn/iOS-Arch/ios/IDSamirLoan/Application/Configuration/Module/IDModuleList.plist" target="_blank" rel="noopener noreferrer">🦊 ios/IDSamirLoan/Application/Configuration/Module/IDModuleList.plist <span class="branch-tag">learn/iOS-Arch</span> ↗</a>.</p>
-<ol>
-<li><strong>Isi Dictionary <code>IDModuleList.plist</code></strong>:</li>
-</ol>
+<ol start="2">
+<li><strong>Isi Dictionary <code>IDModuleList.plist</code></strong>:
+</li></ol>
 <pre><code class="language-xml">   &lt;dict&gt;
        &lt;key&gt;SamirMainModule&lt;/key&gt;
        &lt;string&gt;IDSamirMainModule&lt;/string&gt;
@@ -241,9 +247,9 @@ let _ = CZModuleHandler.ModuleManagerApplicationMain(
        &lt;key&gt;SamirMineModule&lt;/key&gt;
        &lt;string&gt;IDSamirMineModule&lt;/string&gt;
    &lt;/dict&gt;</code></pre>
-<ol>
-<li><strong>Proses Pengambilan Nilai di <code>CZModuleManager.swift:L62-78</code></strong>:</li>
-</ol>
+<ol start="3">
+<li><strong>Proses Pengambilan Nilai di <code>CZModuleManager.swift:L62-78</code></strong>:
+</li></ol>
 <pre><code class="language-swift">   private func registerAllModules(_ plistFileName: String) {
        // 1. Temukan URL file plist di Main Bundle aplikasi
        let url = Bundle.main.url(forResource: plistFileName, withExtension: &quot;plist&quot;)
@@ -260,10 +266,12 @@ let _ = CZModuleHandler.ModuleManagerApplicationMain(
        }
    }</code></pre>
 <ul>
-<li><strong>Key Plist</strong>: Nama Modul/Namespace (misal: <code>SamirMainModule</code>).</li>
-<li><strong>Value Plist</strong>: Nama Class Swift konkret (misal: <code>IDSamirMainModule</code>).</li>
-<li>Objek modul kemudian diinstansiasi secara dinamis menggunakan <code>(moduleClass as! CZModuleProtocol.Type).create()</code>.</li>
-</ul>
+<li><strong>Key Plist</strong>: Nama Modul/Namespace (misal: <code>SamirMainModule</code>).
+</li>
+<li><strong>Value Plist</strong>: Nama Class Swift konkret (misal: <code>IDSamirMainModule</code>).
+</li>
+<li>Objek modul kemudian diinstansiasi secara dinamis menggunakan <code>(moduleClass as! CZModuleProtocol.Type).create()</code>.
+</li></ul>
 <div id="sub-5-file-warisan-mati-applicationmainm" class="doc-subsection">
 <h4>5. File Warisan Mati: <code>Application/main.m</code></h4>
 </div>
@@ -301,22 +309,26 @@ sequenceDiagram
   </div>
 </div>
 <ol>
-<li><strong>Step 1 — OS Kernel</strong>: Dyld meload binary aplikasi ke memori dan mengeksekusi instruksi top-level di <code>main.swift</code>.</li>
-<li><strong>Step 2 — Inisialisasi APM</strong>: <code>ApplicationLauncher.performLaunchSetup()</code> dieksekusi di dalam <code>autoreleasepool</code>. SDK Tingyun mendeteksi apakah aplikasi berjalan di environment <code>TEST</code> atau <code>PROD</code> untuk menentukan App ID pelaporan performa.</li>
-<li><strong>Step 3 — Registrasi Modul & Service</strong>: <code>CZModuleHandler.ModuleManagerApplicationMain</code> dipanggil dengan parameter nama file konfigurasi: <code>&quot;IDModuleList&quot;</code> dan <code>&quot;IDServiceList&quot;</code>.</li>
-<li><strong>Step 4 — Setup Singleton <code>CZModuleManager</code></strong>: <code>CZModuleManager.shared.setup(...)</code> membaca plist konfigurasi, menginstansiasi class modul menggunakan <code>NSClassFromString</code>, dan mendaftarkan URL router masing-masing modul.</li>
-<li><strong>Step 5 — Serah Terima ke UIKit</strong>: <code>UIApplicationMain</code> dipanggil dengan meneruskan nama class <code>CZAppDelegate</code>. Dari titik ini, UIKit mengambil alih siklus hidup aplikasi.</li>
-</ol>
+<li><strong>Step 1 — OS Kernel</strong>: Dyld meload binary aplikasi ke memori dan mengeksekusi instruksi top-level di <code>main.swift</code>.
+</li>
+<li><strong>Step 2 — Inisialisasi APM</strong>: <code>ApplicationLauncher.performLaunchSetup()</code> dieksekusi di dalam <code>autoreleasepool</code>. SDK Tingyun mendeteksi apakah aplikasi berjalan di environment <code>TEST</code> atau <code>PROD</code> untuk menentukan App ID pelaporan performa.
+</li>
+<li><strong>Step 3 — Registrasi Modul & Service</strong>: <code>CZModuleHandler.ModuleManagerApplicationMain</code> dipanggil dengan parameter nama file konfigurasi: <code>&quot;IDModuleList&quot;</code> dan <code>&quot;IDServiceList&quot;</code>.
+</li>
+<li><strong>Step 4 — Setup Singleton <code>CZModuleManager</code></strong>: <code>CZModuleManager.shared.setup(...)</code> membaca plist konfigurasi, menginstansiasi class modul menggunakan <code>NSClassFromString</code>, dan mendaftarkan URL router masing-masing modul.
+</li>
+<li><strong>Step 5 — Serah Terima ke UIKit</strong>: <code>UIApplicationMain</code> dipanggil dengan meneruskan nama class <code>CZAppDelegate</code>. Dari titik ini, UIKit mengambil alih siklus hidup aplikasi.
+</li></ol>
 </section>
 <section id="sec-why" class="doc-section">
 <h3>⚖️ F. Why It Matters (Trade-Offs & Catatan Arsitektur)</h3>
 <ul>
-<li><strong>Mengapa Modul Harus Terdaftar Sebelum <code>UIApplicationMain</code>?</strong></li>
-</ul>
+<li><strong>Mengapa Modul Harus Terdaftar Sebelum <code>UIApplicationMain</code>?</strong>
+</li></ul>
 <p>Jika modul baru didaftarkan di dalam <code>application(_:didFinishLaunchingWithOptions:)</code>, ada risiko modul prioritas tinggi terlambat menerima notifikasi peluncuran sistem atau parameter peluncuran (<code>launchOptions</code>). Mendaftarkannya di <code>CZModuleHandler</code> menjamin saat <code>CZAppDelegate</code> pertama kali menerima event sistem, seluruh modul sudah berada dalam keadaan siap menerima panggilan.</p>
 <ul>
-<li><strong>Mengapa Tingyun Dijalankan di Luar UIKit RunLoop?</strong></li>
-</ul>
+<li><strong>Mengapa Tingyun Dijalankan di Luar UIKit RunLoop?</strong>
+</li></ul>
 <p>Jika terjadi crash sangat awal (misalnya kegagalan alokasi memori pada dynamic loader atau error saat membaca bundle plist), APM Tingyun sudah aktif dan mampu mencatat crash tersebut sebelum aplikasi terhenti.</p>
 </section>
 <section id="sec-example" class="doc-section">
@@ -326,21 +338,30 @@ sequenceDiagram
 <section id="sec-mistakes" class="doc-section">
 <h3>⚠️ H. Common Mistakes & Debugging</h3>
 <ul>
-<li><strong>Crash Fatal Saat Boot</strong>:</li>
-<li><em>Gejala</em>: Aplikasi langsung crash sesaat setelah splash screen muncul (sebelum UI sempat dirender).</li>
-<li><em>Penyebab</em>: Typo pada nama class di <code>IDModuleList.plist</code> atau assertion gagal di <code>CZModuleManager.setup()</code>.</li>
-<li><em>File yang harus diperiksa</em>: <code>ios/IDSamirLoan/Application/Configuration/Module/IDModuleList.plist</code> dan breakpoint di <code>CZModuleManager.registerAllModules</code>.</li>
-<li><strong>Menghapus <code>environment_preprocess.h</code></strong>:</li>
-<li>File ini dihasilkan otomatis oleh skrip build. Jika hilang, jalankan Scheme <code>IDSamirEnvironment</code> atau build skema apa pun sekali lagi untuk membuatnya kembali.</li>
-</ul>
+<li><strong>Crash Fatal Saat Boot</strong>:
+<ul>
+<li><em>Gejala</em>: Aplikasi langsung crash sesaat setelah splash screen muncul (sebelum UI sempat dirender).
+</li>
+<li><em>Penyebab</em>: Typo pada nama class di <code>IDModuleList.plist</code> atau assertion gagal di <code>CZModuleManager.setup()</code>.
+</li>
+<li><em>File yang harus diperiksa</em>: <code>ios/IDSamirLoan/Application/Configuration/Module/IDModuleList.plist</code> dan breakpoint di <code>CZModuleManager.registerAllModules</code>.
+</li></ul>
+</li>
+<li><strong>Menghapus <code>environment_preprocess.h</code></strong>:
+<ul>
+<li>File ini dihasilkan otomatis oleh skrip build. Jika hilang, jalankan Scheme <code>IDSamirEnvironment</code> atau build skema apa pun sekali lagi untuk membuatnya kembali.
+</li></ul>
+</li></ul>
 </section>
 <section id="sec-check" class="doc-section">
 <h3>🧠 I. Knowledge Check</h3>
 <ol>
-<li>Apa nama fungsi di <code>main.swift</code> yang bertanggung jawab mendaftarkan <code>IDModuleList.plist</code>?</li>
-<li>Mengapa App ID Tingyun berbeda antara konfigurasi TEST dan PROD?</li>
-<li>Apa peran <code>CZAppDelegate</code> dalam pemanggilan <code>UIApplicationMain</code>?</li>
-</ol>
+<li>Apa nama fungsi di <code>main.swift</code> yang bertanggung jawab mendaftarkan <code>IDModuleList.plist</code>?
+</li>
+<li>Mengapa App ID Tingyun berbeda antara konfigurasi TEST dan PROD?
+</li>
+<li>Apa peran <code>CZAppDelegate</code> dalam pemanggilan <code>UIApplicationMain</code>?
+</li></ol>
 <p><strong>Latihan Observasi</strong>:</p>
 <p>Buka file <code>ios/IDSamirLoan/main.swift</code>. Perhatikan baris 11–16 yang dikomentari (<code>//@main struct IDSamirLoan</code>). Mengapa sintaks <code>@main</code> Swift modern tidak digunakan di proyek ini? (Jawabannya: Karena proyek membutuhkan fase setup custom sebelum <code>UIApplicationMain</code> dimulai).</p>
 </section>

@@ -204,6 +204,68 @@ h4 {
   scroll-margin-top: 80px;
 }
 
+h5 {
+  font-size: 1.05rem;
+  font-weight: 700;
+  margin-top: 1.75rem;
+  margin-bottom: 0.75rem;
+  margin-left: 1.5rem;
+  padding-left: 0.75rem;
+  color: #38bdf8;
+  border-left: 3px solid rgba(56, 189, 248, 0.5);
+  display: block;
+  line-height: 1.45;
+  scroll-margin-top: 80px;
+}
+
+/* ==============================================================================
+   Nested Sub-point Hierarchy Block (.doc-subpoint-block)
+   Memberikan indentasi jelas, grouping visual, dan border aksen untuk sub-poin H5
+   ============================================================================== */
+
+.doc-subpoint-block {
+  margin-left: 1.5rem;
+  margin-top: 1.4rem;
+  margin-bottom: 1.85rem;
+  padding: 1.25rem 1.45rem;
+  background: rgba(18, 22, 34, 0.65);
+  border: 1px solid rgba(56, 189, 248, 0.18);
+  border-left: 4px solid var(--accent-primary, #38bdf8);
+  border-radius: 0 10px 10px 0;
+  box-shadow: 0 3px 12px rgba(0, 0, 0, 0.22);
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.doc-subpoint-block:hover {
+  border-color: rgba(56, 189, 248, 0.38);
+  border-left-color: #38bdf8;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+  background: rgba(22, 28, 44, 0.78);
+}
+
+.doc-subpoint-block > h5:first-child {
+  margin-top: 0;
+  margin-bottom: 0.95rem;
+  margin-left: 0;
+  padding-left: 0;
+  padding-bottom: 0.55rem;
+  border-left: none;
+  border-bottom: 1px dashed rgba(148, 163, 184, 0.25);
+  color: #38bdf8;
+  font-size: 1.08rem;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  display: block;
+}
+
+.doc-subpoint-block p:last-child,
+.doc-subpoint-block ul:last-child,
+.doc-subpoint-block ol:last-child,
+.doc-subpoint-block .table-container:last-child,
+.doc-subpoint-block .callout:last-child {
+  margin-bottom: 0;
+}
+
 p, ul, ol {
   margin-bottom: 1.25rem;
 }
@@ -213,7 +275,44 @@ ul, ol {
 }
 
 li {
-  margin-bottom: 0.6rem;
+  margin-bottom: 0.5rem;
+  line-height: 1.65;
+}
+
+/* Nested List Hierarchy & Indentation */
+li > ul,
+li > ol {
+  margin-top: 0.4rem;
+  margin-bottom: 0.4rem;
+  padding-left: 1.5rem;
+}
+
+ul {
+  list-style-type: disc;
+}
+
+ul ul {
+  list-style-type: circle;
+}
+
+ul ul ul {
+  list-style-type: square;
+}
+
+ol {
+  list-style-type: decimal;
+}
+
+ol ol {
+  list-style-type: lower-alpha;
+}
+
+ol ol ol {
+  list-style-type: lower-roman;
+}
+
+li::marker {
+  color: var(--accent-primary);
 }
 
 a {
@@ -263,6 +362,26 @@ code:not(pre code):not(.chiron-nav-code):hover {
   h4 {
     color: #0369a1;
     border-left-color: rgba(2, 132, 199, 0.4);
+  }
+  h5 {
+    color: #0284c7;
+    border-left-color: rgba(2, 132, 199, 0.5);
+  }
+  .doc-subpoint-block {
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-left: 4px solid #0284c7;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+  }
+  .doc-subpoint-block:hover {
+    border-color: #cbd5e1;
+    border-left-color: #0369a1;
+    background: #f1f5f9;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  }
+  .doc-subpoint-block > h5:first-child {
+    color: #0369a1;
+    border-bottom-color: #e2e8f0;
   }
   code:not(pre code):not(.chiron-nav-code) {
     color: #475569 !important;
@@ -371,7 +490,7 @@ pre code {
   font-size: 0.95rem;
   text-transform: uppercase;
   letter-spacing: 0.05em;
-  margin-bottom: 0.5rem;
+  margin-bottom: 0.75rem;
   display: flex;
   align-items: center;
   gap: 0.5rem;
@@ -379,6 +498,34 @@ pre code {
 
 .callout.critique .callout-title { color: var(--accent-warning); }
 .callout.best-practice .callout-title { color: var(--accent-success); }
+
+.callout ol, .callout ul {
+  margin: 0.5rem 0 0.75rem 1.4rem;
+  padding: 0;
+}
+
+.callout li {
+  margin-bottom: 0.5rem;
+  line-height: 1.65;
+}
+
+.callout li:last-child {
+  margin-bottom: 0;
+}
+
+.callout p {
+  margin-bottom: 0.6rem;
+  line-height: 1.65;
+}
+
+.callout p:last-child {
+  margin-bottom: 0;
+}
+
+.callout-subheading {
+  font-size: 0.92rem;
+  color: var(--text-main);
+}
 
 /* Interactive Quizzes (Retrieval Practice) */
 .quiz-card {
@@ -508,6 +655,21 @@ footer {
   border-radius: 4px;
   color: #fff;
   font-weight: 600;
+}
+/* Universal High-Contrast Mermaid Diagram Arrow & Marker Styling */
+.mermaid .edgePath path.path {
+  stroke-width: 2.5px !important;
+}
+.mermaid .marker {
+  fill-opacity: 1 !important;
+}
+.mermaid .edgeLabel {
+  background-color: var(--card-bg, #1a1e29) !important;
+  padding: 3px 8px !important;
+  border-radius: 4px !important;
+  font-size: 0.75rem !important;
+  color: var(--text-main, #f1f5f9) !important;
+  border: 1px solid var(--surface-border, rgba(148, 163, 184, 0.2)) !important;
 }
 
 /* Mermaid Interactive Diagram Wrapper & Zoom */
@@ -669,19 +831,31 @@ footer {
 
 .diagram-modal-body {
   flex: 1;
-  overflow: auto;
-  padding: 2.5rem;
+  overflow: hidden;
+  padding: 1.5rem;
   background: #090b10;
   display: flex;
   align-items: center;
   justify-content: center;
+  cursor: grab;
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: none;
+  position: relative;
+}
+
+.diagram-modal-body.is-panning,
+.diagram-modal-body:active {
+  cursor: grabbing;
 }
 
 .diagram-modal-body svg {
   max-width: none !important;
+  max-height: none !important;
   height: auto !important;
   transform-origin: center center;
-  transition: transform 0.2s cubic-bezier(0.2, 0, 0, 1);
+  transition: transform 0.05s ease-out;
+  pointer-events: auto;
 }
 
 /* ==============================================================================
@@ -2881,5 +3055,17 @@ table.data-table tr:hover td {
 .lesson-nav-btn.next {
   margin-left: auto;
 }
+
+@media (max-width: 768px) {
+  h5 {
+    margin-left: 0.5rem;
+    font-size: 1rem;
+  }
+  .doc-subpoint-block {
+    margin-left: 0.5rem;
+    padding: 1rem 0.95rem;
+  }
+}
+
 
 

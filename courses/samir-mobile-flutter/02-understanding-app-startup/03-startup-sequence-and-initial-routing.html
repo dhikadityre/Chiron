@@ -101,11 +101,14 @@
 <h3>🎯 A. Learning Objective</h3>
 <p>Setelah menyelesaikan dokumen ini, pembaca akan mampu:</p>
 <ol>
-<li>Memahami bagaimana host native menyalurkan rute awal (<em>initial route</em>) ke dalam Flutter Engine.</li>
-<li>Menganalisis fungsi <code>_initialLocation</code> di dalam <code>routers.dart</code>.</li>
-<li>Menjelaskan mengapa rute <code>/mine</code> dan <code>/repay</code> dialihkan ke rute internal <code>/root</code> (<code>RoutePaths.rootContainer</code>).</li>
-<li>Mengetahui struktur pesan <code>showFlutterRoute</code> dari native (<code>route</code>, <code>presentation</code>, <code>requestId</code>) dan bagaimana race condition dicegah.</li>
-</ol>
+<li>Memahami bagaimana host native menyalurkan rute awal (<em>initial route</em>) ke dalam Flutter Engine.
+</li>
+<li>Menganalisis fungsi <code>_initialLocation</code> di dalam <code>routers.dart</code>.
+</li>
+<li>Menjelaskan mengapa rute <code>/mine</code> dan <code>/repay</code> dialihkan ke rute internal <code>/root</code> (<code>RoutePaths.rootContainer</code>).
+</li>
+<li>Mengetahui struktur pesan <code>showFlutterRoute</code> dari native (<code>route</code>, <code>presentation</code>, <code>requestId</code>) dan bagaimana race condition dicegah.
+</li></ol>
 </section>
 <section id="sec-prereq" class="doc-section">
 <h3>📋 B. Prerequisites</h3>
@@ -115,10 +118,12 @@
 <h3>💡 C. Simple Explanation (Analogi & Konsep Sederhana)</h3>
 <p>Bayangkan Anda menaiki lift di gedung bertingkat:</p>
 <ul>
-<li>Jika penumpang menekan tombol lantai sebelum pintu lift tertutup (<code>defaultRouteName</code>), lift langsung meluncur ke lantai tersebut saat dinyalakan.</li>
-<li>Jika penumpang menekan "Lantai Tagihan" atau "Lantai Profil", resepsionis lift menyadari bahwa kedua ruangan ini berada di dalam aula lantai dasar yang sama (<code>/root</code>). Lift membawa Anda ke aula tersebut, lalu membuka sekat partisi yang sesuai.</li>
-<li>Jika ada banyak tombol lantai ditekan secara cepat berturut-turut oleh orang yang berbeda, sistem komputer lift mencatat nomor urut permintaan (<code>requestId</code>) dan hanya melayani permintaan yang paling mutakhir, mengabaikan perintah lama yang sudah terlambat.</li>
-</ul>
+<li>Jika penumpang menekan tombol lantai sebelum pintu lift tertutup (<code>defaultRouteName</code>), lift langsung meluncur ke lantai tersebut saat dinyalakan.
+</li>
+<li>Jika penumpang menekan "Lantai Tagihan" atau "Lantai Profil", resepsionis lift menyadari bahwa kedua ruangan ini berada di dalam aula lantai dasar yang sama (<code>/root</code>). Lift membawa Anda ke aula tersebut, lalu membuka sekat partisi yang sesuai.
+</li>
+<li>Jika ada banyak tombol lantai ditekan secara cepat berturut-turut oleh orang yang berbeda, sistem komputer lift mencatat nomor urut permintaan (<code>requestId</code>) dan hanya melayani permintaan yang paling mutakhir, mengabaikan perintah lama yang sudah terlambat.
+</li></ul>
 </section>
 <section id="sec-actual" class="doc-section">
 <h3>💻 D. Actual Implementation (Bukti di Kode Sumber)</h3>
@@ -144,11 +149,14 @@
 }</code></pre>
 <p>Alur keputusan rute awal:</p>
 <ol>
-<li><strong>Periksa <code>defaultRouteName</code></strong>: Nilai ini dikirim oleh native saat memanggil <code>FlutterEngine.run(withEntrypoint: nil, initialRoute: &quot;/repay&quot;)</code>.</li>
-<li><strong>Kondisi A (Root Tab Match)</strong>: Jika rute adalah tab root (<code>/mine</code> atau <code>/repay</code>), panggil <code>FlutterRootController.select(route)</code> dan kembalikan <code>/root</code>. Ini memastikan <code>FlutterRootPage</code> dimuat dengan index tab yang benar.</li>
-<li><strong>Kondisi B (Secondary Route)</strong>: Jika rute adalah halaman khusus (misal deep link ke <code>/mine/personal</code>), buka rute tersebut secara langsung dan beri tahu <code>NativeRouteChrome</code> untuk menyembunyikan tab bar native.</li>
-<li><strong>Kondisi Fallback</strong>: Jika tidak ada parameter atau bernilai <code>/</code>, buka <code>/root</code>.</li>
-</ol>
+<li><strong>Periksa <code>defaultRouteName</code></strong>: Nilai ini dikirim oleh native saat memanggil <code>FlutterEngine.run(withEntrypoint: nil, initialRoute: &quot;/repay&quot;)</code>.
+</li>
+<li><strong>Kondisi A (Root Tab Match)</strong>: Jika rute adalah tab root (<code>/mine</code> atau <code>/repay</code>), panggil <code>FlutterRootController.select(route)</code> dan kembalikan <code>/root</code>. Ini memastikan <code>FlutterRootPage</code> dimuat dengan index tab yang benar.
+</li>
+<li><strong>Kondisi B (Secondary Route)</strong>: Jika rute adalah halaman khusus (misal deep link ke <code>/mine/personal</code>), buka rute tersebut secara langsung dan beri tahu <code>NativeRouteChrome</code> untuk menyembunyikan tab bar native.
+</li>
+<li><strong>Kondisi Fallback</strong>: Jika tidak ada parameter atau bernilai <code>/</code>, buka <code>/root</code>.
+</li></ol>
 <div id="sub-2-penanganan-panggilan-rute-dari-host-showflutterroute" class="doc-subsection">
 <h4>2. Penanganan Panggilan Rute dari Host (<code>showFlutterRoute</code>)</h4>
 </div>
@@ -242,12 +250,12 @@ sequenceDiagram
 <section id="sec-why" class="doc-section">
 <h3>⚖️ F. Why It Matters (Trade-Offs & Implikasi Teknis)</h3>
 <ul>
-<li><strong>Mengapa Harus Ada <code>requestId</code>?</strong></li>
-</ul>
+<li><strong>Mengapa Harus Ada <code>requestId</code>?</strong>
+</li></ul>
 <p>Pada sistem hybrid, thread UI iOS/Android dan thread Dart UI Flutter berjalan secara asynchronous. Jika user mengetuk Tab A lalu dengan cepat mengetuk Tab B, pesan Tab A bisa saja diproses <em>setelah</em> pesan Tab B jika terjadi antrean di message loop platform channel. Tanpa <code>requestId</code>, layar bisa melompat mundur secara keliru ke Tab A.</p>
 <ul>
-<li><strong>Mengapa Root Tab Menggunakan <code>Routers.go</code> Bukan <code>Routers.push</code>?</strong></li>
-</ul>
+<li><strong>Mengapa Root Tab Menggunakan <code>Routers.go</code> Bukan <code>Routers.push</code>?</strong>
+</li></ul>
 <p>Menggunakan <code>push</code> untuk tab bar akan menumpuk halaman di atas halaman lain tanpa batas (stack leak), menghabiskan memori RAM. Sebaliknya, <code>go</code> membersihkan tumpukan rute child dan kembali ke kontainer utama <code>/root</code>.</p>
 </section>
 <section id="sec-example" class="doc-section">
@@ -263,17 +271,21 @@ sequenceDiagram
 <section id="sec-mistakes" class="doc-section">
 <h3>⚠️ H. Common Mistakes & Debugging</h3>
 <ul>
-<li><strong>Mendaftarkan Rute Root Langsung ke Daftar <code>routes</code> di GoRouter</strong>:</li>
-<li>Jika <code>/repay</code> dan <code>/mine</code> dideklarasikan sebagai <code>GoRoute</code> terpisah yang masing-masing mengembalikan widget baru tanpa <code>IndexedStack</code>, setiap kali user berpindah tab, state form, scroll position, dan cache data akan musnah. Keduanya <strong>wajib</strong> dikonsolidasikan di bawah rute <code>/root</code>.</li>
-</ul>
+<li><strong>Mendaftarkan Rute Root Langsung ke Daftar <code>routes</code> di GoRouter</strong>:
+<ul>
+<li>Jika <code>/repay</code> dan <code>/mine</code> dideklarasikan sebagai <code>GoRoute</code> terpisah yang masing-masing mengembalikan widget baru tanpa <code>IndexedStack</code>, setiap kali user berpindah tab, state form, scroll position, dan cache data akan musnah. Keduanya <strong>wajib</strong> dikonsolidasikan di bawah rute <code>/root</code>.
+</li></ul>
+</li></ul>
 </section>
 <section id="sec-check" class="doc-section">
 <h3>🧠 I. Knowledge Check</h3>
 <ol>
-<li>Properti apa dari framework Flutter yang digunakan untuk membaca rute awal yang dioper oleh host native?</li>
-<li>Bagaimana <code>FlutterNativeRouteDispatcher</code> mencegah perpindahan tab yang salah saat user mengetuk tab berulang kali secara cepat?</li>
-<li>Nilai apa yang dikembalikan oleh <code>_showRootTab</code> ke host native untuk menandai bahwa tampilan telah siap di layar?</li>
-</ol>
+<li>Properti apa dari framework Flutter yang digunakan untuk membaca rute awal yang dioper oleh host native?
+</li>
+<li>Bagaimana <code>FlutterNativeRouteDispatcher</code> mencegah perpindahan tab yang salah saat user mengetuk tab berulang kali secara cepat?
+</li>
+<li>Nilai apa yang dikembalikan oleh <code>_showRootTab</code> ke host native untuk menandai bahwa tampilan telah siap di layar?
+</li></ol>
 <p><strong>Latihan Observasi</strong>:</p>
 <p>Buka <a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/learn/Flutter-Arch/flutter/lib/common/router/routers.dart" target="_blank" rel="noopener noreferrer">🦊 flutter/lib/common/router/routers.dart <span class="branch-tag">learn/Flutter-Arch</span> ↗</a>. Periksa fungsi <code>_initialLocation</code> pada baris 50–65 dan catat 3 cabang evaluasi rutenya.</p>
 </section>

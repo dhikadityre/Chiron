@@ -100,31 +100,39 @@
 <h3>🎯 A. Learning Objective</h3>
 <p>Setelah mempelajari dokumen ini, Anda diharapkan mampu:</p>
 <ol>
-<li>Mengetahui status terkini arsitektur pengujian di SAMIR (ketiadaan target XCTest/automated unit testing).</li>
-<li>Memahami arsitektur dan lifecycle <code>DebugUI</code>, floating window logger in-app yang aktif pada build <code>TEST</code>.</li>
-<li>Mengoperasikan tab-tab logging: <code>request</code>, <code>thirdEvent</code>, <code>realtimeEvent</code>, dan console log.</li>
-<li>Menjalankan skenario debugging krusial: verifikasi API signature mismatch, inspeksi token autentikasi, pengujian deep link, dan isolasi crash.</li>
-<li>Menggunakan proxy debugging eksternal (Charles / Proxyman) secara efektif berdampingan dengan internal logging.</li>
-</ol>
+<li>Mengetahui status terkini arsitektur pengujian di SAMIR (ketiadaan target XCTest/automated unit testing).
+</li>
+<li>Memahami arsitektur dan lifecycle <code>DebugUI</code>, floating window logger in-app yang aktif pada build <code>TEST</code>.
+</li>
+<li>Mengoperasikan tab-tab logging: <code>request</code>, <code>thirdEvent</code>, <code>realtimeEvent</code>, dan console log.
+</li>
+<li>Menjalankan skenario debugging krusial: verifikasi API signature mismatch, inspeksi token autentikasi, pengujian deep link, dan isolasi crash.
+</li>
+<li>Menggunakan proxy debugging eksternal (Charles / Proxyman) secara efektif berdampingan dengan internal logging.
+</li></ol>
 </section>
 <section id="sec-prereq" class="doc-section">
 <h3>📋 B. Prerequisites</h3>
 <p>Sebelum membaca dokumen ini, Anda disarankan telah membaca:</p>
 <ul>
-<li><a href="../01-project-foundation/03-technology-stack-and-build.html">01-project-foundation/03-technology-stack-and-build.md</a> — Memahami 4 Xcode scheme dan flag <code>CZPreBuildMacro.cz_buildTest()</code>.</li>
-<li><a href="../06-understanding-data-and-dependencies/02-networking-and-api-flow.html">06-understanding-data-and-dependencies/02-networking-and-api-flow.md</a> — Memahami struktur envelope API, header, dan <code>LibNetSignGenerator</code>.</li>
-<li><a href="01-error-handling.html">07-learning-to-debug-and-maintain/01-error-handling.md</a> — Memahami taksonomi kode error dan mapping network error.</li>
-</ul>
+<li><a href="../01-project-foundation/03-technology-stack-and-build.html">01-project-foundation/03-technology-stack-and-build.md</a> — Memahami 4 Xcode scheme dan flag <code>CZPreBuildMacro.cz_buildTest()</code>.
+</li>
+<li><a href="../06-understanding-data-and-dependencies/02-networking-and-api-flow.html">06-understanding-data-and-dependencies/02-networking-and-api-flow.md</a> — Memahami struktur envelope API, header, dan <code>LibNetSignGenerator</code>.
+</li>
+<li><a href="01-error-handling.html">07-learning-to-debug-and-maintain/01-error-handling.md</a> — Memahami taksonomi kode error dan mapping network error.
+</li></ul>
 </section>
 <section id="sec-simple" class="doc-section">
 <h3>💡 C. Simple Explanation: "Kotak Perkakas Lapangan Tanpa Lab Otomatis"</h3>
 <p>Bayangkan sebuah pesawat yang tidak memiliki simulasi uji coba otomatis di hanggar sebelum terbang (tidak ada unit test). Namun, teknisi memasang dashboard monitor portabel ekstra di kokpit (floating debug tool) yang menampilkan setiap kabel yang dialiri listrik dan setiap sensor yang mengirim sinyal saat pesawat sedang diterbangkan di udara.</p>
 <p>Di SAMIR iOS:</p>
 <ol>
-<li><strong>Tidak ada Unit Test atau UI Test otomatis</strong> yang dijalankan pada Xcode target maupun CI pipeline.</li>
-<li>Setiap kali Anda menjalankan build skema <code>TEST</code>, sebuah tombol oranye melayang (<code>DataCollectDraggableButton</code>) muncul di atas semua layar aplikasi.</li>
-<li>Mengetuk tombol tersebut akan membuka terminal log in-app yang mencegat semua request HTTP, response JSON, event tracking analitik (AppsFlyer/Burying Point), dan error console tanpa perlu menyambungkan kabel USB ke Xcode Console!</li>
-</ol>
+<li><strong>Tidak ada Unit Test atau UI Test otomatis</strong> yang dijalankan pada Xcode target maupun CI pipeline.
+</li>
+<li>Setiap kali Anda menjalankan build skema <code>TEST</code>, sebuah tombol oranye melayang (<code>DataCollectDraggableButton</code>) muncul di atas semua layar aplikasi.
+</li>
+<li>Mengetuk tombol tersebut akan membuka terminal log in-app yang mencegat semua request HTTP, response JSON, event tracking analitik (AppsFlyer/Burying Point), dan error console tanpa perlu menyambungkan kabel USB ke Xcode Console!
+</li></ol>
 </section>
 <section id="sec-actual" class="doc-section">
 <h3>💻 D. Actual Implementation</h3>
@@ -133,30 +141,38 @@
 </div>
 <p>Pemeriksaan pada <code>IDSamirLoan.xcodeproj/project.pbxproj</code> dan pencarian simbol <code>XCTest</code> membuktikan temuan penting:</p>
 <ul>
-<li><strong>Test Target:</strong> 0 target unit test (<code>IDSamirLoanTests</code> tidak ada).</li>
-<li><strong>UI Test Target:</strong> 0 target UI test (<code>IDSamirLoanUITests</code> tidak ada).</li>
-<li><strong>Konsekuensi:</strong> Kualitas rilis bergantung 100% pada Manual QA testing, exploratory testing, dan regression testing manual di lingkungan staging.</li>
-</ul>
+<li><strong>Test Target:</strong> 0 target unit test (<code>IDSamirLoanTests</code> tidak ada).
+</li>
+<li><strong>UI Test Target:</strong> 0 target UI test (<code>IDSamirLoanUITests</code> tidak ada).
+</li>
+<li><strong>Konsekuensi:</strong> Kualitas rilis bergantung 100% pada Manual QA testing, exploratory testing, dan regression testing manual di lingkungan staging.
+</li></ul>
 <div id="sub-2-in-app-debug-console-modul-debug-debugui-verified" class="doc-subsection">
 <h4>2. In-App Debug Console: Modul <code>Debug</code> & <code>DebugUI</code> <code>[Verified]</code></h4>
 </div>
 <p>Sistem debugging in-app terletak di direktori <a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/learn/iOS-Arch/ios/IDSamirLoan/Application/Debug/" target="_blank" rel="noopener noreferrer">🦊 ios/IDSamirLoan/Application/Debug/ <span class="branch-tag">learn/iOS-Arch</span> ↗</a>:</p>
 <ul>
-<li><code>Manager/DebugUI.swift</code>: Singleton pengelola lifecycle floating window dan interceptor.</li>
-<li><code>Manager/DataCollectDebugLogManager.swift</code>: In-memory log store dengan pembatasan jumlah item maksimum (default buffer).</li>
-<li><code>Controller/DebugListViewController.swift</code>: UI konsol log berisikan UISearchBar, segment picker, dan expandable table view.</li>
-<li><code>View/DataCollectDraggableButton.swift</code>: Tombol melayang oranye bebas digeser (pan gesture) di atas key window.</li>
-</ul>
+<li><code>Manager/DebugUI.swift</code>: Singleton pengelola lifecycle floating window dan interceptor.
+</li>
+<li><code>Manager/DataCollectDebugLogManager.swift</code>: In-memory log store dengan pembatasan jumlah item maksimum (default buffer).
+</li>
+<li><code>Controller/DebugListViewController.swift</code>: UI konsol log berisikan UISearchBar, segment picker, dan expandable table view.
+</li>
+<li><code>View/DataCollectDraggableButton.swift</code>: Tombol melayang oranye bebas digeser (pan gesture) di atas key window.
+</li></ul>
 <div class="callout best-practice"><p>[!NOTE] <strong>Modul <code>Debug</code> Digunakan untuk Apa?</strong> Modul <code>Debug</code> adalah <em>in-app developer & QA cockpit</em> portabel. Tujuannya adalah mengeliminasi kebutuhan menyambungkan kabel USB ke Xcode atau memasang software proxy (Charles/Proxyman) saat testing di lapangan. Modul ini memungkinkan QA dan developer memeriksa secara instan di layar HP: 1. Apakah request HTTP berhasil dikirim beserta seluruh parameter dan kalkulasi <code>sign</code>. 2. Apakah response backend sesuai format yang diharapkan (<code>200</code> vs <code>10006</code>). 3. Apakah event analitik pihak ketiga (AppsFlyer, Facebook, TikTok) dan telemetri risiko SAMIR (<code>burying points</code>) terpicu dengan benar saat suatu tombol diklik.</p></div>
-<h5 id="item-aktivasi-bersyarat-scheme-guard">Aktivasi Bersyarat (Scheme Guard)</h5>
+<div class="doc-subpoint-block" id="item-aktivasi-bersyarat-scheme-guard">
+<h5>Aktivasi Bersyarat (Scheme Guard)</h5>
 <p>Floating debug console <strong>tidak pernah</strong> tampil di skema <code>PROD</code> demi keamanan data pengguna. Inisialisasi dilakukan pada tab bar root:</p>
 <ul>
-<li>Lokasi file: <code>ios/IDSamirLoan/Application/SamirMainModule/Classes/IDController/IDMainTabBarController.swift:L39-41</code></li>
-</ul>
+<li>Lokasi file: <code>ios/IDSamirLoan/Application/SamirMainModule/Classes/IDController/IDMainTabBarController.swift:L39-41</code>
+</li></ul>
 <pre><code class="language-swift">if CZPreBuildMacro.cz_buildTest() {
     DebugUI.setup()
 }</code></pre>
-<h5 id="item-arsitektur-window-level">Arsitektur Window Level</h5>
+</div>
+<div class="doc-subpoint-block" id="item-arsitektur-window-level">
+<h5>Arsitektur Window Level</h5>
 <p><code>DebugUI</code> membuat dua <code>UIWindow</code> khusus yang berdiri di atas <code>keyWindow</code> aplikasi normal:</p>
 <pre><code class="language-swift">+-------------------------------------------------------------+
 | UIWindow (buttonFloatWindow, windowLevel = .alert + 2)      |  &lt;-- Tombol oranye melayang (60x60)
@@ -167,39 +183,40 @@
 +-------------------------------------------------------------+</code></pre>
 <p>Implementasi window pada <code>DebugUI.swift:L57-79</code>:</p>
 <ul>
-<li><code>buttonFloatWindow.windowLevel = .alert + 2</code></li>
-<li><code>debugListFloatWindow.windowLevel = .alert + 1</code> (ketinggian setengah layar: <code>UIScreen.main.bounds.height / 2</code>).</li>
-</ul>
+<li><code>buttonFloatWindow.windowLevel = .alert + 2</code>
+</li>
+<li><code>debugListFloatWindow.windowLevel = .alert + 1</code> (ketinggian setengah layar: <code>UIScreen.main.bounds.height / 2</code>).
+</li></ul>
+</div>
 <div id="sub-3-kategori-log-yang-dicegat-datacollecttype-verified" class="doc-subsection">
 <h4>3. Kategori Log yang Dicegat (<code>DataCollectType</code>) <code>[Verified]</code></h4>
 </div>
 <p>Saat <code>DebugUI.setup()</code> dipanggil, tiga tipe log didaftarkan:</p>
 <ol>
-<li><code>DataCollectType.request</code>:</li>
-</ol>
+<li><code>DataCollectType.request</code>:
 <ul>
-<li>Terpasang di <code>IDNetworkRequest.swift:L746</code> (saat request dikirim dengan URL, parameter, dan header).</li>
-<li>Terpasang di <code>IDNetworkRequest.swift:L785</code> (saat response sukses berformat dictionary diterima).</li>
-<li>Terpasang di <code>IDNetworkRequest.swift:L843</code> (saat request gagal dengan error string).</li>
-</ul>
-<ol>
-<li><code>DataCollectType.thirdEvent</code>:</li>
-</ol>
+<li>Terpasang di <code>IDNetworkRequest.swift:L746</code> (saat request dikirim dengan URL, parameter, dan header).
+</li>
+<li>Terpasang di <code>IDNetworkRequest.swift:L785</code> (saat response sukses berformat dictionary diterima).
+</li>
+<li>Terpasang di <code>IDNetworkRequest.swift:L843</code> (saat request gagal dengan error string).
+</li></ul>
+</li>
+<li><code>DataCollectType.thirdEvent</code>:
 <ul>
-<li>Terpasang di <code>IDDataReportUtils.swift:L54</code> saat event AppsFlyer atau vendor third-party lainnya dikirim.</li>
-</ul>
-<ol>
-<li><code>DataCollectType.realtimeEvent</code>:</li>
-</ol>
+<li>Terpasang di <code>IDDataReportUtils.swift:L54</code> saat event AppsFlyer atau vendor third-party lainnya dikirim.
+</li></ul>
+</li>
+<li><code>DataCollectType.realtimeEvent</code>:
 <ul>
-<li>Terpasang di <code>IDCustomPointNetworkManager.swift:L147</code> saat event tracking bisnis SAMIR (burying points / telemetry) ditembakkan ke endpoint analytics.</li>
-</ul>
-<ol>
-<li><code>DataCollectType.console</code>:</li>
-</ol>
+<li>Terpasang di <code>IDCustomPointNetworkManager.swift:L147</code> saat event tracking bisnis SAMIR (burying points / telemetry) ditembakkan ke endpoint analytics.
+</li></ul>
+</li>
+<li><code>DataCollectType.console</code>:
 <ul>
-<li>Terpasang di <code>DataLogConsole.swift:L53</code> untuk menangkap logging internal aplikasi.</li>
-</ul>
+<li>Terpasang di <code>DataLogConsole.swift:L53</code> untuk menangkap logging internal aplikasi.
+</li></ul>
+</li></ol>
 
 <div class="mermaid-interactive-card">
   <div class="mermaid-card-toolbar">
@@ -235,49 +252,53 @@ sequenceDiagram
 <h4>Skenario: Menemukan Penyebab "Gagal Mengambil Kuota Pinjaman" pada Akun Test</h4>
 </div>
 <ol>
-<li><strong>Langkah 1 — Jalankan Scheme <code>TEST</code> di Simulator atau Device Fisik:</strong></li>
-</ol>
+<li><strong>Langkah 1 — Jalankan Scheme <code>TEST</code> di Simulator atau Device Fisik:</strong>
 <ul>
-<li>Pastikan skema aktif adalah <code>TEST</code> (bukan <code>PROD</code>).</li>
-<li>Setelah splash screen selesai dan masuk ke halaman login/home, perhatikan lingkaran oranye di sudut kiri atas layar.</li>
-</ul>
-<ol>
-<li><strong>Langkah 2 — Reprodusir Masalah:</strong></li>
-</ol>
+<li>Pastikan skema aktif adalah <code>TEST</code> (bukan <code>PROD</code>).
+</li>
+<li>Setelah splash screen selesai dan masuk ke halaman login/home, perhatikan lingkaran oranye di sudut kiri atas layar.
+</li></ul>
+</li>
+<li><strong>Langkah 2 — Reprodusir Masalah:</strong>
 <ul>
-<li>Masuk ke tab Home (Pinjaman), tarik ke bawah untuk refresh (pull-to-refresh).</li>
-<li>Jika muncul toast error <code>99999</code> atau data kuota tidak berubah, jangan tutup aplikasi.</li>
-</ul>
-<ol>
-<li><strong>Langkah 3 — Buka In-App Debug Console:</strong></li>
-</ol>
+<li>Masuk ke tab Home (Pinjaman), tarik ke bawah untuk refresh (pull-to-refresh).
+</li>
+<li>Jika muncul toast error <code>99999</code> atau data kuota tidak berubah, jangan tutup aplikasi.
+</li></ul>
+</li>
+<li><strong>Langkah 3 — Buka In-App Debug Console:</strong>
 <ul>
-<li>Ketuk lingkaran oranye <code>DataCollectDraggableButton</code>.</li>
-<li>Window setengah layar <code>DebugListViewController</code> akan meluncur turun dari atas.</li>
-</ul>
-<ol>
-<li><strong>Langkah 4 — Filter Log Request:</strong></li>
-</ol>
+<li>Ketuk lingkaran oranye <code>DataCollectDraggableButton</code>.
+</li>
+<li>Window setengah layar <code>DebugListViewController</code> akan meluncur turun dari atas.
+</li></ul>
+</li>
+<li><strong>Langkah 4 — Filter Log Request:</strong>
 <ul>
-<li>Pada baris segment atas (<code>QTUISegmentView</code>), pilih tab <code>request</code>.</li>
-<li>Gunakan <code>searchView</code> dan ketik kata kunci endpoint, misalnya: <code>getAppIndexNew</code> atau <code>borrow</code>.</li>
-</ul>
-<ol>
-<li><strong>Langkah 5 — Inspeksi Detail Request & Response:</strong></li>
-</ol>
+<li>Pada baris segment atas (<code>QTUISegmentView</code>), pilih tab <code>request</code>.
+</li>
+<li>Gunakan <code>searchView</code> dan ketik kata kunci endpoint, misalnya: <code>getAppIndexNew</code> atau <code>borrow</code>.
+</li></ul>
+</li>
+<li><strong>Langkah 5 — Inspeksi Detail Request & Response:</strong>
 <ul>
-<li>Ketuk sel log yang bersangkutan. Sel akan membesar (<code>ExpandableTableView</code>).</li>
-<li>Di dalam detail, periksa:</li>
-<li><code>URL</code>: Pastikan base URL mengarah ke server gateway dev (<code>.../app/...</code>).</li>
-<li><code>Header</code>: Periksa nilai <code>token</code> (apakah ada nilai hex MD5 atau string kosong), <code>timestamp</code>, dan <code>sign</code>.</li>
-<li><code>Response Data</code>: Periksa JSON body apakah <code>code == 10006</code> (token kadaluarsa) atau <code>code == 20001</code> (sedang ada order aktif).</li>
-</ul>
-<ol>
-<li><strong>Langkah 6 — Salin Data untuk Tiket Bug:</strong></li>
-</ol>
+<li>Ketuk sel log yang bersangkutan. Sel akan membesar (<code>ExpandableTableView</code>).
+</li>
+<li>Di dalam detail, periksa:
 <ul>
-<li>Anda dapat memilih teks JSON respons langsung dari layar dan menyalinnya ke catatan pelaporan bug Jira/Slack.</li>
-</ul>
+<li><code>URL</code>: Pastikan base URL mengarah ke server gateway dev (<code>.../app/...</code>).
+</li>
+<li><code>Header</code>: Periksa nilai <code>token</code> (apakah ada nilai hex MD5 atau string kosong), <code>timestamp</code>, dan <code>sign</code>.
+</li>
+<li><code>Response Data</code>: Periksa JSON body apakah <code>code == 10006</code> (token kadaluarsa) atau <code>code == 20001</code> (sedang ada order aktif).
+</li></ul>
+</li></ul>
+</li>
+<li><strong>Langkah 6 — Salin Data untuk Tiket Bug:</strong>
+<ul>
+<li>Anda dapat memilih teks JSON respons langsung dari layar dan menyalinnya ke catatan pelaporan bug Jira/Slack.
+</li></ul>
+</li></ol>
 </section>
 <section id="sec-why" class="doc-section">
 <h3>⚖️ F. Why It Matters: Kelebihan, Keterbatasan, & Trade-Off</h3>
@@ -287,17 +308,18 @@ sequenceDiagram
 <h3>🔬 G. Practical Example: Menelusuri Signature Mismatch Error (<code>code: 10004</code>)</h3>
 <p>Jika backend menolak permintaan dengan pesan error signature tidak valid:</p>
 <ol>
-<li>Pasang breakpoint di <code>ios/IDSamirLoan/Application/SamirNetworkModule/Classes/Common/IDNetworkRequest.swift:L480</code> (sebelum pemanggilan generator signature).</li>
-<li>Periksa dictionary parameter yang dikumpulkan:</li>
-</ol>
+<li>Pasang breakpoint di <code>ios/IDSamirLoan/Application/SamirNetworkModule/Classes/Common/IDNetworkRequest.swift:L480</code> (sebelum pemanggilan generator signature).
+</li>
+<li>Periksa dictionary parameter yang dikumpulkan:
+</li></ol>
 <pre><code class="language-swift">   po params</code></pre>
-<ol>
-<li>Periksa string signature yang dihasilkan oleh library <code>LibNetSignGenerator</code>:</li>
-</ol>
+<ol start="3">
+<li>Periksa string signature yang dihasilkan oleh library <code>LibNetSignGenerator</code>:
+</li></ol>
 <pre><code class="language-swift">   po self.cz_requestSign</code></pre>
-<ol>
-<li>Buka <code>DebugUI</code> pada perangkat, pilih tab <code>request</code>, lalu cocokkan apakah query parameters mengandung karakter khusus URL (<code>+</code>, <code>/</code>, <code>=</code>, spasi) yang tidak ter-encode dengan benar antara Swift URL encoding dan backend parser.</li>
-</ol>
+<ol start="4">
+<li>Buka <code>DebugUI</code> pada perangkat, pilih tab <code>request</code>, lalu cocokkan apakah query parameters mengandung karakter khusus URL (<code>+</code>, <code>/</code>, <code>=</code>, spasi) yang tidak ter-encode dengan benar antara Swift URL encoding dan backend parser.
+</li></ol>
 </section>
 <section id="sec-mistakes" class="doc-section">
 <h3>⚠️ H. Common Mistakes and Debugging</h3>
@@ -305,51 +327,62 @@ sequenceDiagram
 <h4>1. Tombol Debug Oranye Hilang atau Tertutup View</h4>
 </div>
 <ul>
-<li><strong>Gejala:</strong> Anda menjalankan skema <code>TEST</code>, tetapi tombol oranye <code>DebugUI</code> tidak muncul.</li>
-<li><strong>Penyebab:</strong></li>
-</ul>
+<li><strong>Gejala:</strong> Anda menjalankan skema <code>TEST</code>, tetapi tombol oranye <code>DebugUI</code> tidak muncul.
+</li>
+<li><strong>Penyebab:</strong>
 <ol>
-<li>Anda login menggunakan skema <code>PROD</code> atau <code>PROD-TEST</code> di mana <code>CZPreBuildMacro.cz_buildTest()</code> bernilai <code>false</code>.</li>
-<li>Subview dari modal dialog native atau plugin third-party (seperti Advance AI liveness window) dibuat dengan <code>UIWindow.windowLevel = .statusBar + 100</code>, menutupi <code>buttonFloatWindow</code>.</li>
-</ol>
-<ul>
-<li><strong>Solusi:</strong> Pastikan skema aktif adalah <code>TEST</code>. Jika tertutup modal khusus, selesaikan alur modal terlebih dahulu agar window level kembali normal.</li>
-</ul>
+<li>Anda login menggunakan skema <code>PROD</code> atau <code>PROD-TEST</code> di mana <code>CZPreBuildMacro.cz_buildTest()</code> bernilai <code>false</code>.
+</li>
+<li>Subview dari modal dialog native atau plugin third-party (seperti Advance AI liveness window) dibuat dengan <code>UIWindow.windowLevel = .statusBar + 100</code>, menutupi <code>buttonFloatWindow</code>.
+</li></ol>
+</li>
+<li><strong>Solusi:</strong> Pastikan skema aktif adalah <code>TEST</code>. Jika tertutup modal khusus, selesaikan alur modal terlebih dahulu agar window level kembali normal.
+</li></ul>
 <div id="sub-2-traffic-flutter-tidak-muncul-di-debugui" class="doc-subsection">
 <h4>2. Traffic Flutter Tidak Muncul di <code>DebugUI</code></h4>
 </div>
 <ul>
-<li><strong>Gejala:</strong> Saat membuka Tab "Bayar" (Repay) atau Tab "Saya" (Mine), aktivitas API tidak muncul di tab <code>request</code> <code>DebugUI</code>.</li>
-<li><strong>Penyebab:</strong> Tab Repay dan Mine dirender oleh Flutter engine. Jika request HTTP di dalam Flutter menggunakan package Dart <code>http</code> atau <code>dio</code>, request tersebut tidak melewati <code>IDNetworkRequest.swift</code> native iOS!</li>
-<li><strong>Solusi:</strong> Gunakan Charles / Proxyman dengan SSL Proxying terpasang pada simulator/device untuk memantau traffic jaringan Flutter secara terpadu.</li>
-</ul>
+<li><strong>Gejala:</strong> Saat membuka Tab "Bayar" (Repay) atau Tab "Saya" (Mine), aktivitas API tidak muncul di tab <code>request</code> <code>DebugUI</code>.
+</li>
+<li><strong>Penyebab:</strong> Tab Repay dan Mine dirender oleh Flutter engine. Jika request HTTP di dalam Flutter menggunakan package Dart <code>http</code> atau <code>dio</code>, request tersebut tidak melewati <code>IDNetworkRequest.swift</code> native iOS!
+</li>
+<li><strong>Solusi:</strong> Gunakan Charles / Proxyman dengan SSL Proxying terpasang pada simulator/device untuk memantau traffic jaringan Flutter secara terpadu.
+</li></ul>
 <div id="sub-3-log-penuh-dan-aplikasi-menjadi-patah-patah-lag" class="doc-subsection">
 <h4>3. Log Penuh dan Aplikasi Menjadi Patah-Patah (Lag)</h4>
 </div>
 <ul>
-<li><strong>Gejala:</strong> Scroll pada aplikasi tersendat setelah melakukan stress testing ratusan request.</li>
-<li><strong>Penyebab:</strong> Ukuran array di <code>DataCollectDebugLogManager</code> menumpuk tanpa batas pembersihan berkala.</li>
-<li><strong>Solusi:</strong> Buka konsol <code>DebugUI</code>, geser tab ke paling kanan, lalu ketuk <code>Clear</code> untuk mengosongkan buffer memori log.</li>
-</ul>
+<li><strong>Gejala:</strong> Scroll pada aplikasi tersendat setelah melakukan stress testing ratusan request.
+</li>
+<li><strong>Penyebab:</strong> Ukuran array di <code>DataCollectDebugLogManager</code> menumpuk tanpa batas pembersihan berkala.
+</li>
+<li><strong>Solusi:</strong> Buka konsol <code>DebugUI</code>, geser tab ke paling kanan, lalu ketuk <code>Clear</code> untuk mengosongkan buffer memori log.
+</li></ul>
 </section>
 <section id="sec-check" class="doc-section">
 <h3>🧠 I. Knowledge Check</h3>
 <ol>
-<li>Mengapa unit test otomatis tidak ditemukan di project Xcode SAMIR, dan apa dampaknya bagi developer baru yang hendak melakukan refactoring?</li>
-<li>Pada file dan method mana <code>DebugUI.setup()</code> pertama kali dipanggil, serta apa syarat kondisi pemanggilannya?</li>
-<li>Mengapa tombol melayang debug menggunakan <code>windowLevel = .alert + 2</code> daripada sekadar ditambahkan sebagai subview di <code>keyWindow.rootViewController.view</code>?</li>
-<li>Sebutkan 3 kategori log utama yang dapat difilter di dalam konsol <code>DebugListViewController</code>!</li>
-<li>Bagaimana cara memverifikasi apakah sebuah request yang dikirimkan aplikasi menyertakan parameter <code>sign</code> yang benar tanpa membuka Xcode?</li>
-</ol>
+<li>Mengapa unit test otomatis tidak ditemukan di project Xcode SAMIR, dan apa dampaknya bagi developer baru yang hendak melakukan refactoring?
+</li>
+<li>Pada file dan method mana <code>DebugUI.setup()</code> pertama kali dipanggil, serta apa syarat kondisi pemanggilannya?
+</li>
+<li>Mengapa tombol melayang debug menggunakan <code>windowLevel = .alert + 2</code> daripada sekadar ditambahkan sebagai subview di <code>keyWindow.rootViewController.view</code>?
+</li>
+<li>Sebutkan 3 kategori log utama yang dapat difilter di dalam konsol <code>DebugListViewController</code>!
+</li>
+<li>Bagaimana cara memverifikasi apakah sebuah request yang dikirimkan aplikasi menyertakan parameter <code>sign</code> yang benar tanpa membuka Xcode?
+</li></ol>
 </section>
 <section id="sec-completion" class="doc-section">
 <h3>🏁 J. Completion Criteria</h3>
 <p>Anda siap melanjutkan ke dokumen berikutnya jika:</p>
 <ul>
-<li>Anda mengetahui lokasi folder <code>Application/Debug/</code> dan memahami pembatasan build scheme (<code>TEST</code> vs <code>PROD</code>).</li>
-<li>Anda memahami bahwa SAMIR belum memiliki automated unit test suite dan mengandalkan exploratory QA.</li>
-<li>Anda dapat mengoperasikan floating in-app console untuk inspeksi request jaringan, response payload, dan event tracking.</li>
-</ul>
+<li>Anda mengetahui lokasi folder <code>Application/Debug/</code> dan memahami pembatasan build scheme (<code>TEST</code> vs <code>PROD</code>).
+</li>
+<li>Anda memahami bahwa SAMIR belum memiliki automated unit test suite dan mengandalkan exploratory QA.
+</li>
+<li>Anda dapat mengoperasikan floating in-app console untuk inspeksi request jaringan, response payload, dan event tracking.
+</li></ul>
 <p>Lanjut ke dokumen berikutnya: <a href="03-coupling-and-technical-debt.html">03-coupling-and-technical-debt.md</a></p>
 </section>
 

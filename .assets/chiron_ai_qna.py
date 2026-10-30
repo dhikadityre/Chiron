@@ -25,16 +25,24 @@ def find_all_sidecars():
 
 
 def get_sidecar_for_lesson(lesson_path_or_str: str) -> Path:
-    clean = str(lesson_path_or_str).strip().lstrip("/")
+    raw = str(lesson_path_or_str).strip()
+    if raw.startswith("file://"):
+        raw = raw[7:]
+    p = Path(raw)
+    if p.is_absolute():
+        if p.name.endswith(".html"):
+            return p.with_name(p.stem + ".notes.json")
+        elif not p.name.endswith(".notes.json"):
+            return p.with_name(p.name + ".notes.json")
+        return p
+
+    clean = raw.lstrip("/")
     if clean.endswith(".html"):
         clean = clean[:-5] + ".notes.json"
     elif not clean.endswith(".notes.json"):
         clean = clean + ".notes.json"
 
-    p = Path(clean)
-    if p.is_absolute():
-        return p
-    return (CHIRON_ROOT / p).resolve()
+    return (CHIRON_ROOT / clean).resolve()
 
 
 def list_questions(lesson_filter=None, as_json=False):

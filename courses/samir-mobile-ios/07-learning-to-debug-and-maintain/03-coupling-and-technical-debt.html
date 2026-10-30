@@ -100,31 +100,39 @@
 <h3>🎯 A. Learning Objective</h3>
 <p>Setelah mempelajari dokumen ini, Anda diharapkan mampu:</p>
 <ol>
-<li>Mengidentifikasi titik-titik utang teknis kritis berisiko tinggi (<em>high-risk debt</em>), menengah (<em>medium-risk</em>), dan rendah (<em>low-risk</em>).</li>
-<li>Memahami konsekuensi dari ~1.488 <em>force unwraps</em> (<code>!</code>) dan hardcoded credentials terhadap stabilitas dan keamanan aplikasi.</li>
-<li>Memetakan <em>God Objects</em> dan <em>Massive ViewControllers</em> yang melebihi 1.000 hingga 2.200 baris kode.</li>
-<li>Menganalisis isolasi paradigma reaktif (RxSwift "Island") pada modul pinjaman dibanding keseluruhan arsitektur aplikasi.</li>
-<li>Mengetahui bug tersembunyi pada module loader (<em>module priority no-op bug</em>) dan salah ketik API protokol (<em>reapyService</em>).</li>
-<li>Memahami batasan penting: <strong>tidak ada refactoring yang diizinkan dalam fase dokumentasi ini</strong>, namun semua temuan dicatat dengan bukti kode yang valid.</li>
-</ol>
+<li>Mengidentifikasi titik-titik utang teknis kritis berisiko tinggi (<em>high-risk debt</em>), menengah (<em>medium-risk</em>), dan rendah (<em>low-risk</em>).
+</li>
+<li>Memahami konsekuensi dari ~1.488 <em>force unwraps</em> (<code>!</code>) dan hardcoded credentials terhadap stabilitas dan keamanan aplikasi.
+</li>
+<li>Memetakan <em>God Objects</em> dan <em>Massive ViewControllers</em> yang melebihi 1.000 hingga 2.200 baris kode.
+</li>
+<li>Menganalisis isolasi paradigma reaktif (RxSwift "Island") pada modul pinjaman dibanding keseluruhan arsitektur aplikasi.
+</li>
+<li>Mengetahui bug tersembunyi pada module loader (<em>module priority no-op bug</em>) dan salah ketik API protokol (<em>reapyService</em>).
+</li>
+<li>Memahami batasan penting: <strong>tidak ada refactoring yang diizinkan dalam fase dokumentasi ini</strong>, namun semua temuan dicatat dengan bukti kode yang valid.
+</li></ol>
 </section>
 <section id="sec-prereq" class="doc-section">
 <h3>📋 B. Prerequisites</h3>
 <p>Sebelum membaca dokumen ini, Anda disarankan telah membaca:</p>
 <ul>
-<li><a href="../03-understanding-architecture/01-architecture-overview.html">03-understanding-architecture/01-architecture-overview.md</a> — Struktur modular monolith SAMIR.</li>
-<li><a href="../03-understanding-architecture/04-shared-components-and-services.html">03-understanding-architecture/04-shared-components-and-services.md</a> — Service registry <code>IDServiceManager</code>.</li>
-<li><a href="02-testing-and-debugging.html">07-learning-to-debug-and-maintain/02-testing-and-debugging.md</a> — Ketiadaan target pengujian otomatis.</li>
-</ul>
+<li><a href="../03-understanding-architecture/01-architecture-overview.html">03-understanding-architecture/01-architecture-overview.md</a> — Struktur modular monolith SAMIR.
+</li>
+<li><a href="../03-understanding-architecture/04-shared-components-and-services.html">03-understanding-architecture/04-shared-components-and-services.md</a> — Service registry <code>IDServiceManager</code>.
+</li>
+<li><a href="02-testing-and-debugging.html">07-learning-to-debug-and-maintain/02-testing-and-debugging.md</a> — Ketiadaan target pengujian otomatis.
+</li></ul>
 </section>
 <section id="sec-simple" class="doc-section">
 <h3>💡 C. Simple Explanation: "Peta Ranjau di Dalam Kode"</h3>
 <p>Bayangkan Anda pindah ke rumah tua yang baru direnovasi sebagian. Ruang tamu tampak modern, tetapi di balik dinding terdapat sambungan kabel tanpa isolator (force unwraps), kunci pintu utama tersimpan di bawah keset (hardcoded secret), dan pipa air dari dapur tersambung langsung ke pipa pembuangan tanpa katup pengaman (tight coupling).</p>
 <p>Di SAMIR:</p>
 <ul>
-<li>Aplikasi berfungsi dengan baik di tangan ratusan ribu pengguna karena alur pengujian manual (QA) yang ketat.</li>
-<li>Namun dari kacamata arsitektur, terdapat beberapa "ranjau teknis" yang dapat meledak menjadi crash runtime jika seorang developer baru mengubah tipe data respons API atau melakukan <em>force-unwrapping</em> pada nilai opsional yang bernilai <code>nil</code>.</li>
-</ul>
+<li>Aplikasi berfungsi dengan baik di tangan ratusan ribu pengguna karena alur pengujian manual (QA) yang ketat.
+</li>
+<li>Namun dari kacamata arsitektur, terdapat beberapa "ranjau teknis" yang dapat meledak menjadi crash runtime jika seorang developer baru mengubah tipe data respons API atau melakukan <em>force-unwrapping</em> pada nilai opsional yang bernilai <code>nil</code>.
+</li></ul>
 </section>
 <section id="sec-actual" class="doc-section">
 <h3>💻 D. Actual Implementation: Inventarisasi Utang Teknis Berdasarkan Tingkat Risiko</h3>
@@ -151,131 +159,168 @@
 <div id="sub-1-kategori-risiko-tinggi-high-risk-verified" class="doc-subsection">
 <h4>1. Kategori Risiko Tinggi (High Risk) <code>[Verified]</code></h4>
 </div>
-<h5 id="item-a-1488-force-unwraps-force-casts-as">A. 1.488 Force Unwraps & Force Casts (<code>!</code> / <code>as!</code>)</h5>
+<div class="doc-subpoint-block" id="item-a-1488-force-unwraps-force-casts-as">
+<h5>A. 1.488 Force Unwraps & Force Casts (<code>!</code> / <code>as!</code>)</h5>
 <p>Pemeriksaan kode dengan ripgrep menemukan sekitar <strong>1.488 baris</strong> yang menggunakan tanda seru paksa tanpa <code>guard let</code> atau <code>if let</code> defensif.</p>
 <ul>
-<li><strong>Bukti Sampel:</strong></li>
-<li><code>IDNetworkRequest.swift:L480</code>: Akses paksa dictionary response.</li>
-<li><code>IDMainTabBarController.swift:L65</code>: <code>rootVC.view.addSubview(self.button!)</code>.</li>
-<li>Presenter Auth & KTP: Akses paksa image picker result dan parsing tanggal lahir.</li>
-<li><strong>Dampak:</strong> Backend yang mengirimkan field <code>null</code> tak terduga akan langsung menyebabkan crash fatal SIGABRT di runtime pengguna.</li>
-</ul>
-<h5 id="item-b-kredensial-kunci-rahasia-hardcoded">B. Kredensial & Kunci Rahasia Hardcoded</h5>
+<li><strong>Bukti Sampel:</strong>
+<ul>
+<li><code>IDNetworkRequest.swift:L480</code>: Akses paksa dictionary response.
+</li>
+<li><code>IDMainTabBarController.swift:L65</code>: <code>rootVC.view.addSubview(self.button!)</code>.
+</li>
+<li>Presenter Auth & KTP: Akses paksa image picker result dan parsing tanggal lahir.
+</li></ul>
+</li>
+<li><strong>Dampak:</strong> Backend yang mengirimkan field <code>null</code> tak terduga akan langsung menyebabkan crash fatal SIGABRT di runtime pengguna.
+</li></ul>
+</div>
+<div class="doc-subpoint-block" id="item-b-kredensial-kunci-rahasia-hardcoded">
+<h5>B. Kredensial & Kunci Rahasia Hardcoded</h5>
 <p>Kunci rahasia third-party dan enkripsi disimpan langsung sebagai string literal di dalam kode sumber:</p>
 <ul>
-<li><strong>AppsFlyer Dev Key:</strong></li>
-<li>File: <code>ios/IDSamirLoan/Application/SamirPointsModule/Classes/IDAppsFlyerManager.swift:L24</code></li>
-<li>Bukti: <code>AppsFlyerLib.shared().appsFlyerDevKey = &quot;KMuxXxjrdNtBQE4M83xR8h&quot;</code></li>
-<li><strong>Static AES-GCM Key:</strong></li>
-<li>File: <code>ios/IDSamirLoan/Application/SamirLoginModule/Classes/IDModel/IDLoginCodeModel.swift:L33</code></li>
-<li>Bukti: <code>static let staticKey = SymmetricKey(data: &quot;samir-ios-secure-key-2024&quot;.data(using: .utf8)!)</code></li>
-<li><strong>Dampak:</strong> Siapa pun yang melakukan dekompilasi IPA dapat mengekstraksi kunci analitik dan kunci enkripsi file sesi pengguna lokal.</li>
-</ul>
-<h5 id="item-c-penonaktifan-ats-global-nsallowsarbitraryloads-true">C. Penonaktifan ATS Global (<code>NSAllowsArbitraryLoads = true</code>)</h5>
+<li><strong>AppsFlyer Dev Key:</strong>
 <ul>
-<li><strong>File:</strong> <code>ios/IDSamirLoan/Application/IDSamirLoan-Info.plist:L93-97</code></li>
-</ul>
+<li>File: <code>ios/IDSamirLoan/Application/SamirPointsModule/Classes/IDAppsFlyerManager.swift:L24</code>
+</li>
+<li>Bukti: <code>AppsFlyerLib.shared().appsFlyerDevKey = &quot;KMuxXxjrdNtBQE4M83xR8h&quot;</code>
+</li></ul>
+</li>
+<li><strong>Static AES-GCM Key:</strong>
+<ul>
+<li>File: <code>ios/IDSamirLoan/Application/SamirLoginModule/Classes/IDModel/IDLoginCodeModel.swift:L33</code>
+</li>
+<li>Bukti: <code>static let staticKey = SymmetricKey(data: &quot;samir-ios-secure-key-2024&quot;.data(using: .utf8)!)</code>
+</li></ul>
+</li>
+<li><strong>Dampak:</strong> Siapa pun yang melakukan dekompilasi IPA dapat mengekstraksi kunci analitik dan kunci enkripsi file sesi pengguna lokal.
+</li></ul>
+</div>
+<div class="doc-subpoint-block" id="item-c-penonaktifan-ats-global-nsallowsarbitraryloads-true">
+<h5>C. Penonaktifan ATS Global (<code>NSAllowsArbitraryLoads = true</code>)</h5>
+<ul>
+<li><strong>File:</strong> <code>ios/IDSamirLoan/Application/IDSamirLoan-Info.plist:L93-97</code>
+</li></ul>
 <pre><code class="language-xml">&lt;key&gt;NSAppTransportSecurity&lt;/key&gt;
 &lt;dict&gt;
     &lt;key&gt;NSAllowsArbitraryLoads&lt;/key&gt;
     &lt;true/&gt;
 &lt;/dict&gt;</code></pre>
 <ul>
-<li><strong>Dampak:</strong> Membuka kerentanan Man-in-the-Middle (MitM) jika WebView atau API client memanggil endpoint <code>http://</code> non-terenkripsi. Berpotensi ditolak saat audit berkala App Store jika tidak disertai justifikasi eksplisit.</li>
-</ul>
-<h5 id="item-d-ketiadaan-pengujian-otomatis-zero-tests">D. Ketiadaan Pengujian Otomatis (Zero Tests)</h5>
+<li><strong>Dampak:</strong> Membuka kerentanan Man-in-the-Middle (MitM) jika WebView atau API client memanggil endpoint <code>http://</code> non-terenkripsi. Berpotensi ditolak saat audit berkala App Store jika tidak disertai justifikasi eksplisit.
+</li></ul>
+</div>
+<div class="doc-subpoint-block" id="item-d-ketiadaan-pengujian-otomatis-zero-tests">
+<h5>D. Ketiadaan Pengujian Otomatis (Zero Tests)</h5>
 <ul>
-<li><strong>Bukti:</strong> Tidak ada file <code>*Tests.swift</code>, tidak ada dependensi <code>Quick/Nimble</code>, dan tidak ada target test di <code>project.pbxproj</code>.</li>
-<li><strong>Dampak:</strong> Tim tidak memiliki safety net otomatis saat melakukan refactoring atau pembaruan dependensi.</li>
-</ul>
+<li><strong>Bukti:</strong> Tidak ada file <code>*Tests.swift</code>, tidak ada dependensi <code>Quick/Nimble</code>, dan tidak ada target test di <code>project.pbxproj</code>.
+</li>
+<li><strong>Dampak:</strong> Tim tidak memiliki safety net otomatis saat melakukan refactoring atau pembaruan dependensi.
+</li></ul>
+</div>
 <div id="sub-2-kategori-risiko-menengah-medium-risk-verified" class="doc-subsection">
 <h4>2. Kategori Risiko Menengah (Medium Risk) <code>[Verified]</code></h4>
 </div>
-<h5 id="item-a-massive-viewcontrollers-god-objects">A. Massive ViewControllers & God Objects</h5>
+<div class="doc-subpoint-block" id="item-a-massive-viewcontrollers-god-objects">
+<h5>A. Massive ViewControllers & God Objects</h5>
 <p>Terdapat file-file raksasa yang menggabungkan presentation logic, view layouting, validasi input, dan network orchestration:</p>
 <div class="table-container"><table class="data-table"><thead><tr><th>File Sumber</th><th>Baris Kode</th><th>Peran & Masalah Arsitektur</th></tr></thead><tbody><tr><td><code>LoanConfirmViewController_Rx.swift</code></td><td><strong>2.250 baris</strong></td><td>Form konfirmasi pinjaman raksasa: kalkulasi bunga, agreement checkbox, OTP trigger, dan dynamic fee breakdown.</td></tr><tr><td><code>LoanConfirmService.swift</code></td><td><strong>1.541 baris</strong></td><td>Service pinjaman mengelola puluhan state request dan model mapping.</td></tr><tr><td><code>LoanConfirmAmountView.swift</code></td><td><strong>1.465 baris</strong></td><td>View pemilihan nominal dan tenor pinjaman dengan animasi slider dan label formatting.</td></tr><tr><td><code>IDNetworkRequest.swift</code></td><td><strong>1.428 baris</strong></td><td>God-class networking: signature generation, parameter injection, header assembly, error parsing, dan DebugUI bridge.</td></tr><tr><td><code>LoanConfirmViewModel.swift</code></td><td><strong>1.396 baris</strong></td><td>State store pinjaman dengan puluhan <code>BehaviorRelay</code> dan <code>PublishSubject</code>.</td></tr><tr><td><code>IDNewAuthPresenter.swift</code></td><td><strong>1.251 baris</strong></td><td>Presenter e-KYC 6 langkah dengan logika parsing respon OCR, Liveness, dan Advance AI.</td></tr><tr><td><code>IDHomeViewController.swift</code></td><td><strong>1.212 baris</strong></td><td>Dashboard tab pertama: polling status aplikasi, dynamic banner, dialog popups, dan rating prompt.</td></tr></tbody></table></div>
-<h5 id="item-b-isolasi-reaktif-rxswift-the-reactive-island">B. Isolasi Reaktif RxSwift ("The Reactive Island")</h5>
+</div>
+<div class="doc-subpoint-block" id="item-b-isolasi-reaktif-rxswift-the-reactive-island">
+<h5>B. Isolasi Reaktif RxSwift ("The Reactive Island")</h5>
 <p>Modul <code>SamirLoanConfirmModule</code> ditulis menggunakan arsitektur MVVM berbasis <strong>RxSwift & RxCocoa</strong> (<code>BehaviorRelay</code>, <code>DisposeBag</code>, <code>Observable.combineLatest</code>), sementara seluruh modul lainnya (<code>SamirAuthModule</code>, <code>SamirMainModule</code>, <code>SamirLoginModule</code>) menggunakan pola imperatif <strong>MVP + Delegates/Closures</strong>.</p>
 <ul>
-<li><strong>Dampak:</strong> Developer harus menguasai dua paradigma mental yang saling bertolak belakang dalam satu aplikasi. Terjadi fragmentasi standar penulisan kode.</li>
-</ul>
-<h5 id="item-c-assertion-failure-pada-duplikasi-host-router">C. Assertion Failure pada Duplikasi Host Router</h5>
+<li><strong>Dampak:</strong> Developer harus menguasai dua paradigma mental yang saling bertolak belakang dalam satu aplikasi. Terjadi fragmentasi standar penulisan kode.
+</li></ul>
+</div>
+<div class="doc-subpoint-block" id="item-c-assertion-failure-pada-duplikasi-host-router">
+<h5>C. Assertion Failure pada Duplikasi Host Router</h5>
 <ul>
-<li><strong>File:</strong> <code>CZSwiftRouterLib/Classes/CZRouterCenter.swift:L48</code></li>
-</ul>
+<li><strong>File:</strong> <code>CZSwiftRouterLib/Classes/CZRouterCenter.swift:L48</code>
+</li></ul>
 <pre><code class="language-swift">if self.routerMap.keys.contains(host) {
     assertionFailure(&quot;Host already exists: \(host)&quot;)
 }</code></pre>
 <ul>
-<li><strong>Dampak:</strong> Jika ada developer baru yang mendaftarkan router handler dengan host yang sama (misalnya <code>samir://order</code>), aplikasi akan langsung crash pada mode Debug/Test. Pada mode Release/Production, <code>assertionFailure</code> diabaikan oleh compiler sehingga handler lama ditimpa tanpa peringatan.</li>
-</ul>
-<h5 id="item-d-module-priority-no-op-bug">D. Module Priority No-Op Bug</h5>
+<li><strong>Dampak:</strong> Jika ada developer baru yang mendaftarkan router handler dengan host yang sama (misalnya <code>samir://order</code>), aplikasi akan langsung crash pada mode Debug/Test. Pada mode Release/Production, <code>assertionFailure</code> diabaikan oleh compiler sehingga handler lama ditimpa tanpa peringatan.
+</li></ul>
+</div>
+<div class="doc-subpoint-block" id="item-d-module-priority-no-op-bug">
+<h5>D. Module Priority No-Op Bug</h5>
 <ul>
-<li><strong>File:</strong> <code>CZSwiftModuleLib/Classes/CZModuleManager.swift:L87-92</code></li>
-</ul>
+<li><strong>File:</strong> <code>CZSwiftModuleLib/Classes/CZModuleManager.swift:L87-92</code>
+</li></ul>
 <pre><code class="language-swift">var moduleContext = CZModuleContext()
 // moduleContext.modulePriority tidak pernah diisi dari moduleObject.loadPriority!
 self.moduleList.sort { $0.modulePriority &gt; $1.modulePriority }</code></pre>
 <ul>
-<li><strong>Dampak:</strong> Properti <code>loadPriority</code> di <code>IDModuleList.plist</code> sama sekali tidak berfungsi. Urutan inisialisasi modul murni mengikuti urutan iterasi dictionary di dalam file plist.</li>
-</ul>
-<h5 id="item-e-salah-ketik-pada-api-protokol-publik-reapyservice">E. Salah Ketik pada API Protokol Publik: <code>reapyService()</code></h5>
+<li><strong>Dampak:</strong> Properti <code>loadPriority</code> di <code>IDModuleList.plist</code> sama sekali tidak berfungsi. Urutan inisialisasi modul murni mengikuti urutan iterasi dictionary di dalam file plist.
+</li></ul>
+</div>
+<div class="doc-subpoint-block" id="item-e-salah-ketik-pada-api-protokol-publik-reapyservice">
+<h5>E. Salah Ketik pada API Protokol Publik: <code>reapyService()</code></h5>
 <ul>
-<li><strong>File:</strong> <code>ios/IDSamirLoan/Application/SamirServiceModule/Classes/IDServiceManager.swift:L25</code></li>
-</ul>
+<li><strong>File:</strong> <code>ios/IDSamirLoan/Application/SamirServiceModule/Classes/IDServiceManager.swift:L25</code>
+</li></ul>
 <pre><code class="language-swift">public static func reapyService() -&gt; IDReapyServiceProtocol?</code></pre>
 <ul>
-<li><strong>Dampak:</strong> Typo huruf 'p' dan 'a' tertukar (<code>reapy</code> alih-alih <code>repay</code>). Karena sudah tersebar di puluhan call site, perbaikan typo ini memerlukan refactoring massal lintas modul.</li>
-</ul>
+<li><strong>Dampak:</strong> Typo huruf 'p' dan 'a' tertukar (<code>reapy</code> alih-alih <code>repay</code>). Karena sudah tersebar di puluhan call site, perbaikan typo ini memerlukan refactoring massal lintas modul.
+</li></ul>
+</div>
 <div id="sub-3-kategori-risiko-rendah-kode-mati-low-risk-dead-code-verified" class="doc-subsection">
 <h4>3. Kategori Risiko Rendah & Kode Mati (Low Risk / Dead Code) <code>[Verified]</code></h4>
 </div>
 <ol>
-<li><strong>File <code>main.m</code> (Objective-C):</strong></li>
-</ol>
+<li><strong>File <code>main.m</code> (Objective-C):</strong>
 <ul>
-<li>File <code>ios/IDSamirLoan/Application/Launcher/main.m</code> masih tersimpan di repository namun target entry point aktif menggunakan <code>main.swift</code>.</li>
-</ul>
-<ol>
-<li><strong>Stub Kosong <code>IDSamirRepayRouterHandler.swift</code>:</strong></li>
-</ol>
+<li>File <code>ios/IDSamirLoan/Application/Launcher/main.m</code> masih tersimpan di repository namun target entry point aktif menggunakan <code>main.swift</code>.
+</li></ul>
+</li>
+<li><strong>Stub Kosong <code>IDSamirRepayRouterHandler.swift</code>:</strong>
 <ul>
-<li>Method handler untuk rute <code>samir://repay/historyOrder</code> dan <code>samir://repay/order</code> dibiarkan kosong (<code>{ }</code>) karena fungsionalitas riwayat pembayaran telah dipindahkan ke tab Flutter dan authenticated H5.</li>
-</ul>
-<ol>
-<li><strong>Kategori Extension UIImage yang Duplikatif:</strong></li>
-</ol>
+<li>Method handler untuk rute <code>samir://repay/historyOrder</code> dan <code>samir://repay/order</code> dibiarkan kosong (<code>{ }</code>) karena fungsionalitas riwayat pembayaran telah dipindahkan ke tab Flutter dan authenticated H5.
+</li></ul>
+</li>
+<li><strong>Kategori Extension UIImage yang Duplikatif:</strong>
 <ul>
-<li>Terdapat fungsi kompresi gambar yang terduplikasi antara <code>CZSwiftUIKit</code> dan <code>SamirAuthModule</code>.</li>
-</ul>
+<li>Terdapat fungsi kompresi gambar yang terduplikasi antara <code>CZSwiftUIKit</code> dan <code>SamirAuthModule</code>.
+</li></ul>
+</li></ol>
 </section>
 <section id="sec-walkthrough" class="doc-section">
 <h3>🪜 E. Step-by-Step Walkthrough: Analisis Bahaya Modifikasi pada <code>IDHomeViewController</code></h3>
 <p>Jika Anda diminta untuk menambahkan banner promosi baru di tab Home:</p>
 <ol>
-<li><strong>Buka file:</strong> <code>ios/IDSamirLoan/Application/SamirLoanModule/Classes/IDController/IDHomeViewController.swift</code>.</li>
-<li><strong>Periksa ukuran file:</strong> 1.212 baris kode dengan puluhan property tersimpan (<code>var orderModel</code>, <code>var bannerList</code>, <code>var dialogManager</code>).</li>
-<li><strong>Telusuri Lifecycle:</strong> <code>viewDidLoad</code> memanggil lebih dari 8 method konfigurasi terpisah.</li>
-<li><strong>Analisis Risiko Titik Runtuh (Coupling Points):</strong></li>
-</ol>
+<li><strong>Buka file:</strong> <code>ios/IDSamirLoan/Application/SamirLoanModule/Classes/IDController/IDHomeViewController.swift</code>.
+</li>
+<li><strong>Periksa ukuran file:</strong> 1.212 baris kode dengan puluhan property tersimpan (<code>var orderModel</code>, <code>var bannerList</code>, <code>var dialogManager</code>).
+</li>
+<li><strong>Telusuri Lifecycle:</strong> <code>viewDidLoad</code> memanggil lebih dari 8 method konfigurasi terpisah.
+</li>
+<li><strong>Analisis Risiko Titik Runtuh (Coupling Points):</strong>
 <ul>
-<li>Method <code>pullToRefresh</code> memicu <code>loadAppIndexData()</code>.</li>
-<li>Di dalam closure respon API, terdapat navigasi implisit ke halaman KYC jika <code>auditStatus == 2</code> atau ke halaman pinjaman jika kuota tersedia.</li>
-<li>Menambahkan subview baru tanpa memperhatikan auto-layout SnapKit berisiko merusak scroll view container di layar iPhone berukuran kecil (iPhone SE / 8).</li>
-</ul>
-<ol>
-<li><strong>Kesimpulan Senior:</strong> Selalu pecah view baru menjadi komponen UIView terisolasi (<code>CustomPromoBannerView</code>) daripada menulis 200 baris kode tambahan langsung di dalam <code>IDHomeViewController.swift</code>.</li>
-</ol>
+<li>Method <code>pullToRefresh</code> memicu <code>loadAppIndexData()</code>.
+</li>
+<li>Di dalam closure respon API, terdapat navigasi implisit ke halaman KYC jika <code>auditStatus == 2</code> atau ke halaman pinjaman jika kuota tersedia.
+</li>
+<li>Menambahkan subview baru tanpa memperhatikan auto-layout SnapKit berisiko merusak scroll view container di layar iPhone berukuran kecil (iPhone SE / 8).
+</li></ul>
+</li>
+<li><strong>Kesimpulan Senior:</strong> Selalu pecah view baru menjadi komponen UIView terisolasi (<code>CustomPromoBannerView</code>) daripada menulis 200 baris kode tambahan langsung di dalam <code>IDHomeViewController.swift</code>.
+</li></ol>
 </section>
 <section id="sec-why" class="doc-section">
 <h3>⚖️ F. Why It Matters: Rencana Strategis Penanganan Teknis</h3>
 <p>Meskipun <strong>tidak boleh melakukan refactoring pada fase dokumentasi ini</strong>, pemetaan utang teknis ini menjadi modal berharga bagi tim engineering untuk menyusun <em>Technical Debt Roadmap</em>:</p>
 <ol>
-<li><strong>Fase 1 (Safety First):</strong> Mengganti <em>force unwraps</em> (<code>!</code>) pada layer networking dan model parsing dengan <code>guard let</code> dan default fallback values.</li>
-<li><strong>Fase 2 (Security Hardening):</strong> Memindahkan API keys ke xcconfig/environment injection dan meninjau ulang domain whitelist untuk ATS.</li>
-<li><strong>Fase 3 (Modular Decomposition):</strong> Memecah <code>LoanConfirmViewController_Rx</code> dan <code>IDHomeViewController</code> menjadi modul-modul sub-komponen presenter/interactor yang lebih kecil.</li>
-<li><strong>Fase 4 (Test Foundation):</strong> Membuat target <code>IDSamirLoanTests</code> pertama untuk menguji parsing model <code>KakaJSON</code> dan validasi signature <code>LibNetSignGenerator</code>.</li>
-</ol>
+<li><strong>Fase 1 (Safety First):</strong> Mengganti <em>force unwraps</em> (<code>!</code>) pada layer networking dan model parsing dengan <code>guard let</code> dan default fallback values.
+</li>
+<li><strong>Fase 2 (Security Hardening):</strong> Memindahkan API keys ke xcconfig/environment injection dan meninjau ulang domain whitelist untuk ATS.
+</li>
+<li><strong>Fase 3 (Modular Decomposition):</strong> Memecah <code>LoanConfirmViewController_Rx</code> dan <code>IDHomeViewController</code> menjadi modul-modul sub-komponen presenter/interactor yang lebih kecil.
+</li>
+<li><strong>Fase 4 (Test Foundation):</strong> Membuat target <code>IDSamirLoanTests</code> pertama untuk menguji parsing model <code>KakaJSON</code> dan validasi signature <code>LibNetSignGenerator</code>.
+</li></ol>
 </section>
 <section id="sec-example" class="doc-section">
 <h3>🔬 G. Practical Example: Mengapa Force Unwrap Berbahaya di Kasus KYC</h3>
@@ -297,35 +342,43 @@ guard let image = info[.originalImage] as? UIImage,
 <h4>1. Menghapus Protocol Method yang Mengandung Typo Tanpa Cek Dependensi</h4>
 </div>
 <ul>
-<li><strong>Kesalahan:</strong> Mencoba memperbaiki <code>reapyService()</code> menjadi <code>repayService()</code> di <code>IDServiceManager.swift</code>.</li>
-<li><strong>Akibat:</strong> Proyek langsung gagal compile (<em>build error</em>) di puluhan modul karena protocol conformance di <code>SamirRepayModule</code> dan pemanggilan di <code>IDMainTabBarController</code> masih mengacu ke nama lama.</li>
-</ul>
+<li><strong>Kesalahan:</strong> Mencoba memperbaiki <code>reapyService()</code> menjadi <code>repayService()</code> di <code>IDServiceManager.swift</code>.
+</li>
+<li><strong>Akibat:</strong> Proyek langsung gagal compile (<em>build error</em>) di puluhan modul karena protocol conformance di <code>SamirRepayModule</code> dan pemanggilan di <code>IDMainTabBarController</code> masih mengacu ke nama lama.
+</li></ul>
 <div id="sub-2-mendaftarkan-route-dengan-host-yang-sama" class="doc-subsection">
 <h4>2. Mendaftarkan Route dengan Host yang Sama</h4>
 </div>
 <ul>
-<li><strong>Kesalahan:</strong> Membuat rute <code>samir://auth/biometric</code> padahal host <code>auth</code> sudah didaftarkan oleh <code>IDSamirAuthRouterHandler</code>.</li>
-<li><strong>Akibat:</strong> Crash fatal <code>assertionFailure(&quot;Host already exists&quot;)</code> saat aplikasi baru pertama kali dibuka di lingkungan Debug.</li>
-</ul>
+<li><strong>Kesalahan:</strong> Membuat rute <code>samir://auth/biometric</code> padahal host <code>auth</code> sudah didaftarkan oleh <code>IDSamirAuthRouterHandler</code>.
+</li>
+<li><strong>Akibat:</strong> Crash fatal <code>assertionFailure(&quot;Host already exists&quot;)</code> saat aplikasi baru pertama kali dibuka di lingkungan Debug.
+</li></ul>
 </section>
 <section id="sec-check" class="doc-section">
 <h3>🧠 I. Knowledge Check</h3>
 <ol>
-<li>Sebutkan 3 file dengan jumlah baris kode terbanyak di codebase SAMIR dan berapa perkiraan baris kodenya!</li>
-<li>Di modul manakah paradigma reaktif (RxSwift) digunakan secara terisolasi?</li>
-<li>Mengapa penonaktifan ATS (<code>NSAllowsArbitraryLoads = true</code>) dikategorikan sebagai utang teknis berisiko tinggi?</li>
-<li>Mengapa fitur pengaturan prioritas modul (<code>loadPriority</code>) di <code>IDModuleList.plist</code> saat ini tidak berdampak nyata pada urutan inisialisasi modul?</li>
-<li>Mengapa perubahan refactoring kode <strong>dilarang keras</strong> selama pelaksanaan tugas reverse engineering ini?</li>
-</ol>
+<li>Sebutkan 3 file dengan jumlah baris kode terbanyak di codebase SAMIR dan berapa perkiraan baris kodenya!
+</li>
+<li>Di modul manakah paradigma reaktif (RxSwift) digunakan secara terisolasi?
+</li>
+<li>Mengapa penonaktifan ATS (<code>NSAllowsArbitraryLoads = true</code>) dikategorikan sebagai utang teknis berisiko tinggi?
+</li>
+<li>Mengapa fitur pengaturan prioritas modul (<code>loadPriority</code>) di <code>IDModuleList.plist</code> saat ini tidak berdampak nyata pada urutan inisialisasi modul?
+</li>
+<li>Mengapa perubahan refactoring kode <strong>dilarang keras</strong> selama pelaksanaan tugas reverse engineering ini?
+</li></ol>
 </section>
 <section id="sec-completion" class="doc-section">
 <h3>🏁 J. Completion Criteria</h3>
 <p>Anda siap melanjutkan ke dokumen berikutnya jika:</p>
 <ul>
-<li>Anda mengetahui letak dan jenis utang teknis utama di codebase SAMIR (force unwraps, keys, god objects).</li>
-<li>Anda memahami risiko arsitektural dari isolasi RxSwift di <code>SamirLoanConfirmModule</code>.</li>
-<li>Anda dapat mengantisipasi area sensitif yang berpotensi rusak jika dilakukan modifikasi sembarangan.</li>
-</ul>
+<li>Anda mengetahui letak dan jenis utang teknis utama di codebase SAMIR (force unwraps, keys, god objects).
+</li>
+<li>Anda memahami risiko arsitektural dari isolasi RxSwift di <code>SamirLoanConfirmModule</code>.
+</li>
+<li>Anda dapat mengantisipasi area sensitif yang berpotensi rusak jika dilakukan modifikasi sembarangan.
+</li></ul>
 <p>Lanjut ke dokumen berikutnya: <a href="04-change-impact-analysis.html">04-change-impact-analysis.md</a></p>
 </section>
 

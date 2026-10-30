@@ -257,19 +257,17 @@ def parse_markdown_to_chiron_html(md_content, track_key, lesson_item):
     table_headers = []
     table_rows = []
     
-    in_list = False
-    list_type = None # 'ul' or 'ol'
-    
+    list_stack = []  # Stack of dicts: {"type": 'ul'|'ol', "indent": int}
+
     in_callout = False
     callout_type = "info"
     callout_lines = []
-    
+
     def close_list():
-        nonlocal in_list, list_type
-        if in_list:
-            html_parts.append(f"</{list_type}>")
-            in_list = False
-            list_type = None
+        nonlocal list_stack
+        while list_stack:
+            item = list_stack.pop()
+            html_parts.append(f"</li></{item['type']}>")
             
     def close_table():
         nonlocal in_table, table_headers, table_rows
@@ -292,14 +290,106 @@ def parse_markdown_to_chiron_html(md_content, track_key, lesson_item):
             table_headers = []
             table_rows = []
             
+    def render_callout_body(lines):
+        out = []
+        in_ol = False
+        in_ul = False
+        in_sub_ol = False
+        in_sub_ul = False
+        
+        def close_inner_lists():
+            nonlocal in_ol, in_ul, in_sub_ol, in_sub_ul
+            res = ""
+            if in_sub_ol:
+                res += "</ol>"
+                in_sub_ol = False
+            if in_sub_ul:
+                res += "</ul>"
+                in_sub_ul = False
+            if in_ol:
+                res += "</ol>"
+                in_ol = False
+            if in_ul:
+                res += "</ul>"
+                in_ul = False
+            return res
+
+        for raw_line in lines:
+            line = raw_line.rstrip()
+            stripped = line.strip()
+            if not stripped:
+                c = close_inner_lists()
+                if c: out.append(c)
+                continue
+            
+            indent = len(raw_line) - len(raw_line.lstrip())
+            
+            if indent >= 2:
+                m_sub_ol = re.match(r'^\d+\.\s+(.*)', stripped)
+                m_sub_ul = re.match(r'^[-*]\s+(.*)', stripped)
+                if m_sub_ol:
+                    if not in_sub_ol:
+                        out.append("<ol>")
+                        in_sub_ol = True
+                    out.append(f"<li>{inline_markdown(m_sub_ol.group(1))}</li>")
+                    continue
+                elif m_sub_ul:
+                    if not in_sub_ul:
+                        out.append("<ul>")
+                        in_sub_ul = True
+                    out.append(f"<li>{inline_markdown(m_sub_ul.group(1))}</li>")
+                    continue
+            
+            if in_sub_ol:
+                out.append("</ol>")
+                in_sub_ol = False
+            if in_sub_ul:
+                out.append("</ul>")
+                in_sub_ul = False
+                
+            m_ol = re.match(r'^\d+\.\s+(.*)', stripped)
+            m_ul = re.match(r'^[-*]\s+(.*)', stripped)
+            if m_ol:
+                if in_ul:
+                    out.append("</ul>")
+                    in_ul = False
+                if not in_ol:
+                    out.append("<ol>")
+                    in_ol = True
+                out.append(f"<li>{inline_markdown(m_ol.group(1))}</li>")
+            elif m_ul:
+                if in_ol:
+                    out.append("</ol>")
+                    in_ol = False
+                if not in_ul:
+                    out.append("<ul>")
+                    in_ul = True
+                out.append(f"<li>{inline_markdown(m_ul.group(1))}</li>")
+            else:
+                c = close_inner_lists()
+                if c: out.append(c)
+                out.append(f"<p>{inline_markdown(stripped)}</p>")
+                
+        c = close_inner_lists()
+        if c: out.append(c)
+        return "\n".join([x for x in out if x])
+
     def close_callout():
         nonlocal in_callout, callout_lines, callout_type
         if in_callout:
-            c_text = " ".join(callout_lines)
-            html_parts.append(f'<div class="callout {callout_type}"><p>{inline_markdown(c_text)}</p></div>')
+            body_html = render_callout_body(callout_lines)
+            html_parts.append(f'<div class="callout {callout_type}">{body_html}</div>')
             in_callout = False
             callout_lines = []
             callout_type = "info"
+
+    subpoint_block_open = False
+
+    def close_subpoint():
+        nonlocal subpoint_block_open
+        if subpoint_block_open:
+            html_parts.append('</div>')
+            subpoint_block_open = False
 
     def inline_markdown(text):
         if not text:
@@ -367,7 +457,7 @@ def parse_markdown_to_chiron_html(md_content, track_key, lesson_item):
     current_section_id = None
     section_open = False
     
-    for line in lines:
+    for line_idx, line in enumerate(lines):
         stripped = line.strip()
         
         # 1. Code blocks
@@ -453,6 +543,7 @@ def parse_markdown_to_chiron_html(md_content, track_key, lesson_item):
             close_list()
             close_table()
             close_callout()
+            close_subpoint()
             continue
             
         # 5. Headings
@@ -472,6 +563,7 @@ def parse_markdown_to_chiron_html(md_content, track_key, lesson_item):
                 continue
             elif h_level == 2:
                 # Top section
+                close_subpoint()
                 if section_open:
                     html_parts.append('</section>')
                     section_open = False
@@ -527,6 +619,7 @@ def parse_markdown_to_chiron_html(md_content, track_key, lesson_item):
                 continue
                 
             elif h_level == 3:
+                close_subpoint()
                 clean_h3 = re.sub(r'^\*\*(.*?)\*\*$', r'\1', h_text).strip().replace('**', '')
                 sub_id = f"sub-{sanitize_id(clean_h3)}"
                 if toc_tree and toc_tree[-1]["level"] == 2:
@@ -541,41 +634,88 @@ def parse_markdown_to_chiron_html(md_content, track_key, lesson_item):
                 continue
                 
             elif h_level >= 4:
+                close_subpoint()
                 clean_h4 = re.sub(r'^\*\*(.*?)\*\*$', r'\1', h_text).strip().replace('**', '')
                 sub_id = f"item-{sanitize_id(clean_h4)}"
-                html_parts.append(f'<h5 id="{sub_id}">{inline_markdown(clean_h4)}</h5>')
+                html_parts.append(f'<div class="doc-subpoint-block" id="{sub_id}">')
+                html_parts.append(f'<h5>{inline_markdown(clean_h4)}</h5>')
+                subpoint_block_open = True
                 continue
                 
-        # 6. Lists
-        m_ul = re.match(r'^[\*\-]\s+(.*)$', stripped)
-        m_ol = re.match(r'^\d+\.\s+(.*)$', stripped)
-        
-        if m_ul:
+        # 6. Lists (Hierarchical Nested Lists)
+        m_list = re.match(r'^(\s*)(?:([\*\-\+])|(\d+)\.)\s+(.*)$', line)
+        if m_list:
             close_table()
             close_callout()
-            if not in_list or list_type != 'ul':
-                close_list()
-                html_parts.append('<ul>')
-                in_list = True
-                list_type = 'ul'
-            html_parts.append(f'<li>{inline_markdown(m_ul.group(1))}</li>')
+            indent = len(m_list.group(1).replace('\t', '    '))
+            is_ol = (m_list.group(3) is not None)
+            l_type = 'ol' if is_ol else 'ul'
+            content = inline_markdown(m_list.group(4))
+            start_num = m_list.group(3)
+            open_tag = f'<ol start="{start_num}">' if is_ol and start_num and start_num != '1' and not list_stack else f'<{l_type}>'
+
+            if not list_stack:
+                html_parts.append(open_tag)
+                list_stack.append({"type": l_type, "indent": indent})
+                html_parts.append(f'<li>{content}')
+            elif indent > list_stack[-1]["indent"]:
+                html_parts.append(f'<{l_type}>')
+                list_stack.append({"type": l_type, "indent": indent})
+                html_parts.append(f'<li>{content}')
+            elif indent == list_stack[-1]["indent"]:
+                if l_type == list_stack[-1]["type"]:
+                    html_parts.append('</li>')
+                    html_parts.append(f'<li>{content}')
+                else:
+                    html_parts.append(f'</li></{list_stack[-1]["type"]}>')
+                    list_stack.pop()
+                    html_parts.append(f'<{l_type}>')
+                    list_stack.append({"type": l_type, "indent": indent})
+                    html_parts.append(f'<li>{content}')
+            else:
+                while list_stack and indent < list_stack[-1]["indent"]:
+                    html_parts.append(f'</li></{list_stack[-1]["type"]}>')
+                    list_stack.pop()
+                if list_stack and indent == list_stack[-1]["indent"]:
+                    if l_type == list_stack[-1]["type"]:
+                        html_parts.append('</li>')
+                        html_parts.append(f'<li>{content}')
+                    else:
+                        html_parts.append(f'</li></{list_stack[-1]["type"]}>')
+                        list_stack.pop()
+                        html_parts.append(f'<{l_type}>')
+                        list_stack.append({"type": l_type, "indent": indent})
+                        html_parts.append(f'<li>{content}')
+                elif list_stack and indent > list_stack[-1]["indent"]:
+                    html_parts.append(f'<{l_type}>')
+                    list_stack.append({"type": l_type, "indent": indent})
+                    html_parts.append(f'<li>{content}')
+                else:
+                    while list_stack:
+                        html_parts.append(f'</li></{list_stack[-1]["type"]}>')
+                        list_stack.pop()
+                    html_parts.append(open_tag)
+                    list_stack.append({"type": l_type, "indent": indent})
+                    html_parts.append(f'<li>{content}')
             continue
-        elif m_ol:
-            close_table()
-            close_callout()
-            if not in_list or list_type != 'ol':
-                close_list()
-                html_parts.append('<ol>')
-                in_list = True
-                list_type = 'ol'
-            html_parts.append(f'<li>{inline_markdown(m_ol.group(1))}</li>')
+
+        if not stripped:
+            if list_stack:
+                next_is_list = False
+                for next_line in lines[line_idx + 1:]:
+                    if next_line.strip():
+                        if re.match(r'^\s*(?:[\*\-\+]|\d+\.)\s+', next_line):
+                            next_is_list = True
+                        break
+                if next_is_list:
+                    continue
+                else:
+                    close_list()
             continue
-        else:
-            if in_list:
-                close_list()
-                
+
         # 7. Normal paragraphs
         if stripped:
+            close_list()
             close_table()
             close_callout()
             html_parts.append(f'<p>{inline_markdown(stripped)}</p>')
@@ -584,6 +724,7 @@ def parse_markdown_to_chiron_html(md_content, track_key, lesson_item):
     close_list()
     close_table()
     close_callout()
+    close_subpoint()
     if section_open:
         html_parts.append('</section>')
         

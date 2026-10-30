@@ -1,0 +1,25 @@
+{
+  "version": "1.0",
+  "lesson": "courses/samir-mobile-ios/01-project-foundation/02-repository-structure.html",
+  "updated_at": "2026-10-26T07:59:46.811545+00:00",
+  "total_annotations": 0,
+  "notes_count": 0,
+  "ai_questions_count": 0,
+  "annotations": [],
+  "resolved_history": [
+    {
+      "id": "anno-1793001169296-64kih",
+      "type": "ai_question",
+      "content": "bagaimana konsep ini bekerja?\ndan bagaimana cara implementnya dan jika mau pakai cara lama, bagaimana cara melakukannya?\napa tradeoffnya jika menggunakan cara ini dengan cara lama",
+      "created_at": "2026-10-26T07:52:49.296Z",
+      "status": "resolved",
+      "anchor": {
+        "exact": "Xcode 16 Synchronized Groups",
+        "prefix": "e), dan konfigurasi.\n💬\nMemahami konsep ",
+        "suffix": " (objectVersion 73) yang membuat file di",
+        "selector": "div.docs-layout > main.docs-content > section.doc-section > ol > li > strong"
+      },
+      "resolved_at": "2026-10-26T07:59:46.811154+00:00"
+    }
+  ]
+}

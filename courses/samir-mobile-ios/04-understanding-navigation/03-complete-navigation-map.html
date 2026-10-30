@@ -101,29 +101,38 @@
 <h3>🎯 A. Learning Objective</h3>
 <p>Setelah mempelajari dokumen ini, pembaca akan mampu:</p>
 <ol>
-<li>Memvisualisasikan seluruh graf navigasi aplikasi dari kontainer utama hingga layar terdalam.</li>
-<li>Mengetahui alur cabang sukses dan alur cabang alternatif pada setiap fitur.</li>
-<li>Memahami interaksi navigasi antara layar Native Swift dan layar Flutter Hybrid.</li>
-</ol>
+<li>Memvisualisasikan seluruh graf navigasi aplikasi dari kontainer utama hingga layar terdalam.
+</li>
+<li>Mengetahui alur cabang sukses dan alur cabang alternatif pada setiap fitur.
+</li>
+<li>Memahami interaksi navigasi antara layar Native Swift dan layar Flutter Hybrid.
+</li></ol>
 </section>
 <section id="sec-prereq" class="doc-section">
 <h3>📋 B. Prerequisites</h3>
 <ul>
-<li>Sudah membaca <a href="01-feature-inventory.html">01-feature-inventory.md</a> dan <a href="02-navigation-fundamentals.html">02-navigation-fundamentals.md</a>.</li>
-<li>Mengetahui struktur <code>UITabBarController</code> dan <code>UINavigationController</code> pada iOS.</li>
-</ul>
+<li>Sudah membaca <a href="01-feature-inventory.html">01-feature-inventory.md</a> dan <a href="02-navigation-fundamentals.html">02-navigation-fundamentals.md</a>.
+</li>
+<li>Mengetahui struktur <code>UITabBarController</code> dan <code>UINavigationController</code> pada iOS.
+</li></ul>
 </section>
 <section id="sec-simple" class="doc-section">
 <h3>💡 C. Simple Explanation (Peta Transportasi Kereta Bawah Tanah)</h3>
 <p>Bayangkan peta rute MRT / Kereta Api:</p>
 <ul>
-<li><strong>Stasiun Pusat (Central Hub)</strong>: <code>IDMainTabBarController</code> dengan 3 peron jalur utama:</li>
-<li><strong>Jalur Hijau</strong>: Peron Beranda (Jalur Pengajuan Pinjaman).</li>
-<li><strong>Jalur Biru</strong>: Peron Tagihan (Jalur Pembayaran Pinjaman).</li>
-<li><strong>Jalur Kuning</strong>: Peron Saya (Jalur Profil & Pengaturan Akun).</li>
-<li><strong>Stasiun Transit</strong>: Layar Login (Modal) dapat dipanggil dari peron mana pun jika pengguna belum memiliki tiket (sesi login).</li>
-<li><strong>Rute Satu Arah Berurutan</strong>: Jalur verifikasi identitas e-KYC (KTP -> Pribadi -> Pekerjaan -> Kontak -> Bank -> Wajah). Anda harus melewati stasiun KTP sebelum diizinkan masuk ke stasiun Rekening Bank.</li>
-</ul>
+<li><strong>Stasiun Pusat (Central Hub)</strong>: <code>IDMainTabBarController</code> dengan 3 peron jalur utama:
+<ul>
+<li><strong>Jalur Hijau</strong>: Peron Beranda (Jalur Pengajuan Pinjaman).
+</li>
+<li><strong>Jalur Biru</strong>: Peron Tagihan (Jalur Pembayaran Pinjaman).
+</li>
+<li><strong>Jalur Kuning</strong>: Peron Saya (Jalur Profil & Pengaturan Akun).
+</li></ul>
+</li>
+<li><strong>Stasiun Transit</strong>: Layar Login (Modal) dapat dipanggil dari peron mana pun jika pengguna belum memiliki tiket (sesi login).
+</li>
+<li><strong>Rute Satu Arah Berurutan</strong>: Jalur verifikasi identitas e-KYC (KTP -> Pribadi -> Pekerjaan -> Kontak -> Bank -> Wajah). Anda harus melewati stasiun KTP sebelum diizinkan masuk ke stasiun Rekening Bank.
+</li></ul>
 </section>
 <section id="sec-actual" class="doc-section">
 <h3>💻 D. Actual Implementation: Peta Graf Navigasi Lengkap</h3>
@@ -224,48 +233,62 @@ graph TD
 <h4>1. Jalur Pengguna Baru (Zero to First Loan)</h4>
 </div>
 <ol>
-<li><strong>Pintu Masuk</strong>: User membuka aplikasi pertama kali -> Melihat Splash 3 detik (<code>IDLaunchViewController</code>) -> Masuk Beranda Tab 0.</li>
-<li><strong>Autentikasi</strong>: User menekan "Ajukan Pinjaman" -> Karena belum login, modal <code>LoginViewV2Controller</code> terbuka -> User input OTP -> Modal tertutup.</li>
-<li><strong>Pemeriksaan KYC</strong>: Beranda mendeteksi user belum memiliki data KTP -> Memanggil <code>samir://auth/identity</code>.</li>
-<li><strong>Rantai KYC</strong>:</li>
-</ol>
+<li><strong>Pintu Masuk</strong>: User membuka aplikasi pertama kali -> Melihat Splash 3 detik (<code>IDLaunchViewController</code>) -> Masuk Beranda Tab 0.
+</li>
+<li><strong>Autentikasi</strong>: User menekan "Ajukan Pinjaman" -> Karena belum login, modal <code>LoginViewV2Controller</code> terbuka -> User input OTP -> Modal tertutup.
+</li>
+<li><strong>Pemeriksaan KYC</strong>: Beranda mendeteksi user belum memiliki data KTP -> Memanggil <code>samir://auth/identity</code>.
+</li>
+<li><strong>Rantai KYC</strong>:
 <ul>
-<li><code>IDNewOCRViewController</code>: Ambil foto e-KTP -> OCR otomatis mengisi NIK & Nama.</li>
-<li><code>IDNewAuthBasicViewController</code>: Isi tanggal lahir, status kawin, alamat.</li>
-<li><code>IDNewAuthJobViewController</code>: Isi nama kantor, jabatan, gaji.</li>
-<li><code>IDNewAuthContactViewController</code>: Input 2 kontak darurat kerabat.</li>
-<li><code>IDNewBankViewController</code>: Masukkan no rekening BCA/Mandiri/BRI.</li>
-<li><code>IDAuthLiveViewController</code>: Deteksi kedip mata & geleng kepala.</li>
-</ul>
-<ol>
-<li><strong>Penilaian Kredit</strong>: Selesai liveness -> Sistem otomatis mengarahkan ke <code>samir://loan/creditAssess</code> (<code>IDQuatoAssessViewController</code>) -> Polling analisa risiko selama beberapa detik.</li>
-<li><strong>Konfirmasi Pinjaman</strong>: Kuota disetujui Rp 3.000.000 -> Navigasi ke <code>samir://loan/confirm</code> (<code>LoanConfirmViewController_Rx</code>) -> User memilih voucher diskon -> User membaca kontrak pinjaman -> User tap "Cairkan Sekarang".</li>
-<li><strong>Selesai</strong>: Popup sukses tampil -> User kembali ke Beranda (<code>Tab 0</code>).</li>
-</ol>
+<li><code>IDNewOCRViewController</code>: Ambil foto e-KTP -> OCR otomatis mengisi NIK & Nama.
+</li>
+<li><code>IDNewAuthBasicViewController</code>: Isi tanggal lahir, status kawin, alamat.
+</li>
+<li><code>IDNewAuthJobViewController</code>: Isi nama kantor, jabatan, gaji.
+</li>
+<li><code>IDNewAuthContactViewController</code>: Input 2 kontak darurat kerabat.
+</li>
+<li><code>IDNewBankViewController</code>: Masukkan no rekening BCA/Mandiri/BRI.
+</li>
+<li><code>IDAuthLiveViewController</code>: Deteksi kedip mata & geleng kepala.
+</li></ul>
+</li>
+<li><strong>Penilaian Kredit</strong>: Selesai liveness -> Sistem otomatis mengarahkan ke <code>samir://loan/creditAssess</code> (<code>IDQuatoAssessViewController</code>) -> Polling analisa risiko selama beberapa detik.
+</li>
+<li><strong>Konfirmasi Pinjaman</strong>: Kuota disetujui Rp 3.000.000 -> Navigasi ke <code>samir://loan/confirm</code> (<code>LoanConfirmViewController_Rx</code>) -> User memilih voucher diskon -> User membaca kontrak pinjaman -> User tap "Cairkan Sekarang".
+</li>
+<li><strong>Selesai</strong>: Popup sukses tampil -> User kembali ke Beranda (<code>Tab 0</code>).
+</li></ol>
 <div id="sub-2-jalur-pengguna-memeriksa-tagihan-profil" class="doc-subsection">
 <h4>2. Jalur Pengguna Memeriksa Tagihan & Profil</h4>
 </div>
 <ol>
-<li>Dari <code>IDMainTabBarController</code>, user menyentuh icon Tab 1 ("Tagihan").</li>
-<li><code>IDMainTabBarController</code> mendeteksi rute <code>/repay</code>, menyembunyikan view native, dan menampilkan persistent container Flutter.</li>
-<li>User menyentuh icon Tab 2 ("Saya").</li>
-<li><code>IDMainTabBarController</code> mendeteksi rute <code>/mine</code>, memperbarui safe area, dan menampilkan profil Flutter.</li>
-<li>Dari Profil, user mengklik "Pengaturan":</li>
-</ol>
+<li>Dari <code>IDMainTabBarController</code>, user menyentuh icon Tab 1 ("Tagihan").
+</li>
+<li><code>IDMainTabBarController</code> mendeteksi rute <code>/repay</code>, menyembunyikan view native, dan menampilkan persistent container Flutter.
+</li>
+<li>User menyentuh icon Tab 2 ("Saya").
+</li>
+<li><code>IDMainTabBarController</code> mendeteksi rute <code>/mine</code>, memperbarui safe area, dan menampilkan profil Flutter.
+</li>
+<li>Dari Profil, user mengklik "Pengaturan":
 <ul>
-<li>Flutter mengirim pesan method channel <code>openNativeRoute(&quot;samir://mine/setting&quot;)</code>.</li>
-<li>Native merespon dan melakukan <code>navigationController?.pushViewController(IDMineSettingController(), animated: true)</code>.</li>
-</ul>
+<li>Flutter mengirim pesan method channel <code>openNativeRoute(&quot;samir://mine/setting&quot;)</code>.
+</li>
+<li>Native merespon dan melakukan <code>navigationController?.pushViewController(IDMineSettingController(), animated: true)</code>.
+</li></ul>
+</li></ol>
 </section>
 <section id="sec-why" class="doc-section">
 <h3>⚖️ F. Why It Matters: Mekanisme Unwind & Pengembalian Layar</h3>
 <ul>
-<li><strong>Bagaimana Pengguna Kembali dari Alur Terdalam?</strong></li>
-</ul>
+<li><strong>Bagaimana Pengguna Kembali dari Alur Terdalam?</strong>
+</li></ul>
 <p>Setiap ViewController native menyediakan tombol navigasi kembali di pojok kiri atas yang terhubung ke <code>navigationController?.popViewController(animated: true)</code>.</p>
 <ul>
-<li><strong>Kasus Khusus: Kembali Langsung ke Beranda (Back to Home)</strong>:</li>
-</ul>
+<li><strong>Kasus Khusus: Kembali Langsung ke Beranda (Back to Home)</strong>:
+</li></ul>
 <p>Pada layar web H5 (<code>IDBusinessWebViewController</code>) dan popup konfirmasi pinjaman, terdapat properti <code>backToHome: Bool = true</code>. Ketika properti ini aktif, menekan tombol silang (<code>alert_close</code>) tidak melakukan pop bertahap, melainkan memanggil:</p>
 <pre><code class="language-swift">  IDRouterManager.id_perfromWithURLString(
       IDRouterSchemeConstants.Main.tab.rawValue, 
@@ -287,19 +310,26 @@ void _openFAQ() {
 <section id="sec-mistakes" class="doc-section">
 <h3>⚠️ H. Common Mistakes & Debugging</h3>
 <ul>
-<li><strong>Stack Navigation Menumpuk (Navigation Stack Leak)</strong>:</li>
-<li>Memanggil <code>IDRouterManager.id_perfromWithURLString</code> berulang kali untuk layar yang sama dapat menumpuk puluhan ViewController di memori jika tidak ditutup dengan benar.</li>
-<li><strong>Gesture Pop Terkunci Setelah KYC</strong>:</li>
-<li><code>IDNewOCRViewController</code> mematikan gesture swipe back (<code>popGestureClose()</code>). Jika layar ditutup secara tidak wajar tanpa memanggil <code>popGestureOpen()</code>, controller berikutnya mungkin kehilangan kemampuan swipe back.</li>
-</ul>
+<li><strong>Stack Navigation Menumpuk (Navigation Stack Leak)</strong>:
+<ul>
+<li>Memanggil <code>IDRouterManager.id_perfromWithURLString</code> berulang kali untuk layar yang sama dapat menumpuk puluhan ViewController di memori jika tidak ditutup dengan benar.
+</li></ul>
+</li>
+<li><strong>Gesture Pop Terkunci Setelah KYC</strong>:
+<ul>
+<li><code>IDNewOCRViewController</code> mematikan gesture swipe back (<code>popGestureClose()</code>). Jika layar ditutup secara tidak wajar tanpa memanggil <code>popGestureOpen()</code>, controller berikutnya mungkin kehilangan kemampuan swipe back.
+</li></ul>
+</li></ul>
 </section>
 <section id="sec-check" class="doc-section">
 <h3>🧠 I. Knowledge Check</h3>
 <ol>
-<li>Ke layar mana pengguna diarahkan setelah verifikasi liveness wajah (<code>IDAuthLiveViewController</code>) selesai dengan sukses?</li>
-<li>Bagaimana cara layar web H5 memerintahkan aplikasi kembali langsung ke Beranda?</li>
-<li>Sebutkan rute URL yang digunakan untuk membuka formulir pengikatan kartu bank!</li>
-</ol>
+<li>Ke layar mana pengguna diarahkan setelah verifikasi liveness wajah (<code>IDAuthLiveViewController</code>) selesai dengan sukses?
+</li>
+<li>Bagaimana cara layar web H5 memerintahkan aplikasi kembali langsung ke Beranda?
+</li>
+<li>Sebutkan rute URL yang digunakan untuk membuka formulir pengikatan kartu bank!
+</li></ol>
 </section>
 <section id="sec-completion" class="doc-section">
 <h3>🏁 J. Completion Criteria</h3>

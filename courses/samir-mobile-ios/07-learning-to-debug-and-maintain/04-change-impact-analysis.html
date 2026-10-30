@@ -100,31 +100,39 @@
 <h3>🎯 A. Learning Objective</h3>
 <p>Setelah mempelajari dokumen ini, Anda diharapkan mampu:</p>
 <ol>
-<li>Memetakan <em>blast radius</em> (radius ledakan dampak) dari setiap perubahan pada komponen fondasi, networking, routing, dan integrasi hybrid.</li>
-<li>Memahami konsekuensi fatal dari modifikasi parameter umum API terhadap generator signature (<code>LibNetSignGenerator</code>).</li>
-<li>Mencegah regresi pada sistem deep link dan JavaScript Bridge (H5-to-Native) saat mengubah format routing.</li>
-<li>Menjaga kontrak komunikasi MethodChannel antara Swift native dan Flutter engine tetap sinkron.</li>
-<li>Menjalankan <em>Pre-PR Verification Checklist</em> komprehensif sebelum mengajukan code review.</li>
-</ol>
+<li>Memetakan <em>blast radius</em> (radius ledakan dampak) dari setiap perubahan pada komponen fondasi, networking, routing, dan integrasi hybrid.
+</li>
+<li>Memahami konsekuensi fatal dari modifikasi parameter umum API terhadap generator signature (<code>LibNetSignGenerator</code>).
+</li>
+<li>Mencegah regresi pada sistem deep link dan JavaScript Bridge (H5-to-Native) saat mengubah format routing.
+</li>
+<li>Menjaga kontrak komunikasi MethodChannel antara Swift native dan Flutter engine tetap sinkron.
+</li>
+<li>Menjalankan <em>Pre-PR Verification Checklist</em> komprehensif sebelum mengajukan code review.
+</li></ol>
 </section>
 <section id="sec-prereq" class="doc-section">
 <h3>📋 B. Prerequisites</h3>
 <p>Sebelum membaca dokumen ini, Anda disarankan telah membaca:</p>
 <ul>
-<li><a href="../04-understanding-navigation/02-navigation-fundamentals.html">04-understanding-navigation/02-navigation-fundamentals.md</a> — Mekanisme registrasi router SAMIR.</li>
-<li><a href="../06-understanding-data-and-dependencies/02-networking-and-api-flow.html">06-understanding-data-and-dependencies/02-networking-and-api-flow.md</a> — 18 parameter umum dan signature hashing.</li>
-<li><a href="../06-understanding-data-and-dependencies/05-native-flutter-integration.html">06-understanding-data-and-dependencies/05-native-flutter-integration.md</a> — Kontrak <code>samir_native_channel</code>.</li>
-<li><a href="03-coupling-and-technical-debt.html">07-learning-to-debug-and-maintain/03-coupling-and-technical-debt.md</a> — Matriks utang teknis dan God Objects.</li>
-</ul>
+<li><a href="../04-understanding-navigation/02-navigation-fundamentals.html">04-understanding-navigation/02-navigation-fundamentals.md</a> — Mekanisme registrasi router SAMIR.
+</li>
+<li><a href="../06-understanding-data-and-dependencies/02-networking-and-api-flow.html">06-understanding-data-and-dependencies/02-networking-and-api-flow.md</a> — 18 parameter umum dan signature hashing.
+</li>
+<li><a href="../06-understanding-data-and-dependencies/05-native-flutter-integration.html">06-understanding-data-and-dependencies/05-native-flutter-integration.md</a> — Kontrak <code>samir_native_channel</code>.
+</li>
+<li><a href="03-coupling-and-technical-debt.html">07-learning-to-debug-and-maintain/03-coupling-and-technical-debt.md</a> — Matriks utang teknis dan God Objects.
+</li></ul>
 </section>
 <section id="sec-simple" class="doc-section">
 <h3>💡 C. Simple Explanation: "Mengetahui Kabel Mana yang Menyetrum Sebelum Memotong"</h3>
 <p>Bayangkan Anda sedang merenovasi sirkuit kelistrikan di gedung bertingkat. Jika Anda memotong kabel lampu di koridor lantai 3, hanya lampu koridor yang padam. Namun, jika Anda mencabut sekring utama di ruang genset bawah tanah, seluruh gedung akan gelap gulita dan lift akan berhenti mendadak.</p>
 <p>Di SAMIR:</p>
 <ul>
-<li>Ada perubahan lokal berisiko rendah, misalnya mengubah warna teks di halaman syarat & ketentuan pinjaman.</li>
-<li>Namun ada komponen fondasi (seperti <code>ApiParamsHelper</code>, <code>CZRouterCenter</code>, atau <code>IDLoginCodeModel</code>) yang bila diubah satu baris saja, dampaknya dapat melumpuhkan seluruh transaksi pinjaman, merusak token sesi semua pengguna, atau membuat aplikasi crash saat pertama kali dibuka.</li>
-</ul>
+<li>Ada perubahan lokal berisiko rendah, misalnya mengubah warna teks di halaman syarat & ketentuan pinjaman.
+</li>
+<li>Namun ada komponen fondasi (seperti <code>ApiParamsHelper</code>, <code>CZRouterCenter</code>, atau <code>IDLoginCodeModel</code>) yang bila diubah satu baris saja, dampaknya dapat melumpuhkan seluruh transaksi pinjaman, merusak token sesi semua pengguna, atau membuat aplikasi crash saat pertama kali dibuka.
+</li></ul>
 </section>
 <section id="sec-actual" class="doc-section">
 <h3>💻 D. Actual Implementation: Peta Blast Radius Berdasarkan Komponen</h3>
@@ -161,67 +169,111 @@ graph TD
 <h4>1. Zona Berbahaya 1: Networking, Headers, & Signature <code>[Verified]</code></h4>
 </div>
 <ul>
-<li><strong>File Kunci:</strong></li>
-<li><code>ios/IDSamirLoan/Application/SamirNetworkModule/Classes/Common/ApiParamsHelper.swift</code></li>
-<li><code>ios/IDSamirLoan/Application/SamirNetworkModule/Classes/Common/IDNetworkRequest.swift</code></li>
-<li><strong>Tingkat Bahaya:</strong> <strong>EXTREME (100% dari seluruh fungsionalitas aplikasi)</strong></li>
-<li><strong>Mekanisme Dampak:</strong></li>
-<li><code>ApiParamsHelper</code> menyuplai 18 parameter umum (seperti <code>mid</code>, <code>userNo</code>, <code>sysVersion</code>, <code>appVersion</code>, <code>channelCode</code>, <code>token</code>).</li>
-<li>Parameter ini diurutkan dan dikirim ke framework biner tertutup <code>LibNetSignGenerator.framework</code> untuk membuat header <code>sign</code>.</li>
-<li><strong>Skenario Bencana:</strong> Jika Anda mengubah penamaan parameter (misalnya mengubah <code>sysVersion</code> menjadi <code>systemVersion</code>) atau mengubah urutan enkapsulasi parameter, generator signature akan menghasilkan hash yang tidak cocok dengan formula backend.</li>
-<li><strong>Akibat:</strong> Seluruh panggilan API di aplikasi (Login, Home, KYC, Konfirmasi Pinjaman, Repayment) akan serentak ditolak oleh server gateway dengan respons error <code>code: 10004 (Signature verification failed)</code>.</li>
-</ul>
+<li><strong>File Kunci:</strong>
+<ul>
+<li><code>ios/IDSamirLoan/Application/SamirNetworkModule/Classes/Common/ApiParamsHelper.swift</code>
+</li>
+<li><code>ios/IDSamirLoan/Application/SamirNetworkModule/Classes/Common/IDNetworkRequest.swift</code>
+</li></ul>
+</li>
+<li><strong>Tingkat Bahaya:</strong> <strong>EXTREME (100% dari seluruh fungsionalitas aplikasi)</strong>
+</li>
+<li><strong>Mekanisme Dampak:</strong>
+<ul>
+<li><code>ApiParamsHelper</code> menyuplai 18 parameter umum (seperti <code>mid</code>, <code>userNo</code>, <code>sysVersion</code>, <code>appVersion</code>, <code>channelCode</code>, <code>token</code>).
+</li>
+<li>Parameter ini diurutkan dan dikirim ke framework biner tertutup <code>LibNetSignGenerator.framework</code> untuk membuat header <code>sign</code>.
+</li>
+<li><strong>Skenario Bencana:</strong> Jika Anda mengubah penamaan parameter (misalnya mengubah <code>sysVersion</code> menjadi <code>systemVersion</code>) atau mengubah urutan enkapsulasi parameter, generator signature akan menghasilkan hash yang tidak cocok dengan formula backend.
+</li>
+<li><strong>Akibat:</strong> Seluruh panggilan API di aplikasi (Login, Home, KYC, Konfirmasi Pinjaman, Repayment) akan serentak ditolak oleh server gateway dengan respons error <code>code: 10004 (Signature verification failed)</code>.
+</li></ul>
+</li></ul>
 <div id="sub-2-zona-berbahaya-2-router-tables-url-schemes-verified" class="doc-subsection">
 <h4>2. Zona Berbahaya 2: Router Tables & URL Schemes <code>[Verified]</code></h4>
 </div>
 <ul>
-<li><strong>File Kunci:</strong></li>
-<li><code>CZSwiftRouterLib/Classes/CZRouterCenter.swift</code></li>
-<li><code>ios/IDSamirLoan/Application/SamirMainModule/Classes/IDRouter/IDRouterManager.swift</code></li>
-<li><code>IDSamir*RouterHandler.swift</code></li>
-<li><strong>Tingkat Bahaya:</strong> <strong>HIGH (Navigasi global, Deep Link, dan H5 Bridge)</strong></li>
-<li><strong>Mekanisme Dampak:</strong></li>
-<li>Router bekerja berdasarkan pola skema URL <code>samir://&lt;host&gt;/&lt;path&gt;</code>.</li>
-<li>Terdapat tiga konsumen eksternal yang mengandalkan kestabilan URL scheme ini:</li>
-</ul>
-<ol>
-<li><strong>APNs Push Notification Payload:</strong> Notifikasi promosi dari server membawa string deep link mentah.</li>
-<li><strong>H5 Marketing / Event Banners:</strong> Halaman webview memanggil fungsi JavaScript <code>callApp({url: &quot;samir://...&quot;})</code>.</li>
-<li><strong>Backend App Configuration:</strong> Respons API <code>getAppIndexNew</code> mengembalikan route target ke tahapan KYC pengguna.</li>
-</ol>
+<li><strong>File Kunci:</strong>
 <ul>
-<li><strong>Skenario Bencana:</strong></li>
-<li>Jika Anda mengubah format path (misalnya <code>samir://auth/baseInfo</code> diubah menjadi <code>samir://auth/step1</code>), maka notifikasi yang dikirim server atau halaman webview yang belum diperbarui akan gagal membuka layar target (silent failure / drop).</li>
-<li>Jika Anda mendaftarkan handler baru dengan nama host yang sudah ada, aplikasi akan crash saat diluncurkan: <code>assertionFailure(&quot;Host already exists&quot;)</code>.</li>
-</ul>
+<li><code>CZSwiftRouterLib/Classes/CZRouterCenter.swift</code>
+</li>
+<li><code>ios/IDSamirLoan/Application/SamirMainModule/Classes/IDRouter/IDRouterManager.swift</code>
+</li>
+<li><code>IDSamir*RouterHandler.swift</code>
+</li></ul>
+</li>
+<li><strong>Tingkat Bahaya:</strong> <strong>HIGH (Navigasi global, Deep Link, dan H5 Bridge)</strong>
+</li>
+<li><strong>Mekanisme Dampak:</strong>
+<ul>
+<li>Router bekerja berdasarkan pola skema URL <code>samir://&lt;host&gt;/&lt;path&gt;</code>.
+</li>
+<li>Terdapat tiga konsumen eksternal yang mengandalkan kestabilan URL scheme ini:
+<ol>
+<li><strong>APNs Push Notification Payload:</strong> Notifikasi promosi dari server membawa string deep link mentah.
+</li>
+<li><strong>H5 Marketing / Event Banners:</strong> Halaman webview memanggil fungsi JavaScript <code>callApp({url: &quot;samir://...&quot;})</code>.
+</li>
+<li><strong>Backend App Configuration:</strong> Respons API <code>getAppIndexNew</code> mengembalikan route target ke tahapan KYC pengguna.
+</li></ol>
+</li>
+<li><strong>Skenario Bencana:</strong>
+<ul>
+<li>Jika Anda mengubah format path (misalnya <code>samir://auth/baseInfo</code> diubah menjadi <code>samir://auth/step1</code>), maka notifikasi yang dikirim server atau halaman webview yang belum diperbarui akan gagal membuka layar target (silent failure / drop).
+</li>
+<li>Jika Anda mendaftarkan handler baru dengan nama host yang sudah ada, aplikasi akan crash saat diluncurkan: <code>assertionFailure(&quot;Host already exists&quot;)</code>.
+</li></ul>
+</li></ul>
+</li></ul>
 <div id="sub-3-zona-berbahaya-3-saluran-hybrid-flutter-samir-native-channel-verified" class="doc-subsection">
 <h4>3. Zona Berbahaya 3: Saluran Hybrid Flutter (<code>samir_native_channel</code>) <code>[Verified]</code></h4>
 </div>
 <ul>
-<li><strong>File Kunci:</strong></li>
-<li><code>ios/IDSamirLoan/Application/SamirMainModule/Classes/Flutter/FlutterEngineManager.swift</code></li>
-<li><code>ios/IDSamirLoan/Application/SamirMainModule/Classes/IDController/IDMainTabBarController.swift</code></li>
-<li><strong>Tingkat Bahaya:</strong> <strong>HIGH (Tab Repay, Tab Mine, dan Konsistensi Token Sesi)</strong></li>
-<li><strong>Mekanisme Dampak:</strong></li>
-<li>Flutter engine tunggal (<code>singleEngine</code>) beroperasi di background dan menerima event melalui <code>FlutterMethodChannel(name: &quot;samir_native_channel&quot;)</code>.</li>
-<li>Method penting:</li>
-<li><code>getRootPageData</code>: Mengirim token, mid, status login, dan environment URL ke Dart runtime.</li>
-<li><code>pushNativePage</code>: Menerima instruksi dari Flutter untuk membuka halaman native (KYC atau Pengaturan).</li>
-<li><code>nativeLogout</code>: Menginstruksikan pembersihan sesi native saat user logout dari tab Flutter.</li>
-<li><strong>Skenario Bencana:</strong> Mengubah tipe payload dictionary atau nama method channel di sisi Swift tanpa memperbarui kode Dart di repository <code>flutter/</code> akan mengakibatkan halaman Repay dan Mine menampilkan layar putih (blank screen) atau sesi token tidak sinkron.</li>
-</ul>
+<li><strong>File Kunci:</strong>
+<ul>
+<li><code>ios/IDSamirLoan/Application/SamirMainModule/Classes/Flutter/FlutterEngineManager.swift</code>
+</li>
+<li><code>ios/IDSamirLoan/Application/SamirMainModule/Classes/IDController/IDMainTabBarController.swift</code>
+</li></ul>
+</li>
+<li><strong>Tingkat Bahaya:</strong> <strong>HIGH (Tab Repay, Tab Mine, dan Konsistensi Token Sesi)</strong>
+</li>
+<li><strong>Mekanisme Dampak:</strong>
+<ul>
+<li>Flutter engine tunggal (<code>singleEngine</code>) beroperasi di background dan menerima event melalui <code>FlutterMethodChannel(name: &quot;samir_native_channel&quot;)</code>.
+</li>
+<li>Method penting:
+<ul>
+<li><code>getRootPageData</code>: Mengirim token, mid, status login, dan environment URL ke Dart runtime.
+</li>
+<li><code>pushNativePage</code>: Menerima instruksi dari Flutter untuk membuka halaman native (KYC atau Pengaturan).
+</li>
+<li><code>nativeLogout</code>: Menginstruksikan pembersihan sesi native saat user logout dari tab Flutter.
+</li></ul>
+</li>
+<li><strong>Skenario Bencana:</strong> Mengubah tipe payload dictionary atau nama method channel di sisi Swift tanpa memperbarui kode Dart di repository <code>flutter/</code> akan mengakibatkan halaman Repay dan Mine menampilkan layar putih (blank screen) atau sesi token tidak sinkron.
+</li></ul>
+</li></ul>
 <div id="sub-4-zona-berbahaya-4-penyimpanan-sesi-pengguna-lokal-idlogincodemodel-verified" class="doc-subsection">
 <h4>4. Zona Berbahaya 4: Penyimpanan Sesi Pengguna Lokal (<code>IDLoginCodeModel</code>) <code>[Verified]</code></h4>
 </div>
 <ul>
-<li><strong>File Kunci:</strong></li>
-<li><code>ios/IDSamirLoan/Application/SamirLoginModule/Classes/IDModel/IDLoginCodeModel.swift</code></li>
-<li><strong>Tingkat Bahaya:</strong> <strong>CRITICAL (Kehilangan Sesi Seluruh Pengguna / Mass Forced Logout)</strong></li>
-<li><strong>Mekanisme Dampak:</strong></li>
-<li>File sesi disimpan terenkripsi di <code>Library/Application Support/idn_userFile.plist</code> menggunakan kunci simetris AES-GCM (<code>staticKey</code>).</li>
-<li><strong>Skenario Bencana:</strong> Jika Anda memodifikasi string kunci <code>staticKey</code> atau mengubah struktur decoding <code>NSCoding</code> / <code>NSSecureCoding</code> tanpa mekanisme migrasi data, aplikasi tidak akan dapat mendekripsi file sesi yang ada saat update versi.</li>
-<li><strong>Akibat:</strong> Seluruh pengguna yang melakukan update aplikasi dari App Store akan otomatis ter-logout (<em>mass forced logout</em>) dan harus memasukkan nomor HP serta OTP ulang.</li>
-</ul>
+<li><strong>File Kunci:</strong>
+<ul>
+<li><code>ios/IDSamirLoan/Application/SamirLoginModule/Classes/IDModel/IDLoginCodeModel.swift</code>
+</li></ul>
+</li>
+<li><strong>Tingkat Bahaya:</strong> <strong>CRITICAL (Kehilangan Sesi Seluruh Pengguna / Mass Forced Logout)</strong>
+</li>
+<li><strong>Mekanisme Dampak:</strong>
+<ul>
+<li>File sesi disimpan terenkripsi di <code>Library/Application Support/idn_userFile.plist</code> menggunakan kunci simetris AES-GCM (<code>staticKey</code>).
+</li>
+<li><strong>Skenario Bencana:</strong> Jika Anda memodifikasi string kunci <code>staticKey</code> atau mengubah struktur decoding <code>NSCoding</code> / <code>NSSecureCoding</code> tanpa mekanisme migrasi data, aplikasi tidak akan dapat mendekripsi file sesi yang ada saat update versi.
+</li>
+<li><strong>Akibat:</strong> Seluruh pengguna yang melakukan update aplikasi dari App Store akan otomatis ter-logout (<em>mass forced logout</em>) dan harus memasukkan nomor HP serta OTP ulang.
+</li></ul>
+</li></ul>
 </section>
 <section id="sec-walkthrough" class="doc-section">
 <h3>📌 E. Pre-PR Verification Checklist: Standar Wajib Sebelum Merge Kode</h3>
@@ -230,49 +282,66 @@ graph TD
 <h4>1. Build & Configuration Verification</h4>
 </div>
 <ul>
-<li>[ ] Proyek berhasil dicompile di bawah keempat build scheme:</li>
-<li>[ ] <code>TEST</code> (memastikan DebugUI dan pre-build test macros berfungsi).</li>
-<li>[ ] <code>PROD-TEST</code> (memastikan environment pre-production stabil).</li>
-<li>[ ] <code>PROD</code> (memastikan build release bersih dari debug symbols dan logging).</li>
-<li>[ ] <code>IDSamirEnvironment</code> (memastikan parser environment switch bekerja).</li>
-<li>[ ] Tidak ada penambahan file di luar folder yang diizinkan (jangan commit file cache <code>.DS_Store</code> atau Pods artifacts).</li>
-<li>[ ] File konfigurasi build (<code>IDSamirLoan.xcodeproj/project.pbxproj</code>) tidak mengalami modifikasi bundle identifier, provisioning profile, atau deployment target tanpa persetujuan tim lead.</li>
-</ul>
+<li>[ ] Proyek berhasil dicompile di bawah keempat build scheme:
+<ul>
+<li>[ ] <code>TEST</code> (memastikan DebugUI dan pre-build test macros berfungsi).
+</li>
+<li>[ ] <code>PROD-TEST</code> (memastikan environment pre-production stabil).
+</li>
+<li>[ ] <code>PROD</code> (memastikan build release bersih dari debug symbols dan logging).
+</li>
+<li>[ ] <code>IDSamirEnvironment</code> (memastikan parser environment switch bekerja).
+</li></ul>
+</li>
+<li>[ ] Tidak ada penambahan file di luar folder yang diizinkan (jangan commit file cache <code>.DS_Store</code> atau Pods artifacts).
+</li>
+<li>[ ] File konfigurasi build (<code>IDSamirLoan.xcodeproj/project.pbxproj</code>) tidak mengalami modifikasi bundle identifier, provisioning profile, atau deployment target tanpa persetujuan tim lead.
+</li></ul>
 <div id="sub-2-networking-routing-verification" class="doc-subsection">
 <h4>2. Networking & Routing Verification</h4>
 </div>
 <ul>
-<li>[ ] Tidak ada perubahan nama key pada <code>ApiParamsHelper.swift</code>.</li>
-<li>[ ] Seluruh endpoint baru yang ditambahkan mengembalikan format envelope <code>{ &quot;code&quot;: Int, &quot;msg&quot;: String, &quot;result&quot;: Any }</code>.</li>
-<li>[ ] Uji coba request di build <code>TEST</code> dan pastikan respon <code>code</code> bernilai <code>200</code> (bukan <code>10004 Sign Verification Failed</code>).</li>
-<li>[ ] Tidak ada host duplikat yang didaftarkan di <code>IDRouterManager.swift</code>.</li>
-<li>[ ] Format skema URL baru telah didokumentasikan di katalog rute dan divalidasi terhadap event H5 JSBridge.</li>
-</ul>
+<li>[ ] Tidak ada perubahan nama key pada <code>ApiParamsHelper.swift</code>.
+</li>
+<li>[ ] Seluruh endpoint baru yang ditambahkan mengembalikan format envelope <code>{ &quot;code&quot;: Int, &quot;msg&quot;: String, &quot;result&quot;: Any }</code>.
+</li>
+<li>[ ] Uji coba request di build <code>TEST</code> dan pastikan respon <code>code</code> bernilai <code>200</code> (bukan <code>10004 Sign Verification Failed</code>).
+</li>
+<li>[ ] Tidak ada host duplikat yang didaftarkan di <code>IDRouterManager.swift</code>.
+</li>
+<li>[ ] Format skema URL baru telah didokumentasikan di katalog rute dan divalidasi terhadap event H5 JSBridge.
+</li></ul>
 <div id="sub-3-memory-safety-verification" class="doc-subsection">
 <h4>3. Memory & Safety Verification</h4>
 </div>
 <ul>
-<li>[ ] Tidak ada penambahan <em>force unwrap</em> (<code>!</code>) atau <em>force cast</em> (<code>as!</code>) baru pada model decoding dan parsing respons API. Gunakan <code>guard let</code> defensif.</li>
-<li>[ ] Periksa closure / asynchronous callbacks apakah telah menyertakan <code>[weak self]</code> untuk mencegah retain cycle dan kebocoran memori (memory leak).</li>
-<li>[ ] Lakukan uji coba navigasi keluar-masuk layar (push lalu pop berulang kali) untuk memastikan deallokasi berjalan normal.</li>
-</ul>
+<li>[ ] Tidak ada penambahan <em>force unwrap</em> (<code>!</code>) atau <em>force cast</em> (<code>as!</code>) baru pada model decoding dan parsing respons API. Gunakan <code>guard let</code> defensif.
+</li>
+<li>[ ] Periksa closure / asynchronous callbacks apakah telah menyertakan <code>[weak self]</code> untuk mencegah retain cycle dan kebocoran memori (memory leak).
+</li>
+<li>[ ] Lakukan uji coba navigasi keluar-masuk layar (push lalu pop berulang kali) untuk memastikan deallokasi berjalan normal.
+</li></ul>
 <div id="sub-4-hybrid-sync-verification" class="doc-subsection">
 <h4>4. Hybrid Sync Verification</h4>
 </div>
 <ul>
-<li>[ ] Jalankan perpindahan tab: Tab 0 (Home Native) -> Tab 1 (Repay Flutter) -> Tab 2 (Mine Flutter) -> Tab 0.</li>
-<li>[ ] Pastikan tidak ada stuttering atau penurunan frame rate (FPS drop) saat transisi tab.</li>
-<li>[ ] Uji alur logout dari halaman Mine (Flutter) dan pastikan Tab 0 (Native) langsung memperbarui tampilan ke status belum login.</li>
-</ul>
+<li>[ ] Jalankan perpindahan tab: Tab 0 (Home Native) -> Tab 1 (Repay Flutter) -> Tab 2 (Mine Flutter) -> Tab 0.
+</li>
+<li>[ ] Pastikan tidak ada stuttering atau penurunan frame rate (FPS drop) saat transisi tab.
+</li>
+<li>[ ] Uji alur logout dari halaman Mine (Flutter) dan pastikan Tab 0 (Native) langsung memperbarui tampilan ke status belum login.
+</li></ul>
 </section>
 <section id="sec-why" class="doc-section">
 <h3>⚖️ F. Why It Matters: Stabilitas Finansial & Kepercayaan Pengguna</h3>
 <p>Sebagai aplikasi pinjaman online berlisensi OJK, kestabilan aplikasi memiliki korelasi langsung dengan reputasi dan finansial perusahaan:</p>
 <ul>
-<li><strong>Kegagalan Signature (10004):</strong> Menghentikan 100% penyaluran pinjaman (disbursement) dan pelunasan angsuran. Kerugian finansial terjadi setiap menit sistem offline.</li>
-<li><strong>Crash pada Halaman Konfirmasi Pinjaman:</strong> Pengguna yang sedang menunggu pencairan dana dapat mengalami ketidakpastian status apakah pinjaman telah disetujui atau gagal, memicu lonjakan tiket komplain di Customer Support.</li>
-<li><strong>Mass Logout:</strong> Mengakibatkan lonjakan biaya SMS OTP (setiap SMS OTP berbayar per pengiriman) dan meningkatkan rasio <em>drop-off</em> pengguna yang malas login ulang.</li>
-</ul>
+<li><strong>Kegagalan Signature (10004):</strong> Menghentikan 100% penyaluran pinjaman (disbursement) dan pelunasan angsuran. Kerugian finansial terjadi setiap menit sistem offline.
+</li>
+<li><strong>Crash pada Halaman Konfirmasi Pinjaman:</strong> Pengguna yang sedang menunggu pencairan dana dapat mengalami ketidakpastian status apakah pinjaman telah disetujui atau gagal, memicu lonjakan tiket komplain di Customer Support.
+</li>
+<li><strong>Mass Logout:</strong> Mengakibatkan lonjakan biaya SMS OTP (setiap SMS OTP berbayar per pengiriman) dan meningkatkan rasio <em>drop-off</em> pengguna yang malas login ulang.
+</li></ul>
 </section>
 <section id="sec-example" class="doc-section">
 <h3>🔬 G. Practical Example: Mengubah Penamaan Field API Tanpa Menghancurkan App</h3>
@@ -294,36 +363,45 @@ params[&quot;deviceModel&quot;] = UIDevice.current.model
 <h4>1. Menguji Perubahan Hanya di Skema <code>TEST</code></h4>
 </div>
 <ul>
-<li><strong>Kesalahan:</strong> Lupa menguji di skema <code>PROD</code>.</li>
-<li><strong>Dampak:</strong> Kode yang bergantung pada macro <code>#if TEST</code> atau <code>CZPreBuildMacro.cz_buildTest()</code> mungkin berjalan mulus di staging, namun ketika dicompile untuk App Store Release (<code>PROD</code>), blok kode tersebut diabaikan compiler sehingga memicu <em>nil pointer</em> atau alur yang terputus.</li>
-<li><strong>Solusi:</strong> Selalu jalankan uji verifikasi minimal satu kali pada skema <code>PROD-TEST</code> atau <code>PROD</code> sebelum merge PR.</li>
-</ul>
+<li><strong>Kesalahan:</strong> Lupa menguji di skema <code>PROD</code>.
+</li>
+<li><strong>Dampak:</strong> Kode yang bergantung pada macro <code>#if TEST</code> atau <code>CZPreBuildMacro.cz_buildTest()</code> mungkin berjalan mulus di staging, namun ketika dicompile untuk App Store Release (<code>PROD</code>), blok kode tersebut diabaikan compiler sehingga memicu <em>nil pointer</em> atau alur yang terputus.
+</li>
+<li><strong>Solusi:</strong> Selalu jalankan uji verifikasi minimal satu kali pada skema <code>PROD-TEST</code> atau <code>PROD</code> sebelum merge PR.
+</li></ul>
 <div id="sub-2-mengubah-sifat-singleton-menjadi-local-instance" class="doc-subsection">
 <h4>2. Mengubah Sifat Singleton Menjadi Local Instance</h4>
 </div>
 <ul>
-<li><strong>Kesalahan:</strong> Menginstansiasi <code>FlutterEngineManager()</code> baru di dalam sebuah ViewController alih-alih menggunakan <code>FlutterEngineManager.shared</code>.</li>
-<li><strong>Dampak:</strong> Membengkakkan konsumsi RAM hingga 80-120 MB ekstra per engine dan merusak sinkronisasi event channel Flutter.</li>
-</ul>
+<li><strong>Kesalahan:</strong> Menginstansiasi <code>FlutterEngineManager()</code> baru di dalam sebuah ViewController alih-alih menggunakan <code>FlutterEngineManager.shared</code>.
+</li>
+<li><strong>Dampak:</strong> Membengkakkan konsumsi RAM hingga 80-120 MB ekstra per engine dan merusak sinkronisasi event channel Flutter.
+</li></ul>
 </section>
 <section id="sec-check" class="doc-section">
 <h3>🧠 I. Knowledge Check</h3>
 <ol>
-<li>Mengapa perubahan pada satu baris kode di <code>ApiParamsHelper.swift</code> dapat menyebabkan 100% panggilan API di seluruh aplikasi gagal?</li>
-<li>Apa yang akan terjadi jika developer mendaftarkan host router baru yang namanya sama dengan host yang sudah ada?</li>
-<li>Sebutkan 3 dampak berbahaya jika kunci enkripsi sesi <code>staticKey</code> di <code>IDLoginCodeModel.swift</code> diubah!</li>
-<li>Sebutkan 4 build scheme yang wajib diverifikasi sebelum mengajukan Pull Request!</li>
-<li>Mengapa pengujian transisi tab Native ke Flutter (Tab 0 ke Tab 1) wajib masuk ke dalam checklist pra-rilis?</li>
-</ol>
+<li>Mengapa perubahan pada satu baris kode di <code>ApiParamsHelper.swift</code> dapat menyebabkan 100% panggilan API di seluruh aplikasi gagal?
+</li>
+<li>Apa yang akan terjadi jika developer mendaftarkan host router baru yang namanya sama dengan host yang sudah ada?
+</li>
+<li>Sebutkan 3 dampak berbahaya jika kunci enkripsi sesi <code>staticKey</code> di <code>IDLoginCodeModel.swift</code> diubah!
+</li>
+<li>Sebutkan 4 build scheme yang wajib diverifikasi sebelum mengajukan Pull Request!
+</li>
+<li>Mengapa pengujian transisi tab Native ke Flutter (Tab 0 ke Tab 1) wajib masuk ke dalam checklist pra-rilis?
+</li></ol>
 </section>
 <section id="sec-completion" class="doc-section">
 <h3>🏁 J. Completion Criteria</h3>
 <p>Anda siap melanjutkan ke Level 8 (Dokumentasi Referensi Lanjutan) jika:</p>
 <ul>
-<li>Anda memahami peta zona bahaya (<em>danger zones</em>) dan batas toleransi perubahan kode di SAMIR.</li>
-<li>Anda dapat menerapkan <em>Pre-PR Verification Checklist</em> untuk menjaga kualitas dan stabilitas codebase.</li>
-<li>Anda memahami tanggung jawab senior engineer dalam menjaga kesinambungan sistem tanpa menimbulkan regresi.</li>
-</ul>
+<li>Anda memahami peta zona bahaya (<em>danger zones</em>) dan batas toleransi perubahan kode di SAMIR.
+</li>
+<li>Anda dapat menerapkan <em>Pre-PR Verification Checklist</em> untuk menjaga kualitas dan stabilitas codebase.
+</li>
+<li>Anda memahami tanggung jawab senior engineer dalam menjaga kesinambungan sistem tanpa menimbulkan regresi.
+</li></ul>
 <p>Lanjut ke level berikutnya: <a href="../08-reference/01-codebase-glossary.html">Level 8: Referensi Lanjutan</a></p>
 </section>
 

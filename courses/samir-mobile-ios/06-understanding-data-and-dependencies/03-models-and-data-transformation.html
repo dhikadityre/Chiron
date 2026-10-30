@@ -105,27 +105,33 @@
 <h3>🎯 A. Learning Objective</h3>
 <p>Setelah mempelajari dokumen ini, pembaca akan mampu:</p>
 <ol>
-<li>Memahami cara kerja pustaka <code>KakaJSON</code> (<code>kj.model</code> dan <code>kj.modelArray</code>) dalam memetakan JSON ke model Swift.</li>
-<li>Menggunakan method kustomisasi <code>kj_modelKey</code> untuk menangani ketidakcocokan nama properti JSON dengan nama properti Swift.</li>
-<li>Menjelaskan implementasi <code>NSCoding</code> / <code>NSSecureCoding</code> pada <code>IDLoginCodeModel</code> untuk persistensi disk terenkripsi.</li>
-<li>Menelusuri transformasi data kompleks dari model produk backend menjadi daftar baris sel tabel di Beranda (<code>IDLoanService.getCellListAry</code>).</li>
-</ol>
+<li>Memahami cara kerja pustaka <code>KakaJSON</code> (<code>kj.model</code> dan <code>kj.modelArray</code>) dalam memetakan JSON ke model Swift.
+</li>
+<li>Menggunakan method kustomisasi <code>kj_modelKey</code> untuk menangani ketidakcocokan nama properti JSON dengan nama properti Swift.
+</li>
+<li>Menjelaskan implementasi <code>NSCoding</code> / <code>NSSecureCoding</code> pada <code>IDLoginCodeModel</code> untuk persistensi disk terenkripsi.
+</li>
+<li>Menelusuri transformasi data kompleks dari model produk backend menjadi daftar baris sel tabel di Beranda (<code>IDLoanService.getCellListAry</code>).
+</li></ol>
 </section>
 <section id="sec-prereq" class="doc-section">
 <h3>📋 B. Prerequisites</h3>
 <ul>
-<li>Sudah membaca <a href="02-networking-and-api-flow.html">02-networking-and-api-flow.md</a>.</li>
-<li>Mengetahui konsep JSON parsing, Swift Codable, dan protokol <code>NSCoding</code>.</li>
-</ul>
+<li>Sudah membaca <a href="02-networking-and-api-flow.html">02-networking-and-api-flow.md</a>.
+</li>
+<li>Mengetahui konsep JSON parsing, Swift Codable, dan protokol <code>NSCoding</code>.
+</li></ul>
 </section>
 <section id="sec-simple" class="doc-section">
 <h3>💡 C. Simple Explanation (Analogi Penerjemah Dokumen Asing)</h3>
 <p>Ketika dokumen hukum tiba dari luar negeri dalam bahasa asing (JSON mentah dari backend):</p>
 <ul>
-<li><strong>Penerjemah Kilat (<code>KakaJSON</code>)</strong>: Membaca lembaran dokumen asing tersebut dan langsung menyalinnya ke dalam formulir resmi berbahasa Indonesia (<strong>Model Struct / Class Swift</strong>).</li>
-<li><strong>Kamus Istilah Khusus (<code>kj_modelKey</code>)</strong>: Jika dokumen asing menyebutkan kata <em>"cust_id"</em>, penerjemah tahu bahwa di formulir kita istilah tersebut harus dimasukkan ke kolom <em>"customerId"</em>.</li>
-<li><strong>Penata Meja Display (<code>Data Transformation</code>)</strong>: Data angka mentah (misal: <code>5000000</code> dan <code>30</code>) diubah menjadi teks yang enak dibaca pengunjung mall: <em>"Plafon Rp 5.000.000 • Tenor 30 Hari"</em>.</li>
-</ul>
+<li><strong>Penerjemah Kilat (<code>KakaJSON</code>)</strong>: Membaca lembaran dokumen asing tersebut dan langsung menyalinnya ke dalam formulir resmi berbahasa Indonesia (<strong>Model Struct / Class Swift</strong>).
+</li>
+<li><strong>Kamus Istilah Khusus (<code>kj_modelKey</code>)</strong>: Jika dokumen asing menyebutkan kata <em>"cust_id"</em>, penerjemah tahu bahwa di formulir kita istilah tersebut harus dimasukkan ke kolom <em>"customerId"</em>.
+</li>
+<li><strong>Penata Meja Display (<code>Data Transformation</code>)</strong>: Data angka mentah (misal: <code>5000000</code> dan <code>30</code>) diubah menjadi teks yang enak dibaca pengunjung mall: <em>"Plafon Rp 5.000.000 • Tenor 30 Hari"</em>.
+</li></ul>
 </section>
 <section id="sec-actual" class="doc-section">
 <h3>💻 D. Actual Implementation: Standar Penulisan Model</h3>
@@ -150,7 +156,8 @@ public struct IDProductModel: Convertible {
     // Inisialisasi default
     public init() {}
 }</code></pre>
-<h5 id="item-cara-parsing-di-service-layer">Cara Parsing di Service Layer:</h5>
+<div class="doc-subpoint-block" id="item-cara-parsing-di-service-layer">
+<h5>Cara Parsing di Service Layer:</h5>
 <pre><code class="language-swift">// Parsing objek tunggal
 if let dict = responseDict[&quot;result&quot;] as? [String: Any] {
     let product = dict.kj.model(IDProductModel.self)
@@ -160,6 +167,7 @@ if let dict = responseDict[&quot;result&quot;] as? [String: Any] {
 if let array = responseDict[&quot;result&quot;] as? [[String: Any]] {
     let productList = array.kj.modelArray(IDProductModel.self)
 }</code></pre>
+</div>
 <div id="sub-2-kustomisasi-pemetaan-kunci-kj-modelkey" class="doc-subsection">
 <h4>2. Kustomisasi Pemetaan Kunci (<code>kj_modelKey</code>)</h4>
 </div>
@@ -245,9 +253,10 @@ graph LR
 <section id="sec-walkthrough" class="doc-section">
 <h3>🪜 E. Step-by-Step Walkthrough: Membuat Model Baru untuk Endpoint Baru</h3>
 <ol>
-<li><strong>Buat File Baru</strong>: Di dalam modul pemilik, misal: <code>SamirLoanModule/Classes/IDModel/IDRepaymentHistoryModel.swift</code>.</li>
-<li><strong>Definisikan Struct</strong>:</li>
-</ol>
+<li><strong>Buat File Baru</strong>: Di dalam modul pemilik, misal: <code>SamirLoanModule/Classes/IDModel/IDRepaymentHistoryModel.swift</code>.
+</li>
+<li><strong>Definisikan Struct</strong>:
+</li></ol>
 <pre><code class="language-swift">   import Foundation
    import KakaJSON
    
@@ -258,9 +267,9 @@ graph LR
        
        public init() {}
    }</code></pre>
-<ol>
-<li><strong>Panggil di Service</strong>:</li>
-</ol>
+<ol start="3">
+<li><strong>Panggil di Service</strong>:
+</li></ol>
 <pre><code class="language-swift">   if let list = (req.responseObject as? [String: Any])?[&quot;records&quot;] as? [[String: Any]] {
        let models = list.kj.modelArray(IDRepaymentHistoryItemModel.self)
        success(models)
@@ -270,12 +279,12 @@ graph LR
 <h3>⚖️ F. Why It Matters: KakaJSON vs Apple Swift <code>Codable</code></h3>
 <p>Mengapa SAMIR iOS menggunakan <code>KakaJSON</code> dan bukan protokol standar bawaan Apple <code>Codable</code>?</p>
 <ul>
-<li>*<em>Ketahanan Terhadap Tipe Data yang Berubah (</em>Type Tolerance<em>)</em>*:</li>
-</ul>
+<li>*<em>Ketahanan Terhadap Tipe Data yang Berubah (</em>Type Tolerance<em>)</em>*:
+</li></ul>
 <p>Di backend, terkadang field nominal dikembalikan sebagai String <code>&quot;50000&quot;</code> di satu endpoint dan sebagai Integer <code>50000</code> di endpoint lain. <code>Codable</code> bawaan Swift akan langsung melempar exception <code>DecodingError.typeMismatch</code> dan membatalkan seluruh parsing. Sebaliknya, <code>KakaJSON</code> memiliki fitur <em>auto-casting</em> yang secara toleran mengubah string angka menjadi <code>Double</code> atau <code>Int</code> tanpa melempar crash!</p>
 <ul>
-<li><strong>Kecepatan Parsing</strong>: <code>KakaJSON</code> mengalokasikan memori secara langsung (<em>memory layout inspection</em>) yang sangat cepat untuk payload array besar.</li>
-</ul>
+<li><strong>Kecepatan Parsing</strong>: <code>KakaJSON</code> mengalokasikan memori secara langsung (<em>memory layout inspection</em>) yang sangat cepat untuk payload array besar.
+</li></ul>
 </section>
 <section id="sec-example" class="doc-section">
 <h3>🔬 G. Practical Example: Format Mata Uang Rupiah di Model</h3>
@@ -292,19 +301,26 @@ graph LR
 <section id="sec-mistakes" class="doc-section">
 <h3>⚠️ H. Common Mistakes & Debugging</h3>
 <ul>
-<li><strong>Lupa Menambahkan <code>init() {}</code></strong>:</li>
-<li><code>KakaJSON</code> mewajibkan struct atau class yang mengadopsi <code>Convertible</code> memiliki konstruktor kosong <code>init()</code>. Jika lupa, kompilasi akan menampilkan error <code>Initializer &#x27;init()&#x27; must be declared</code>.</li>
-<li><strong>Nilai Default untuk Tipe Primitif</strong>:</li>
-<li>Selalu berikan nilai default pada tipe non-opsional (misal: <code>var count: Int = 0</code> atau gunakan opsional <code>var count: Int?</code>). Properti non-opsional tanpa nilai default dapat menyebabkan inisialisasi model gagal saat field tersebut absen dari response JSON.</li>
-</ul>
+<li><strong>Lupa Menambahkan <code>init() {}</code></strong>:
+<ul>
+<li><code>KakaJSON</code> mewajibkan struct atau class yang mengadopsi <code>Convertible</code> memiliki konstruktor kosong <code>init()</code>. Jika lupa, kompilasi akan menampilkan error <code>Initializer &#x27;init()&#x27; must be declared</code>.
+</li></ul>
+</li>
+<li><strong>Nilai Default untuk Tipe Primitif</strong>:
+<ul>
+<li>Selalu berikan nilai default pada tipe non-opsional (misal: <code>var count: Int = 0</code> atau gunakan opsional <code>var count: Int?</code>). Properti non-opsional tanpa nilai default dapat menyebabkan inisialisasi model gagal saat field tersebut absen dari response JSON.
+</li></ul>
+</li></ul>
 </section>
 <section id="sec-check" class="doc-section">
 <h3>🧠 I. Knowledge Check</h3>
 <ol>
-<li>Apa protokol utama dari pustaka KakaJSON yang diadopsi oleh model-model di SAMIR iOS?</li>
-<li>Mengapa class <code>IDLoginCodeModel</code> wajib mengimplementasikan protokol <code>NSCoding</code>?</li>
-<li>Apa keunggulan toleransi tipe data <code>KakaJSON</code> dibandingkan protokol <code>Codable</code> bawaan Swift?</li>
-</ol>
+<li>Apa protokol utama dari pustaka KakaJSON yang diadopsi oleh model-model di SAMIR iOS?
+</li>
+<li>Mengapa class <code>IDLoginCodeModel</code> wajib mengimplementasikan protokol <code>NSCoding</code>?
+</li>
+<li>Apa keunggulan toleransi tipe data <code>KakaJSON</code> dibandingkan protokol <code>Codable</code> bawaan Swift?
+</li></ol>
 </section>
 <section id="sec-completion" class="doc-section">
 <h3>🏁 J. Completion Criteria</h3>

@@ -101,34 +101,44 @@
 <h3>🎯 A. Learning Objective</h3>
 <p>Setelah mempelajari dokumen ini, pembaca akan mampu:</p>
 <ol>
-<li>Membedakan 5 tingkatan hierarki error di SAMIR iOS.</li>
-<li>Memahami bagaimana <code>NSError.cz_isConnectionError()</code> mendeteksi kendala konektivitas fisik dan memetakan pesan ramah pengguna.</li>
-<li>Menjelaskan penanganan kesalahan pada level bisnis (Business Error vs Transport Error).</li>
-<li>Mengetahui kapan harus menggunakan Toast, Dialog Modal, atau Empty State View saat terjadi error.</li>
-</ol>
+<li>Membedakan 5 tingkatan hierarki error di SAMIR iOS.
+</li>
+<li>Memahami bagaimana <code>NSError.cz_isConnectionError()</code> mendeteksi kendala konektivitas fisik dan memetakan pesan ramah pengguna.
+</li>
+<li>Menjelaskan penanganan kesalahan pada level bisnis (Business Error vs Transport Error).
+</li>
+<li>Mengetahui kapan harus menggunakan Toast, Dialog Modal, atau Empty State View saat terjadi error.
+</li></ol>
 </section>
 <section id="sec-prereq" class="doc-section">
 <h3>📋 B. Prerequisites</h3>
 <ul>
-<li>Sudah membaca <a href="../06-understanding-data-and-dependencies/02-networking-and-api-flow.html">02-networking-and-api-flow.md</a>.</li>
-<li>Mengetahui konsep error domain dan status code pada <code>NSError</code> iOS.</li>
-</ul>
+<li>Sudah membaca <a href="../06-understanding-data-and-dependencies/02-networking-and-api-flow.html">02-networking-and-api-flow.md</a>.
+</li>
+<li>Mengetahui konsep error domain dan status code pada <code>NSError</code> iOS.
+</li></ul>
 </section>
 <section id="sec-simple" class="doc-section">
 <h3>💡 C. Simple Explanation (Analogi Petugas Loket dan Kendala Paspor)</h3>
 <p>Bayangkan Anda mengajukan visa di kantor kedutaan:</p>
 <ol>
-<li><strong>Mati Lampu / Telepon Putus (Layer 1: Transport Error)</strong>: Anda tidak bisa berbicara dengan petugas karena sambungan putus. Solusinya: Tunggu listrik menyala (<strong>Periksa Koneksi Internet</strong>).</li>
-<li><strong>Loket Tutup (Layer 2: HTTP 500 / 404)</strong>: Server sedang dalam perbaikan (<em>Maintenance</em>).</li>
-<li><strong>Paspor Kadaluwarsa (Layer 3: Business Code <code>10006</code>)</strong>: Petugas menolak berkas karena masa berlaku identitas habis. Anda disuruh memperpanjang paspor terlebih dahulu (<strong>Re-Login</strong>).</li>
-<li><strong>Foto Paspor Miring (Layer 3: Business Code Khusus)</strong>: Petugas memberitahu spesifik apa yang salah: <em>"Foto KTP buram, silakan ambil ulang."</em></li>
-<li><strong>Papan Peringatan (Layer 5: UI Presentation)</strong>:</li>
-</ol>
+<li><strong>Mati Lampu / Telepon Putus (Layer 1: Transport Error)</strong>: Anda tidak bisa berbicara dengan petugas karena sambungan putus. Solusinya: Tunggu listrik menyala (<strong>Periksa Koneksi Internet</strong>).
+</li>
+<li><strong>Loket Tutup (Layer 2: HTTP 500 / 404)</strong>: Server sedang dalam perbaikan (<em>Maintenance</em>).
+</li>
+<li><strong>Paspor Kadaluwarsa (Layer 3: Business Code <code>10006</code>)</strong>: Petugas menolak berkas karena masa berlaku identitas habis. Anda disuruh memperpanjang paspor terlebih dahulu (<strong>Re-Login</strong>).
+</li>
+<li><strong>Foto Paspor Miring (Layer 3: Business Code Khusus)</strong>: Petugas memberitahu spesifik apa yang salah: <em>"Foto KTP buram, silakan ambil ulang."</em>
+</li>
+<li><strong>Papan Peringatan (Layer 5: UI Presentation)</strong>:
 <ul>
-<li>Kesalahan kecil disampaikan lisan (<strong>Toast pop-up</strong>).</li>
-<li>Kesalahan fatal menghentikan antrean (<strong>Dialog Modal Peringatan</strong>).</li>
-<li>Seluruh sistem offline menampilkan papan tanda tutup (<strong>Empty View</strong>).</li>
-</ul>
+<li>Kesalahan kecil disampaikan lisan (<strong>Toast pop-up</strong>).
+</li>
+<li>Kesalahan fatal menghentikan antrean (<strong>Dialog Modal Peringatan</strong>).
+</li>
+<li>Seluruh sistem offline menampilkan papan tanda tutup (<strong>Empty View</strong>).
+</li></ul>
+</li></ol>
 </section>
 <section id="sec-actual" class="doc-section">
 <h3>💻 D. Actual Implementation: 5 Tingkat Hierarki Error</h3>
@@ -195,8 +205,8 @@ graph TD
 </div>
 <p>Alamofire mengevaluasi kode HTTP server:</p>
 <ul>
-<li>Jika server mengembalikan <code>502 Bad Gateway</code> atau <code>500 Internal Server Error</code>, request gagal di level Alamofire dan langsung dilempar ke closure <code>failure(req)</code> tanpa mencoba mem-parse JSON.</li>
-</ul>
+<li>Jika server mengembalikan <code>502 Bad Gateway</code> atau <code>500 Internal Server Error</code>, request gagal di level Alamofire dan langsung dilempar ke closure <code>failure(req)</code> tanpa mencoba mem-parse JSON.
+</li></ul>
 <div id="sub-3-layer-3-envelope-status-kode-bisnis" class="doc-subsection">
 <h4>3. Layer 3: Envelope Status Kode Bisnis</h4>
 </div>
@@ -229,54 +239,64 @@ graph TD
 </div>
 <p>Presenter dan ViewController memilih cara penyajian berdasarkan keparahan error:</p>
 <ol>
-<li><strong>Umpan Balik Cepat (Toast)</strong>:</li>
-</ol>
+<li><strong>Umpan Balik Cepat (Toast)</strong>:
 <ul>
-<li>Digunakan untuk validasi form atau kegagalan minor (misal: <em>"Nomor ponsel tidak boleh kurang dari 10 digit"</em>).</li>
-<li>Pemanggilan: <code>self.view.showToast(withMessage: errorMsg)</code>.</li>
-</ul>
-<ol>
-<li><strong>State Layar Kosong (Empty View)</strong>:</li>
-</ol>
+<li>Digunakan untuk validasi form atau kegagalan minor (misal: <em>"Nomor ponsel tidak boleh kurang dari 10 digit"</em>).
+</li>
+<li>Pemanggilan: <code>self.view.showToast(withMessage: errorMsg)</code>.
+</li></ul>
+</li>
+<li><strong>State Layar Kosong (Empty View)</strong>:
 <ul>
-<li>Digunakan ketika request daftar (seperti riwayat pinjaman atau daftar kupon) gagal akibat koneksi internet mati.</li>
-<li>Menggunakan <code>IDEmptyView</code> dengan callback tombol coba lagi:</li>
-</ul>
+<li>Digunakan ketika request daftar (seperti riwayat pinjaman atau daftar kupon) gagal akibat koneksi internet mati.
+</li>
+<li>Menggunakan <code>IDEmptyView</code> dengan callback tombol coba lagi:
+</li></ul>
+</li></ol>
 <pre><code class="language-swift">     id_clickEmptyBlock = { [weak self] in
          self?.presenter.fetchData()
      }</code></pre>
-<ol>
-<li><strong>Peringatan Pemblokiran (Modal Alert / Pop-up)</strong>:</li>
-</ol>
+<ol start="3">
+<li><strong>Peringatan Pemblokiran (Modal Alert / Pop-up)</strong>:
 <ul>
-<li>Digunakan untuk penolakan pengajuan kredit, limit pinjaman kadaluwarsa, atau pembaruan aplikasi wajib.</li>
-<li>Menggunakan <code>IDNPopupController</code> yang mewajibkan pengguna menekan tombol aksi untuk menutupnya.</li>
-</ul>
+<li>Digunakan untuk penolakan pengajuan kredit, limit pinjaman kadaluwarsa, atau pembaruan aplikasi wajib.
+</li>
+<li>Menggunakan <code>IDNPopupController</code> yang mewajibkan pengguna menekan tombol aksi untuk menutupnya.
+</li></ul>
+</li></ol>
 </section>
 <section id="sec-walkthrough" class="doc-section">
 <h3>🪜 E. Step-by-Step Walkthrough: Alur Penanganan Error Koneksi Mati</h3>
 <ol>
-<li>User menekan tombol "Refresh Tagihan".</li>
-<li>iPhone sedang dalam mode pesawat (<em>Airplane Mode</em>).</li>
-<li>Alamofire mengembalikan error <code>NSURLErrorNotConnectedToInternet</code> (-1009).</li>
-<li><code>IDNetworkRequest</code> membungkus error tersebut ke dalam <code>req.error</code>.</li>
-<li>Service memanggil blok <code>failure(req)</code>.</li>
-<li>Presenter mengekstrak pesan: <code>req.error.cz_errorMessage</code>.</li>
-<li>Karena fungsi <code>cz_isConnectionError()</code> mengembalikan <code>true</code>, pesan otomatis disesuaikan menjadi:</li>
-</ol>
+<li>User menekan tombol "Refresh Tagihan".
+</li>
+<li>iPhone sedang dalam mode pesawat (<em>Airplane Mode</em>).
+</li>
+<li>Alamofire mengembalikan error <code>NSURLErrorNotConnectedToInternet</code> (-1009).
+</li>
+<li><code>IDNetworkRequest</code> membungkus error tersebut ke dalam <code>req.error</code>.
+</li>
+<li>Service memanggil blok <code>failure(req)</code>.
+</li>
+<li>Presenter mengekstrak pesan: <code>req.error.cz_errorMessage</code>.
+</li>
+<li>Karena fungsi <code>cz_isConnectionError()</code> mengembalikan <code>true</code>, pesan otomatis disesuaikan menjadi:
+</li></ol>
 <p><em>"Tampaknya ada masalah dengan jaringan, periksa pengaturan koneksi Anda."</em></p>
-<ol>
-<li>Presenter memerintahkan ViewController: <code>view.showNetworkEmptyView()</code>.</li>
-<li>Layar menampilkan ilustrasi kabel terputus dengan tombol <em>"Coba Lagi"</em>.</li>
-</ol>
+<ol start="8">
+<li>Presenter memerintahkan ViewController: <code>view.showNetworkEmptyView()</code>.
+</li>
+<li>Layar menampilkan ilustrasi kabel terputus dengan tombol <em>"Coba Lagi"</em>.
+</li></ol>
 </section>
 <section id="sec-why" class="doc-section">
 <h3>⚖️ F. Why It Matters: Standarisasi Pesan Error Pengguna</h3>
 <p>Senior engineer harus memastikan bahwa <strong>detail teknis internal tidak pernah bocor ke pengguna akhir</strong>:</p>
 <ul>
-<li>Jangan pernah menampilkan teks mentah seperti: <code>&quot;JSONSerializationException: Unexpected token at row 4&quot;</code> atau <code>&quot;Alamofire.AFError 4&quot;</code>.</li>
-<li>Seluruh pesan error wajib dipetakan ke bahasa yang dapat dipahami nasabah awam, memberikan instruksi jelas tentang apa yang harus dilakukan (contoh: <em>"Periksa sinyal ponsel Anda"</em> atau <em>"Pastikan ruangan cukup terang saat mengambil foto"</em>).</li>
-</ul>
+<li>Jangan pernah menampilkan teks mentah seperti: <code>&quot;JSONSerializationException: Unexpected token at row 4&quot;</code> atau <code>&quot;Alamofire.AFError 4&quot;</code>.
+</li>
+<li>Seluruh pesan error wajib dipetakan ke bahasa yang dapat dipahami nasabah awam, memberikan instruksi jelas tentang apa yang harus dilakukan (contoh: <em>"Periksa sinyal ponsel Anda"</em> atau <em>"Pastikan ruangan cukup terang saat mengambil foto"</em>).
+</li></ul>
 </section>
 <section id="sec-example" class="doc-section">
 <h3>🔬 G. Practical Example: Guard Nil pada Callback Presenter</h3>
@@ -298,19 +318,26 @@ service.fetchLoanDetail(bizId: bizId) { [weak self] model in
 <section id="sec-mistakes" class="doc-section">
 <h3>⚠️ H. Common Mistakes & Debugging</h3>
 <ul>
-<li><strong>Crash Karena Force-Unwrap pada <code>req.error!</code></strong>:</li>
-<li>Di blok <code>failure</code>, jangan berasumsi <code>req.error</code> pasti memiliki nilai; selalu gunakan optional binding <code>req.error?.cz_errorMessage ?? &quot;Kendala sistem&quot;</code>.</li>
-<li><strong>Menelan Error Tanpa Memberi Tahu UI</strong>:</li>
-<li>Menulis blok <code>failure: { req in }</code> kosong (<em>silent failure</em>) membuat loading indicator terus berputar selamanya di layar (<em>infinite spinner</em>). Selalu sembunyikan loading HUD di blok failure!</li>
-</ul>
+<li><strong>Crash Karena Force-Unwrap pada <code>req.error!</code></strong>:
+<ul>
+<li>Di blok <code>failure</code>, jangan berasumsi <code>req.error</code> pasti memiliki nilai; selalu gunakan optional binding <code>req.error?.cz_errorMessage ?? &quot;Kendala sistem&quot;</code>.
+</li></ul>
+</li>
+<li><strong>Menelan Error Tanpa Memberi Tahu UI</strong>:
+<ul>
+<li>Menulis blok <code>failure: { req in }</code> kosong (<em>silent failure</em>) membuat loading indicator terus berputar selamanya di layar (<em>infinite spinner</em>). Selalu sembunyikan loading HUD di blok failure!
+</li></ul>
+</li></ul>
 </section>
 <section id="sec-check" class="doc-section">
 <h3>🧠 I. Knowledge Check</h3>
 <ol>
-<li>Apa fungsi dari method <code>NSError.cz_isConnectionError()</code>?</li>
-<li>Apa yang membedakan error Layer 2 (HTTP) dengan error Layer 3 (Business Envelope)?</li>
-<li>Kapan seorang developer sebaiknya menggunakan <code>IDEmptyView</code> dibanding <code>showToast</code>?</li>
-</ol>
+<li>Apa fungsi dari method <code>NSError.cz_isConnectionError()</code>?
+</li>
+<li>Apa yang membedakan error Layer 2 (HTTP) dengan error Layer 3 (Business Envelope)?
+</li>
+<li>Kapan seorang developer sebaiknya menggunakan <code>IDEmptyView</code> dibanding <code>showToast</code>?
+</li></ol>
 </section>
 <section id="sec-completion" class="doc-section">
 <h3>🏁 J. Completion Criteria</h3>

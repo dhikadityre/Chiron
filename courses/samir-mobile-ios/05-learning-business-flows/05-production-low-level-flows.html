@@ -104,11 +104,14 @@
 <section id="sec-daftar-alur-produksi" class="doc-section">
 <h3>📌 DAFTAR ALUR PRODUKSI</h3>
 <ol>
-<li><a href="#alur-1-pipeline-request-jaringan-penandatanganan-kriptografis--envelope-handling" target="_blank" rel="noopener noreferrer">Alur 1: Pipeline Request Jaringan, Penandatanganan Kriptografis, &amp; Envelope Handling</a></li>
-<li><a href="#alur-2-konfirmasi-pinjaman-perhitungan-biaya-realtime-rx--pengajuan-order-formal" target="_blank" rel="noopener noreferrer">Alur 2: Konfirmasi Pinjaman, Perhitungan Biaya Realtime (Rx), &amp; Pengajuan Order Formal</a></li>
-<li><a href="#alur-3-navigasi-antar-modul--resolusi-deep-link-ter-decouple-czrouter" target="_blank" rel="noopener noreferrer">Alur 3: Navigasi Antar-Modul &amp; Resolusi Deep-Link Ter-decouple (CZRouter)</a></li>
-<li><a href="#alur-4-transisi-layar-native-ke-persistent-flutter-container--shared-session-bridge" target="_blank" rel="noopener noreferrer">Alur 4: Transisi Layar Native ke Persistent Flutter Container &amp; Shared Session Bridge</a></li>
-</ol>
+<li><a href="#alur-1-pipeline-request-jaringan-penandatanganan-kriptografis--envelope-handling" target="_blank" rel="noopener noreferrer">Alur 1: Pipeline Request Jaringan, Penandatanganan Kriptografis, &amp; Envelope Handling</a>
+</li>
+<li><a href="#alur-2-konfirmasi-pinjaman-perhitungan-biaya-realtime-rx--pengajuan-order-formal" target="_blank" rel="noopener noreferrer">Alur 2: Konfirmasi Pinjaman, Perhitungan Biaya Realtime (Rx), &amp; Pengajuan Order Formal</a>
+</li>
+<li><a href="#alur-3-navigasi-antar-modul--resolusi-deep-link-ter-decouple-czrouter" target="_blank" rel="noopener noreferrer">Alur 3: Navigasi Antar-Modul &amp; Resolusi Deep-Link Ter-decouple (CZRouter)</a>
+</li>
+<li><a href="#alur-4-transisi-layar-native-ke-persistent-flutter-container--shared-session-bridge" target="_blank" rel="noopener noreferrer">Alur 4: Transisi Layar Native ke Persistent Flutter Container &amp; Shared Session Bridge</a>
+</li></ol>
 </section>
 <section id="sec-alur-1-pipeline-request-jaringan-penandatanganan-kriptografis-envelope-handling" class="doc-section">
 <h3>📌 Alur 1: Pipeline Request Jaringan, Penandatanganan Kriptografis, & Envelope Handling</h3>
@@ -116,38 +119,53 @@
 <h4>1. THE "WHY" (Arsitektur & Motivasi)</h4>
 </div>
 <ul>
-<li><strong>Pola Arsitektur</strong>: Layered Client-Adapter Architecture (<code>BusinessService</code> -> <code>IDNetworkRequest</code> Facade -> <code>IDNetworkSignatureHandler</code> -> <code>LibNetSignGenerator</code> C-Wrapper -> <code>CZNetworkCenter</code> -> <code>CZAlamofireBridge</code> -> <code>Alamofire.Session</code>).</li>
-<li><strong>Alasan Pemisahan & Decoupling</strong>:</li>
-</ul>
+<li><strong>Pola Arsitektur</strong>: Layered Client-Adapter Architecture (<code>BusinessService</code> -> <code>IDNetworkRequest</code> Facade -> <code>IDNetworkSignatureHandler</code> -> <code>LibNetSignGenerator</code> C-Wrapper -> <code>CZNetworkCenter</code> -> <code>CZAlamofireBridge</code> -> <code>Alamofire.Session</code>).
+</li>
+<li><strong>Alasan Pemisahan & Decoupling</strong>:
 <ol>
-<li><strong>Security Binary Isolation</strong>: Logika pembuatan hash <code>sign</code> diisolasi di binary vendor framework tertutup (<code>LibNetSignGenerator.framework</code>), melindungi algoritma penandatanganan dari reverse engineering terhadap Swift source code.</li>
-<li><strong>Transport Layer Decoupling</strong>: Wrapper <code>CZAlamofireBridge</code> mengisolasi pihak ketiga (<code>Alamofire</code>). Jika dependensi networking diperbarui atau diganti, seluruh modul bisnis tingkat atas tidak terdampak.</li>
-<li><strong>Centralized Envelope & Session Interception</strong>: Pembongkaran format <code>{code, msg, result}</code> serta penanganan sesi kadaluarsa (<code>code == &quot;10006&quot;</code>) dilakukan secara terpusat di <code>IDNetworkRequest</code>, mengeliminasi boilerplate kode error handling di ratusan controller.</li>
-</ol>
+<li><strong>Security Binary Isolation</strong>: Logika pembuatan hash <code>sign</code> diisolasi di binary vendor framework tertutup (<code>LibNetSignGenerator.framework</code>), melindungi algoritma penandatanganan dari reverse engineering terhadap Swift source code.
+</li>
+<li><strong>Transport Layer Decoupling</strong>: Wrapper <code>CZAlamofireBridge</code> mengisolasi pihak ketiga (<code>Alamofire</code>). Jika dependensi networking diperbarui atau diganti, seluruh modul bisnis tingkat atas tidak terdampak.
+</li>
+<li><strong>Centralized Envelope & Session Interception</strong>: Pembongkaran format <code>{code, msg, result}</code> serta penanganan sesi kadaluarsa (<code>code == &quot;10006&quot;</code>) dilakukan secara terpusat di <code>IDNetworkRequest</code>, mengeliminasi boilerplate kode error handling di ratusan controller.
+</li></ol>
+</li></ul>
 <div id="sub-2-the-trigger-chain-reaction-alur-eksekusi" class="doc-subsection">
 <h4>2. THE TRIGGER & CHAIN REACTION (Alur Eksekusi)</h4>
 </div>
 <ul>
-<li><strong>Entry Point</strong>: Pemanggilan service bisnis oleh presenter atau viewModel, contoh: <code>IDLoanService.requestProductDetail(...)</code> yang mengeksekusi <code>IDNetworkRequest.id_startPOSTRequest(...)</code>.</li>
-<li><strong>Execution Chain</strong>:</li>
-</ul>
+<li><strong>Entry Point</strong>: Pemanggilan service bisnis oleh presenter atau viewModel, contoh: <code>IDLoanService.requestProductDetail(...)</code> yang mengeksekusi <code>IDNetworkRequest.id_startPOSTRequest(...)</code>.
+</li>
+<li><strong>Execution Chain</strong>:
 <ol>
-<li>Service memanggil <code>IDNetworkRequest.id_startPOSTRequest(requestUrl, params: params, success: ..., failure: ...)</code>.</li>
-<li>Properti getter <code>cz_requestArguments</code> di <code>IDNetworkRequest</code> membaca parameter bisnis dan memanggil <code>ApiParamsHelper.getDefaultParams()</code> untuk menyuntikkan 18 parameter umum (account_id, mid, timestamp, uuid, version, dll.).</li>
-<li><code>IDNetworkRequest</code> memeriksa varian request: memanggil <code>IDNetworkSignatureHandler.getNormalRequestParamsWithSign(allRequestProperties)</code>.</li>
-<li><code>IDNetworkSignatureHandler</code> mengurutkan dictionary, mengubahnya menjadi JSON string, lalu memanggil method ObjC <code>NetworkRequestSignWrapper.ns_encrypt(forNormal: jsonStr, staticKey: IDNetworkManager.shared.static_key)</code>.</li>
-<li>Framework <code>LibNetSignGenerator</code> menghitung hash dan mengembalikan nilai string ke field <code>&quot;sign&quot;</code> pada dictionary request.</li>
-<li><code>IDNetworkRequest.startWithCompletionBlock</code> memanggil <code>CZBaseRequest.start()</code>, yang mendaftarkan instance request ke <code>CZNetworkCenter.sharedInstance().addRequest(self)</code>.</li>
-<li><code>CZNetworkCenter</code> membangun <code>URLRequest</code> dan mendelegasikannya ke <code>CZAlamofireBridge.startDataRequest(urlRequest: ..., sessionConfiguration: ..., validatesDomainName: ...)</code>.</li>
-<li><code>CZAlamofireBridge</code> mengeksekusi request HTTP melalui instance <code>Alamofire.Session</code>.</li>
-<li>Saat HTTP response diterima, <code>handleRequestResult</code> di <code>CZNetworkCenter</code> meneruskan data mentah ke <code>IDNetworkRequest.p_handleSuccessRequest</code>.</li>
-<li><code>IDNetworkRequest</code> memvalidasi envelope JSON:</li>
-</ol>
+<li>Service memanggil <code>IDNetworkRequest.id_startPOSTRequest(requestUrl, params: params, success: ..., failure: ...)</code>.
+</li>
+<li>Properti getter <code>cz_requestArguments</code> di <code>IDNetworkRequest</code> membaca parameter bisnis dan memanggil <code>ApiParamsHelper.getDefaultParams()</code> untuk menyuntikkan 18 parameter umum (account_id, mid, timestamp, uuid, version, dll.).
+</li>
+<li><code>IDNetworkRequest</code> memeriksa varian request: memanggil <code>IDNetworkSignatureHandler.getNormalRequestParamsWithSign(allRequestProperties)</code>.
+</li>
+<li><code>IDNetworkSignatureHandler</code> mengurutkan dictionary, mengubahnya menjadi JSON string, lalu memanggil method ObjC <code>NetworkRequestSignWrapper.ns_encrypt(forNormal: jsonStr, staticKey: IDNetworkManager.shared.static_key)</code>.
+</li>
+<li>Framework <code>LibNetSignGenerator</code> menghitung hash dan mengembalikan nilai string ke field <code>&quot;sign&quot;</code> pada dictionary request.
+</li>
+<li><code>IDNetworkRequest.startWithCompletionBlock</code> memanggil <code>CZBaseRequest.start()</code>, yang mendaftarkan instance request ke <code>CZNetworkCenter.sharedInstance().addRequest(self)</code>.
+</li>
+<li><code>CZNetworkCenter</code> membangun <code>URLRequest</code> dan mendelegasikannya ke <code>CZAlamofireBridge.startDataRequest(urlRequest: ..., sessionConfiguration: ..., validatesDomainName: ...)</code>.
+</li>
+<li><code>CZAlamofireBridge</code> mengeksekusi request HTTP melalui instance <code>Alamofire.Session</code>.
+</li>
+<li>Saat HTTP response diterima, <code>handleRequestResult</code> di <code>CZNetworkCenter</code> meneruskan data mentah ke <code>IDNetworkRequest.p_handleSuccessRequest</code>.
+</li>
+<li><code>IDNetworkRequest</code> memvalidasi envelope JSON:
 <ul>
-<li>Jika <code>code == &quot;200&quot;</code>, panggil callback <code>success(self)</code> dengan <code>responseObject</code> berisi objek <code>result</code>.</li>
-<li>Jika <code>code == &quot;10006&quot;</code>, eksekusi <code>reloginWhenRequestError()</code> (reset sesi & arahkan ke layar login).</li>
-<li>Jika kode error lain, bangun instance <code>NSError</code> dengan <code>cz_errorMessage</code> dan panggil <code>failure(self)</code>.</li>
-</ul>
+<li>Jika <code>code == &quot;200&quot;</code>, panggil callback <code>success(self)</code> dengan <code>responseObject</code> berisi objek <code>result</code>.
+</li>
+<li>Jika <code>code == &quot;10006&quot;</code>, eksekusi <code>reloginWhenRequestError()</code> (reset sesi & arahkan ke layar login).
+</li>
+<li>Jika kode error lain, bangun instance <code>NSError</code> dengan <code>cz_errorMessage</code> dan panggil <code>failure(self)</code>.
+</li></ul>
+</li></ol>
+</li></ul>
 <div id="sub-3-mermaid-sequence-diagram" class="doc-subsection">
 <h4>3. MERMAID SEQUENCE DIAGRAM</h4>
 </div>
@@ -203,37 +221,54 @@ sequenceDiagram
 <h4>1. THE "WHY" (Arsitektur & Motivasi)</h4>
 </div>
 <ul>
-<li><strong>Pola Arsitektur</strong>: Clean MVVM-Rx (Model-View-ViewModel with Reactive Extensions & Unidirectional Data Flow).</li>
-<li><strong>Alasan Pemisahan & Decoupling</strong>:</li>
-</ul>
+<li><strong>Pola Arsitektur</strong>: Clean MVVM-Rx (Model-View-ViewModel with Reactive Extensions & Unidirectional Data Flow).
+</li>
+<li><strong>Alasan Pemisahan & Decoupling</strong>:
 <ol>
-<li><strong>Strict Input/Output Decoupling</strong>: View Controller hanya berinteraksi melalui interface <code>LoanConfirmViewModelInput</code> (<code>PublishSubject</code>) dan <code>LoanConfirmViewModelOutput</code> (<code>Driver</code>), mencegah View memanipulasi state internal secara langsung.</li>
-<li><strong>Thread Safety via Driver</strong>: Output UI dijamin terikat pada <code>MainScheduler</code> dan tidak dapat mengemisikan <code>error</code> stream termination, mencegah kegagalan rendering dan crash antarmuka pada formulir finansial kritis.</li>
-<li><strong>Decoupled Pricing Engine</strong>: Logika perhitungan bunga, diskon kupon, dan breakdown biaya pinjaman diisolasi di <code>LoanConfirmServiceProtocol</code>, memungkinkan unit testing kalkulasi kredit tanpa instansiasi view.</li>
-</ol>
+<li><strong>Strict Input/Output Decoupling</strong>: View Controller hanya berinteraksi melalui interface <code>LoanConfirmViewModelInput</code> (<code>PublishSubject</code>) dan <code>LoanConfirmViewModelOutput</code> (<code>Driver</code>), mencegah View memanipulasi state internal secara langsung.
+</li>
+<li><strong>Thread Safety via Driver</strong>: Output UI dijamin terikat pada <code>MainScheduler</code> dan tidak dapat mengemisikan <code>error</code> stream termination, mencegah kegagalan rendering dan crash antarmuka pada formulir finansial kritis.
+</li>
+<li><strong>Decoupled Pricing Engine</strong>: Logika perhitungan bunga, diskon kupon, dan breakdown biaya pinjaman diisolasi di <code>LoanConfirmServiceProtocol</code>, memungkinkan unit testing kalkulasi kredit tanpa instansiasi view.
+</li></ol>
+</li></ul>
 <div id="sub-2-the-trigger-chain-reaction-alur-eksekusi" class="doc-subsection">
 <h4>2. THE TRIGGER & CHAIN REACTION (Alur Eksekusi)</h4>
 </div>
 <ul>
-<li><strong>Entry Point</strong>: Pengguna membuka halaman konfirmasi pinjaman, memilih kartu tenor produk, memilih voucher kupon, mencentang persetujuan akad, atau menekan tombol konfirmasi pencairan.</li>
-<li><strong>Execution Chain</strong>:</li>
-</ul>
+<li><strong>Entry Point</strong>: Pengguna membuka halaman konfirmasi pinjaman, memilih kartu tenor produk, memilih voucher kupon, mencentang persetujuan akad, atau menekan tombol konfirmasi pencairan.
+</li>
+<li><strong>Execution Chain</strong>:
 <ol>
-<li>Saat layar dimuat, <code>LoanConfirmViewController_Rx.viewDidLoad</code> memanggil <code>input.refreshTrial.onNext(())</code>.</li>
-<li><code>LoanConfirmViewModel</code> mengaktifkan <code>_isLoading.accept(true)</code> dan memanggil <code>service.requestLoanConfirmDetails(bizId: ...)</code>.</li>
-<li><code>LoanConfirmService</code> memanggil <code>IDNetworkRequest</code> ke endpoint <code>product/confirm/details</code>; data kuota dan kupon yang diterima disimpan ke <code>_loanData</code> (<code>BehaviorRelay</code>).</li>
-<li>Driver <code>output.loanData</code> mengemisikan nilai ke View, memperbarui tampilan limit pinjaman dan daftar kartu produk cicilan.</li>
-<li>Pengguna mengetuk pilihan tenor pinjaman -> View memicu <code>input.selectProduct.onNext((product, index))</code>.</li>
-<li>ViewModel memperbarui <code>_selectedProduct.accept(product)</code> dan memicu perhitungan ulang simulasi biaya melalui <code>service.requestTrialCalculation(...)</code>.</li>
-<li>Service memanggil endpoint <code>product/confirm/calculateTrial</code>; hasil kalkulasi baru diterima dan dipancarkan ke <code>_trialResult</code>.</li>
-<li>Driver <code>output.trialResult</code> dan <code>output.receivedAmount</code> memperbarui label "Jumlah Diterima Bersih", biaya admin, dan bunga cicilan secara realtime.</li>
-<li>Pengguna mencentang persetujuan akad & regulasi SEOJK -> View memicu <code>input.toggleTermsAgreement.onNext(true)</code>.</li>
-<li>ViewModel mengevaluasi kombinasi state via <code>Observable.combineLatest</code>; Driver <code>output.canSubmit</code> mengemisikan <code>true</code> langsung ke <code>btnConfirm.rx.isEnabled</code>.</li>
-<li>Pengguna menekan tombol "Ajukan Pinjaman" -> View memicu <code>input.submitCycleLoanOrder.onNext((lat, lng, usageKey, path))</code>.</li>
-<li>ViewModel memvalidasi koordinat GPS, mengaktifkan <code>_isLoading.accept(true)</code>, dan memanggil <code>service.submitCycleFormalOrder(...)</code>.</li>
-<li>Service mengirim request bertanda tangan ke <code>product/confirm/cycleOrder</code>; respon <code>IDCycleFormalOrderModel</code> dengan status <code>&quot;AUDITING&quot;</code> dipancarkan ke <code>_cycleLoanOrderSuccess</code>.</li>
-<li>Driver <code>output.cycleLoanOrderSuccess</code> diterima <code>LoanConfirmViewController_Rx</code>, menampilkan dialog status sukses dan merutekan navigasi kembali ke Tab Beranda (<code>Tab 0</code>).</li>
-</ol>
+<li>Saat layar dimuat, <code>LoanConfirmViewController_Rx.viewDidLoad</code> memanggil <code>input.refreshTrial.onNext(())</code>.
+</li>
+<li><code>LoanConfirmViewModel</code> mengaktifkan <code>_isLoading.accept(true)</code> dan memanggil <code>service.requestLoanConfirmDetails(bizId: ...)</code>.
+</li>
+<li><code>LoanConfirmService</code> memanggil <code>IDNetworkRequest</code> ke endpoint <code>product/confirm/details</code>; data kuota dan kupon yang diterima disimpan ke <code>_loanData</code> (<code>BehaviorRelay</code>).
+</li>
+<li>Driver <code>output.loanData</code> mengemisikan nilai ke View, memperbarui tampilan limit pinjaman dan daftar kartu produk cicilan.
+</li>
+<li>Pengguna mengetuk pilihan tenor pinjaman -> View memicu <code>input.selectProduct.onNext((product, index))</code>.
+</li>
+<li>ViewModel memperbarui <code>_selectedProduct.accept(product)</code> dan memicu perhitungan ulang simulasi biaya melalui <code>service.requestTrialCalculation(...)</code>.
+</li>
+<li>Service memanggil endpoint <code>product/confirm/calculateTrial</code>; hasil kalkulasi baru diterima dan dipancarkan ke <code>_trialResult</code>.
+</li>
+<li>Driver <code>output.trialResult</code> dan <code>output.receivedAmount</code> memperbarui label "Jumlah Diterima Bersih", biaya admin, dan bunga cicilan secara realtime.
+</li>
+<li>Pengguna mencentang persetujuan akad & regulasi SEOJK -> View memicu <code>input.toggleTermsAgreement.onNext(true)</code>.
+</li>
+<li>ViewModel mengevaluasi kombinasi state via <code>Observable.combineLatest</code>; Driver <code>output.canSubmit</code> mengemisikan <code>true</code> langsung ke <code>btnConfirm.rx.isEnabled</code>.
+</li>
+<li>Pengguna menekan tombol "Ajukan Pinjaman" -> View memicu <code>input.submitCycleLoanOrder.onNext((lat, lng, usageKey, path))</code>.
+</li>
+<li>ViewModel memvalidasi koordinat GPS, mengaktifkan <code>_isLoading.accept(true)</code>, dan memanggil <code>service.submitCycleFormalOrder(...)</code>.
+</li>
+<li>Service mengirim request bertanda tangan ke <code>product/confirm/cycleOrder</code>; respon <code>IDCycleFormalOrderModel</code> dengan status <code>&quot;AUDITING&quot;</code> dipancarkan ke <code>_cycleLoanOrderSuccess</code>.
+</li>
+<li>Driver <code>output.cycleLoanOrderSuccess</code> diterima <code>LoanConfirmViewController_Rx</code>, menampilkan dialog status sukses dan merutekan navigasi kembali ke Tab Beranda (<code>Tab 0</code>).
+</li></ol>
+</li></ul>
 <div id="sub-3-mermaid-sequence-diagram" class="doc-subsection">
 <h4>3. MERMAID SEQUENCE DIAGRAM</h4>
 </div>
@@ -303,34 +338,48 @@ sequenceDiagram
 <h4>1. THE "WHY" (Arsitektur & Motivasi)</h4>
 </div>
 <ul>
-<li><strong>Pola Arsitektur</strong>: Mediator / URL-Based Dynamic Router Pattern (<code>CZSwiftRouterLib</code>).</li>
-<li><strong>Alasan Pemisahan & Decoupling</strong>:</li>
-</ul>
+<li><strong>Pola Arsitektur</strong>: Mediator / URL-Based Dynamic Router Pattern (<code>CZSwiftRouterLib</code>).
+</li>
+<li><strong>Alasan Pemisahan & Decoupling</strong>:
 <ol>
-<li><strong>Zero Compile-Time Coupling</strong>: Modul fitur (seperti <code>SamirMainModule</code> dan <code>SamirAuthModule</code>) tidak saling meng-import file satu sama lain, memangkas dependency cycle dan mempercepat proses build.</li>
-<li><strong>Universal Navigation Pipeline</strong>: Format URL tunggal (<code>samir://&lt;module&gt;/&lt;path&gt;?params</code>) melayani deep link push notification, banner WebView H5, dan perpindahan layar kode internal secara identik.</li>
-<li><strong>Decentralized Route Handlers</strong>: Setiap modul mendaftarkan domain jalurnya sendiri (<code>IDSamirAuthModuleRouterHandler</code>) ke tabel rute saat bootstrap modul tanpa memodifikasi registry sentral.</li>
-</ol>
+<li><strong>Zero Compile-Time Coupling</strong>: Modul fitur (seperti <code>SamirMainModule</code> dan <code>SamirAuthModule</code>) tidak saling meng-import file satu sama lain, memangkas dependency cycle dan mempercepat proses build.
+</li>
+<li><strong>Universal Navigation Pipeline</strong>: Format URL tunggal (<code>samir://&lt;module&gt;/&lt;path&gt;?params</code>) melayani deep link push notification, banner WebView H5, dan perpindahan layar kode internal secara identik.
+</li>
+<li><strong>Decentralized Route Handlers</strong>: Setiap modul mendaftarkan domain jalurnya sendiri (<code>IDSamirAuthModuleRouterHandler</code>) ke tabel rute saat bootstrap modul tanpa memodifikasi registry sentral.
+</li></ol>
+</li></ul>
 <div id="sub-2-the-trigger-chain-reaction-alur-eksekusi" class="doc-subsection">
 <h4>2. THE TRIGGER & CHAIN REACTION (Alur Eksekusi)</h4>
 </div>
 <ul>
-<li><strong>Entry Point</strong>: Pemanggilan in-app via <code>IDRouterManager.open(routerUrl)</code> atau penanganan deep link sistem di <code>AppDelegate.application(_:open:options:)</code>.</li>
-<li><strong>Execution Chain</strong>:</li>
-</ul>
+<li><strong>Entry Point</strong>: Pemanggilan in-app via <code>IDRouterManager.open(routerUrl)</code> atau penanganan deep link sistem di <code>AppDelegate.application(_:open:options:)</code>.
+</li>
+<li><strong>Execution Chain</strong>:
 <ol>
-<li>Pemanggil mengeksekusi URL navigasi target: <code>IDRouterManager.open(&quot;samir://auth/identity?step=1&amp;status=RENEW&quot;)</code>.</li>
-<li><code>IDRouterManager</code> meneruskan URL string ke <code>CZRouterCenter.sharedInstance().open(url: routerUrl)</code>.</li>
-<li><code>CZRouterCenter</code> mengurai string menjadi objek <code>CZRouterRequest</code>: skema <code>samir://</code>, path <code>/auth/identity</code>, dan query parameters <code>[&quot;step&quot;: &quot;1&quot;, &quot;status&quot;: &quot;RENEW&quot;]</code>.</li>
-<li><code>CZRouterCenter</code> mencocokkan pola regex path pada <code>CZRouterTable</code>.</li>
-<li>Regex pencocokan mengidentifikasi bahwa prefix <code>/auth/*</code> terdaftar untuk kelas <code>IDSamirAuthModuleRouterHandler</code>.</li>
-<li><code>CZRouterCenter</code> mengeksekusi method <code>handle(_ router: CZRouterProtocol?)</code> pada instance <code>IDSamirAuthModuleRouterHandler</code>.</li>
-<li>Handler mengevaluasi switch-case pada properti <code>router?.path</code>, menemukan kecocokan dengan <code>IDSamirAuthRouterPath.Identity</code>.</li>
-<li>Handler membaca dictionary <code>router?.params</code> dan menginstansiasi view controller target: <code>let vc = IDNewOCRViewController(); vc.step = step; vc.status = status</code>.</li>
-<li>Handler memanggil helper navigasi <code>openVC(vc)</code>.</li>
-<li>Helper menelusuri hierarchy view controller aktif via <code>UIViewController.cz.topViewController()?.navigationController</code>.</li>
-<li>Navigation controller aktif mengeksekusi <code>pushViewController(vc, animated: true)</code> dan transisi layar selesai tanpa caller mengetahui kelas target konkret.</li>
-</ol>
+<li>Pemanggil mengeksekusi URL navigasi target: <code>IDRouterManager.open(&quot;samir://auth/identity?step=1&amp;status=RENEW&quot;)</code>.
+</li>
+<li><code>IDRouterManager</code> meneruskan URL string ke <code>CZRouterCenter.sharedInstance().open(url: routerUrl)</code>.
+</li>
+<li><code>CZRouterCenter</code> mengurai string menjadi objek <code>CZRouterRequest</code>: skema <code>samir://</code>, path <code>/auth/identity</code>, dan query parameters <code>[&quot;step&quot;: &quot;1&quot;, &quot;status&quot;: &quot;RENEW&quot;]</code>.
+</li>
+<li><code>CZRouterCenter</code> mencocokkan pola regex path pada <code>CZRouterTable</code>.
+</li>
+<li>Regex pencocokan mengidentifikasi bahwa prefix <code>/auth/*</code> terdaftar untuk kelas <code>IDSamirAuthModuleRouterHandler</code>.
+</li>
+<li><code>CZRouterCenter</code> mengeksekusi method <code>handle(_ router: CZRouterProtocol?)</code> pada instance <code>IDSamirAuthModuleRouterHandler</code>.
+</li>
+<li>Handler mengevaluasi switch-case pada properti <code>router?.path</code>, menemukan kecocokan dengan <code>IDSamirAuthRouterPath.Identity</code>.
+</li>
+<li>Handler membaca dictionary <code>router?.params</code> dan menginstansiasi view controller target: <code>let vc = IDNewOCRViewController(); vc.step = step; vc.status = status</code>.
+</li>
+<li>Handler memanggil helper navigasi <code>openVC(vc)</code>.
+</li>
+<li>Helper menelusuri hierarchy view controller aktif via <code>UIViewController.cz.topViewController()?.navigationController</code>.
+</li>
+<li>Navigation controller aktif mengeksekusi <code>pushViewController(vc, animated: true)</code> dan transisi layar selesai tanpa caller mengetahui kelas target konkret.
+</li></ol>
+</li></ul>
 <div id="sub-3-mermaid-sequence-diagram" class="doc-subsection">
 <h4>3. MERMAID SEQUENCE DIAGRAM</h4>
 </div>
@@ -374,33 +423,46 @@ sequenceDiagram
 <h4>1. THE "WHY" (Arsitektur & Motivasi)</h4>
 </div>
 <ul>
-<li><strong>Pola Arsitektur</strong>: Prewarmed Single-Engine Persistent Host Bridge (<code>FlutterEngineManager</code> + <code>FlutterNativeChannel</code> + MethodChannel RPC).</li>
-<li><strong>Alasan Pemisahan & Decoupling</strong>:</li>
-</ul>
+<li><strong>Pola Arsitektur</strong>: Prewarmed Single-Engine Persistent Host Bridge (<code>FlutterEngineManager</code> + <code>FlutterNativeChannel</code> + MethodChannel RPC).
+</li>
+<li><strong>Alasan Pemisahan & Decoupling</strong>:
 <ol>
-<li><strong>Memory & CPU Conservation</strong>: Alih-alih membuat <code>FlutterViewController</code> baru di setiap navigasi (~30-40MB RAM per engine), aplikasi menggunakan 1 single prewarmed engine yang aktif sejak booting.</li>
-<li><strong>Zero-Flicker Screen Switch</strong>: Container Flutter (<code>flutterContainerView</code>) disisipkan tepat di bawah TabBar native. Transisi antara Tab Native (Tab 0: Home) dan Tab Flutter (Tab 1: Repay, Tab 2: Mine) hanya melakukan toggle <code>isHidden</code> setelah Flutter mengirimkan sinyal <code>frameReady</code>, mengeliminasi efek layar berkedip putih/hitam.</li>
-<li><strong>Single Source of Truth (SSOT) Session</strong>: Flutter tidak mengelola token otentikasi atau hashing tanda tangan sendiri; seluruh parameter perangkat dan <code>staticKey</code> dipinjam dari Native via method channel <code>getNativeRequestParams</code>.</li>
-</ol>
+<li><strong>Memory & CPU Conservation</strong>: Alih-alih membuat <code>FlutterViewController</code> baru di setiap navigasi (~30-40MB RAM per engine), aplikasi menggunakan 1 single prewarmed engine yang aktif sejak booting.
+</li>
+<li><strong>Zero-Flicker Screen Switch</strong>: Container Flutter (<code>flutterContainerView</code>) disisipkan tepat di bawah TabBar native. Transisi antara Tab Native (Tab 0: Home) dan Tab Flutter (Tab 1: Repay, Tab 2: Mine) hanya melakukan toggle <code>isHidden</code> setelah Flutter mengirimkan sinyal <code>frameReady</code>, mengeliminasi efek layar berkedip putih/hitam.
+</li>
+<li><strong>Single Source of Truth (SSOT) Session</strong>: Flutter tidak mengelola token otentikasi atau hashing tanda tangan sendiri; seluruh parameter perangkat dan <code>staticKey</code> dipinjam dari Native via method channel <code>getNativeRequestParams</code>.
+</li></ol>
+</li></ul>
 <div id="sub-2-the-trigger-chain-reaction-alur-eksekusi" class="doc-subsection">
 <h4>2. THE TRIGGER & CHAIN REACTION (Alur Eksekusi)</h4>
 </div>
 <ul>
-<li><strong>Entry Point</strong>: Pengguna mengetuk Tab 1 ("Tagihan" / <code>IDRepayViewController</code>) atau Tab 2 ("Akun Saya" / <code>IDMineViewController</code>) pada native bottom TabBar.</li>
-<li><strong>Execution Chain</strong>:</li>
-</ul>
+<li><strong>Entry Point</strong>: Pengguna mengetuk Tab 1 ("Tagihan" / <code>IDRepayViewController</code>) atau Tab 2 ("Akun Saya" / <code>IDMineViewController</code>) pada native bottom TabBar.
+</li>
+<li><strong>Execution Chain</strong>:
 <ol>
-<li><code>IDMainTabBarController</code> menangkap delegasi pemilihan tab dan memanggil <code>flutterRootRoute(for: selectedViewController)</code>.</li>
-<li>Jika tab yang dipilih adalah <code>IDRepayViewController</code>, fungsi mengembalikan rute <code>&quot;/repay&quot;</code>.</li>
-<li><code>IDMainTabBarController</code> mengeksekusi <code>switchFlutterRoot(to: &quot;/repay&quot;)</code> dan membuat penomoran unik <code>requestID</code>.</li>
-<li>Method memanggil <code>FlutterEngineManager.shared.resume()</code>, lalu memicu <code>FlutterNativeChannel.shared.showFlutterRoute(&quot;/repay&quot;, presentation: &quot;root&quot;, requestID: requestID)</code>.</li>
-<li><code>FlutterNativeChannel</code> mengeksekusi <code>methodChannel?.invokeMethod(&quot;showFlutterRoute&quot;, arguments: [&quot;route&quot;: &quot;/repay&quot;, &quot;presentation&quot;: &quot;root&quot;, &quot;requestId&quot;: requestID])</code> melalui channel <code>samir_native_channel</code>.</li>
-<li>Modul Flutter menerima RPC di <code>FlutterRootPage</code>, mengubah indeks aktif pada widget <code>IndexedStack</code>, dan me-render frame tampilan Repay.</li>
-<li>Flutter mengembalikan callback payload <code>{&quot;frameReady&quot;: true, &quot;requestId&quot;: requestID}</code> ke native iOS.</li>
-<li>Native completion block memverifikasi bahwa <code>requestID</code> cocok dengan tab aktif saat ini, lalu mengubah status <code>flutterContainerView.isHidden = false</code> dan memanggil <code>FlutterEngineManager.shared.setPersistentRootVisible(true)</code>.</li>
-<li>Ketika halaman Flutter membutuhkan komunikasi HTTP: Modul Dart mengirimkan RPC <code>getNativeRequestParams</code> melalui <code>samir_native_channel</code>.</li>
-<li><code>FlutterNativeChannel.getNativeRequestParams</code> di iOS memanggil <code>ApiParamsHelper.getDefaultParams()</code> dan menyisipkan <code>staticKey = IDNetworkManager.shared.static_key</code>, lalu mengembalikan dictionary parameter lengkap ke Flutter.</li>
-</ol>
+<li><code>IDMainTabBarController</code> menangkap delegasi pemilihan tab dan memanggil <code>flutterRootRoute(for: selectedViewController)</code>.
+</li>
+<li>Jika tab yang dipilih adalah <code>IDRepayViewController</code>, fungsi mengembalikan rute <code>&quot;/repay&quot;</code>.
+</li>
+<li><code>IDMainTabBarController</code> mengeksekusi <code>switchFlutterRoot(to: &quot;/repay&quot;)</code> dan membuat penomoran unik <code>requestID</code>.
+</li>
+<li>Method memanggil <code>FlutterEngineManager.shared.resume()</code>, lalu memicu <code>FlutterNativeChannel.shared.showFlutterRoute(&quot;/repay&quot;, presentation: &quot;root&quot;, requestID: requestID)</code>.
+</li>
+<li><code>FlutterNativeChannel</code> mengeksekusi <code>methodChannel?.invokeMethod(&quot;showFlutterRoute&quot;, arguments: [&quot;route&quot;: &quot;/repay&quot;, &quot;presentation&quot;: &quot;root&quot;, &quot;requestId&quot;: requestID])</code> melalui channel <code>samir_native_channel</code>.
+</li>
+<li>Modul Flutter menerima RPC di <code>FlutterRootPage</code>, mengubah indeks aktif pada widget <code>IndexedStack</code>, dan me-render frame tampilan Repay.
+</li>
+<li>Flutter mengembalikan callback payload <code>{&quot;frameReady&quot;: true, &quot;requestId&quot;: requestID}</code> ke native iOS.
+</li>
+<li>Native completion block memverifikasi bahwa <code>requestID</code> cocok dengan tab aktif saat ini, lalu mengubah status <code>flutterContainerView.isHidden = false</code> dan memanggil <code>FlutterEngineManager.shared.setPersistentRootVisible(true)</code>.
+</li>
+<li>Ketika halaman Flutter membutuhkan komunikasi HTTP: Modul Dart mengirimkan RPC <code>getNativeRequestParams</code> melalui <code>samir_native_channel</code>.
+</li>
+<li><code>FlutterNativeChannel.getNativeRequestParams</code> di iOS memanggil <code>ApiParamsHelper.getDefaultParams()</code> dan menyisipkan <code>staticKey = IDNetworkManager.shared.static_key</code>, lalu mengembalikan dictionary parameter lengkap ke Flutter.
+</li></ol>
+</li></ul>
 <div id="sub-3-mermaid-sequence-diagram" class="doc-subsection">
 <h4>3. MERMAID SEQUENCE DIAGRAM</h4>
 </div>

@@ -97,28 +97,36 @@
 <h3>🎯 A. Learning Objective</h3>
 <p>Setelah mempelajari dokumen ini, pembaca akan mampu:</p>
 <ol>
-<li>Mengidentifikasi seluruh pustaka open-source, vendor framework closed-source, dan SDK analitik yang digunakan dalam aplikasi.</li>
-<li>Memahami 4 Xcode Shared Schemes (<code>TEST</code>, <code>PROD-TEST</code>, <code>PROD</code>, <code>IDSamirEnvironment</code>) dan perbedaan perilakunya saat kompilasi.</li>
-<li>Memahami 4 fase build script otomatis di Xcode: generasi <code>environment_preprocess.h</code>, kompilasi Flutter, generasi aset <code>R.swift</code>, dan arsitektur thinning <code>LibNetSignGenerator.framework</code>.</li>
-</ol>
+<li>Mengidentifikasi seluruh pustaka open-source, vendor framework closed-source, dan SDK analitik yang digunakan dalam aplikasi.
+</li>
+<li>Memahami 4 Xcode Shared Schemes (<code>TEST</code>, <code>PROD-TEST</code>, <code>PROD</code>, <code>IDSamirEnvironment</code>) dan perbedaan perilakunya saat kompilasi.
+</li>
+<li>Memahami 4 fase build script otomatis di Xcode: generasi <code>environment_preprocess.h</code>, kompilasi Flutter, generasi aset <code>R.swift</code>, dan arsitektur thinning <code>LibNetSignGenerator.framework</code>.
+</li></ol>
 </section>
 <section id="sec-prereq" class="doc-section">
 <h3>📋 B. Prerequisites</h3>
 <ul>
-<li>Sudah membaca <a href="01-application-overview.html">01-application-overview.md</a> dan <a href="02-repository-structure.html">02-repository-structure.md</a>.</li>
-<li>Mengetahui cara kerja CocoaPods (<code>pod install</code>) dan pengaturan Target di Xcode.</li>
-</ul>
+<li>Sudah membaca <a href="01-application-overview.html">01-application-overview.md</a> dan <a href="02-repository-structure.html">02-repository-structure.md</a>.
+</li>
+<li>Mengetahui cara kerja CocoaPods (<code>pod install</code>) dan pengaturan Target di Xcode.
+</li></ul>
 </section>
 <section id="sec-simple" class="doc-section">
 <h3>💡 C. Simple Explanation (Analogi Pabrik Perakitan)</h3>
 <p>Bayangkan aplikasi SAMIR seperti mobil yang dirakit di pabrik:</p>
 <ul>
-<li><strong>Komponen Standar</strong>: Baut, mur, dan ban diambil dari pasar umum (pustaka open-source seperti SnapKit, Alamofire, Kingfisher).</li>
-<li><strong>Komponen Khusus / Berlisensi</strong>: Mesin keamanan anti-maling dan modul sensor wajah dipasok oleh vendor khusus dengan teknologi tertutup (TrustDecision, Advance AI, LibNetSignGenerator).</li>
-<li><strong>Lini Perakitan (Xcode Scheme)</strong>:</li>
-<li>Lini Uji Coba (<code>TEST</code>): Mobil dipasangi alat diagnosis tambahan (tombol DebugUI), mesin tidak dibatasi, dan speedometer menampilkan angka debug.</li>
-<li>Lini Produksi (<code>PROD</code>): Alat diagnosis dicopot, nama pabrik dirapikan, performa dioptimalkan secara maksimal, dan siap dijual ke publik (App Store).</li>
-</ul>
+<li><strong>Komponen Standar</strong>: Baut, mur, dan ban diambil dari pasar umum (pustaka open-source seperti SnapKit, Alamofire, Kingfisher).
+</li>
+<li><strong>Komponen Khusus / Berlisensi</strong>: Mesin keamanan anti-maling dan modul sensor wajah dipasok oleh vendor khusus dengan teknologi tertutup (TrustDecision, Advance AI, LibNetSignGenerator).
+</li>
+<li><strong>Lini Perakitan (Xcode Scheme)</strong>:
+<ul>
+<li>Lini Uji Coba (<code>TEST</code>): Mobil dipasangi alat diagnosis tambahan (tombol DebugUI), mesin tidak dibatasi, dan speedometer menampilkan angka debug.
+</li>
+<li>Lini Produksi (<code>PROD</code>): Alat diagnosis dicopot, nama pabrik dirapikan, performa dioptimalkan secara maksimal, dan siap dijual ke publik (App Store).
+</li></ul>
+</li></ul>
 </section>
 <section id="sec-actual" class="doc-section">
 <h3>💻 D. Actual Implementation (Daftar Stack & Konfigurasi)</h3>
@@ -126,12 +134,18 @@
 <h4>1. Technology Stack & Dependency Catalog</h4>
 </div>
 <p>Berdasarkan file <a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/learn/iOS-Arch/ios/Podfile" target="_blank" rel="noopener noreferrer">🦊 ios/Podfile <span class="branch-tag">learn/iOS-Arch</span> ↗</a>:</p>
-<h5 id="item-a-foundation-ui-engineering-open-source">A. Foundation & UI Engineering (Open-Source)</h5>
+<div class="doc-subpoint-block" id="item-a-foundation-ui-engineering-open-source">
+<h5>A. Foundation & UI Engineering (Open-Source)</h5>
 <div class="table-container"><table class="data-table"><thead><tr><th>Pustaka</th><th>Versi</th><th>Peran Teknis di Proyek</th></tr></thead><tbody><tr><td><strong>SnapKit</strong></td><td><code>5.6.0</code></td><td>DSL Auto Layout deklaratif programatik di seluruh ViewController native.</td></tr><tr><td><strong>Kingfisher</strong></td><td><code>8.6.2</code></td><td>Pemuatan dan caching gambar web asynchronous.</td></tr><tr><td><strong>KakaJSON</strong></td><td><code>~&gt; 1.1.2</code></td><td>Serialisasi dan deserialisasi JSON ke struct/model (<code>kj.model</code>).</td></tr><tr><td><strong>IQKeyboardManagerSwift</strong></td><td><code>7.0.2</code></td><td>Pengelolaan otomatis scroll view agar form input tidak tertutup keyboard.</td></tr><tr><td><strong>R.swift</strong></td><td>Latest</td><td>Kode otomatis strongly-typed untuk aset gambar (<code>R.image.*</code>) dan string.</td></tr><tr><td><strong>MJRefresh</strong></td><td>Latest</td><td>Komponen pull-to-refresh pada tabel dan scroll view.</td></tr><tr><td><strong>lottie-ios</strong></td><td>Latest</td><td>Rendering animasi vektor JSON untuk loading indicator (<code>IDAnimationJson</code>).</td></tr><tr><td><strong>MarqueeLabel</strong></td><td>Latest</td><td>Label teks berjalan untuk pengumuman atau ticker running text.</td></tr><tr><td><strong>FSPagerView</strong></td><td>Latest</td><td>Komponen banner berputar (carousel paging) di halaman Beranda.</td></tr><tr><td><strong>MBProgressHUD</strong></td><td><code>1.2.0</code></td><td>Dialog popup loading (HUD) dan toast pesan singkat.</td></tr><tr><td><strong>Then</strong></td><td><code>2.7.0</code></td><td>Syntactic sugar untuk inisialisasi properti objek secara clean.</td></tr><tr><td><strong>CryptoSwift</strong></td><td><code>1.4.2</code></td><td>Utilitas hashing & kriptografi legacy di beberapa modul pendukung.</td></tr><tr><td><strong>RxSwift & RxCocoa</strong></td><td><code>6.9.0</code></td><td>Pemrograman reaktif fungsional (<strong>khusus digunakan di <code>LoanConfirmModule</code></strong>).</td></tr></tbody></table></div>
-<h5 id="item-b-networking-core-foundation">B. Networking & Core Foundation</h5>
+</div>
+<div class="doc-subpoint-block" id="item-b-networking-core-foundation">
+<h5>B. Networking & Core Foundation</h5>
 <div class="table-container"><table class="data-table"><thead><tr><th>Pustaka</th><th>Versi</th><th>Peran Teknis di Proyek</th></tr></thead><tbody><tr><td><strong>Alamofire</strong></td><td>Latest</td><td>Core HTTP network networking client yang di-wrap oleh <code>CZAlamofireBridge</code>.</td></tr><tr><td><strong>KeychainAccess</strong></td><td><code>4.2.2</code></td><td>Pembungkus aman iOS Keychain Services API untuk token sesi.</td></tr><tr><td><strong>XCGLogger</strong></td><td><code>7.0.1</code></td><td>Pustaka logging multi-level (Verbose, Debug, Info, Error).</td></tr></tbody></table></div>
-<h5 id="item-c-vendor-sdks-anti-fraud-closed-source-binary">C. Vendor SDKs & Anti-Fraud (Closed-Source / Binary)</h5>
+</div>
+<div class="doc-subpoint-block" id="item-c-vendor-sdks-anti-fraud-closed-source-binary">
+<h5>C. Vendor SDKs & Anti-Fraud (Closed-Source / Binary)</h5>
 <div class="table-container"><table class="data-table"><thead><tr><th>SDK / Framework</th><th>Versi / Sumber</th><th>Peran Kritis</th></tr></thead><tbody><tr><td><strong>LibNetSignGenerator</strong></td><td>Binary <code>.framework</code> lokal di <code>SamirNetworkModule/Frameworks/</code></td><td><strong>Kritis Keamanan</strong>: Menghasilkan tanda tangan request HTTP (<code>sign</code>) menggunakan <code>staticKey</code>.</td></tr><tr><td><strong>TrustDecisionPro</strong></td><td><code>4.3.1.3</code></td><td>Risk profiling & fraud scoring (<code>blackBox</code>).</td></tr><tr><td><strong>TrustDecisionLiveness-Lite</strong></td><td><code>2.5.1</code></td><td>SDK verifikasi gerakan wajah liveness.</td></tr><tr><td><strong>AAILiveness & AAINetwork</strong></td><td>Remote tarball Aliyun OSS (V3.0.7)</td><td>Deteksi liveness & perbandingan wajah Advance AI KYC.</td></tr><tr><td><strong>AppsFlyerFramework</strong></td><td><code>6.17.7</code></td><td>Atribusi pemasaran, instalasi, dan resolusi deep link.</td></tr><tr><td><strong>FirebaseAnalytics & Messaging</strong></td><td><code>11.14.0</code></td><td>Analitik perilaku user dan push notification token (FCM).</td></tr><tr><td><strong>FBSDKCoreKit</strong></td><td><code>18.0.0</code></td><td>SDK Facebook untuk atribusi event & iklan.</td></tr><tr><td><strong>TikTokBusinessSDK</strong></td><td>Latest</td><td>SDK atribusi event instalasi dari iklan TikTok.</td></tr><tr><td><strong>tingyunApp</strong></td><td><code>2.17.7</code></td><td>Application Performance Monitoring (APM) & crash reporting.</td></tr></tbody></table></div>
+</div>
 <div id="sub-2-xcode-schemes-build-configurations" class="doc-subsection">
 <h4>2. Xcode Schemes & Build Configurations</h4>
 </div>
@@ -160,76 +174,100 @@ graph TD
   </div>
 </div>
 <ol>
-<li><strong><code>TEST</code></strong>:</li>
-</ol>
+<li><strong><code>TEST</code></strong>:
 <ul>
-<li>Digunakan untuk development harian dan QA testing.</li>
-<li>Mendefinisikan compiler macro <code>TEST=1</code>.</li>
-<li>Mengaktifkan menu mengambang <code>DebugUI</code> di layar untuk inspeksi payload jaringan.</li>
-<li>Menghubungkan aplikasi ke server staging: <code>https://domain-loansapp-test.samir.co.id/</code>.</li>
-<li>Optimasi kompilasi dimatikan (<code>-Onone</code>) untuk kecepatan build dan kenyamanan debugging LLDB.</li>
-</ul>
-<ol>
-<li><strong><code>PROD-TEST</code></strong>:</li>
-</ol>
+<li>Digunakan untuk development harian dan QA testing.
+</li>
+<li>Mendefinisikan compiler macro <code>TEST=1</code>.
+</li>
+<li>Mengaktifkan menu mengambang <code>DebugUI</code> di layar untuk inspeksi payload jaringan.
+</li>
+<li>Menghubungkan aplikasi ke server staging: <code>https://domain-loansapp-test.samir.co.id/</code>.
+</li>
+<li>Optimasi kompilasi dimatikan (<code>-Onone</code>) untuk kecepatan build dan kenyamanan debugging LLDB.
+</li></ul>
+</li>
+<li><strong><code>PROD-TEST</code></strong>:
 <ul>
-<li>Skema perantara untuk menguji integrasi backend produksi dengan sertifikat staging.</li>
-</ul>
-<ol>
-<li><strong><code>PROD</code></strong>:</li>
-</ol>
+<li>Skema perantara untuk menguji integrasi backend produksi dengan sertifikat staging.
+</li></ul>
+</li>
+<li><strong><code>PROD</code></strong>:
 <ul>
-<li>Skema resmi untuk distribusi App Store dan TestFlight.</li>
-<li>Menghubungkan ke backend produksi: <code>https://domain-loansapp.samir.co.id/</code>.</li>
-<li>Seluruh fasilitas debug dan logging dimatikan demi keamanan.</li>
-</ul>
-<ol>
-<li><strong><code>IDSamirEnvironment</code></strong>:</li>
-</ol>
+<li>Skema resmi untuk distribusi App Store dan TestFlight.
+</li>
+<li>Menghubungkan ke backend produksi: <code>https://domain-loansapp.samir.co.id/</code>.
+</li>
+<li>Seluruh fasilitas debug dan logging dimatikan demi keamanan.
+</li></ul>
+</li>
+<li><strong><code>IDSamirEnvironment</code></strong>:
 <ul>
-<li>Target agregat Xcode (<code>PBXAggregateTarget</code>) yang bertugas mengeksekusi skrip <code>app_environment.sh</code>.</li>
-<li><strong>Fungsi Utama</strong>: Memungkinkan developer atau CI pipeline menghasilkan/memperbarui file <code>environment_preprocess.h</code> secara independen tanpa harus melakukan kompilasi penuh pada seluruh biner aplikasi iOS.</li>
-<li><strong>Cara Membuat Target Serupa di Project Baru</strong>:</li>
-</ul>
+<li>Target agregat Xcode (<code>PBXAggregateTarget</code>) yang bertugas mengeksekusi skrip <code>app_environment.sh</code>.
+</li>
+<li><strong>Fungsi Utama</strong>: Memungkinkan developer atau CI pipeline menghasilkan/memperbarui file <code>environment_preprocess.h</code> secara independen tanpa harus melakukan kompilasi penuh pada seluruh biner aplikasi iOS.
+</li>
+<li><strong>Cara Membuat Target Serupa di Project Baru</strong>:
 <ol>
-<li>Buka Xcode project -> Pilih file Project di Project Navigator paling atas.</li>
-<li>Pada daftar <strong>Targets</strong>, klik tombol <strong><code>+</code></strong> di bagian bawah.</li>
-<li>Pada modal template, scroll ke kategori <strong>"Cross-platform"</strong> (atau "Other") lalu pilih template <strong>"Aggregate"</strong>. Beri nama (misal: <code>IDSamirEnvironment</code>).</li>
-<li>Pilih target agregat yang baru dibuat -> buka tab <strong>"Build Phases"</strong>.</li>
-<li>Klik tombol <code>+</code> -> pilih <strong>"New Run Script Phase"</strong>.</li>
-<li>Tuliskan skrip eksekusi shell yang diinginkan, contoh:</li>
-</ol>
+<li>Buka Xcode project -> Pilih file Project di Project Navigator paling atas.
+</li>
+<li>Pada daftar <strong>Targets</strong>, klik tombol <strong><code>+</code></strong> di bagian bawah.
+</li>
+<li>Pada modal template, scroll ke kategori <strong>"Cross-platform"</strong> (atau "Other") lalu pilih template <strong>"Aggregate"</strong>. Beri nama (misal: <code>IDSamirEnvironment</code>).
+</li>
+<li>Pilih target agregat yang baru dibuat -> buka tab <strong>"Build Phases"</strong>.
+</li>
+<li>Klik tombol <code>+</code> -> pilih <strong>"New Run Script Phase"</strong>.
+</li>
+<li>Tuliskan skrip eksekusi shell yang diinginkan, contoh:
+</li></ol>
+</li></ul>
+</li></ol>
 <pre><code class="language-bash">        sh &quot;${PROJECT_DIR}/${PROJECT_NAME}/Application/Configuration/Environment/app_environment.sh&quot;</code></pre>
-<ol>
-<li>Hubungkan dependensi: Pada target aplikasi utama (<code>IDSamirLoan</code>), buka tab <strong>"Build Phases"</strong> -> bagian <strong>"Dependencies"</strong> -> klik <code>+</code> dan tambahkan target agregat <code>IDSamirEnvironment</code>. Dengan ini, skrip selalu dijalankan sebelum target utama dikompilasi.</li>
-</ol>
+<ol start="7">
+<li>Hubungkan dependensi: Pada target aplikasi utama (<code>IDSamirLoan</code>), buka tab <strong>"Build Phases"</strong> -> bagian <strong>"Dependencies"</strong> -> klik <code>+</code> dan tambahkan target agregat <code>IDSamirEnvironment</code>. Dengan ini, skrip selalu dijalankan sebelum target utama dikompilasi.
+</li></ol>
 <div id="sub-3-build-phases-custom-shell-scripts" class="doc-subsection">
 <h4>3. Build Phases & Custom Shell Scripts</h4>
 </div>
 <p>Proyek Xcode <code>IDSamirLoan</code> mengeksekusi 4 skrip otomatis saat proses kompilasi berlangsung:</p>
-<h5 id="item-fase-1-pra-proses-environment-app-environmentsh">Fase 1: Pra-proses Environment (<code>app_environment.sh</code>)</h5>
+<div class="doc-subpoint-block" id="item-fase-1-pra-proses-environment-app-environmentsh">
+<h5>Fase 1: Pra-proses Environment (<code>app_environment.sh</code>)</h5>
 <ul>
-<li><strong>Lokasi file</strong>: <a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/learn/iOS-Arch/ios/IDSamirLoan/Application/Configuration/Environment/app_environment.sh" target="_blank" rel="noopener noreferrer">🦊 ios/IDSamirLoan/Application/Configuration/Environment/app_environment.sh <span class="branch-tag">learn/iOS-Arch</span> ↗</a></li>
-<li><strong>Fungsi</strong>: Menghitung jumlah commit git (<code>git rev-list HEAD | wc -l</code>), mengambil tanggal saat ini, dan menghasilkan file header <a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/learn/iOS-Arch/ios/IDSamirLoan/Application/environment_preprocess.h" target="_blank" rel="noopener noreferrer">🦊 ios/IDSamirLoan/Application/environment_preprocess.h <span class="branch-tag">learn/iOS-Arch</span> ↗</a>.</li>
-<li><strong>Hasil</strong>: Jika mode <code>TEST</code>, nama aplikasi diubah dinamis menjadi <code>Samir &lt;tanggal_hari_ini&gt;</code> sehingga tester dapat membedakan build hari ini dengan build kemarin.</li>
-</ul>
-<h5 id="item-fase-2-flutter-tools-build-xcode-backendsh">Fase 2: Flutter Tools Build (<code>xcode_backend.sh</code>)</h5>
+<li><strong>Lokasi file</strong>: <a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/learn/iOS-Arch/ios/IDSamirLoan/Application/Configuration/Environment/app_environment.sh" target="_blank" rel="noopener noreferrer">🦊 ios/IDSamirLoan/Application/Configuration/Environment/app_environment.sh <span class="branch-tag">learn/iOS-Arch</span> ↗</a>
+</li>
+<li><strong>Fungsi</strong>: Menghitung jumlah commit git (<code>git rev-list HEAD | wc -l</code>), mengambil tanggal saat ini, dan menghasilkan file header <a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/learn/iOS-Arch/ios/IDSamirLoan/Application/environment_preprocess.h" target="_blank" rel="noopener noreferrer">🦊 ios/IDSamirLoan/Application/environment_preprocess.h <span class="branch-tag">learn/iOS-Arch</span> ↗</a>.
+</li>
+<li><strong>Hasil</strong>: Jika mode <code>TEST</code>, nama aplikasi diubah dinamis menjadi <code>Samir &lt;tanggal_hari_ini&gt;</code> sehingga tester dapat membedakan build hari ini dengan build kemarin.
+</li></ul>
+</div>
+<div class="doc-subpoint-block" id="item-fase-2-flutter-tools-build-xcode-backendsh">
+<h5>Fase 2: Flutter Tools Build (<code>xcode_backend.sh</code>)</h5>
 <ul>
-<li><strong>Definisi di PBX</strong>: <code>project.pbxproj:L1104</code></li>
-<li><strong>Fungsi</strong>: Mengekspor environment Flutter dari <code>../flutter/.ios/Flutter/flutter_export_environment.sh</code> dan mengompilasi kode Dart ke dalam biner framework native iOS.</li>
-</ul>
-<h5 id="item-fase-3-rswift-generation">Fase 3: R.swift Generation</h5>
+<li><strong>Definisi di PBX</strong>: <code>project.pbxproj:L1104</code>
+</li>
+<li><strong>Fungsi</strong>: Mengekspor environment Flutter dari <code>../flutter/.ios/Flutter/flutter_export_environment.sh</code> dan mengompilasi kode Dart ke dalam biner framework native iOS.
+</li></ul>
+</div>
+<div class="doc-subpoint-block" id="item-fase-3-rswift-generation">
+<h5>Fase 3: R.swift Generation</h5>
 <ul>
-<li><strong>Definisi di PBX</strong>: <code>project.pbxproj:L1141</code></li>
-<li><strong>Perintah</strong>: <code>&quot;$PODS_ROOT/R.swift/rswift&quot; generate &quot;$SRCROOT/IDSamirLoan/R.generated.swift&quot;</code></li>
-<li><strong>Fungsi</strong>: Membaca folder <code>Assets.xcassets</code> dan memperbarui file <code>R.generated.swift</code> agar semua gambar dapat diakses secara type-safe (<code>R.image.icon_name()</code>).</li>
-</ul>
-<h5 id="item-fase-4-arsitektur-thinning-libnetsigngenerator-lipo--extract">Fase 4: Arsitektur Thinning LibNetSignGenerator (<code>lipo -extract</code>)</h5>
+<li><strong>Definisi di PBX</strong>: <code>project.pbxproj:L1141</code>
+</li>
+<li><strong>Perintah</strong>: <code>&quot;$PODS_ROOT/R.swift/rswift&quot; generate &quot;$SRCROOT/IDSamirLoan/R.generated.swift&quot;</code>
+</li>
+<li><strong>Fungsi</strong>: Membaca folder <code>Assets.xcassets</code> dan memperbarui file <code>R.generated.swift</code> agar semua gambar dapat diakses secara type-safe (<code>R.image.icon_name()</code>).
+</li></ul>
+</div>
+<div class="doc-subpoint-block" id="item-fase-4-arsitektur-thinning-libnetsigngenerator-lipo--extract">
+<h5>Fase 4: Arsitektur Thinning LibNetSignGenerator (<code>lipo -extract</code>)</h5>
 <ul>
-<li><strong>Definisi di PBX</strong>: <code>project.pbxproj:L1153</code></li>
-<li><strong>Fungsi</strong>: Memeriksa framework vendor <code>LibNetSignGenerator.framework</code> di dalam build directory (<code>TARGET_BUILD_DIR</code>), mengekstrak hanya arsitektur yang cocok dengan target kompilasi (<code>$ARCHS</code>), dan menggabungkan kembali (lipo) agar ukuran biner tetap ramping dan tidak ditolak oleh App Store Connect karena arsitektur yang tidak digunakan.</li>
-<li><strong>Kode Skrip PBX Aktual</strong>:</li>
-</ul>
+<li><strong>Definisi di PBX</strong>: <code>project.pbxproj:L1153</code>
+</li>
+<li><strong>Fungsi</strong>: Memeriksa framework vendor <code>LibNetSignGenerator.framework</code> di dalam build directory (<code>TARGET_BUILD_DIR</code>), mengekstrak hanya arsitektur yang cocok dengan target kompilasi (<code>$ARCHS</code>), dan menggabungkan kembali (lipo) agar ukuran biner tetap ramping dan tidak ditolak oleh App Store Connect karena arsitektur yang tidak digunakan.
+</li>
+<li><strong>Kode Skrip PBX Aktual</strong>:
+</li></ul>
 <pre><code class="language-bash">  APP_PATH=&quot;${TARGET_BUILD_DIR}/${WRAPPER_NAME}&quot;
 
   # Cari LibNetSignGenerator.framework di dalam bundle aplikasi
@@ -256,43 +294,55 @@ graph TD
       mv &quot;$FRAMEWORK_EXECUTABLE_PATH-merged&quot; &quot;$FRAMEWORK_EXECUTABLE_PATH&quot;
   done</code></pre>
 <ul>
-<li><strong>Alur Eksekusi <code>lipo -extract</code> Langkah-demi-Langkah</strong>:</li>
-</ul>
+<li><strong>Alur Eksekusi <code>lipo -extract</code> Langkah-demi-Langkah</strong>:
 <ol>
-<li><strong>Identifikasi Binary</strong>: Membaca nama biner framework dari <code>Info.plist</code> menggunakan <code>defaults read ... CFBundleExecutable</code>.</li>
-<li><strong>Isolasi Arsitektur Target (<code>lipo -extract</code>)</strong>: Variabel <code>$ARCHS</code> dari Xcode (misal: <code>arm64</code>) diiterasi. Perintah <code>lipo -extract &quot;$ARCH&quot; ...</code> mengambil hanya slice arsitektur tersebut ke file sementara.</li>
-<li><strong>Penyatuan Kembali (<code>lipo -create</code>)</strong>: Menggabungkan kembali irisan yang dibutuhkan (<code>-create</code>) menjadi satu binary biner bersih (<code>-merged</code>).</li>
-<li>*<em>Pembersihan (</em>Thinning Replacement<em>)</em>*: Menghapus binary fat asli yang berukuran besar dan menggantinya dengan binary hasil thinning. Hal ini mencegah App Store menolak build karena arsitektur simulator (<code>x86_64</code>) yang tertinggal di dalam binary dinamis.</li>
-</ol>
+<li><strong>Identifikasi Binary</strong>: Membaca nama biner framework dari <code>Info.plist</code> menggunakan <code>defaults read ... CFBundleExecutable</code>.
+</li>
+<li><strong>Isolasi Arsitektur Target (<code>lipo -extract</code>)</strong>: Variabel <code>$ARCHS</code> dari Xcode (misal: <code>arm64</code>) diiterasi. Perintah <code>lipo -extract &quot;$ARCH&quot; ...</code> mengambil hanya slice arsitektur tersebut ke file sementara.
+</li>
+<li><strong>Penyatuan Kembali (<code>lipo -create</code>)</strong>: Menggabungkan kembali irisan yang dibutuhkan (<code>-create</code>) menjadi satu binary biner bersih (<code>-merged</code>).
+</li>
+<li>*<em>Pembersihan (</em>Thinning Replacement<em>)</em>*: Menghapus binary fat asli yang berukuran besar dan menggantinya dengan binary hasil thinning. Hal ini mencegah App Store menolak build karena arsitektur simulator (<code>x86_64</code>) yang tertinggal di dalam binary dinamis.
+</li></ol>
+</li></ul>
+</div>
 <div id="sub-4-vendor-framework-khusus-libnetsigngeneratorframework" class="doc-subsection">
 <h4>4. Vendor Framework Khusus: <code>LibNetSignGenerator.framework</code></h4>
 </div>
 <ul>
-<li><strong>Fungsi</strong>: Pustaka biner dinamis closed-source (C++/ObjC) yang bertugas menghitung tanda tangan enkripsi (<code>sign</code>) pada setiap request jaringan HTTP (normal request, upload gambar, hingga config request). Tanda tangan ini menggunakan formula hashing yang dikombinasikan dengan <code>staticKey</code> sesi user untuk melindungi API dari request tampering, replay attacks, dan sniffing.</li>
-<li><strong>Header Publik</strong>:</li>
-<li><code>NetworkRequestSignWrapper.h</code>: Menyediakan <code>ns_initialize(appName:)</code>, <code>ns_encryptForNormal(requestJsonString:staticKey:)</code>, <code>ns_encryptWithImage(...)</code>, dan <code>ns_checkSign(...)</code>.</li>
-<li><code>NetworkRequestEventSignWrapper.h</code>: Menyediakan <code>nsEvent_encrypt(...)</code> untuk payload telemetri.</li>
-<li><strong>Cara Setup & Import di Proyek</strong>:</li>
-</ul>
-<ol>
-<li><strong>Penyimpanan Berkas</strong>: File <code>LibNetSignGenerator.framework</code> diletakkan di <code>Application/SamirNetworkModule/Frameworks/</code>.</li>
-<li><strong>Xcode Build Settings</strong>:</li>
-</ol>
+<li><strong>Fungsi</strong>: Pustaka biner dinamis closed-source (C++/ObjC) yang bertugas menghitung tanda tangan enkripsi (<code>sign</code>) pada setiap request jaringan HTTP (normal request, upload gambar, hingga config request). Tanda tangan ini menggunakan formula hashing yang dikombinasikan dengan <code>staticKey</code> sesi user untuk melindungi API dari request tampering, replay attacks, dan sniffing.
+</li>
+<li><strong>Header Publik</strong>:
 <ul>
-<li><code>FRAMEWORK_SEARCH_PATHS</code> diarahkan ke <code>&quot;$(PROJECT_DIR)/Application/SamirNetworkModule/Frameworks&quot;</code>.</li>
-<li>Ditambahkan ke fase <strong>"Link Binary With Libraries"</strong> dan <strong>"Embed Frameworks"</strong> (dengan opsi <code>CodeSignOnCopy</code>).</li>
-</ul>
+<li><code>NetworkRequestSignWrapper.h</code>: Menyediakan <code>ns_initialize(appName:)</code>, <code>ns_encryptForNormal(requestJsonString:staticKey:)</code>, <code>ns_encryptWithImage(...)</code>, dan <code>ns_checkSign(...)</code>.
+</li>
+<li><code>NetworkRequestEventSignWrapper.h</code>: Menyediakan <code>nsEvent_encrypt(...)</code> untuk payload telemetri.
+</li></ul>
+</li>
+<li><strong>Cara Setup & Import di Proyek</strong>:
 <ol>
-<li><strong>Import di Swift / ObjC</strong>:</li>
-</ol>
+<li><strong>Penyimpanan Berkas</strong>: File <code>LibNetSignGenerator.framework</code> diletakkan di <code>Application/SamirNetworkModule/Frameworks/</code>.
+</li>
+<li><strong>Xcode Build Settings</strong>:
 <ul>
-<li>Karena framework memiliki <code>Modules/module.modulemap</code>, kode Swift cukup menuliskan <code>import LibNetSignGenerator</code>.</li>
-<li>Untuk modul ObjC / Bridging Header, disertakan baris <code>#import &lt;LibNetSignGenerator/LibNetSignGenerator.h&gt;</code>.</li>
-</ul>
+<li><code>FRAMEWORK_SEARCH_PATHS</code> diarahkan ke <code>&quot;$(PROJECT_DIR)/Application/SamirNetworkModule/Frameworks&quot;</code>.
+</li>
+<li>Ditambahkan ke fase <strong>"Link Binary With Libraries"</strong> dan <strong>"Embed Frameworks"</strong> (dengan opsi <code>CodeSignOnCopy</code>).
+</li></ul>
+</li>
+<li><strong>Import di Swift / ObjC</strong>:
+<ul>
+<li>Karena framework memiliki <code>Modules/module.modulemap</code>, kode Swift cukup menuliskan <code>import LibNetSignGenerator</code>.
+</li>
+<li>Untuk modul ObjC / Bridging Header, disertakan baris <code>#import &lt;LibNetSignGenerator/LibNetSignGenerator.h&gt;</code>.
+</li></ul>
+</li></ol>
+</li></ul>
 <div id="sub-5-konfigurasi-khusus-podfile-build-library-for-distribution-xcode-16-synchronized-groups" class="doc-subsection">
 <h4>5. Konfigurasi Khusus Podfile (<code>BUILD_LIBRARY_FOR_DISTRIBUTION</code> & <code>Xcode 16 Synchronized Groups</code>)</h4>
 </div>
-<h5 id="item-a-mengapa-kingfisher-disetel-build-library-for-distribution-no">A. Mengapa Kingfisher Disetel <code>BUILD_LIBRARY_FOR_DISTRIBUTION = &#x27;NO&#x27;</code>?</h5>
+<div class="doc-subpoint-block" id="item-a-mengapa-kingfisher-disetel-build-library-for-distribution-no">
+<h5>A. Mengapa Kingfisher Disetel <code>BUILD_LIBRARY_FOR_DISTRIBUTION = &#x27;NO&#x27;</code>?</h5>
 <p>Di baris 91-95 <a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/learn/iOS-Arch/ios/Podfile" target="_blank" rel="noopener noreferrer">🦊 ios/Podfile <span class="branch-tag">learn/iOS-Arch</span> ↗</a>:</p>
 <pre><code class="language-ruby">if target.name == &#x27;Kingfisher&#x27;
   target.build_configurations.each do |config|
@@ -301,70 +351,88 @@ graph TD
 end</code></pre>
 <p><strong>Tujuan dan Alasan</strong>:</p>
 <ol>
-<li><code>BUILD_LIBRARY_FOR_DISTRIBUTION = YES</code> menginstruksikan compiler Swift untuk menghasilkan file interface publik <code>.swiftinterface</code> demi mendukung <em>Swift Module Stability</em> (biner yang dapat digunakan lintas versi compiler Swift).</li>
-<li>Namun, saat compiler mencoba menghasilkan <code>.swiftinterface</code> untuk Kingfisher versi 7/8, Swift compiler mengalami kegagalan kompilasi karena inferensi tipe generik pada pipeline pemrosesan gambar Kingfisher serta adanya atribut <code>@_implementationOnly</code> atau default arguments yang melanggar aturan stabilitas modul Swift.</li>
-<li>Karena Kingfisher dikompilasi langsung dari kode sumber di dalam workspace aplikasi kita (bukan didistribusikan sebagai biner tertutup untuk developer pihak ketiga), stabilitas modul tidak diperlukan.</li>
-<li>Menyetelnya ke <code>&#x27;NO&#x27;</code> mematikan pembuatan <code>.swiftinterface</code>, menyelesaikan error kompilasi Swift compiler secara tuntas, dan mempercepat proses build secara signifikan.</li>
-</ol>
-<h5 id="item-b-pengaturan-xcode-16-synchronized-groups-manual-vs-otomatis">B. Pengaturan Xcode 16 Synchronized Groups: Manual vs Otomatis</h5>
+<li><code>BUILD_LIBRARY_FOR_DISTRIBUTION = YES</code> menginstruksikan compiler Swift untuk menghasilkan file interface publik <code>.swiftinterface</code> demi mendukung <em>Swift Module Stability</em> (biner yang dapat digunakan lintas versi compiler Swift).
+</li>
+<li>Namun, saat compiler mencoba menghasilkan <code>.swiftinterface</code> untuk Kingfisher versi 7/8, Swift compiler mengalami kegagalan kompilasi karena inferensi tipe generik pada pipeline pemrosesan gambar Kingfisher serta adanya atribut <code>@_implementationOnly</code> atau default arguments yang melanggar aturan stabilitas modul Swift.
+</li>
+<li>Karena Kingfisher dikompilasi langsung dari kode sumber di dalam workspace aplikasi kita (bukan didistribusikan sebagai biner tertutup untuk developer pihak ketiga), stabilitas modul tidak diperlukan.
+</li>
+<li>Menyetelnya ke <code>&#x27;NO&#x27;</code> mematikan pembuatan <code>.swiftinterface</code>, menyelesaikan error kompilasi Swift compiler secara tuntas, dan mempercepat proses build secara signifikan.
+</li></ol>
+</div>
+<div class="doc-subpoint-block" id="item-b-pengaturan-xcode-16-synchronized-groups-manual-vs-otomatis">
+<h5>B. Pengaturan Xcode 16 Synchronized Groups: Manual vs Otomatis</h5>
 <p>Di Xcode 16, Apple memperkenalkan format baru <strong>Synchronized Groups</strong> (<code>PBXFileSystemSynchronizedRootGroup</code> dengan <code>objectVersion 73</code> di <code>project.pbxproj</code>):</p>
 <ul>
-<li><strong>Perbedaan Konsep</strong>:</li>
-<li><em>Legacy Groups (<code>PBXGroup</code>)</em>: Virtual folder di Xcode. Menambah/menghapus file di disk macOS tidak otomatis mengubah struktur project di Xcode tanpa diedit di file <code>.pbxproj</code>.</li>
-<li><em>Synchronized Groups</em>: Terikat 1:1 langsung ke direktori filesystem. Setiap file yang dibuat di folder Finder langsung otomatis menjadi anggota target kompilasi Xcode.</li>
-<li><strong>Manual atau Otomatis?</strong>:</li>
-<li>Untuk proyek lama yang di-upgrade, Xcode <strong>TIDAK</strong> mengubahnya secara otomatis menjadi Synchronized Groups. Struktur grup dipertahankan manual sebagai <code>PBXGroup</code> kecuali jika developer sengaja memilih <em>Right Click -> "Convert to Synchronized Group..."</em>.</li>
-<li>Namun, saat project dibuka di Xcode 16, Xcode secara otomatis menaikkan format <code>objectVersion</code> project menjadi <code>73</code> (<code>Xcode 16.0 compatibility</code>).</li>
-<li><strong>Dampak pada CocoaPods & Monkey Patch di <code>Podfile</code></strong>:</li>
-<li>Library <code>xcodeproj</code> ruby bawaan CocoaPods versi lama akan crash dengan error: <code>[Xcodeproj] Unknown object version &#x27;73&#x27;</code> saat menjalankan <code>pod install</code>.</li>
-<li>Oleh karena itu, di baris 2-6 <code>Podfile</code> SAMIR disematkan patch manual:</li>
-</ul>
+<li><strong>Perbedaan Konsep</strong>:
+<ul>
+<li><em>Legacy Groups (<code>PBXGroup</code>)</em>: Virtual folder di Xcode. Menambah/menghapus file di disk macOS tidak otomatis mengubah struktur project di Xcode tanpa diedit di file <code>.pbxproj</code>.
+</li>
+<li><em>Synchronized Groups</em>: Terikat 1:1 langsung ke direktori filesystem. Setiap file yang dibuat di folder Finder langsung otomatis menjadi anggota target kompilasi Xcode.
+</li></ul>
+</li>
+<li><strong>Manual atau Otomatis?</strong>:
+<ul>
+<li>Untuk proyek lama yang di-upgrade, Xcode <strong>TIDAK</strong> mengubahnya secara otomatis menjadi Synchronized Groups. Struktur grup dipertahankan manual sebagai <code>PBXGroup</code> kecuali jika developer sengaja memilih <em>Right Click -> "Convert to Synchronized Group..."</em>.
+</li>
+<li>Namun, saat project dibuka di Xcode 16, Xcode secara otomatis menaikkan format <code>objectVersion</code> project menjadi <code>73</code> (<code>Xcode 16.0 compatibility</code>).
+</li></ul>
+</li>
+<li><strong>Dampak pada CocoaPods & Monkey Patch di <code>Podfile</code></strong>:
+<ul>
+<li>Library <code>xcodeproj</code> ruby bawaan CocoaPods versi lama akan crash dengan error: <code>[Xcodeproj] Unknown object version &#x27;73&#x27;</code> saat menjalankan <code>pod install</code>.
+</li>
+<li>Oleh karena itu, di baris 2-6 <code>Podfile</code> SAMIR disematkan patch manual:
+</li></ul>
+</li></ul>
 <pre><code class="language-ruby">    require &#x27;xcodeproj&#x27;
     compatibility_versions = Xcodeproj::Constants::COMPATIBILITY_VERSION_BY_OBJECT_VERSION.dup
     compatibility_versions[73] ||= &#x27;Xcode 16.0&#x27;
     Xcodeproj::Constants.send(:remove_const, :COMPATIBILITY_VERSION_BY_OBJECT_VERSION)
     Xcodeproj::Constants.const_set(:COMPATIBILITY_VERSION_BY_OBJECT_VERSION, compatibility_versions.freeze)</code></pre>
 <ul>
-<li><strong>Rekomendasi</strong>: Pertahankan pengaturan grup sebagai <strong>Manual (Virtual Group)</strong> untuk saat ini guna mencegah konflik mapping build phase file CocoaPods.</li>
-</ul>
+<li><strong>Rekomendasi</strong>: Pertahankan pengaturan grup sebagai <strong>Manual (Virtual Group)</strong> untuk saat ini guna mencegah konflik mapping build phase file CocoaPods.
+</li></ul>
+</div>
 </section>
 <section id="sec-walkthrough" class="doc-section">
 <h3>🪜 E. Step-by-Step Walkthrough: Cara Melakukan Build Pertama Kali</h3>
 <ol>
-<li><strong>Buka Terminal</strong>: Arahkan ke folder <code>ios/</code>.</li>
-<li><strong>Install Dependensi CocoaPods</strong>:</li>
-</ol>
+<li><strong>Buka Terminal</strong>: Arahkan ke folder <code>ios/</code>.
+</li>
+<li><strong>Install Dependensi CocoaPods</strong>:
+</li></ol>
 <pre><code class="language-bash">   cd /Users/samir/Documents/Workspace/SAMIR/Mobile/Develop/samir-mobile-develop/ios
    pod install</code></pre>
 <p><em>Catatan:</em> Perintah ini juga akan menjalankan hook <code>flutter_post_install</code> yang disetel pada baris 59 <code>Podfile</code>.</p>
-<ol>
-<li><strong>Buka Workspace di Xcode</strong>:</li>
-</ol>
+<ol start="3">
+<li><strong>Buka Workspace di Xcode</strong>:
+</li></ol>
 <pre><code class="language-bash">   open IDSamirLoan.xcworkspace</code></pre>
-<ol>
-<li><strong>Pilih Skema</strong>:</li>
-</ol>
+<ol start="4">
+<li><strong>Pilih Skema</strong>:
 <ul>
-<li>Di toolbar atas Xcode, pilih scheme <strong><code>TEST</code></strong>.</li>
-<li>Pilih destination perangkat: Simulator iPhone 15 / 16 (iOS 14.0+).</li>
-</ul>
-<ol>
-<li><strong>Jalankan Build (Cmd + R)</strong>:</li>
-</ol>
+<li>Di toolbar atas Xcode, pilih scheme <strong><code>TEST</code></strong>.
+</li>
+<li>Pilih destination perangkat: Simulator iPhone 15 / 16 (iOS 14.0+).
+</li></ul>
+</li>
+<li><strong>Jalankan Build (Cmd + R)</strong>:
 <ul>
-<li>Xcode akan mengeksekusi <code>app_environment.sh</code>, mengompilasi Flutter, mengompilasi R.swift, menipiskan arsitektur framework, dan menjalankan aplikasi di simulator.</li>
-</ul>
+<li>Xcode akan mengeksekusi <code>app_environment.sh</code>, mengompilasi Flutter, mengompilasi R.swift, menipiskan arsitektur framework, dan menjalankan aplikasi di simulator.
+</li></ul>
+</li></ol>
 </section>
 <section id="sec-why" class="doc-section">
 <h3>⚖️ F. Why It Matters (Trade-Offs & Catatan Arsitektur)</h3>
 <ul>
-<li><strong>Mengapa Podfile.lock di-ignore di Git?</strong></li>
-</ul>
+<li><strong>Mengapa Podfile.lock di-ignore di Git?</strong>
+</li></ul>
 <p>Di file <code>.gitignore</code>, <code>Podfile.lock</code> tidak di-commit.</p>
 <p><em>Trade-off</em>: Ini dapat menimbulkan variasi versi minor antarmesin developer jika tidak berhati-hati saat menjalankan <code>pod update</code>. Pastikan hanya menjalankan <code>pod install</code> dan versi dependensi penting telah di-pin secara eksplisit (seperti <code>SnapKit 5.6.0</code>, <code>Kingfisher 8.6.2</code>).</p>
 <ul>
-<li><strong>Keberadaan RxSwift yang Terisolasi</strong>:</li>
-</ul>
+<li><strong>Keberadaan RxSwift yang Terisolasi</strong>:
+</li></ul>
 <p>RxSwift (<code>6.9.0</code>) hanya digunakan pada modul konfirmasi pinjaman (<code>LoanConfirmModule</code>). Modul lain menggunakan callback Presenter biasa. Ini menimbulkan overhead biner, namun memigrasikannya membutuhkan refactoring yang sangat hati-hati karena alur konfirmasi pinjaman adalah alur konversi bisnis utama.</p>
 </section>
 <section id="sec-example" class="doc-section">
@@ -397,21 +465,31 @@ end</code></pre>
 <section id="sec-mistakes" class="doc-section">
 <h3>⚠️ H. Common Mistakes & Debugging</h3>
 <ul>
-<li><strong>Lupa Menjalankan CocoaPods dari Folder iOS</strong>:</li>
-<li>Menjalankan <code>pod install</code> di root repo atau di folder <code>flutter/</code> akan gagal. <code>Podfile</code> berada di <code>ios/</code>.</li>
-<li><strong>Error Kompilasi Aset <code>R.image.*</code></strong>:</li>
-<li>Jika Anda baru saja menambahkan icon gambar baru ke <code>Assets.xcassets</code> tetapi Xcode mengeluh simbol tidak ditemukan, jalankan build sekali lagi atau eksekusi <code>pod install</code> agar script generator <code>R.swift</code> memperbarui <code>R.generated.swift</code>.</li>
-<li><strong>Error Kompilasi LibNetSignGenerator di Simulator Apple Silicon</strong>:</li>
-<li>Skrip <code>lipo -extract</code> di Run Script otomatis menyesuaikan arsitektur biner. Jangan memodifikasi file <code>.framework</code> vendor secara manual.</li>
-</ul>
+<li><strong>Lupa Menjalankan CocoaPods dari Folder iOS</strong>:
+<ul>
+<li>Menjalankan <code>pod install</code> di root repo atau di folder <code>flutter/</code> akan gagal. <code>Podfile</code> berada di <code>ios/</code>.
+</li></ul>
+</li>
+<li><strong>Error Kompilasi Aset <code>R.image.*</code></strong>:
+<ul>
+<li>Jika Anda baru saja menambahkan icon gambar baru ke <code>Assets.xcassets</code> tetapi Xcode mengeluh simbol tidak ditemukan, jalankan build sekali lagi atau eksekusi <code>pod install</code> agar script generator <code>R.swift</code> memperbarui <code>R.generated.swift</code>.
+</li></ul>
+</li>
+<li><strong>Error Kompilasi LibNetSignGenerator di Simulator Apple Silicon</strong>:
+<ul>
+<li>Skrip <code>lipo -extract</code> di Run Script otomatis menyesuaikan arsitektur biner. Jangan memodifikasi file <code>.framework</code> vendor secara manual.
+</li></ul>
+</li></ul>
 </section>
 <section id="sec-check" class="doc-section">
 <h3>🧠 I. Knowledge Check</h3>
 <ol>
-<li>Sebutkan nama framework closed-source yang bertugas membuat tanda tangan (<code>sign</code>) pada request jaringan HTTP!</li>
-<li>Apa fungsi dari target agregat <code>IDSamirEnvironment</code> di dalam Xcode project?</li>
-<li>Di mana satu-satunya modul di dalam aplikasi yang memanfaatkan pustaka reaktif <code>RxSwift</code>?</li>
-</ol>
+<li>Sebutkan nama framework closed-source yang bertugas membuat tanda tangan (<code>sign</code>) pada request jaringan HTTP!
+</li>
+<li>Apa fungsi dari target agregat <code>IDSamirEnvironment</code> di dalam Xcode project?
+</li>
+<li>Di mana satu-satunya modul di dalam aplikasi yang memanfaatkan pustaka reaktif <code>RxSwift</code>?
+</li></ol>
 <p><strong>Latihan Observasi</strong>:</p>
 <p>Buka file <code>ios/Podfile</code>. Periksa baris 86–97 di dalam blok <code>post_install</code>. Catat konfigurasi khusus yang diterapkan pada target <code>Kingfisher</code> (<code>BUILD_LIBRARY_FOR_DISTRIBUTION = &#x27;NO&#x27;</code>).</p>
 </section>

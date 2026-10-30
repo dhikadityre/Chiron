@@ -101,11 +101,14 @@
 <h3>🎯 A. Learning Objective</h3>
 <p>Setelah menyelesaikan dokumen ini, pembaca akan mampu:</p>
 <ol>
-<li>Menyebutkan 4 lapisan tanggung jawab utama dalam modul Flutter SAMIR.</li>
-<li>Memahami batas pemisah antara Presentation Layer dan Business Service Layer.</li>
-<li>Menjelaskan tugas Network & Infrastructure Layer dalam menjamin integritas request HTTP.</li>
-<li>Mengetahui peran Platform Bridge Layer sebagai satu-satunya pintu gerbang komunikasi dengan sistem operasi host native.</li>
-</ol>
+<li>Menyebutkan 4 lapisan tanggung jawab utama dalam modul Flutter SAMIR.
+</li>
+<li>Memahami batas pemisah antara Presentation Layer dan Business Service Layer.
+</li>
+<li>Menjelaskan tugas Network & Infrastructure Layer dalam menjamin integritas request HTTP.
+</li>
+<li>Mengetahui peran Platform Bridge Layer sebagai satu-satunya pintu gerbang komunikasi dengan sistem operasi host native.
+</li></ol>
 </section>
 <section id="sec-prereq" class="doc-section">
 <h3>📋 B. Prerequisites</h3>
@@ -115,11 +118,14 @@
 <h3>💡 C. Simple Explanation (Analogi & Konsep Sederhana)</h3>
 <p>Bayangkan sebuah kantor penerbitan surat kabar internasional:</p>
 <ol>
-<li><strong>Wartawan & Fotografer (Presentation Layer)</strong>: Berfokus pada tata letak visual, gambar, dan keterbacaan teks agar pembaca merasa nyaman.</li>
-<li><strong>Editor & Redaksi (Business Service Layer)</strong>: Menyaring informasi mentah, memvalidasi fakta, dan memutuskan berita mana yang layak diterbitkan.</li>
-<li><strong>Pabrik Percetakan & Kurir (Network Layer)</strong>: Menangani tinta, mesin cetak berkecepatan tinggi, dan rute pengiriman logistik secara tepat waktu.</li>
-<li><strong>Petugas Hubungan Luar Negeri (Platform Bridge Layer)</strong>: Berkomunikasi dengan duta besar dan instansi pemerintah negara tuan rumah untuk mendapatkan izin liputan khusus.</li>
-</ol>
+<li><strong>Wartawan & Fotografer (Presentation Layer)</strong>: Berfokus pada tata letak visual, gambar, dan keterbacaan teks agar pembaca merasa nyaman.
+</li>
+<li><strong>Editor & Redaksi (Business Service Layer)</strong>: Menyaring informasi mentah, memvalidasi fakta, dan memutuskan berita mana yang layak diterbitkan.
+</li>
+<li><strong>Pabrik Percetakan & Kurir (Network Layer)</strong>: Menangani tinta, mesin cetak berkecepatan tinggi, dan rute pengiriman logistik secara tepat waktu.
+</li>
+<li><strong>Petugas Hubungan Luar Negeri (Platform Bridge Layer)</strong>: Berkomunikasi dengan duta besar dan instansi pemerintah negara tuan rumah untuk mendapatkan izin liputan khusus.
+</li></ol>
 </section>
 <section id="sec-actual" class="doc-section">
 <h3>💻 D. Actual Implementation (Bukti di Kode Sumber)</h3>
@@ -180,37 +186,43 @@ sequenceDiagram
 <section id="sec-why" class="doc-section">
 <h3>⚖️ F. Why It Matters (Trade-Offs & Implikasi Teknis)</h3>
 <ul>
-<li><strong>Strict Separation of Concerns (SoC)</strong>:</li>
-</ul>
+<li><strong>Strict Separation of Concerns (SoC)</strong>:
+</li></ul>
 <p>Dengan melarang widget memanggil <code>Dio</code> secara langsung, perubahan endpoint atau format otorisasi backend tidak akan merusak layout visual antarmuka. Demikian pula, penggantian desain UI kartu tagihan tidak berisiko merusak logika perhitungan denda di Service.</p>
 <ul>
-<li><strong>Isolasi Platform Channel</strong>:</li>
-</ul>
+<li><strong>Isolasi Platform Channel</strong>:
+</li></ul>
 <p>Panggilan <code>MethodChannel</code> tidak disebarkan sembarangan di dalam widget. Seluruh pemanggilan native dikonsolidasikan di bawah <code>common/platform/</code>. Jika di kemudian hari modul Flutter ingin diuji coba di browser desktop (<em>Flutter Web</em>) atau dijalankan secara mandiri (<em>standalone</em>), developer cukup membuat implementasi tiruan (<em>mock</em>) pada layer platform tanpa menyentuh kode bisnis.</p>
 </section>
 <section id="sec-example" class="doc-section">
 <h3>🔬 G. Practical Example (Skenario Penggunaan Nyata)</h3>
 <p>Jika seorang nasabah menekan tombol "Hubungi CS":</p>
 <ol>
-<li><code>MineHomePage</code> (Presentation) menangkap event <code>onTap</code>.</li>
-<li>Widget memanggil <code>FlutterNativeChannelRoute.openNativeRoute(&#x27;customerAction&#x27;)</code> (Platform Bridge).</li>
-<li>Host native iOS menangkap perintah tersebut dan membuka modul Live Chat SDK native (seperti Zendesk / Meiqia) dengan animasi transisi yang mulus.</li>
-</ol>
+<li><code>MineHomePage</code> (Presentation) menangkap event <code>onTap</code>.
+</li>
+<li>Widget memanggil <code>FlutterNativeChannelRoute.openNativeRoute(&#x27;customerAction&#x27;)</code> (Platform Bridge).
+</li>
+<li>Host native iOS menangkap perintah tersebut dan membuka modul Live Chat SDK native (seperti Zendesk / Meiqia) dengan animasi transisi yang mulus.
+</li></ol>
 </section>
 <section id="sec-mistakes" class="doc-section">
 <h3>⚠️ H. Common Mistakes & Debugging</h3>
 <ul>
-<li><strong>Menaruh State Bisnis di <code>Global</code> yang Seharusnya di State Widget</strong>:</li>
-<li><code>Global</code> hanya untuk kredensial otentikasi global (token, user ID, tenant ID). Data transaksi seperti order tagihan atau voucher promo <strong>dilarang</strong> disimpan di <code>Global</code> karena berisiko menampilkan data usang milik user lain jika terjadi pergantian akun.</li>
-</ul>
+<li><strong>Menaruh State Bisnis di <code>Global</code> yang Seharusnya di State Widget</strong>:
+<ul>
+<li><code>Global</code> hanya untuk kredensial otentikasi global (token, user ID, tenant ID). Data transaksi seperti order tagihan atau voucher promo <strong>dilarang</strong> disimpan di <code>Global</code> karena berisiko menampilkan data usang milik user lain jika terjadi pergantian akun.
+</li></ul>
+</li></ul>
 </section>
 <section id="sec-check" class="doc-section">
 <h3>🧠 I. Knowledge Check</h3>
 <ol>
-<li>Lapisan mana yang bertugas mengubah JSON mentah dari backend menjadi data class Dart?</li>
-<li>Mengapa seluruh pemanggilan MethodChannel wajib dikumpulkan di bawah <code>common/platform/</code>?</li>
-<li>Sebutkan nama class yang bertindak sebagai Scaffold dasar di Presentation Layer modul SAMIR!</li>
-</ol>
+<li>Lapisan mana yang bertugas mengubah JSON mentah dari backend menjadi data class Dart?
+</li>
+<li>Mengapa seluruh pemanggilan MethodChannel wajib dikumpulkan di bawah <code>common/platform/</code>?
+</li>
+<li>Sebutkan nama class yang bertindak sebagai Scaffold dasar di Presentation Layer modul SAMIR!
+</li></ol>
 <p><strong>Latihan Observasi</strong>:</p>
 <p>Buka file <a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/learn/Flutter-Arch/flutter/lib/pages/mine/home/services/mine_home_service.dart" target="_blank" rel="noopener noreferrer">🦊 flutter/lib/pages/mine/home/services/mine_home_service.dart <span class="branch-tag">learn/Flutter-Arch</span> ↗</a>. Amati method <code>fetchMineHomeData()</code> dan catat bagaimana ia memanggil <code>httpClient.post()</code> dan mereturn model <code>MineHomeModel</code>.</p>
 </section>

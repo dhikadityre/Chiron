@@ -101,11 +101,14 @@
 <h3>🎯 A. Learning Objective</h3>
 <p>Setelah menyelesaikan dokumen ini, pembaca akan mampu:</p>
 <ol>
-<li>Memahami perbedaan antara OS App Lifecycle (<code>AppLifecycleState</code>) dan Page Lifecycle di Flutter Add-to-App.</li>
-<li>Menjelaskan mengapa <code>IndexedStack</code> membutuhkan pembungkus <code>PageLifecycleVisibility</code> dan <code>TickerMode</code>.</li>
-<li>Memahami peran <code>PageLifecycleMixin</code> dalam menghentikan/melanjutkan timer, animasi, dan pelacakan analytics saat pengguna berpindah tab.</li>
-<li>Menelusuri bagaimana sinyal refresh dari native (<code>refreshMineHome</code> dan <code>refreshRepayHome</code>) diterima dan didistribusikan ke State widget.</li>
-</ol>
+<li>Memahami perbedaan antara OS App Lifecycle (<code>AppLifecycleState</code>) dan Page Lifecycle di Flutter Add-to-App.
+</li>
+<li>Menjelaskan mengapa <code>IndexedStack</code> membutuhkan pembungkus <code>PageLifecycleVisibility</code> dan <code>TickerMode</code>.
+</li>
+<li>Memahami peran <code>PageLifecycleMixin</code> dalam menghentikan/melanjutkan timer, animasi, dan pelacakan analytics saat pengguna berpindah tab.
+</li>
+<li>Menelusuri bagaimana sinyal refresh dari native (<code>refreshMineHome</code> dan <code>refreshRepayHome</code>) diterima dan didistribusikan ke State widget.
+</li></ol>
 </section>
 <section id="sec-prereq" class="doc-section">
 <h3>📋 B. Prerequisites</h3>
@@ -115,10 +118,12 @@
 <h3>💡 C. Simple Explanation (Analogi & Konsep Sederhana)</h3>
 <p>Bayangkan sebuah panggung teater dengan dua set dekorasi yang sudah terpasang berdampingan: <strong>Set A (Tagihan)</strong> dan <strong>Set B (Profil)</strong>:</p>
 <ul>
-<li>Lampu sorot hanya menyala di satu set pada satu waktu.</li>
-<li>Ketika sutradara mematikan lampu di Set A dan menyalakan lampu di Set B, para aktor di Set A harus berhenti bernyanyi dan menari (<code>TickerMode(enabled: false)</code>) agar tidak membuang tenaga, meskipun mereka tetap berdiri di panggung (<code>IndexedStack</code>).</li>
-<li>Jika kantor pusat menelepon: <em>"Ada surat tagihan baru masuk!"</em> (<code>refreshRepayHome</code>), staf di balik panggung segera memperbarui papan informasi Set A, sehingga ketika lampu sorot kembali menyala, data langsung tampil mutakhir.</li>
-</ul>
+<li>Lampu sorot hanya menyala di satu set pada satu waktu.
+</li>
+<li>Ketika sutradara mematikan lampu di Set A dan menyalakan lampu di Set B, para aktor di Set A harus berhenti bernyanyi dan menari (<code>TickerMode(enabled: false)</code>) agar tidak membuang tenaga, meskipun mereka tetap berdiri di panggung (<code>IndexedStack</code>).
+</li>
+<li>Jika kantor pusat menelepon: <em>"Ada surat tagihan baru masuk!"</em> (<code>refreshRepayHome</code>), staf di balik panggung segera memperbarui papan informasi Set A, sehingga ketika lampu sorot kembali menyala, data langsung tampil mutakhir.
+</li></ul>
 </section>
 <section id="sec-actual" class="doc-section">
 <h3>💻 D. Actual Implementation (Bukti di Kode Sumber)</h3>
@@ -127,9 +132,10 @@
 </div>
 <p>Dalam framework Flutter standar, widget <code>IndexedStack</code> menjaga seluruh child-nya tetap di-mount di element tree. Konsekuensinya:</p>
 <ul>
-<li>Child yang tidak aktif tidak menerima event <code>dispose()</code> atau <code>initState()</code>.</li>
-<li>Jika child memiliki animasi berputar atau timer, kalkulasi akan terus membebani CPU di background.</li>
-</ul>
+<li>Child yang tidak aktif tidak menerima event <code>dispose()</code> atau <code>initState()</code>.
+</li>
+<li>Jika child memiliki animasi berputar atau timer, kalkulasi akan terus membebani CPU di background.
+</li></ul>
 <p>Untuk mengatasi ini, SAMIR Flutter menerapkan kombinasi arsitektur di <a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/learn/Flutter-Arch/flutter/lib/pages/root/flutter_root_page.dart" target="_blank" rel="noopener noreferrer">🦊 flutter/lib/pages/root/flutter_root_page.dart <span class="branch-tag">learn/Flutter-Arch</span> ↗</a> (baris 59–65):</p>
 <pre><code class="language-dart">children: List&lt;Widget&gt;.generate(_pages.length, (int index) {
   final bool visible = index == selectedIndex;
@@ -139,9 +145,10 @@
   );
 }, growable: false),</code></pre>
 <ol>
-<li><strong><code>TickerMode(enabled: visible)</code></strong>: Mematikan seluruh controller animasi (<code>AnimationController</code>, Lottie) ketika tab sedang tidak aktif, menghemat daya baterai dan penggunaan GPU.</li>
-<li><strong><code>PageLifecycleVisibility(visible: visible)</code></strong>: Mendistribusikan status <code>visible</code> ke bawah widget tree sehingga State yang menggunakan <code>PageLifecycleMixin</code> tahu kapan harus memulai atau menghentikan refresh data.</li>
-</ol>
+<li><strong><code>TickerMode(enabled: visible)</code></strong>: Mematikan seluruh controller animasi (<code>AnimationController</code>, Lottie) ketika tab sedang tidak aktif, menghemat daya baterai dan penggunaan GPU.
+</li>
+<li><strong><code>PageLifecycleVisibility(visible: visible)</code></strong>: Mendistribusikan status <code>visible</code> ke bawah widget tree sehingga State yang menggunakan <code>PageLifecycleMixin</code> tahu kapan harus memulai atau menghentikan refresh data.
+</li></ol>
 <div id="sub-2-kelas-pagelifecyclemixin" class="doc-subsection">
 <h4>2. Kelas <code>PageLifecycleMixin</code></h4>
 </div>
@@ -158,9 +165,10 @@
 }</code></pre>
 <p>Halaman utama seperti <code>MineHomePage</code> dan <code>RepayHomePage</code> mengimplementasikan mixin ini:</p>
 <ul>
-<li>Ketika tab dipilih, <code>onPageVisible()</code> dipicu otomatis.</li>
-<li>Halaman memicu <code>TrackPageViewMixin</code> untuk mengirimkan log analytics page view (<code>me</code> untuk Mine, <code>repayment</code> untuk Repay) ke host native.</li>
-</ul>
+<li>Ketika tab dipilih, <code>onPageVisible()</code> dipicu otomatis.
+</li>
+<li>Halaman memicu <code>TrackPageViewMixin</code> untuk mengirimkan log analytics page view (<code>me</code> untuk Mine, <code>repayment</code> untuk Repay) ke host native.
+</li></ul>
 <div id="sub-3-sinyal-refresh-dari-host-native-flutternativepagesignal" class="doc-subsection">
 <h4>3. Sinyal Refresh dari Host Native (<code>FlutterNativePageSignal</code>)</h4>
 </div>
@@ -188,10 +196,12 @@
 }</code></pre>
 <p>Ketika native host memanggil method channel:</p>
 <ol>
-<li><code>FlutterNativeRouteDispatcher._handleNativeCall</code> menerima method <code>refreshMineHome</code> atau <code>refreshRepayHome</code>.</li>
-<li>Dispatcher memanggil <code>FlutterNativePageSignal.refreshMineHome()</code>.</li>
-<li><code>MineHomePage</code> yang berlangganan pada <code>initState()</code> langsung memicu fungsi pengambilan data terbaru (<code>_loadData()</code>).</li>
-</ol>
+<li><code>FlutterNativeRouteDispatcher._handleNativeCall</code> menerima method <code>refreshMineHome</code> atau <code>refreshRepayHome</code>.
+</li>
+<li>Dispatcher memanggil <code>FlutterNativePageSignal.refreshMineHome()</code>.
+</li>
+<li><code>MineHomePage</code> yang berlangganan pada <code>initState()</code> langsung memicu fungsi pengambilan data terbaru (<code>_loadData()</code>).
+</li></ol>
 </section>
 <section id="sec-walkthrough" class="doc-section">
 <h3>🪜 E. Step-by-Step Walkthrough: Propagasi Sinyal Refresh Saat User Melakukan Pembayaran di Native</h3>
@@ -227,40 +237,50 @@ sequenceDiagram
 <section id="sec-why" class="doc-section">
 <h3>⚖️ F. Why It Matters (Trade-Offs & Implikasi Teknis)</h3>
 <ul>
-<li><strong>Mengapa Menggunakan Broadcast Stream Controller Alih-Alih Callback Statis?</strong></li>
-</ul>
+<li><strong>Mengapa Menggunakan Broadcast Stream Controller Alih-Alih Callback Statis?</strong>
+</li></ul>
 <p>Broadcast Stream memungkinkan banyak listener berlangganan secara serentak (misal halaman utama dan floating badge notifikasi) tanpa menciptakan keterikatan ketat (<em>tight coupling</em>) antar class.</p>
 <ul>
-<li><strong>Sinkronisasi Lifecycle Saat Kembali dari Background</strong>:</li>
-</ul>
+<li><strong>Sinkronisasi Lifecycle Saat Kembali dari Background</strong>:
+</li></ul>
 <p>Kelas <code>_NativeRouteLifecycleObserver</code> di <a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/learn/Flutter-Arch/flutter/lib/common/platform/flutter_native_route_dispatcher.dart" target="_blank" rel="noopener noreferrer">🦊 flutter_native_route_dispatcher.dart <span class="branch-tag">learn/Flutter-Arch</span> ↗</a> memantau <code>AppLifecycleState.resumed</code>. Saat aplikasi kembali ke foreground, ia memicu <code>NativeRouteChrome.syncForCurrentRoute()</code> untuk memastikan status tab bar host native tetap selaras dan tidak tertutup.</p>
 </section>
 <section id="sec-example" class="doc-section">
 <h3>🔬 G. Practical Example (Skenario Penggunaan Nyata)</h3>
 <p>Jika pengguna berpindah dari Tab 0 (Beranda Native) ke Tab 1 (Tagihan Flutter):</p>
 <ol>
-<li>Native host mendeteksi klik tab dan memanggil <code>showFlutterRoute(&#x27;/repay&#x27;)</code>.</li>
-<li><code>FlutterNativeRouteDispatcher</code> mengubah index <code>IndexedStack</code> menjadi 1.</li>
-<li><code>PageLifecycleVisibility</code> mendeteksi perubahan menjadi <code>visible: true</code>.</li>
-<li><code>TickerMode</code> diaktifkan, dan <code>RepayHomePage.onPageVisible()</code> dipicu untuk merefresh perhitungan timer jatuh tempo secara real-time.</li>
-</ol>
+<li>Native host mendeteksi klik tab dan memanggil <code>showFlutterRoute(&#x27;/repay&#x27;)</code>.
+</li>
+<li><code>FlutterNativeRouteDispatcher</code> mengubah index <code>IndexedStack</code> menjadi 1.
+</li>
+<li><code>PageLifecycleVisibility</code> mendeteksi perubahan menjadi <code>visible: true</code>.
+</li>
+<li><code>TickerMode</code> diaktifkan, dan <code>RepayHomePage.onPageVisible()</code> dipicu untuk merefresh perhitungan timer jatuh tempo secara real-time.
+</li></ol>
 </section>
 <section id="sec-mistakes" class="doc-section">
 <h3>⚠️ H. Common Mistakes & Debugging</h3>
 <ul>
-<li><strong>Lupa Melakukan <code>cancel()</code> pada StreamSubscription di <code>dispose()</code></strong>:</li>
-<li>Jika listener <code>FlutterNativePageSignal.onMineHomeRefresh</code> tidak dibatalkan saat widget di-dispose, memory leak akan terjadi dan callback dapat dipicu pada widget yang sudah unmounted (<code>setState() called after dispose()</code>).</li>
-<li><strong>Menjalankan Animasi Tanpa Memeriksa <code>TickerMode</code></strong>:</li>
-<li>Menggunakan loop manual <code>Future.delayed</code> alih-alih <code>AnimationController</code> akan mengabaikan <code>TickerMode</code>, sehingga proses background tetap memakan baterai meskipun pengguna sedang berada di tab native.</li>
-</ul>
+<li><strong>Lupa Melakukan <code>cancel()</code> pada StreamSubscription di <code>dispose()</code></strong>:
+<ul>
+<li>Jika listener <code>FlutterNativePageSignal.onMineHomeRefresh</code> tidak dibatalkan saat widget di-dispose, memory leak akan terjadi dan callback dapat dipicu pada widget yang sudah unmounted (<code>setState() called after dispose()</code>).
+</li></ul>
+</li>
+<li><strong>Menjalankan Animasi Tanpa Memeriksa <code>TickerMode</code></strong>:
+<ul>
+<li>Menggunakan loop manual <code>Future.delayed</code> alih-alih <code>AnimationController</code> akan mengabaikan <code>TickerMode</code>, sehingga proses background tetap memakan baterai meskipun pengguna sedang berada di tab native.
+</li></ul>
+</li></ul>
 </section>
 <section id="sec-check" class="doc-section">
 <h3>🧠 I. Knowledge Check</h3>
 <ol>
-<li>Mengapa <code>IndexedStack</code> memerlukan pembungkus <code>TickerMode</code> untuk setiap child halamannya?</li>
-<li>Bagaimana cara widget <code>MineHomePage</code> mengetahui bahwa native host meminta pembaruan data profil?</li>
-<li>Event apa yang dipicu oleh <code>_NativeRouteLifecycleObserver</code> saat aplikasi kembali dibuka dari background?</li>
-</ol>
+<li>Mengapa <code>IndexedStack</code> memerlukan pembungkus <code>TickerMode</code> untuk setiap child halamannya?
+</li>
+<li>Bagaimana cara widget <code>MineHomePage</code> mengetahui bahwa native host meminta pembaruan data profil?
+</li>
+<li>Event apa yang dipicu oleh <code>_NativeRouteLifecycleObserver</code> saat aplikasi kembali dibuka dari background?
+</li></ol>
 <p><strong>Latihan Observasi</strong>:</p>
 <p>Buka <a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/learn/Flutter-Arch/flutter/lib/pages/repay/home/repay_home_page.dart" target="_blank" rel="noopener noreferrer">🦊 flutter/lib/pages/repay/home/repay_home_page.dart <span class="branch-tag">learn/Flutter-Arch</span> ↗</a>. Cari fungsi <code>initState()</code> dan catat bagaimana subscription ke <code>FlutterNativePageSignal.onRepayHomeRefresh</code> didaftarkan.</p>
 </section>

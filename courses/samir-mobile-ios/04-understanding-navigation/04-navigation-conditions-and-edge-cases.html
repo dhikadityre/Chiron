@@ -101,27 +101,33 @@
 <h3>🎯 A. Learning Objective</h3>
 <p>Setelah mempelajari dokumen ini, pembaca akan mampu:</p>
 <ol>
-<li>Menjelaskan mekanisme <em>automatic session recovery & re-login</em> saat API mengembalikan error code <code>10006</code>.</li>
-<li>Memahami bagaimana deep link ditunda (<em>cached</em>) saat cold start dan dieksekusi setelah launch view selesai.</li>
-<li>Menjelaskan perbedaan penanganan deep link tipe <code>&quot;1&quot;</code> (URL web) vs tipe <code>&quot;2&quot;</code> (rute bernama).</li>
-<li>Mengetahui mitigasi saat route URL server tidak terdaftar di router table aplikasi native.</li>
-</ol>
+<li>Menjelaskan mekanisme <em>automatic session recovery & re-login</em> saat API mengembalikan error code <code>10006</code>.
+</li>
+<li>Memahami bagaimana deep link ditunda (<em>cached</em>) saat cold start dan dieksekusi setelah launch view selesai.
+</li>
+<li>Menjelaskan perbedaan penanganan deep link tipe <code>&quot;1&quot;</code> (URL web) vs tipe <code>&quot;2&quot;</code> (rute bernama).
+</li>
+<li>Mengetahui mitigasi saat route URL server tidak terdaftar di router table aplikasi native.
+</li></ol>
 </section>
 <section id="sec-prereq" class="doc-section">
 <h3>📋 B. Prerequisites</h3>
 <ul>
-<li>Sudah membaca <a href="02-navigation-fundamentals.html">02-navigation-fundamentals.md</a> dan <a href="03-complete-navigation-map.html">03-complete-navigation-map.md</a>.</li>
-<li>Mengetahui konsep token JWT / session key dan notifikasi remote push.</li>
-</ul>
+<li>Sudah membaca <a href="02-navigation-fundamentals.html">02-navigation-fundamentals.md</a> dan <a href="03-complete-navigation-map.html">03-complete-navigation-map.md</a>.
+</li>
+<li>Mengetahui konsep token JWT / session key dan notifikasi remote push.
+</li></ul>
 </section>
 <section id="sec-simple" class="doc-section">
 <h3>💡 C. Simple Explanation (Analogi Tiket Masuk Kadaluwarsa di Tengah Wahana)</h3>
 <p>Bayangkan Anda berada di taman hiburan:</p>
 <ul>
-<li>Anda sedang menaiki wahana permainan (misal: mengisi formulir pinjaman), tetapi tiba-tiba sistem mendeteksi tiket Anda sudah kedaluwarsa (<strong>Token Sesi Habis / Error <code>10006</code></strong>).</li>
-<li>Alih-alih membiarkan Anda terjebak di tengah wahana dengan layar error, staf taman hiburan secara sopan mengantar Anda kembali ke pintu masuk (<strong>Reset ke Tab 0 Beranda</strong>) dan membukakan loket perpanjangan tiket (<strong>Modal Login Otomatis Muncul</strong>).</li>
-<li>Jika Anda datang dari luar taman membawa selebaran promosi VIP (<strong>Deep Link Push Notification</strong>), sistem akan memastikan Anda sudah melalui pintu pemeriksaan tiket terlebih dahulu sebelum mengantar Anda langsung ke wahana yang dijanjikan di selebaran tersebut.</li>
-</ul>
+<li>Anda sedang menaiki wahana permainan (misal: mengisi formulir pinjaman), tetapi tiba-tiba sistem mendeteksi tiket Anda sudah kedaluwarsa (<strong>Token Sesi Habis / Error <code>10006</code></strong>).
+</li>
+<li>Alih-alih membiarkan Anda terjebak di tengah wahana dengan layar error, staf taman hiburan secara sopan mengantar Anda kembali ke pintu masuk (<strong>Reset ke Tab 0 Beranda</strong>) dan membukakan loket perpanjangan tiket (<strong>Modal Login Otomatis Muncul</strong>).
+</li>
+<li>Jika Anda datang dari luar taman membawa selebaran promosi VIP (<strong>Deep Link Push Notification</strong>), sistem akan memastikan Anda sudah melalui pintu pemeriksaan tiket terlebih dahulu sebelum mengantar Anda langsung ke wahana yang dijanjikan di selebaran tersebut.
+</li></ul>
 </section>
 <section id="sec-actual" class="doc-section">
 <h3>💻 D. Actual Implementation: Analisis Kasus Ekstrem</h3>
@@ -156,46 +162,55 @@ sequenceDiagram
   </div>
 </div>
 <ol>
-<li><strong>Deteksi Otomatis</strong>: Method <code>p_handleSuccessRequest</code> di <code>IDNetworkRequest</code> mendeteksi <code>code == &quot;10006&quot;</code>.</li>
-<li><strong>Pembersihan State</strong>: <code>IDLoginManager.removeUserInfoWhenLoginOut()</code> menghapus file sesi pengguna (<code>idn_userFile.plist</code>), menghapus kunci di UserDefaults (<code>idn_mid</code>, <code>idn_mobile</code>, <code>BIZ_ID</code>), dan mereset status SDK pihak ketiga.</li>
-<li><strong>Penyelamatan Navigasi</strong>:</li>
-</ol>
+<li><strong>Deteksi Otomatis</strong>: Method <code>p_handleSuccessRequest</code> di <code>IDNetworkRequest</code> mendeteksi <code>code == &quot;10006&quot;</code>.
+</li>
+<li><strong>Pembersihan State</strong>: <code>IDLoginManager.removeUserInfoWhenLoginOut()</code> menghapus file sesi pengguna (<code>idn_userFile.plist</code>), menghapus kunci di UserDefaults (<code>idn_mid</code>, <code>idn_mobile</code>, <code>BIZ_ID</code>), dan mereset status SDK pihak ketiga.
+</li>
+<li><strong>Penyelamatan Navigasi</strong>:
 <ul>
-<li><code>IDSamirMainModuleRouterHandler</code> dipanggil untuk mengembalikan seleksi tab ke Tab 0 (<code>samir://main/tab?tab=home</code>).</li>
-<li><code>loginAction()</code> dipanggil seketika untuk memunculkan modal login agar pengguna cukup memasukkan OTP tanpa harus menutup paksa aplikasi.</li>
-</ul>
+<li><code>IDSamirMainModuleRouterHandler</code> dipanggil untuk mengembalikan seleksi tab ke Tab 0 (<code>samir://main/tab?tab=home</code>).
+</li>
+<li><code>loginAction()</code> dipanggil seketika untuk memunculkan modal login agar pengguna cukup memasukkan OTP tanpa harus menutup paksa aplikasi.
+</li></ul>
+</li></ol>
 <div id="sub-2-skenario-resolusi-deep-link-appsflyer-push-notification" class="doc-subsection">
 <h4>2. Skenario Resolusi Deep Link (AppsFlyer & Push Notification)</h4>
 </div>
 <p>Path: <a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/learn/iOS-Arch/ios/IDSamirLoan/Application/SamirMainModule/Classes/IDModule/IDSamirMainModule.swift:L250-320" target="_blank" rel="noopener noreferrer">🦊 ios/IDSamirLoan/Application/SamirMainModule/Classes/IDModule/IDSamirMainModule.swift <span class="branch-tag">learn/iOS-Arch</span> ↗</a></p>
 <p>Aplikasi menerima deep link dari dua saluran utama:</p>
 <ul>
-<li><strong>AppsFlyer</strong>: Callback <code>didResolveDeepLink</code> (dari iklan Facebook/TikTok/Google Ads).</li>
-<li><strong>Push Notification</strong>: Callback <code>userNotificationCenter(_:didReceive:)</code> (dari push promo/pengingat tagihan).</li>
-</ul>
+<li><strong>AppsFlyer</strong>: Callback <code>didResolveDeepLink</code> (dari iklan Facebook/TikTok/Google Ads).
+</li>
+<li><strong>Push Notification</strong>: Callback <code>userNotificationCenter(_:didReceive:)</code> (dari push promo/pengingat tagihan).
+</li></ul>
 <p>Kedua saluran meneruskan payload ke fungsi sentral:</p>
 <p><code>handleDeepLink(link: String?, linkType: String?)</code></p>
 <div class="table-container"><table class="data-table"><thead><tr><th>Tipe Deep Link (<code>linkType</code>)</th><th>Makna & Format Nilai</th><th>Perilaku Navigasi</th></tr></thead><tbody><tr><td><strong><code>&quot;1&quot;</code> (Web URL)</strong></td><td>URL HTTP / HTTPS (misal: <code>https://m.samir.co.id/samir/repay/detail?bizId=...</code>)</td><td>Membuka <code>IDBusinessWebViewController</code> dengan metode <code>loadUrlWithAuth</code> (token login otomatis disuntikkan).</td></tr><tr><td><strong><code>&quot;2&quot;</code> (Named Route)</strong></td><td>Kode string nama rute:<br/>- <code>repay_list</code><br/>- <code>repay_detail</code><br/>- <code>homepage</code><br/>- <code>couponpage</code><br/>- <code>confirmpage</code></td><td>- <code>repay_list</code>: Pindah ke Tab 1 (Tagihan).<br/>- <code>repay_detail</code>: Ambil bizId terbaru -> Buka web tagihan.<br/>- <code>homepage</code>: Pindah ke Tab 0 (Beranda).<br/>- <code>couponpage</code>: Buka kupon voucher (wajib login).<br/>- <code>confirmpage</code>: Pindah ke beranda & siarkan notifikasi <code>AFyerDeepLinkNotify</code>.</td></tr></tbody></table></div>
-<h5 id="item-penanganan-cold-start-aplikasi-belum-siap">Penanganan Cold Start (Aplikasi Belum Siap):</h5>
+<div class="doc-subpoint-block" id="item-penanganan-cold-start-aplikasi-belum-siap">
+<h5>Penanganan Cold Start (Aplikasi Belum Siap):</h5>
 <p>Jika deep link tiba saat aplikasi baru saja dinyalakan (<em>cold start</em>), UI TabBar belum siap di memori.</p>
 <ul>
-<li><code>handleDeepLink</code> menyimpan link di cache:</li>
-</ul>
+<li><code>handleDeepLink</code> menyimpan link di cache:
+</li></ul>
 <pre><code class="language-swift">  UserDefaults.standard.set(link, forKey: &quot;Samir_DeepLink_Str&quot;)
   UserDefaults.standard.set(linkType, forKey: &quot;Samir_DeepLink_Type&quot;)</code></pre>
 <ul>
-<li>Setelah <code>IDLaunchViewController</code> selesai hitung mundur (atau user tap "Lewati"), method <code>finishLaunch()</code> membaca cache ini dan mengeksekusi navigasi yang tertunda.</li>
-<li>Fungsi <code>clearPushCache()</code> dipanggil untuk memastikan deep link yang sama tidak dieksekusi dua kali.</li>
-</ul>
+<li>Setelah <code>IDLaunchViewController</code> selesai hitung mundur (atau user tap "Lewati"), method <code>finishLaunch()</code> membaca cache ini dan mengeksekusi navigasi yang tertunda.
+</li>
+<li>Fungsi <code>clearPushCache()</code> dipanggil untuk memastikan deep link yang sama tidak dieksekusi dua kali.
+</li></ul>
+</div>
 <div id="sub-3-skenario-rute-ditolak-tidak-ditemukan-notfound" class="doc-subsection">
 <h4>3. Skenario Rute Ditolak / Tidak Ditemukan (<code>NotFound</code>)</h4>
 </div>
 <p>Ketika server mengirimkan rute URL baru yang belum dikenal oleh aplikasi native yang sedang berjalan:</p>
 <ol>
-<li><code>CZRouterCenter.perform</code> mengeksekusi <code>matches(router)</code>.</li>
-<li>Jika regex path tidak cocok dengan tabel router modul mana pun, <code>CZRouterCenter</code> mengembalikan <code>CZRouterResponse.initWithStatus(.NotFound)</code>.</li>
-<li>Aplikasi <strong>tidak melakukan crash</strong>; eksekusi navigasi dibatalkan secara aman dan dicatat di log debug console.</li>
-</ol>
+<li><code>CZRouterCenter.perform</code> mengeksekusi <code>matches(router)</code>.
+</li>
+<li>Jika regex path tidak cocok dengan tabel router modul mana pun, <code>CZRouterCenter</code> mengembalikan <code>CZRouterResponse.initWithStatus(.NotFound)</code>.
+</li>
+<li>Aplikasi <strong>tidak melakukan crash</strong>; eksekusi navigasi dibatalkan secara aman dan dicatat di log debug console.
+</li></ol>
 </section>
 <section id="sec-walkthrough" class="doc-section">
 <h3>🪜 E. Step-by-Step Walkthrough: Alur Deep Link Membutuhkan Login</h3>
@@ -234,19 +249,23 @@ sequenceDiagram
   </div>
 </div>
 <ol>
-<li><strong>Klik Notifikasi</strong>: Pengguna mengklik spanduk notifikasi push saat layar ponsel terkunci.</li>
-<li><strong>Penerimaan Payload</strong>: <code>userNotificationCenter(_:didReceive:)</code> mengekstrak <code>action</code> dan <code>actionType</code>.</li>
-<li><strong>Pemeriksaan Sesi</strong>: Sistem mendeteksi <code>isLogin() == false</code>.</li>
-<li><strong>Penyimpanan State & Interupsi Login</strong>:</li>
-</ol>
+<li><strong>Klik Notifikasi</strong>: Pengguna mengklik spanduk notifikasi push saat layar ponsel terkunci.
+</li>
+<li><strong>Penerimaan Payload</strong>: <code>userNotificationCenter(_:didReceive:)</code> mengekstrak <code>action</code> dan <code>actionType</code>.
+</li>
+<li><strong>Pemeriksaan Sesi</strong>: Sistem mendeteksi <code>isLogin() == false</code>.
+</li>
+<li><strong>Penyimpanan State & Interupsi Login</strong>:
 <ul>
-<li>Link <code>repay_detail</code> disimpan di UserDefaults.</li>
-<li>Layar login muncul di atas layar aplikasi.</li>
-</ul>
-<ol>
-<li><strong>Resume Pasca Login</strong>: Begitu login selesai, observer notifikasi membaca cache link, mengambil ID transaksi pinjaman aktif (<code>bizId</code>), dan membuka layar pembayaran webview terotentikasi.</li>
-<li><strong>Pembersihan</strong>: Kunci cache dihapus agar tidak terjadi navigasi ganda saat aplikasi dibuka lagi nanti.</li>
-</ol>
+<li>Link <code>repay_detail</code> disimpan di UserDefaults.
+</li>
+<li>Layar login muncul di atas layar aplikasi.
+</li></ul>
+</li>
+<li><strong>Resume Pasca Login</strong>: Begitu login selesai, observer notifikasi membaca cache link, mengambil ID transaksi pinjaman aktif (<code>bizId</code>), dan membuka layar pembayaran webview terotentikasi.
+</li>
+<li><strong>Pembersihan</strong>: Kunci cache dihapus agar tidak terjadi navigasi ganda saat aplikasi dibuka lagi nanti.
+</li></ol>
 </section>
 <section id="sec-why" class="doc-section">
 <h3>⚖️ F. Why It Matters: Race Condition pada Penundaan Push Notification</h3>
@@ -271,20 +290,28 @@ sequenceDiagram
 <section id="sec-mistakes" class="doc-section">
 <h3>⚠️ H. Common Mistakes & Debugging</h3>
 <ul>
-<li><strong>Bahaya Penggunaan Kode <code>10006</code> Sembarangan di Backend</strong>:</li>
-<li>Jika backend engineer membuat endpoint baru dan menggunakan kode <code>10006</code> untuk error selain sesi kedaluwarsa (misal: "Saldo tidak mencukupi"), aplikasi iOS akan <strong>OTOMATIS ME-LOGOUT PENGGUNA DAN MERESET KE BERANDA</strong>!</li>
-<li><em>Aturan</em>: Pastikan tim backend hanya menggunakan kode <code>10006</code> murni untuk <em>Expired Token / Invalid Session</em>.</li>
-<li><strong>Deep Link Loop</strong>:</li>
-<li>Lupa memanggil <code>clearPushCache()</code> setelah memproses deep link dapat menyebabkan aplikasi terus-menerus membuka layar yang sama setiap kali kembali ke foreground.</li>
-</ul>
+<li><strong>Bahaya Penggunaan Kode <code>10006</code> Sembarangan di Backend</strong>:
+<ul>
+<li>Jika backend engineer membuat endpoint baru dan menggunakan kode <code>10006</code> untuk error selain sesi kedaluwarsa (misal: "Saldo tidak mencukupi"), aplikasi iOS akan <strong>OTOMATIS ME-LOGOUT PENGGUNA DAN MERESET KE BERANDA</strong>!
+</li>
+<li><em>Aturan</em>: Pastikan tim backend hanya menggunakan kode <code>10006</code> murni untuk <em>Expired Token / Invalid Session</em>.
+</li></ul>
+</li>
+<li><strong>Deep Link Loop</strong>:
+<ul>
+<li>Lupa memanggil <code>clearPushCache()</code> setelah memproses deep link dapat menyebabkan aplikasi terus-menerus membuka layar yang sama setiap kali kembali ke foreground.
+</li></ul>
+</li></ul>
 </section>
 <section id="sec-check" class="doc-section">
 <h3>🧠 I. Knowledge Check</h3>
 <ol>
-<li>Kode error status jaringan apa yang memicu logout dan re-login otomatis di seluruh aplikasi?</li>
-<li>Apa perbedaan perlakuan navigasi antara deep link <code>linkType = &quot;1&quot;</code> dan <code>linkType = &quot;2&quot;</code>?</li>
-<li>Mengapa eksekusi deep link dari push notification ditunda selama 0.3 detik sebelum didispatch?</li>
-</ol>
+<li>Kode error status jaringan apa yang memicu logout dan re-login otomatis di seluruh aplikasi?
+</li>
+<li>Apa perbedaan perlakuan navigasi antara deep link <code>linkType = &quot;1&quot;</code> dan <code>linkType = &quot;2&quot;</code>?
+</li>
+<li>Mengapa eksekusi deep link dari push notification ditunda selama 0.3 detik sebelum didispatch?
+</li></ol>
 </section>
 <section id="sec-completion" class="doc-section">
 <h3>🏁 J. Completion Criteria</h3>

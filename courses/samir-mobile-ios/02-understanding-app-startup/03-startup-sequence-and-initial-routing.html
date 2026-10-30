@@ -101,35 +101,42 @@
 <h3>🎯 A. Learning Objective</h3>
 <p>Setelah mempelajari dokumen ini, pembaca akan mampu:</p>
 <ol>
-<li>Menjelaskan 11 tahapan inisialisasi yang dijalankan di dalam <code>IDSamirMainModule.application(_:didFinishLaunchingWithOptions:)</code>.</li>
-<li>Memahami bagaimana <code>checkAppStartHide</code> menentukan apakah user melihat <code>IDLaunchViewController</code> (countdown 3s) atau langsung masuk ke <code>IDMainTabBarController</code>.</li>
-<li>Menjelaskan bagaimana request konfigurasi aplikasi (<code>app-configuration</code>) diambil pada <code>applicationDidBecomeActive</code> untuk memperbarui pengaturan startup berikutnya.</li>
-<li>Memahami mekanisme eksekusi deep link tertunda (<em>pending deep link</em>) setelah peluncuran selesai.</li>
-</ol>
+<li>Menjelaskan 11 tahapan inisialisasi yang dijalankan di dalam <code>IDSamirMainModule.application(_:didFinishLaunchingWithOptions:)</code>.
+</li>
+<li>Memahami bagaimana <code>checkAppStartHide</code> menentukan apakah user melihat <code>IDLaunchViewController</code> (countdown 3s) atau langsung masuk ke <code>IDMainTabBarController</code>.
+</li>
+<li>Menjelaskan bagaimana request konfigurasi aplikasi (<code>app-configuration</code>) diambil pada <code>applicationDidBecomeActive</code> untuk memperbarui pengaturan startup berikutnya.
+</li>
+<li>Memahami mekanisme eksekusi deep link tertunda (<em>pending deep link</em>) setelah peluncuran selesai.
+</li></ol>
 </section>
 <section id="sec-prereq" class="doc-section">
 <h3>📋 B. Prerequisites</h3>
 <ul>
-<li>Sudah membaca <a href="01-ios-entry-point.html">01-ios-entry-point.md</a> dan <a href="02-application-lifecycle.html">02-application-lifecycle.md</a>.</li>
-<li>Mengetahui konsep UIWindow dan rootViewController pada UIKit.</li>
-</ul>
+<li>Sudah membaca <a href="01-ios-entry-point.html">01-ios-entry-point.md</a> dan <a href="02-application-lifecycle.html">02-application-lifecycle.md</a>.
+</li>
+<li>Mengetahui konsep UIWindow dan rootViewController pada UIKit.
+</li></ul>
 </section>
 <section id="sec-simple" class="doc-section">
 <h3>💡 C. Simple Explanation (Analogi Masuk ke Toko Perhiasan)</h3>
 <p>Bayangkan Anda mengunjungi toko perhiasan:</p>
 <ol>
-<li>Pintu otomatis terbuka (<strong><code>didFinishLaunchingWithOptions</code></strong>).</li>
-<li>Petugas mengaktifkan pendingin ruangan dan kamera keamanan (<strong>Environment, Jaringan, Flutter Engine dihidupkan di latar belakang</strong>).</li>
-<li>Di depan pintu ada papan iklan promosi berdurasi 3 detik (<strong><code>IDLaunchViewController</code></strong>).</li>
-</ol>
+<li>Pintu otomatis terbuka (<strong><code>didFinishLaunchingWithOptions</code></strong>).
+</li>
+<li>Petugas mengaktifkan pendingin ruangan dan kamera keamanan (<strong>Environment, Jaringan, Flutter Engine dihidupkan di latar belakang</strong>).
+</li>
+<li>Di depan pintu ada papan iklan promosi berdurasi 3 detik (<strong><code>IDLaunchViewController</code></strong>).
 <ul>
-<li>Jika Anda adalah pelanggan VIP yang sudah pernah menyetel opsi "Lewati Iklan" di kunjungan sebelumnya (<strong><code>APP_Start_Hide == &quot;1&quot;</code></strong>), papan iklan langsung disingkirkan.</li>
-<li>Jika papan iklan aktif, Anda bisa menunggu 3 detik atau menekan tombol "Lewati".</li>
-</ul>
-<ol>
-<li>Pintu lobi utama terbuka penuh, menampilkan 3 etalase utama (<strong><code>IDMainTabBarController</code></strong>: Etalase Pinjaman, Etalase Tagihan, dan Meja Layanan Nasabah).</li>
-<li>Jika Anda datang karena membawa kupon khusus dari luar (<strong>Deep Link</strong>), staf toko langsung mengantar Anda ke etalase yang tertera di kupon tersebut.</li>
-</ol>
+<li>Jika Anda adalah pelanggan VIP yang sudah pernah menyetel opsi "Lewati Iklan" di kunjungan sebelumnya (<strong><code>APP_Start_Hide == &quot;1&quot;</code></strong>), papan iklan langsung disingkirkan.
+</li>
+<li>Jika papan iklan aktif, Anda bisa menunggu 3 detik atau menekan tombol "Lewati".
+</li></ul>
+</li>
+<li>Pintu lobi utama terbuka penuh, menampilkan 3 etalase utama (<strong><code>IDMainTabBarController</code></strong>: Etalase Pinjaman, Etalase Tagihan, dan Meja Layanan Nasabah).
+</li>
+<li>Jika Anda datang karena membawa kupon khusus dari luar (<strong>Deep Link</strong>), staf toko langsung mengantar Anda ke etalase yang tertera di kupon tersebut.
+</li></ol>
 </section>
 <section id="sec-actual" class="doc-section">
 <h3>💻 D. Actual Implementation (Bukti Kode Sumber)</h3>
@@ -254,51 +261,153 @@ sequenceDiagram
   </div>
 </div>
 <ol>
-<li><strong>Inisialisasi Dasar</strong>: Environment dimuat, jaringan disiapkan, dan <code>FlutterEngineManager.shared.prewarm()</code> mem-booting single runtime engine Flutter agar siap pakai.</li>
-<li><strong>Evaluasi Tampilan Awal</strong>: Sistem memeriksa kunci <code>APP_Start_Hide</code>.</li>
-<li><strong>Penyajian Splash</strong>: Jika belum disetel skip, layar splash tampil 3 detik.</li>
-<li><strong>Transisi ke Tab Bar</strong>: Root window diganti ke <code>IDMainTabBarController</code>. TabBar memasang 3 tab native dan meng-embed view kontainer persisten Flutter di bawah tab bar.</li>
-<li><strong>Eksekusi Deep Link Tertunda</strong>: Jika aplikasi dibuka melalui link atribusi AppsFlyer saat aplikasi dalam kondisi mati (<em>cold start</em>), link disimpan sementara di UserDefaults (<code>Samir_DeepLink_Str</code>) dan baru didispatch ke router setelah <code>finishLaunch()</code> selesai!</li>
-</ol>
+<li><strong>Inisialisasi Dasar</strong>: Environment dimuat, jaringan disiapkan, dan <code>FlutterEngineManager.shared.prewarm()</code> mem-booting single runtime engine Flutter agar siap pakai.
+</li>
+<li><strong>Evaluasi Tampilan Awal</strong>: Sistem memeriksa kunci <code>APP_Start_Hide</code>.
+</li>
+<li><strong>Penyajian Splash</strong>: Jika belum disetel skip, layar splash tampil 3 detik.
+</li>
+<li><strong>Transisi ke Tab Bar</strong>: Root window diganti ke <code>IDMainTabBarController</code>. TabBar memasang 3 tab native dan meng-embed view kontainer persisten Flutter di bawah tab bar.
+</li>
+<li><strong>Eksekusi Deep Link Tertunda</strong>: Jika aplikasi dibuka melalui link atribusi AppsFlyer saat aplikasi dalam kondisi mati (<em>cold start</em>), link disimpan sementara di UserDefaults (<code>Samir_DeepLink_Str</code>) dan baru didispatch ke router setelah <code>finishLaunch()</code> selesai!
+</li></ol>
 </section>
 <section id="sec-why" class="doc-section">
 <h3>⚖️ F. Why It Matters (Trade-Offs & Catatan Arsitektur)</h3>
 <ul>
-<li><strong>Mengapa Prewarm Flutter Dilakukan di Startup?</strong></li>
-</ul>
-<p>Memulai FlutterEngine membutuhkan waktu komputasi (spin up Dart VM sekitar 200–400ms). Dengan memanggil <code>FlutterEngineManager.shared.prewarm()</code> saat startup native, pengguna tidak akan merasakan <em>lag</em> atau kedipan layar kosong ketika mereka berpindah ke Tab Tagihan atau Tab Saya.</p>
+<li><strong>Mengapa Prewarm Flutter Dilakukan di Startup & Bagaimana Menghilangkan UI Loading?</strong>
 <ul>
-<li><strong>Mengapa Request <code>app-configuration</code> Ditaruh di <code>applicationDidBecomeActive</code>?</strong></li>
-</ul>
+<li><strong>Overhead Dart VM:</strong> Memulai <code>FlutterEngine</code> baru membutuhkan waktu komputasi (spin-up Dart VM dan inisialisasi plugin registrasi memakan waktu ~200–400ms).
+</li>
+<li><strong>Solusi Prewarm:</strong> Dengan memanggil <code>FlutterEngineManager.shared.prewarm()</code> pada baris 59 <code>IDSamirMainModule.swift</code>, engine sudah dinyalakan di awal startup native dan langsung disetel ke status <code>inactive()</code> agar hemat daya sebelum digunakan.
+</li>
+<li><strong>Arsitektur Single Persistent Host:</strong> Di <code>IDMainTabBarController.swift</code>, SAMIR menggunakan pola kontainer tunggal persisten (<code>installPersistentRoot</code>). Instance <code>SamirFlutterViewController</code> hanya dibuat <strong>satu kali</strong> dan disematkan langsung di dalam <code>flutterContainerView</code> (di bawah tab bar native).
+</li>
+<li><strong>Buka-Tutup Tab Tanpa Loading UI:</strong> Ketika berpindah ke tab native (Beranda), kontainer Flutter hanya disembunyikan (<code>flutterContainerView.isHidden = true</code>) dan engine di-<code>inactive()</code>. View controller Flutter <strong>tidak pernah di-destroy/di-dealloc</strong>. Saat pengguna kembali ke Tab Tagihan atau Tab Saya, kontainer cukup diaktifkan kembali (<code>flutterContainerView.isHidden = false</code>), engine di-<code>resume()</code>, dan rute dipindahkan lewat MethodChannel <code>showRoot(...)</code>. UI tidak perlu di-load ulang sama sekali (hanya data API yang di-refresh secara terpisah).
+</li>
+<li><strong>Frame-Ready Protection (Anti-Flicker):</strong> Native sengaja menahan kontainer Flutter tetap tersembunyi hingga menerima callback <code>responseID</code> (frameReady) dari Flutter engine, mencegah kedipan frame lama sebelum rute baru selesai dirender oleh Flutter.
+</li></ul>
+</li>
+<li><strong>Mengapa Request <code>app-configuration</code> Ditaruh di <code>applicationDidBecomeActive</code>?</strong>
+</li></ul>
 <p>Setiap kali aplikasi kembali dari background ke foreground, status konfigurasi server (misal: penonaktifan darurat atau pembaruan nomor kontak darurat) harus selalu terbarui tanpa mengharuskan pengguna me-restart aplikasi.</p>
 </section>
 <section id="sec-example" class="doc-section">
-<h3>🔬 G. Practical Example (Studi Kasus Penanganan Deep Link Cold Start)</h3>
-<p>Misalkan pengguna mengklik link promosi SMS <code>samir://repay/historyOrder</code> saat aplikasi sedang mati:</p>
+<h3>🔬 G. Practical Example (Studi Kasus Penanganan Deep Link: Cold Start vs Warm/Background)</h3>
+<p>Penanganan deep link dan notifikasi push diatur oleh <code>handleDeepLink(link:linkType:)</code> pada <code>IDSamirMainModule.swift</code>. Perilaku alur navigasi sangat bergantung pada kesiapan hirarki tampilan (<strong>UI Hierarchy Readiness</strong>).</p>
+
+<div class="mermaid-interactive-card">
+  <div class="mermaid-card-toolbar">
+    <span class="title">📊 Diagram Alur #2</span>
+    <button class="mermaid-zoom-trigger" onclick="openDiagramZoom('diag-2', 'Diagram Alur #2')">🔍 Perbesar Diagram</button>
+  </div>
+  <div class="mermaid-content-wrapper" id="diag-2">
+    <div class="mermaid">
+sequenceDiagram
+    autonumber
+    actor User as Pengguna
+    participant OS as iOS / AppsFlyer
+    participant Main as IDSamirMainModule
+    participant UD as UserDefaults
+    participant Launch as IDLaunchViewController
+    participant Tab as IDMainTabBarController / HomeVC
+
+    alt Skenario 1: Cold Start (Aplikasi Mati / Belum Launching)
+        User->>OS: Tap Link (SMS / Promo / Attribution)
+        OS->>Main: application(_:open:options:) / handleDeepLink
+        Main->>Main: Periksa topViewController()
+        Note over Main: Saat ini topVC == launchViewController (Splash aktif)
+        Main->>UD: Simpan link ke "Samir_DeepLink_Str"
+        Note over Launch: Menunggu hitung mundur 3s / User tap "Lewati"
+        Launch->>Main: finishLaunch() dipanggil
+        Main->>Tab: Ganti window.rootViewController ke IDMainTabBarController
+        Main->>UD: Baca "Samir_DeepLink_Str"
+        Main->>Tab: Dispatch router / trigger Notification
+        Tab->>UD: Bersihkan cache "Samir_DeepLink_Str" = ""
+    else Skenario 2: Warm Start / Background / Foreground (Aplikasi Sudah Terbuka)
+        User->>OS: Tap Link / Banner Push Notification
+        OS->>Main: handleDeepLink / userNotificationCenter(_:didReceive:)
+        Main->>Main: Periksa topViewController()
+        Note over Main: topVC BUKAN launchViewController (UI stack sudah siap)
+        Main->>Main: Langsung evaluasi switch deepLinkType
+        alt User Belum Login & Route Memerlukan Auth
+            Main->>Tab: Buka Modal Login (loginAction)
+        else User Sudah Login
+            Main->>Tab: IDRouterManager.id_perfromWithURLString(routerUrl)
+        end
+        Main->>UD: clearPushCache()
+    end
+    </div>
+  </div>
+</div>
+<div id="sub-1-kasus-cold-start-aplikasi-mati-belum-selesai-launching" class="doc-subsection">
+<h4>1. Kasus Cold Start (Aplikasi Mati / Belum Selesai Launching)</h4>
+</div>
+<p>Misalkan pengguna mengklik tautan promosi <code>samir://repay/historyOrder</code> saat aplikasi tidak aktif di memori:</p>
 <ol>
-<li>iOS membangunkan aplikasi via <code>open url</code>.</li>
-<li><code>IDSamirMainModule.handleDeepLink</code> menerima link tersebut.</li>
-<li>Karena tab bar belum siap dan user belum tentu login, link disimpan di <code>UserDefaults.standard.set(link, forKey: &quot;Samir_DeepLink_Str&quot;)</code>.</li>
-<li>Setelah <code>finishLaunch()</code> selesai dan pengguna terverifikasi login, method <code>changeMainRootViewController</code> membaca kembali cache tersebut dan mengeksekusi <code>IDRouterManager.id_perfromWithURLString(...)</code> untuk mengantar user langsung ke riwayat pinjaman.</li>
-</ol>
+<li><strong>Mengapa Harus Disimpan Sementara di <code>UserDefaults</code> (<code>Samir_DeepLink_Str</code>)?</strong>  
+</li></ol>
+<p>Saat aplikasi baru bangun dari nol, root window masih berupa <code>IDLaunchViewController</code> (layar splash 3 detik). Navigation controller, tab bar, status login, dan konfigurasi server belum terpasang. Jika router langsung dipaksa berpindah layar saat itu juga, transisi akan gagal atau tertimpa oleh proses penggantian root window splash.</p>
+<ol start="2">
+<li><strong>Kapan & Bagaimana Link Dijalankan?</strong>  
+</li></ol>
+<p>Ketika countdown 3 detik habis atau pengguna menekan tombol "Lewati", <code>IDLaunchViewProtocol.finishLaunch()</code> dipanggil:</p>
+<ul>
+<li>Root window diganti ke <code>IDMainTabBarController</code>.
+</li>
+<li><code>launchViewController</code> di-set menjadi <code>nil</code>.
+</li>
+<li>String deep link dibaca dari <code>UserDefaults.standard.value(forKey: &quot;Samir_DeepLink_Str&quot;)</code>.
+</li>
+<li><code>handleDeepLink(link: deeplink, linkType: &quot;2&quot;)</code> dieksekusi ulang secara aman karena hirarki UI sudah berdiri utuh. Untuk rute yang mensyaratkan Beranda siap (misal konfirmasi pinjaman), eksekusi ditunda sampai <code>handleHomeDataLoadCompletion()</code> di <code>IDHomeViewController.swift</code> selesai, lalu cache dibersihkan via <code>clearPushCache()</code>.
+</li></ul>
+<div id="sub-2-kasus-warm-start-background-foreground-aplikasi-sudah-berjalan" class="doc-subsection">
+<h4>2. Kasus Warm Start / Background / Foreground (Aplikasi Sudah Berjalan)</h4>
+</div>
+<p>Ketika aplikasi sudah aktif di latar belakang (suspended) atau sedang dibuka di foreground:</p>
+<ol>
+<li><strong>Mengapa Tidak Disimpan ke <code>UserDefaults</code>?</strong>  
+</li></ol>
+<p>Karena <code>launchViewController</code> sudah bernilai <code>nil</code>, pengecekan <code>if currentVC == launchViewController</code> menghasilkan <code>false</code>. Aplikasi langsung melewati blok penyimpanan dan seketika mengevaluasi blok <code>switch deepLinkType</code>.</p>
+<ol start="2">
+<li><strong>Eksekusi Seketika (Real-Time):</strong>  
+</li></ol>
+<p>Jika rute memerlukan login (misal <code>.couponPage</code>, <code>.confirmPage</code>, <code>.repayDetail</code>) dan user belum login (<code>isLogin() == false</code>), modal login langsung ditampilkan. Jika sudah login, <code>IDRouterManager.id_perfromWithURLString(routerUrl)</code> langsung menavigasikan user ke layar tujuan tanpa jeda.</p>
+<ol start="3">
+<li><strong>Penanganan Push Notifikasi Latar Belakang:</strong>  
+</li></ol>
+<p>Jika link dipicu dari klik banner notifikasi saat di background, <code>userNotificationCenter(_:didReceive:)</code> memberikan jeda waktu <code>DispatchQueue.main.asyncAfter(deadline: .now() + 0.3)</code> agar transisi antarmuka dari sistem operasi selesai sempurna sebelum memanggil <code>handleDeepLink</code>.</p>
 </section>
 <section id="sec-mistakes" class="doc-section">
 <h3>⚠️ H. Common Mistakes & Debugging</h3>
 <ul>
-<li><strong>Splash Screen Terus Muncul Berulang Kali di Staging</strong>:</li>
-<li><em>Penyebab</em>: Endpoint <code>app-configuration</code> di environment TEST mengembalikan <code>appStartHide = &quot;0&quot;</code> atau gagal terhubung.</li>
-<li><em>Pengecekan</em>: Periksa isi <code>UserDefaults.standard.string(forKey: &quot;APP_Start_Hide&quot;)</code>.</li>
-<li><strong>Flutter Tab Berkedip Hitam / Putih Saat Pertama Kali Dibuka</strong>:</li>
-<li><em>Penyebab</em>: <code>FlutterEngineManager.shared.prewarm()</code> gagal atau belum selesai dipanggil sebelum tab diakses. Pastikan pemanggilan <code>prewarm()</code> tetap berada di baris 59 <code>IDSamirMainModule.swift</code>.</li>
-</ul>
+<li><strong>Splash Screen Terus Muncul Berulang Kali di Staging</strong>:
+<ul>
+<li><em>Penyebab</em>: Endpoint <code>app-configuration</code> di environment TEST mengembalikan <code>appStartHide = &quot;0&quot;</code> atau gagal terhubung.
+</li>
+<li><em>Pengecekan</em>: Periksa isi <code>UserDefaults.standard.string(forKey: &quot;APP_Start_Hide&quot;)</code>.
+</li></ul>
+</li>
+<li><strong>Flutter Tab Berkedip Hitam / Putih Saat Pertama Kali Dibuka</strong>:
+<ul>
+<li><em>Penyebab</em>: <code>FlutterEngineManager.shared.prewarm()</code> gagal atau belum selesai dipanggil sebelum tab diakses. Pastikan pemanggilan <code>prewarm()</code> tetap berada di baris 59 <code>IDSamirMainModule.swift</code>.
+</li></ul>
+</li>
+<li><strong>Deep Link Gagal Terbuka Saat Cold Start</strong>:
+<ul>
+<li><em>Penyebab</em>: Kunci <code>Samir_DeepLink_Str</code> terhapus sebelum <code>finishLaunch()</code> selesai atau routing dipanggil sebelum <code>IDMainTabBarController</code> terpasang di window. Pastikan pemeriksaan cache deep link dipanggil di dalam <code>finishLaunch()</code>.
+</li></ul>
+</li></ul>
 </section>
 <section id="sec-check" class="doc-section">
 <h3>🧠 I. Knowledge Check</h3>
 <ol>
-<li>Berapa durasi hitung mundur default pada <code>IDLaunchViewController</code>?</li>
-<li>Kunci apa di <code>UserDefaults</code> yang mengontrol apakah splash screen langsung dilewati?</li>
-<li>Mengapa FlutterEngine di-prewarm di awal startup native?</li>
-</ol>
+<li>Berapa durasi hitung mundur default pada <code>IDLaunchViewController</code>?
+</li>
+<li>Kunci apa di <code>UserDefaults</code> yang mengontrol apakah splash screen langsung dilewati?
+</li>
+<li>Mengapa FlutterEngine di-prewarm di awal startup native?
+</li></ol>
 <p><strong>Latihan Observasi</strong>:</p>
 <p>Buka file <code>ios/IDSamirLoan/Application/SamirMainModule/Classes/IDModule/IDSamirMainModule.swift</code>. Cari fungsi <code>changeLaunchViewController</code> dan <code>finishLaunch()</code>. Perhatikan bagaimana transisi penggantian <code>window?.rootViewController</code> dieksekusi.</p>
 </section>
@@ -507,9 +616,21 @@ public final class AppStartupCoordinator {
             <span class="toc-leaf-dot"></span>
             <a class="toc-tree-link" href="#sec-why">F. Why It Matters (Trade-Offs &amp; Catatan Arsitektur)</a>
           </div>
-          <div class="toc-node-row">
-            <span class="toc-leaf-dot"></span>
-            <a class="toc-tree-link" href="#sec-example">G. Practical Example (Studi Kasus Penanganan Deep Link Cold Start)</a>
+          <div class="toc-tree-node" id="toc-node-sec-example">
+            <div class="toc-node-row">
+              <span class="toc-caret" onclick="toggleTocBranch(this)">▾</span>
+              <a class="toc-tree-link" href="#sec-example">G. Practical Example (Studi Kasus Penanganan Deep Link: Cold Start vs Warm/Background)</a>
+            </div>
+            <div class="toc-branch">
+              <div class="toc-node-row">
+                <span class="toc-leaf-dot"></span>
+                <a class="toc-tree-link" href="#sub-1-kasus-cold-start-aplikasi-mati-belum-selesai-launching">1. Kasus Cold Start (Aplikasi Mati / Belum Selesai Launching)</a>
+              </div>
+              <div class="toc-node-row">
+                <span class="toc-leaf-dot"></span>
+                <a class="toc-tree-link" href="#sub-2-kasus-warm-start-background-foreground-aplikasi-sudah-berjalan">2. Kasus Warm Start / Background / Foreground (Aplikasi Sudah Berjalan)</a>
+              </div>
+            </div>
           </div>
           <div class="toc-node-row">
             <span class="toc-leaf-dot"></span>
@@ -611,9 +732,21 @@ public final class AppStartupCoordinator {
           <span class="toc-leaf-dot"></span>
           <a class="toc-tree-link" href="#sec-why" onclick="toggleMobileToc()">F. Why It Matters (Trade-Offs &amp; Catatan Arsitektur)</a>
         </div>
-        <div class="toc-node-row">
-          <span class="toc-leaf-dot"></span>
-          <a class="toc-tree-link" href="#sec-example" onclick="toggleMobileToc()">G. Practical Example (Studi Kasus Penanganan Deep Link Cold Start)</a>
+        <div class="toc-tree-node" id="mob-toc-node-sec-example">
+          <div class="toc-node-row">
+            <span class="toc-caret" onclick="toggleTocBranch(this)">▾</span>
+            <a class="toc-tree-link" href="#sec-example" onclick="toggleMobileToc()">G. Practical Example (Studi Kasus Penanganan Deep Link: Cold Start vs Warm/Background)</a>
+          </div>
+          <div class="toc-branch">
+            <div class="toc-node-row">
+              <span class="toc-leaf-dot"></span>
+              <a class="toc-tree-link" href="#sub-1-kasus-cold-start-aplikasi-mati-belum-selesai-launching" onclick="toggleMobileToc()">1. Kasus Cold Start (Aplikasi Mati / Belum Selesai Launching)</a>
+            </div>
+            <div class="toc-node-row">
+              <span class="toc-leaf-dot"></span>
+              <a class="toc-tree-link" href="#sub-2-kasus-warm-start-background-foreground-aplikasi-sudah-berjalan" onclick="toggleMobileToc()">2. Kasus Warm Start / Background / Foreground (Aplikasi Sudah Berjalan)</a>
+            </div>
+          </div>
         </div>
         <div class="toc-node-row">
           <span class="toc-leaf-dot"></span>
@@ -948,7 +1081,7 @@ public final class AppStartupCoordinator {
       }
     } catch (e) {}
 
-    const sectionIds = ['sec-title', 'sec-obj', 'sec-prereq', 'sec-simple', 'sec-actual', 'sub-1-urutan-11-langkah-di-idsamirmainmodule', 'sub-2-logika-pemilihan-layar-awal-initwindow-checkappstarthide', 'sub-3-siklus-applicationdidbecomeactive-sinkronisasi-server', 'sec-walkthrough', 'sec-why', 'sec-example', 'sec-mistakes', 'sec-check', 'sec-completion', 'sub-solid', 'sub-blueprint', 'sub-quiz'];
+    const sectionIds = ['sec-title', 'sec-obj', 'sec-prereq', 'sec-simple', 'sec-actual', 'sub-1-urutan-11-langkah-di-idsamirmainmodule', 'sub-2-logika-pemilihan-layar-awal-initwindow-checkappstarthide', 'sub-3-siklus-applicationdidbecomeactive-sinkronisasi-server', 'sec-walkthrough', 'sec-why', 'sec-example', 'sub-1-kasus-cold-start-aplikasi-mati-belum-selesai-launching', 'sub-2-kasus-warm-start-background-foreground-aplikasi-sudah-berjalan', 'sec-mistakes', 'sec-check', 'sec-completion', 'sub-solid', 'sub-blueprint', 'sub-quiz'];
     const tocLinks = document.querySelectorAll('.toc-tree-link');
 
     window.addEventListener('scroll', () => {

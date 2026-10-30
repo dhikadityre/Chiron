@@ -97,11 +97,14 @@
 <h3>🎯 A. Learning Objective</h3>
 <p>Setelah menyelesaikan dokumen ini, pembaca akan mampu:</p>
 <ol>
-<li>Menyebutkan versi runtime resmi Flutter dan Dart yang kompatibel dengan codebase SAMIR.</li>
-<li>Memahami fungsi dan peranan setiap dependency pihak ketiga di dalam <code>pubspec.yaml</code>.</li>
-<li>Menjelaskan mekanisme <code>podhelper.rb</code> yang menghubungkan modul Flutter ke CocoaPods iOS.</li>
-<li>Menjalankan perintah build, dependency update, dan code analysis tanpa merusak integrasi host.</li>
-</ol>
+<li>Menyebutkan versi runtime resmi Flutter dan Dart yang kompatibel dengan codebase SAMIR.
+</li>
+<li>Memahami fungsi dan peranan setiap dependency pihak ketiga di dalam <code>pubspec.yaml</code>.
+</li>
+<li>Menjelaskan mekanisme <code>podhelper.rb</code> yang menghubungkan modul Flutter ke CocoaPods iOS.
+</li>
+<li>Menjalankan perintah build, dependency update, dan code analysis tanpa merusak integrasi host.
+</li></ol>
 </section>
 <section id="sec-prereq" class="doc-section">
 <h3>📋 B. Prerequisites</h3>
@@ -111,10 +114,12 @@
 <h3>💡 C. Simple Explanation (Analogi & Konsep Sederhana)</h3>
 <p>Bayangkan modul Flutter sebagai <strong>mesin bertenaga listrik</strong> yang dipasang ke dalam <strong>chassis mobil berbahan bakar konvensional (Host Native)</strong>:</p>
 <ul>
-<li>Supaya mesin listrik tersebut pas dan bekerja tanpa getaran, dibutuhkan kabel penghubung khusus dan bracket transmisi standar.</li>
-<li>Di iOS, kabel penghubung tersebut dinamakan <strong><code>podhelper.rb</code></strong> yang disediakan oleh Flutter SDK. Skrip ini memberi tahu CocoaPods: <em>"Kompilasi kode Dart ini menjadi framework biner, lalu masukkan ke dalam bundle Xcode <code>IDSamirLoan</code>."</em></li>
-<li>Baterai dan controller mesin tersebut dikelola oleh paket-paket standar: <strong>Dio</strong> sebagai saluran pipa bahan bakar data, dan <strong>GoRouter</strong> sebagai roda kemudi navigasi.</li>
-</ul>
+<li>Supaya mesin listrik tersebut pas dan bekerja tanpa getaran, dibutuhkan kabel penghubung khusus dan bracket transmisi standar.
+</li>
+<li>Di iOS, kabel penghubung tersebut dinamakan <strong><code>podhelper.rb</code></strong> yang disediakan oleh Flutter SDK. Skrip ini memberi tahu CocoaPods: <em>"Kompilasi kode Dart ini menjadi framework biner, lalu masukkan ke dalam bundle Xcode <code>IDSamirLoan</code>."</em>
+</li>
+<li>Baterai dan controller mesin tersebut dikelola oleh paket-paket standar: <strong>Dio</strong> sebagai saluran pipa bahan bakar data, dan <strong>GoRouter</strong> sebagai roda kemudi navigasi.
+</li></ul>
 </section>
 <section id="sec-actual" class="doc-section">
 <h3>💻 D. Actual Implementation (Bukti di Kode Sumber)</h3>
@@ -146,8 +151,8 @@ dev_dependencies:
 <p><em>Catatan Tambahan (Branch Testing)</em>:</p>
 <p>Pada branch pengujian (<code>feature/testing</code> di repositori Nexus), terdapat penambahan pustaka inspeksi lalu lintas jaringan internal:</p>
 <ul>
-<li><code>chucker_flutter: ^1.9.2</code>: Inspector HTTP in-app berbasis floating notification untuk memantau request dan response tanpa kabel USB.</li>
-</ul>
+<li><code>chucker_flutter: ^1.9.2</code>: Inspector HTTP in-app berbasis floating notification untuk memantau request dan response tanpa kabel USB.
+</li></ul>
 <div id="sub-3-integrasi-cocoapods-ios-via-podhelperrb" class="doc-subsection">
 <h4>3. Integrasi CocoaPods iOS via <code>podhelper.rb</code></h4>
 </div>
@@ -162,10 +167,12 @@ target &#x27;IDSamirLoan&#x27; do
 end</code></pre>
 <p>Ketika <code>pod install</code> dijalankan di folder <code>ios/</code>:</p>
 <ol>
-<li><code>podhelper.rb</code> mengevaluasi plugin Flutter yang terdaftar di <code>.flutter-plugins-dependencies</code>.</li>
-<li>Skrip membangun symlink dan podspec lokal untuk framework <code>App.framework</code> (berisi kode Dart yang dikompilasi AOT) dan <code>Flutter.framework</code> (berisi Flutter Engine biner).</li>
-<li>Pods ini ditautkan ke target Xcode <code>IDSamirLoan</code>.</li>
-</ol>
+<li><code>podhelper.rb</code> mengevaluasi plugin Flutter yang terdaftar di <code>.flutter-plugins-dependencies</code>.
+</li>
+<li>Skrip membangun symlink dan podspec lokal untuk framework <code>App.framework</code> (berisi kode Dart yang dikompilasi AOT) dan <code>Flutter.framework</code> (berisi Flutter Engine biner).
+</li>
+<li>Pods ini ditautkan ke target Xcode <code>IDSamirLoan</code>.
+</li></ol>
 </section>
 <section id="sec-walkthrough" class="doc-section">
 <h3>🪜 E. Step-by-Step Walkthrough: Alur Kerja Developer (Daily Workflow)</h3>
@@ -192,38 +199,46 @@ flutter analyze</code></pre>
 <section id="sec-why" class="doc-section">
 <h3>⚖️ F. Why It Matters (Trade-Offs & Implikasi Teknis)</h3>
 <ul>
-<li><strong>Mengapa Versi SDK Terkunci Ketat?</strong></li>
-</ul>
+<li><strong>Mengapa Versi SDK Terkunci Ketat?</strong>
+</li></ul>
 <p>Perubahan minor pada Flutter Engine (misalnya melompat dari Flutter 3.24 ke 3.27) dapat mengubah struktur API C++ di <code>FlutterEngine</code>, yang berpotensi memutus binding runtime <code>FlutterViewController</code> pada kode Objective-C / Swift di host iOS (<code>FlutterEngineManager.swift</code>). Seluruh anggota tim mobile wajib menggunakan versi Flutter SDK yang seragam.</p>
 <ul>
-<li><strong>Mengapa Menggunakan <code>go_router</code> dan Bukan Navigator 1.0 Imperatif?</strong></li>
-</ul>
+<li><strong>Mengapa Menggunakan <code>go_router</code> dan Bukan Navigator 1.0 Imperatif?</strong>
+</li></ul>
 <p>Aplikasi SAMIR menerima sinyal route dari native host berupa string URL path semantik (seperti <code>showFlutterRoute(route: &#x27;/repay&#x27;)</code>). GoRouter secara alami membaca URL string dan memetakannya langsung ke komponen halaman melalui deklarasi rute yang terstruktur.</p>
 </section>
 <section id="sec-example" class="doc-section">
 <h3>🔬 G. Practical Example (Skenario Penggunaan Nyata)</h3>
 <p>Jika tim QA melaporkan error kompilasi CocoaPods <code>podhelper.rb: No such file or directory</code>:</p>
 <ul>
-<li><strong>Penyebab</strong>: Folder <code>.ios/</code> di dalam direktori <code>flutter/</code> belum digenerate oleh Flutter tools.</li>
-<li><strong>Solusi</strong>: Cukup jalankan perintah <code>flutter pub get</code> di dalam direktori <code>flutter/</code> agar Flutter tooling membuat ulang file <code>.ios/Flutter/podhelper.rb</code>.</li>
-</ul>
+<li><strong>Penyebab</strong>: Folder <code>.ios/</code> di dalam direktori <code>flutter/</code> belum digenerate oleh Flutter tools.
+</li>
+<li><strong>Solusi</strong>: Cukup jalankan perintah <code>flutter pub get</code> di dalam direktori <code>flutter/</code> agar Flutter tooling membuat ulang file <code>.ios/Flutter/podhelper.rb</code>.
+</li></ul>
 </section>
 <section id="sec-mistakes" class="doc-section">
 <h3>⚠️ H. Common Mistakes & Debugging</h3>
 <ul>
-<li><strong>Menjalankan <code>pod update</code> tanpa <code>flutter pub get</code> terlebih dahulu</strong>:</li>
-<li>CocoaPods akan mengacu pada snapshot plugin lama dan memicu error <code>Plugin not found in podhelper.rb</code>.</li>
-<li><strong>Mengabaikan peringatan Linter</strong>:</li>
-<li>Hindari penggunaan <code>print()</code> biasa di production code; selalu gunakan <code>debugPrint()</code> atau <code>LogUtils</code> agar log sensitif tidak bocor di release build.</li>
-</ul>
+<li><strong>Menjalankan <code>pod update</code> tanpa <code>flutter pub get</code> terlebih dahulu</strong>:
+<ul>
+<li>CocoaPods akan mengacu pada snapshot plugin lama dan memicu error <code>Plugin not found in podhelper.rb</code>.
+</li></ul>
+</li>
+<li><strong>Mengabaikan peringatan Linter</strong>:
+<ul>
+<li>Hindari penggunaan <code>print()</code> biasa di production code; selalu gunakan <code>debugPrint()</code> atau <code>LogUtils</code> agar log sensitif tidak bocor di release build.
+</li></ul>
+</li></ul>
 </section>
 <section id="sec-check" class="doc-section">
 <h3>🧠 I. Knowledge Check</h3>
 <ol>
-<li>Mengapa developer harus menjalankan <code>pod install</code> di folder <code>ios/</code> setelah menambahkan dependency di <code>flutter/pubspec.yaml</code>?</li>
-<li>Apa kegunaan pustaka <code>crypto</code> di dalam proyek SAMIR Flutter?</li>
-<li>File apa di host iOS yang bertugas mengimpor seluruh pod Flutter ke proyek Xcode?</li>
-</ol>
+<li>Mengapa developer harus menjalankan <code>pod install</code> di folder <code>ios/</code> setelah menambahkan dependency di <code>flutter/pubspec.yaml</code>?
+</li>
+<li>Apa kegunaan pustaka <code>crypto</code> di dalam proyek SAMIR Flutter?
+</li>
+<li>File apa di host iOS yang bertugas mengimpor seluruh pod Flutter ke proyek Xcode?
+</li></ol>
 <p><strong>Latihan Observasi</strong>:</p>
 <p>Buka file <a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/learn/Flutter-Arch/flutter/analysis_options.yaml" target="_blank" rel="noopener noreferrer">🦊 flutter/analysis_options.yaml <span class="branch-tag">learn/Flutter-Arch</span> ↗</a>. Periksa rule apa saja yang diaktifkan atau dinonaktifkan di dalamnya.</p>
 </section>

@@ -97,11 +97,14 @@
 <h3>🎯 A. Learning Objective</h3>
 <p>Setelah menyelesaikan dokumen ini, pembaca akan mampu:</p>
 <ol>
-<li>Memetakan letak seluruh kode sumber Dart, file aset gambar, dan konfigurasi build.</li>
-<li>Memahami pembagian domain antara subdirektori <code>common/</code> dan <code>pages/</code>.</li>
-<li>Menjelaskan konvensi modularisasi subfitur (pola <code>models/</code>, <code>services/</code>, dan <code>widgets/</code>).</li>
-<li>Membedakan folder source code aktif dari folder platform wrapper bawaan (<code>.android/</code>, <code>.ios/</code>).</li>
-</ol>
+<li>Memetakan letak seluruh kode sumber Dart, file aset gambar, dan konfigurasi build.
+</li>
+<li>Memahami pembagian domain antara subdirektori <code>common/</code> dan <code>pages/</code>.
+</li>
+<li>Menjelaskan konvensi modularisasi subfitur (pola <code>models/</code>, <code>services/</code>, dan <code>widgets/</code>).
+</li>
+<li>Membedakan folder source code aktif dari folder platform wrapper bawaan (<code>.android/</code>, <code>.ios/</code>).
+</li></ol>
 </section>
 <section id="sec-prereq" class="doc-section">
 <h3>📋 B. Prerequisites</h3>
@@ -111,10 +114,12 @@
 <h3>💡 C. Simple Explanation (Analogi & Konsep Sederhana)</h3>
 <p>Bayangkan sebuah pabrik komponen otomotif:</p>
 <ul>
-<li>Folder <strong><code>common/</code></strong> adalah bengkel perkakas bersama dan stasiun kontrol umum (kunci pas, baut, jalur pipa oli, jembatan radio dengan stasiun pusat). Semua lini produksi menggunakannya.</li>
-<li>Folder <strong><code>pages/</code></strong> adalah stasiun perakitan modul spesifik. Stasiun <code>repay/</code> khusus merakit loket tagihan, sedangkan <code>mine/</code> khusus merakit dasbor profil pelanggan.</li>
-<li>File <strong><code>pubspec.yaml</code></strong> adalah manifest izin dan daftar suku cadang resmi pabrik.</li>
-</ul>
+<li>Folder <strong><code>common/</code></strong> adalah bengkel perkakas bersama dan stasiun kontrol umum (kunci pas, baut, jalur pipa oli, jembatan radio dengan stasiun pusat). Semua lini produksi menggunakannya.
+</li>
+<li>Folder <strong><code>pages/</code></strong> adalah stasiun perakitan modul spesifik. Stasiun <code>repay/</code> khusus merakit loket tagihan, sedangkan <code>mine/</code> khusus merakit dasbor profil pelanggan.
+</li>
+<li>File <strong><code>pubspec.yaml</code></strong> adalah manifest izin dan daftar suku cadang resmi pabrik.
+</li></ul>
 </section>
 <section id="sec-actual" class="doc-section">
 <h3>💻 D. Actual Implementation (Bukti di Kode Sumber)</h3>
@@ -236,22 +241,26 @@
 <h3>🪜 E. Step-by-Step Walkthrough: Menelusuri File Fitur Baru</h3>
 <p>Jika seorang developer ditugaskan untuk menambahkan menu baru di halaman <code>MineHomePage</code>:</p>
 <ol>
-<li>Buka <a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/learn/Flutter-Arch/flutter/lib/pages/mine/home/widgets/mine_home_menu.dart" target="_blank" rel="noopener noreferrer">🦊 flutter/lib/pages/mine/home/widgets/mine_home_menu.dart <span class="branch-tag">learn/Flutter-Arch</span> ↗</a>.</li>
-<li>Periksa mapping rute pada event <code>onTap</code>.</li>
-<li>Jika menu membutuhkan endpoint data baru, tambahkan konstanta path di <a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/learn/Flutter-Arch/flutter/lib/common/api/server_api.dart" target="_blank" rel="noopener noreferrer">🦊 flutter/lib/common/api/server_api.dart <span class="branch-tag">learn/Flutter-Arch</span> ↗</a>.</li>
-<li>Buat pemanggil API baru di <a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/learn/Flutter-Arch/flutter/lib/pages/mine/home/services/mine_home_service.dart" target="_blank" rel="noopener noreferrer">🦊 flutter/lib/pages/mine/home/services/mine_home_service.dart <span class="branch-tag">learn/Flutter-Arch</span> ↗</a>.</li>
-<li>Buat model parsing di <a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/learn/Flutter-Arch/flutter/lib/pages/mine/home/models/mine_home_model.dart" target="_blank" rel="noopener noreferrer">🦊 flutter/lib/pages/mine/home/models/mine_home_model.dart <span class="branch-tag">learn/Flutter-Arch</span> ↗</a>.</li>
-</ol>
+<li>Buka <a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/learn/Flutter-Arch/flutter/lib/pages/mine/home/widgets/mine_home_menu.dart" target="_blank" rel="noopener noreferrer">🦊 flutter/lib/pages/mine/home/widgets/mine_home_menu.dart <span class="branch-tag">learn/Flutter-Arch</span> ↗</a>.
+</li>
+<li>Periksa mapping rute pada event <code>onTap</code>.
+</li>
+<li>Jika menu membutuhkan endpoint data baru, tambahkan konstanta path di <a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/learn/Flutter-Arch/flutter/lib/common/api/server_api.dart" target="_blank" rel="noopener noreferrer">🦊 flutter/lib/common/api/server_api.dart <span class="branch-tag">learn/Flutter-Arch</span> ↗</a>.
+</li>
+<li>Buat pemanggil API baru di <a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/learn/Flutter-Arch/flutter/lib/pages/mine/home/services/mine_home_service.dart" target="_blank" rel="noopener noreferrer">🦊 flutter/lib/pages/mine/home/services/mine_home_service.dart <span class="branch-tag">learn/Flutter-Arch</span> ↗</a>.
+</li>
+<li>Buat model parsing di <a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/learn/Flutter-Arch/flutter/lib/pages/mine/home/models/mine_home_model.dart" target="_blank" rel="noopener noreferrer">🦊 flutter/lib/pages/mine/home/models/mine_home_model.dart <span class="branch-tag">learn/Flutter-Arch</span> ↗</a>.
+</li></ol>
 </section>
 <section id="sec-why" class="doc-section">
 <h3>⚖️ F. Why It Matters (Trade-Offs & Implikasi Teknis)</h3>
 <ul>
-<li><strong>Mengapa Menggunakan Sintaks <code>part</code> dan <code>part of</code> pada Folder Widgets?</strong></li>
-</ul>
+<li><strong>Mengapa Menggunakan Sintaks <code>part</code> dan <code>part of</code> pada Folder Widgets?</strong>
+</li></ul>
 <p>Komponen UI seperti <code>mine_home_header.dart</code> menggunakan <code>part of &#x27;mine_home_page.dart&#x27;</code>. Hal ini memungkinkan sub-komponen mengakses state internal, method pembantu privat (<code>_showLoading()</code>, <code>_model</code>), tanpa perlu meneruskan puluhan callback parameter secara manual, sambil menjaga file utama tetap ramping dan terstruktur.</p>
 <ul>
-<li><strong>Mengapa <code>.android/</code> dan <code>.ios/</code> Berawalan Titik (<code>.</code>)?</strong></li>
-</ul>
+<li><strong>Mengapa <code>.android/</code> dan <code>.ios/</code> Berawalan Titik (<code>.</code>)?</strong>
+</li></ul>
 <p>Folder ini dibuat otomatis oleh Flutter tooling sebagai sandbox wrapper. Modul Add-to-App yang sesungguhnya diintegrasikan ke folder <code>ios/</code> dan <code>android/</code> di level terluar monorepo SAMIR, bukan di dalam direktori <code>flutter/.android/</code> atau <code>flutter/.ios/</code>.</p>
 </section>
 <section id="sec-example" class="doc-section">
@@ -261,19 +270,26 @@
 <section id="sec-mistakes" class="doc-section">
 <h3>⚠️ H. Common Mistakes & Debugging</h3>
 <ul>
-<li><strong>Mengubah file di dalam <code>.ios/</code> atau <code>.android/</code></strong>:</li>
-<li>File-file ini bersifat transient dan dapat ditimpa ulang (<em>overwritten</em>) secara otomatis setiap kali perintah <code>flutter packages get</code> atau <code>flutter build</code> dijalankan. Perubahan konfigurasi native wajib dilakukan di folder host asli: <code>ios/</code> atau <code>android/</code>.</li>
-<li><strong>Menaruh Business Logic di dalam <code>widgets/</code></strong>:</li>
-<li>Pelanggaran Separation of Concerns terjadi jika widget memanggil <code>httpClient.post()</code> secara langsung. Panggilan jaringan wajib diisolasi di dalam folder <code>services/</code>.</li>
-</ul>
+<li><strong>Mengubah file di dalam <code>.ios/</code> atau <code>.android/</code></strong>:
+<ul>
+<li>File-file ini bersifat transient dan dapat ditimpa ulang (<em>overwritten</em>) secara otomatis setiap kali perintah <code>flutter packages get</code> atau <code>flutter build</code> dijalankan. Perubahan konfigurasi native wajib dilakukan di folder host asli: <code>ios/</code> atau <code>android/</code>.
+</li></ul>
+</li>
+<li><strong>Menaruh Business Logic di dalam <code>widgets/</code></strong>:
+<ul>
+<li>Pelanggaran Separation of Concerns terjadi jika widget memanggil <code>httpClient.post()</code> secara langsung. Panggilan jaringan wajib diisolasi di dalam folder <code>services/</code>.
+</li></ul>
+</li></ul>
 </section>
 <section id="sec-check" class="doc-section">
 <h3>🧠 I. Knowledge Check</h3>
 <ol>
-<li>Di folder mana kode penandatanganan request (signature cryptographic hashing) disimpan?</li>
-<li>Apa tujuan membagi kode per fitur menjadi <code>models/</code>, <code>services/</code>, dan <code>widgets/</code>?</li>
-<li>Apa fungsi file <code>flutter/lib/common/router/native_route_chrome.dart</code>?</li>
-</ol>
+<li>Di folder mana kode penandatanganan request (signature cryptographic hashing) disimpan?
+</li>
+<li>Apa tujuan membagi kode per fitur menjadi <code>models/</code>, <code>services/</code>, dan <code>widgets/</code>?
+</li>
+<li>Apa fungsi file <code>flutter/lib/common/router/native_route_chrome.dart</code>?
+</li></ol>
 <p><strong>Latihan Observasi</strong>:</p>
 <p>Buka file <a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/learn/Flutter-Arch/flutter/lib/common/api/server_api.dart" target="_blank" rel="noopener noreferrer">🦊 flutter/lib/common/api/server_api.dart <span class="branch-tag">learn/Flutter-Arch</span> ↗</a> dan catat seluruh string konstanta endpoint yang ada di dalamnya.</p>
 </section>

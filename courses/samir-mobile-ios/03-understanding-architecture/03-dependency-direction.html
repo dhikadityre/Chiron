@@ -14,6 +14,22 @@
   <!-- Mermaid.js for Dynamic Flow Diagrams -->
   <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
   <script>mermaid.initialize({ startOnLoad: true, theme: 'dark' });</script>
+  <style>
+    .mermaid .edgePath path.path {
+      stroke-width: 2.5px !important;
+    }
+    .mermaid .marker {
+      fill-opacity: 1 !important;
+    }
+    .mermaid .edgeLabel {
+      background-color: var(--card-bg, #1a1e29) !important;
+      padding: 3px 8px !important;
+      border-radius: 4px !important;
+      font-size: 0.75rem !important;
+      color: #38bdf8 !important;
+      border: 1px solid rgba(56, 189, 248, 0.25) !important;
+    }
+  </style>
 </head>
 <body>
 
@@ -101,26 +117,31 @@
 <h3>🎯 A. Learning Objective</h3>
 <p>Setelah mempelajari dokumen ini, pembaca akan mampu:</p>
 <ol>
-<li>Memetakan hierarki ketergantungan piramida dari Foundation (<code>CZ*</code>), Shared Service (<code>SamirServiceModule</code>), hingga Modul Bisnis (<code>Samir*Module</code>).</li>
-<li>Menjelaskan prinsip <em>Inversion of Control (IoC)</em> yang diterapkan untuk mencegah modul bisnis saling import secara langsung.</li>
-<li>Mengidentifikasi dan mencegah potensi ketergantungan sirkular antara modul Auth, Loan, dan Login.</li>
-</ol>
+<li>Memetakan hierarki ketergantungan piramida dari Foundation (<code>CZ*</code>), Shared Service (<code>SamirServiceModule</code>), hingga Modul Bisnis (<code>Samir*Module</code>).
+</li>
+<li>Menjelaskan prinsip <em>Inversion of Control (IoC)</em> yang diterapkan untuk mencegah modul bisnis saling import secara langsung.
+</li>
+<li>Mengidentifikasi dan mencegah potensi ketergantungan sirkular antara modul Auth, Loan, dan Login.
+</li></ol>
 </section>
 <section id="sec-prereq" class="doc-section">
 <h3>📋 B. Prerequisites</h3>
 <ul>
-<li>Sudah membaca <a href="01-architecture-overview.html">01-architecture-overview.md</a> dan <a href="02-layers-and-responsibilities.html">02-layers-and-responsibilities.md</a>.</li>
-<li>Mengetahui konsep acyclic dependencies principle (ADP) dalam arsitektur perangkat lunak.</li>
-</ul>
+<li>Sudah membaca <a href="01-architecture-overview.html">01-architecture-overview.md</a> dan <a href="02-layers-and-responsibilities.html">02-layers-and-responsibilities.md</a>.
+</li>
+<li>Mengetahui konsep acyclic dependencies principle (ADP) dalam arsitektur perangkat lunak.
+</li></ul>
 </section>
 <section id="sec-simple" class="doc-section">
 <h3>💡 C. Simple Explanation (Analogi Rantai Komando Militer)</h3>
 <p>Dalam struktur militer yang disiplin:</p>
 <ul>
-<li><strong>Jenderal (Modul Bisnis)</strong> dapat memberi instruksi ke <strong>Staf Logistik (Pustaka Fondasi & Jaringan)</strong>.</li>
-<li><strong>Staf Logistik</strong> dilarang memberi perintah atau bergantung pada keputusan Jenderal (pustaka <code>CZ*</code> tidak boleh tahu apa pun tentang bisnis pinjaman).</li>
-<li>Dua Jenderal dari divisi berbeda (Jenderal Pinjaman dan Jenderal Penagihan) <strong>tidak boleh saling memerintah secara langsung</strong>. Jika mereka butuh koordinasi, mereka harus mengirimkan memo melalui <strong>Biro Penghubung Resmi (<code>SamirServiceModule</code> & <code>SamirRouterModule</code>)</strong>.</li>
-</ul>
+<li><strong>Jenderal (Modul Bisnis)</strong> dapat memberi instruksi ke <strong>Staf Logistik (Pustaka Fondasi & Jaringan)</strong>.
+</li>
+<li><strong>Staf Logistik</strong> dilarang memberi perintah atau bergantung pada keputusan Jenderal (pustaka <code>CZ*</code> tidak boleh tahu apa pun tentang bisnis pinjaman).
+</li>
+<li>Dua Jenderal dari divisi berbeda (Jenderal Pinjaman dan Jenderal Penagihan) <strong>tidak boleh saling memerintah secara langsung</strong>. Jika mereka butuh koordinasi, mereka harus mengirimkan memo melalui <strong>Biro Penghubung Resmi (<code>SamirServiceModule</code> & <code>SamirRouterModule</code>)</strong>.
+</li></ul>
 <p>Dengan aturan ini, jika satu divisi bubar atau dirombak total, divisi lain tetap dapat beroperasi tanpa terganggu.</p>
 </section>
 <section id="sec-actual" class="doc-section">
@@ -128,90 +149,119 @@
 
 <div class="mermaid-interactive-card">
   <div class="mermaid-card-toolbar">
-    <span class="title">📊 Diagram Alur #1</span>
+    <span class="title">📊 Diagram Alur #1: Piramida Arah Dependensi (Downward Dependency Flow)</span>
     <button class="mermaid-zoom-trigger" onclick="openDiagramZoom('diag-1', 'Diagram Alur #1')">🔍 Perbesar Diagram</button>
   </div>
   <div class="mermaid-content-wrapper" id="diag-1">
     <div class="mermaid">
-graph BT
-    subgraph Layer 1: Core Foundation & Tooling [Pustaka Mandiri]
-        CZ1[CZSwiftUtils]
-        CZ2[CZSwiftUIKit]
-        CZ3[CZSwiftStorageLib]
-        CZ4[CZSwiftAntiFraudLib]
-        CZ5[CZSwiftEnviromentLib]
-        CZ6[CZSwiftModuleLib]
-        CZ7[CZSwiftRouterLib]
+flowchart TD
+    subgraph L4 ["🏛️ Layer 4: Feature Modules (Domain Bisnis Terisolasi)"]
+        direction LR
+        MAIN["SamirMainModule"]
+        LOGN["SamirLoginModule"]
+        AUTH["SamirAuthModule"]
+        LOAN["SamirLoanModule"]
+        RPAY["SamirRepayModule"]
+        MINE["SamirMineModule"]
+        WEBV["SamirWebViewModule"]
     end
 
-    subgraph Layer 2: Core Infrastructure [Infrastruktur Shared]
-        NET[SamirNetworkModule<br/>Alamofire + Signature]
-        PTS[SamirPointsModule<br/>Tracking & Analytics]
-        COM[SamirCommonModule<br/>Base Controllers & Flutter Bridge]
+    subgraph L3 ["🤝 Layer 3: Contracts & Service Abstraction (Biro Penghubung)"]
+        direction LR
+        SRV["SamirServiceModule<br/><code>Service Protocols</code>"]
+        RTM["SamirRouterModule<br/><code>Router Constants</code>"]
     end
 
-    subgraph Layer 3: Contracts & Service Abstraction [Biro Penghubung]
-        SRV[SamirServiceModule<br/>Service Protocols]
-        RTM[SamirRouterModule<br/>Router Constants]
+    subgraph L2 ["⚙️ Layer 2: Core Infrastructure (Infrastruktur Bersama)"]
+        direction LR
+        NET["SamirNetworkModule<br/><code>Alamofire + Signature</code>"]
+        PTS["SamirPointsModule<br/><code>Tracking & Analytics</code>"]
+        COM["SamirCommonModule<br/><code>Base VC & Flutter Bridge</code>"]
     end
 
-    subgraph Layer 4: Feature Modules [Domain Bisnis Terisolasi]
-        MAIN[SamirMainModule]
-        LOGN[SamirLoginModule]
-        AUTH[SamirAuthModule]
-        LOAN[SamirLoanModule]
-        RPAY[SamirRepayModule]
-        MINE[SamirMineModule]
-        WEBV[SamirWebViewModule]
+    subgraph L1 ["🧱 Layer 1: Core Foundation & Tooling (Pustaka Mandiri)"]
+        direction LR
+        CZ1["CZSwiftUtils"]
+        CZ2["CZSwiftUIKit"]
+        CZ3["CZSwiftStorageLib"]
+        CZ4["CZSwiftAntiFraudLib"]
+        CZ5["CZSwiftEnviromentLib"]
+        CZ6["CZSwiftModuleLib"]
+        CZ7["CZSwiftRouterLib"]
     end
 
-    %% Dependency Arrows (Arah Ketergantungan Menunjuk ke Bawah)
+    %% Downward Connections: Modul Fitur ke Layer 3 & Layer 2
+    MAIN & LOGN & AUTH & LOAN & RPAY & MINE & WEBV ==>|① Kontrak Service & Router| SRV & RTM
+    MAIN & LOGN & AUTH & LOAN & RPAY & MINE & WEBV -->|② Fondasi UI, Jaringan & Tracking| COM & NET & PTS
+
+    %% Layer 3 ke Layer 1 (Tooling Protocols)
+    SRV ==>|Definisi Service Protocol| CZ6
+    RTM ==>|Registrasi Handler Route| CZ7
+
+    %% Layer 2 ke Layer 1 (Infrastruktur ke Utilities)
+    COM --> CZ1 & CZ2 & CZ3 & CZ5
     NET --> CZ1 & CZ6
     PTS --> CZ1 & CZ5
-    COM --> CZ1 & CZ2 & CZ3 & CZ5
 
-    SRV --> CZ6
-    RTM --> CZ7
+    %% Node Styling
+    classDef l4Class fill:#1e1b4b,stroke:#818cf8,stroke-width:2px,color:#e0e7ff;
+    classDef l3Class fill:#0c4a6e,stroke:#38bdf8,stroke-width:2.5px,color:#e0f2fe;
+    classDef l2Class fill:#064e3b,stroke:#34d399,stroke-width:2px,color:#dcfce7;
+    classDef l1Class fill:#27272a,stroke:#a1a1aa,stroke-width:1.5px,color:#f4f4f5;
 
-    MAIN --> SRV & RTM & COM & NET & PTS
-    LOGN --> SRV & RTM & COM & NET & PTS
-    AUTH --> SRV & RTM & COM & NET & PTS
-    LOAN --> SRV & RTM & COM & NET & PTS
-    RPAY --> SRV & RTM & COM & NET & PTS
-    MINE --> SRV & RTM & COM & NET & PTS
-    WEBV --> SRV & RTM & COM & NET & PTS
+    class MAIN,LOGN,AUTH,LOAN,RPAY,MINE,WEBV l4Class;
+    class SRV,RTM l3Class;
+    class NET,PTS,COM l2Class;
+    class CZ1,CZ2,CZ3,CZ4,CZ5,CZ6,CZ7 l1Class;
+
+    %% Link Styling - Panah Berwarna Kontras Tinggi
+    linkStyle default stroke:#38bdf8,stroke-width:2.5px;
     </div>
   </div>
+</div>
+
+<div class="callout tip" style="margin-top: 1.25rem;">
+  <div class="callout-title">🎨 Panduan Alur Panah Dependensi (Top-Down Flow)</div>
+  <p>Untuk menghindari kebingungan arah ketergantungan, diagram di atas disusun secara vertikal <strong>Top-to-Bottom</strong> (puncak piramida di atas, fondasi di bawah):</p>
+  <ul style="margin: 0.5rem 0 0 1.2rem; font-size: 0.88rem; line-height: 1.6;">
+    <li><strong style="color: #38bdf8;">Layer 4 ➔ Layer 3 (══► Tebal Biru Cyan)</strong>: Seluruh Modul Fitur terisolasi dan hanya berkomunikasi via kontrak protokol (<code>SamirServiceModule</code>) atau konstanta route (<code>SamirRouterModule</code>).</li>
+    <li><strong style="color: #c084fc;">Layer 4 ➔ Layer 2 (──► Ungu)</strong>: Mengakses controller dasar (<code>SamirCommonModule</code>) serta utilitas jaringan & analitik bersama.</li>
+    <li><strong style="color: #34d399;">Layer 3 ➔ Layer 1 (══► Hijau)</strong>: Protokol layanan mengadopsi <code>CZSwiftModuleLib</code> dan router engine <code>CZSwiftRouterLib</code>.</li>
+    <li><strong style="color: #f59e0b;">Layer 2 ➔ Layer 1 (──► Oranye)</strong>: Komponen infrastruktur bergantung pada utilitas dasar mandiri (UI Kit, Storage, Environment, AntiFraud).</li>
+  </ul>
 </div>
 <div id="sub-1-tiga-aturan-mutlak-ketergantungan-dependency-rules" class="doc-subsection">
 <h4>1. Tiga Aturan Mutlak Ketergantungan (Dependency Rules)</h4>
 </div>
 <ol>
-<li><strong>Aturan 1 (Downward Dependency Only)</strong>:</li>
-</ol>
+<li><strong>Aturan 1 (Downward Dependency Only)</strong>:
+</li></ol>
 <p>Modul pada layer yang lebih tinggi boleh bergantung pada layer di bawahnya, tetapi layer bawah <strong>HARAM</strong> bergantung pada layer di atasnya.</p>
 <p><em>Contoh:</em> <code>SamirLoanModule</code> boleh meng-import <code>CZSwiftUIKit</code>, tetapi <code>CZSwiftUIKit</code> dilarang keras meng-import <code>SamirLoanModule</code>.</p>
-<ol>
-<li><strong>Aturan 2 (No Sibling Imports)</strong>:</li>
-</ol>
+<ol start="2">
+<li><strong>Aturan 2 (No Sibling Imports)</strong>:
+</li></ol>
 <p>Modul fitur pada Layer 4 <strong>DILARANG KERAS</strong> saling meng-import satu sama lain:</p>
 <ul>
-<li><code>SamirLoanModule</code> ❌ TIDAK BOLEH meng-import <code>SamirLoginModule</code>.</li>
-<li><code>SamirAuthModule</code> ❌ TIDAK BOLEH meng-import <code>SamirLoanModule</code>.</li>
-<li><code>SamirRepayModule</code> ❌ TIDAK BOLEH meng-import <code>SamirAuthModule</code>.</li>
-</ul>
+<li><code>SamirLoanModule</code> ❌ TIDAK BOLEH meng-import <code>SamirLoginModule</code>.
+</li>
+<li><code>SamirAuthModule</code> ❌ TIDAK BOLEH meng-import <code>SamirLoanModule</code>.
+</li>
+<li><code>SamirRepayModule</code> ❌ TIDAK BOLEH meng-import <code>SamirAuthModule</code>.
+</li></ul>
 <ol>
-<li><strong>Aturan 3 (Protocol Decoupling via Layer 3)</strong>:</li>
-</ol>
+<li><strong>Aturan 3 (Protocol Decoupling via Layer 3)</strong>:
+</li></ol>
 <p>Semua interaksi antarmodul wajib melalui <code>SamirServiceModule</code> (untuk pertukaran data/aksi) atau <code>SamirRouterModule</code> (untuk perpindahan layar).</p>
 </section>
 <section id="sec-walkthrough" class="doc-section">
 <h3>🪜 E. Step-by-Step Walkthrough: Mencegah Ketergantungan Sirkular</h3>
 <p>Mari kita telaah skenario klasik yang rawan circular dependency:</p>
 <ul>
-<li><strong>Modul Pinjaman (Loan)</strong> butuh memeriksa apakah user sudah login di <strong>Modul Login</strong>.</li>
-<li><strong>Modul Login</strong> setelah berhasil login butuh membuka kembali <strong>Modul Pinjaman</strong> atau me-refresh kuota pinjaman.</li>
-</ul>
+<li><strong>Modul Pinjaman (Loan)</strong> butuh memeriksa apakah user sudah login di <strong>Modul Login</strong>.
+</li>
+<li><strong>Modul Login</strong> setelah berhasil login butuh membuka kembali <strong>Modul Pinjaman</strong> atau me-refresh kuota pinjaman.
+</li></ul>
 <p>Jika kedua modul saling import secara langsung di proyek:</p>
 <p><code>SamirLoanModule -&gt; SamirLoginModule -&gt; SamirLoanModule</code></p>
 <p>Hal ini akan memicu error kompilasi fatal: <strong>Circular dependency detected</strong>.</p>
@@ -244,30 +294,39 @@ sequenceDiagram
 <h4>Solusi di SAMIR iOS:</h4>
 </div>
 <ol>
-<li><code>SamirServiceModule</code> mendefinisikan interface murni:</li>
-</ol>
+<li><code>SamirServiceModule</code> mendefinisikan interface murni:
+</li></ol>
 <pre><code class="language-swift">   // SamirServiceModule/Classes/LoginModuleService/IDLoginModuleServiceProtocol.swift
    public protocol IDLoginModuleServiceProtocol: CZBaseServiceProtocol {
        func isLogin() -&gt; Bool
        func loginInfo() -&gt; IDLoginCodeModel?
        func loginAction()
    }</code></pre>
-<ol>
-<li><code>SamirLoginModule</code> mengimplementasikan protokol tersebut di <code>IDLoginModuleServiceHandler</code>.</li>
-<li><code>SamirLoanModule</code> hanya meng-import <code>SamirServiceModule</code> dan membaca protokol.</li>
-<li>Ketika login selesai, <code>SamirLoginModule</code> tidak memanggil LoanModule secara langsung, melainkan menyiarkan broadcast event via <code>NotificationCenter</code>.</li>
-<li>Hasil: Rantai sirkular berhasil diputus secara elegan (<em>Dependency Inversion Principle</em>).</li>
-</ol>
+<ol start="2">
+<li><code>SamirLoginModule</code> mengimplementasikan protokol tersebut di <code>IDLoginModuleServiceHandler</code>.
+</li>
+<li><code>SamirLoanModule</code> hanya meng-import <code>SamirServiceModule</code> dan membaca protokol.
+</li>
+<li>Ketika login selesai, <code>SamirLoginModule</code> tidak memanggil LoanModule secara langsung, melainkan menyiarkan broadcast event via <code>NotificationCenter</code>.
+</li>
+<li>Hasil: Rantai sirkular berhasil diputus secara elegan (<em>Dependency Inversion Principle</em>).
+</li></ol>
 </section>
 <section id="sec-why" class="doc-section">
 <h3>⚖️ F. Why It Matters (Trade-Offs & Analisis Dampak)</h3>
 <ul>
-<li><strong>Keuntungan</strong>:</li>
-<li>Modul Login dapat ditulis ulang atau diganti antarmukanya tanpa mengubah kode internal Modul Pinjaman.</li>
-<li>Setiap modul fitur dapat di-test secara terisolasi dengan membuat mock handler untuk protokol <code>SamirServiceModule</code>.</li>
-<li><strong>Kelemahan & Trade-Off</strong>:</li>
-<li>Compiler Swift tidak dapat memeriksa keberadaan handler pada waktu kompilasi (<em>compile-time safety</em>). Jika seseorang menghapus entri di <code>IDServiceList.plist</code>, pemanggilan <code>IDServiceManager.loginService()</code> akan mengembalikan <code>nil</code> secara diam-diam saat runtime.</li>
-</ul>
+<li><strong>Keuntungan</strong>:
+<ul>
+<li>Modul Login dapat ditulis ulang atau diganti antarmukanya tanpa mengubah kode internal Modul Pinjaman.
+</li>
+<li>Setiap modul fitur dapat di-test secara terisolasi dengan membuat mock handler untuk protokol <code>SamirServiceModule</code>.
+</li></ul>
+</li>
+<li><strong>Kelemahan & Trade-Off</strong>:
+<ul>
+<li>Compiler Swift tidak dapat memeriksa keberadaan handler pada waktu kompilasi (<em>compile-time safety</em>). Jika seseorang menghapus entri di <code>IDServiceList.plist</code>, pemanggilan <code>IDServiceManager.loginService()</code> akan mengembalikan <code>nil</code> secara diam-diam saat runtime.
+</li></ul>
+</li></ul>
 </section>
 <section id="sec-example" class="doc-section">
 <h3>🔬 G. Practical Example (Contoh Pemanggilan Layanan Nyata)</h3>
@@ -285,21 +344,30 @@ if let isLogin = IDServiceManager.loginService()?.isLogin(), isLogin == true {
 <section id="sec-mistakes" class="doc-section">
 <h3>⚠️ H. Common Mistakes & Debugging</h3>
 <ul>
-<li><strong>Crash Karena Handler Bernilai <code>nil</code></strong>:</li>
-<li><em>Gejala</em>: <code>IDServiceManager.loginService()</code> mengembalikan <code>nil</code> sehingga logika sesi gagal.</li>
-<li><em>Penyebab</em>: Typo pada kunci <code>IDLoginModuleServiceProtocol</code> di file <code>IDServiceList.plist</code> atau class <code>IDLoginModuleServiceHandler</code> gagal diinisialisasi.</li>
-<li><strong>Membuat Protokol Layanan di Folder Modul Fitur</strong>:</li>
-<li><em>Kesalahan</em>: Mendeklarasikan protokol baru di dalam folder <code>SamirLoanModule/Classes/</code>.</li>
-<li><em>Solusi</em>: Protokol yang ditujukan untuk konsumsi lintas modul <strong>wajib</strong> diletakkan di dalam folder <code>SamirServiceModule/Classes/</code>.</li>
-</ul>
+<li><strong>Crash Karena Handler Bernilai <code>nil</code></strong>:
+<ul>
+<li><em>Gejala</em>: <code>IDServiceManager.loginService()</code> mengembalikan <code>nil</code> sehingga logika sesi gagal.
+</li>
+<li><em>Penyebab</em>: Typo pada kunci <code>IDLoginModuleServiceProtocol</code> di file <code>IDServiceList.plist</code> atau class <code>IDLoginModuleServiceHandler</code> gagal diinisialisasi.
+</li></ul>
+</li>
+<li><strong>Membuat Protokol Layanan di Folder Modul Fitur</strong>:
+<ul>
+<li><em>Kesalahan</em>: Mendeklarasikan protokol baru di dalam folder <code>SamirLoanModule/Classes/</code>.
+</li>
+<li><em>Solusi</em>: Protokol yang ditujukan untuk konsumsi lintas modul <strong>wajib</strong> diletakkan di dalam folder <code>SamirServiceModule/Classes/</code>.
+</li></ul>
+</li></ul>
 </section>
 <section id="sec-check" class="doc-section">
 <h3>🧠 I. Knowledge Check</h3>
 <ol>
-<li>Mengapa pustaka fondasi <code>CZ*</code> dilarang meng-import modul bisnis <code>Samir*Module</code>?</li>
-<li>Bagaimana cara modul fitur A berkomunikasi dengan modul fitur B tanpa menimbulkan circular dependency?</li>
-<li>Di mana file plist yang memetakan nama protokol layanan ke class handler konkretnya?</li>
-</ol>
+<li>Mengapa pustaka fondasi <code>CZ*</code> dilarang meng-import modul bisnis <code>Samir*Module</code>?
+</li>
+<li>Bagaimana cara modul fitur A berkomunikasi dengan modul fitur B tanpa menimbulkan circular dependency?
+</li>
+<li>Di mana file plist yang memetakan nama protokol layanan ke class handler konkretnya?
+</li></ol>
 <p><strong>Latihan Observasi</strong>:</p>
 <p>Buka file <code>ios/IDSamirLoan/Application/Configuration/Module/IDServiceList.plist</code>. Cocokkan 4 nama protokol yang ada di dalamnya dengan file deklarasinya di folder <code>SamirServiceModule/Classes/</code>.</p>
 </section>

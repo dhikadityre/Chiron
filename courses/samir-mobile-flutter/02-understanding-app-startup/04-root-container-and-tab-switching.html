@@ -101,11 +101,14 @@
 <h3>🎯 A. Learning Objective</h3>
 <p>Setelah menyelesaikan dokumen ini, pembaca akan mampu:</p>
 <ol>
-<li>Memahami arsitektur wadah tunggal (<code>FlutterRootPage</code>) yang mengelola dua tab native berbeda.</li>
-<li>Menjelaskan mekanisme kerja <code>FlutterRootController.selectedPath</code> yang menggunakan pola <code>ValueNotifier</code>.</li>
-<li>Mengetahui cara kerja <code>IndexedStack</code> dalam mempertahankan state (form input, scroll offset, cache) saat pengguna berpindah tab.</li>
-<li>Menjelaskan integrasi <code>AnnotatedRegion&lt;SystemUiOverlayStyle&gt;</code> untuk memastikan warna status bar perangkat tetap konsisten.</li>
-</ol>
+<li>Memahami arsitektur wadah tunggal (<code>FlutterRootPage</code>) yang mengelola dua tab native berbeda.
+</li>
+<li>Menjelaskan mekanisme kerja <code>FlutterRootController.selectedPath</code> yang menggunakan pola <code>ValueNotifier</code>.
+</li>
+<li>Mengetahui cara kerja <code>IndexedStack</code> dalam mempertahankan state (form input, scroll offset, cache) saat pengguna berpindah tab.
+</li>
+<li>Menjelaskan integrasi <code>AnnotatedRegion&lt;SystemUiOverlayStyle&gt;</code> untuk memastikan warna status bar perangkat tetap konsisten.
+</li></ol>
 </section>
 <section id="sec-prereq" class="doc-section">
 <h3>📋 B. Prerequisites</h3>
@@ -115,12 +118,16 @@
 <h3>💡 C. Simple Explanation (Analogi & Konsep Sederhana)</h3>
 <p>Bayangkan sebuah proyektor film dengan dua slide transparan yang terpasang di atas rel bergeser:</p>
 <ul>
-<li>Slide 1 adalah <strong>Halaman Profil (Mine)</strong>.</li>
-<li>Slide 2 adalah <strong>Halaman Tagihan (Repay)</strong>.</li>
-<li>Ketika proyektor dinyalakan (<code>FlutterRootPage</code>), kedua slide sudah berada di posisinya masing-masing.</li>
-<li>Tuas mekanik (<code>FlutterRootController</code>) cukup menggeser rel sepersekian milimeter untuk menempatkan Slide 1 atau Slide 2 di depan lensa lampu proyektor.</li>
-<li>Slide yang sedang tidak disorot lampu tidak dilepas atau dibuang; posisi gambar dan catatannya tetap menempel sempurna di slide tersebut, siap disorot kembali dalam sekejap mata.</li>
-</ul>
+<li>Slide 1 adalah <strong>Halaman Profil (Mine)</strong>.
+</li>
+<li>Slide 2 adalah <strong>Halaman Tagihan (Repay)</strong>.
+</li>
+<li>Ketika proyektor dinyalakan (<code>FlutterRootPage</code>), kedua slide sudah berada di posisinya masing-masing.
+</li>
+<li>Tuas mekanik (<code>FlutterRootController</code>) cukup menggeser rel sepersekian milimeter untuk menempatkan Slide 1 atau Slide 2 di depan lensa lampu proyektor.
+</li>
+<li>Slide yang sedang tidak disorot lampu tidak dilepas atau dibuang; posisi gambar dan catatannya tetap menempel sempurna di slide tersebut, siap disorot kembali dalam sekejap mata.
+</li></ul>
 </section>
 <section id="sec-actual" class="doc-section">
 <h3>💻 D. Actual Implementation (Bukti di Kode Sumber)</h3>
@@ -151,10 +158,12 @@
 }</code></pre>
 <p>Karakteristik penting:</p>
 <ul>
-<li>Menggunakan <code>ValueNotifier&lt;String?&gt;</code>: Ringan dan efisien, hanya memicu update pada listener yang terdaftar tanpa perlu rebuild global.</li>
-<li><code>supports(location)</code>: Memvalidasi apakah path rute adalah rute root yang didukung (<code>/mine</code> atau <code>/repay</code>).</li>
-<li>Idempoten: Jika path yang dipilih sama dengan path saat ini (<code>selectedPath.value == path</code>), notifikasi diabaikan untuk mencegah siklus render sia-sia.</li>
-</ul>
+<li>Menggunakan <code>ValueNotifier&lt;String?&gt;</code>: Ringan dan efisien, hanya memicu update pada listener yang terdaftar tanpa perlu rebuild global.
+</li>
+<li><code>supports(location)</code>: Memvalidasi apakah path rute adalah rute root yang didukung (<code>/mine</code> atau <code>/repay</code>).
+</li>
+<li>Idempoten: Jika path yang dipilih sama dengan path saat ini (<code>selectedPath.value == path</code>), notifikasi diabaikan untuk mencegah siklus render sia-sia.
+</li></ul>
 <div id="sub-2-bedah-flutterrootpage" class="doc-subsection">
 <h4>2. Bedah <code>FlutterRootPage</code></h4>
 </div>
@@ -227,72 +236,81 @@ class _FlutterRootPageState extends State&lt;FlutterRootPage&gt; {
 <section id="sec-walkthrough" class="doc-section">
 <h3>🪜 E. Step-by-Step Walkthrough: Alur Pergantian Tab (Switching Flow)</h3>
 <ol>
-<li><strong>User Mengetuk Tab Tagihan di Host iOS</strong>:</li>
-</ol>
+<li><strong>User Mengetuk Tab Tagihan di Host iOS</strong>:
+</li></ol>
 <p><code>IDMainTabBarController</code> native mendeteksi perpindahan ke index 1 (Tagihan).</p>
-<ol>
-<li><strong>Native Memanggil Channel</strong>:</li>
-</ol>
+<ol start="2">
+<li><strong>Native Memanggil Channel</strong>:
+</li></ol>
 <p>Host mengirimkan pesan method channel <code>showFlutterRoute</code> dengan payload <code>{&quot;route&quot;: &quot;/repay&quot;}</code>.</p>
-<ol>
-<li><strong>Routers Mengarahkan</strong>:</li>
-</ol>
+<ol start="3">
+<li><strong>Routers Mengarahkan</strong>:
+</li></ol>
 <p><code>FlutterNativeRouteDispatcher</code> memanggil <code>Routers.go(&#x27;/repay&#x27;)</code>.</p>
-<ol>
-<li><strong>Controller Memperbarui State</strong>:</li>
-</ol>
+<ol start="4">
+<li><strong>Controller Memperbarui State</strong>:
+</li></ol>
 <p><code>Routers.go</code> mendeteksi bahwa <code>/repay</code> didukung oleh <code>FlutterRootController</code>, lalu memanggil <code>FlutterRootController.select(&#x27;/repay&#x27;)</code>.</p>
-<ol>
-<li><strong>Listener <code>FlutterRootPage</code> Terpicu</strong>:</li>
-</ol>
+<ol start="5">
+<li><strong>Listener <code>FlutterRootPage</code> Terpicu</strong>:
+</li></ol>
 <p>Fungsi <code>_handleSelectionChanged()</code> menerima notifikasi nilai baru, lalu memanggil <code>setState()</code>.</p>
-<ol>
-<li><strong>Pergantian Indeks Visual</strong>:</li>
-</ol>
+<ol start="6">
+<li><strong>Pergantian Indeks Visual</strong>:
+</li></ol>
 <p>Nilai <code>selectedIndex</code> berubah dari 0 ke 1. <code>IndexedStack</code> seketika memunculkan <code>RepayHomePage()</code> di layar.</p>
-<ol>
-<li><strong>Lifecycle & Ticker Update</strong>:</li>
-</ol>
+<ol start="7">
+<li><strong>Lifecycle & Ticker Update</strong>:
 <ul>
-<li><code>MineHomePage</code> (Index 0): <code>visible = false</code>, <code>TickerMode</code> dimatikan.</li>
-<li><code>RepayHomePage</code> (Index 1): <code>visible = true</code>, <code>TickerMode</code> diaktifkan, dan event <code>onPageVisible()</code> dipicu.</li>
-</ul>
+<li><code>MineHomePage</code> (Index 0): <code>visible = false</code>, <code>TickerMode</code> dimatikan.
+</li>
+<li><code>RepayHomePage</code> (Index 1): <code>visible = true</code>, <code>TickerMode</code> diaktifkan, dan event <code>onPageVisible()</code> dipicu.
+</li></ul>
+</li></ol>
 </section>
 <section id="sec-why" class="doc-section">
 <h3>⚖️ F. Why It Matters (Trade-Offs & Implikasi Teknis)</h3>
 <ul>
-<li><strong>Menghilangkan Tab Switching Latency</strong>:</li>
-</ul>
+<li><strong>Menghilangkan Tab Switching Latency</strong>:
+</li></ul>
 <p>Jika Flutter menghancurkan (<em>destroy</em>) widget halaman setiap kali pengguna berpindah tab, pengguna akan mengalami jeda pemuatan (loading skeleton) dan scrolling position akan reset ke paling atas. <code>IndexedStack</code> mempertahankan state form dan posisi scroll secara utuh di memori.</p>
 <ul>
-<li><strong>Konsistensi Status Bar dengan <code>AnnotatedRegion</code></strong>:</li>
-</ul>
+<li><strong>Konsistensi Status Bar dengan <code>AnnotatedRegion</code></strong>:
+</li></ul>
 <p>Aplikasi SAMIR menggunakan tema antarmuka terang (<em>light background</em>). Pembungkus <code>AnnotatedRegion&lt;SystemUiOverlayStyle&gt;(value: AppSystemUiStyle.onLightBackground)</code> memastikan ikon status bar (jam, baterai, wifi) selalu berwarna hitam legam di perangkat iOS dan Android, menghindari teks status bar menjadi putih tak terbaca di atas latar belakang terang.</p>
 </section>
 <section id="sec-example" class="doc-section">
 <h3>🔬 G. Practical Example (Skenario Penggunaan Nyata)</h3>
 <p>Pengguna sedang mengisi form bantuan di halaman profil (Mine), lalu berpindah ke tab Tagihan untuk memeriksa tanggal jatuh tempo, dan kemudian kembali ke tab profil:</p>
 <ul>
-<li>Berkat <code>IndexedStack</code>, seluruh teks yang sudah diketik di form halaman Mine tidak hilang.</li>
-<li>Pengguna dapat melanjutkan pengetikan tanpa frustrasi.</li>
-</ul>
+<li>Berkat <code>IndexedStack</code>, seluruh teks yang sudah diketik di form halaman Mine tidak hilang.
+</li>
+<li>Pengguna dapat melanjutkan pengetikan tanpa frustrasi.
+</li></ul>
 </section>
 <section id="sec-mistakes" class="doc-section">
 <h3>⚠️ H. Common Mistakes & Debugging</h3>
 <ul>
-<li><strong>Lupa Melepas Listener pada <code>dispose()</code></strong>:</li>
-<li><code>FlutterRootController.selectedPath.removeListener(_handleSelectionChanged)</code> wajib dipanggil di fungsi <code>dispose()</code> untuk mencegah memory leak.</li>
-<li><strong>Memberikan Index Negatif ke <code>IndexedStack</code></strong>:</li>
-<li>Pada baris 57: <code>index: selectedIndex &lt; 0 ? null : selectedIndex</code>. Jika <code>selectedPath</code> belum terdefinisi saat booting awal, memberikan <code>null</code> akan membuat <code>IndexedStack</code> tidak menampilkan child manapun daripada memicu runtime <code>RangeError</code>.</li>
-</ul>
+<li><strong>Lupa Melepas Listener pada <code>dispose()</code></strong>:
+<ul>
+<li><code>FlutterRootController.selectedPath.removeListener(_handleSelectionChanged)</code> wajib dipanggil di fungsi <code>dispose()</code> untuk mencegah memory leak.
+</li></ul>
+</li>
+<li><strong>Memberikan Index Negatif ke <code>IndexedStack</code></strong>:
+<ul>
+<li>Pada baris 57: <code>index: selectedIndex &lt; 0 ? null : selectedIndex</code>. Jika <code>selectedPath</code> belum terdefinisi saat booting awal, memberikan <code>null</code> akan membuat <code>IndexedStack</code> tidak menampilkan child manapun daripada memicu runtime <code>RangeError</code>.
+</li></ul>
+</li></ul>
 </section>
 <section id="sec-check" class="doc-section">
 <h3>🧠 I. Knowledge Check</h3>
 <ol>
-<li>Mengapa <code>FlutterRootPage</code> menggunakan <code>IndexedStack</code> dan bukan <code>TabBarView</code> biasa?</li>
-<li>Objek apa yang digunakan oleh <code>FlutterRootController</code> untuk menyebarkan perubahan tab yang aktif?</li>
-<li>Apa yang terjadi pada controller animasi di halaman yang sedang tersembunyi di dalam <code>IndexedStack</code>?</li>
-</ol>
+<li>Mengapa <code>FlutterRootPage</code> menggunakan <code>IndexedStack</code> dan bukan <code>TabBarView</code> biasa?
+</li>
+<li>Objek apa yang digunakan oleh <code>FlutterRootController</code> untuk menyebarkan perubahan tab yang aktif?
+</li>
+<li>Apa yang terjadi pada controller animasi di halaman yang sedang tersembunyi di dalam <code>IndexedStack</code>?
+</li></ol>
 <p><strong>Latihan Observasi</strong>:</p>
 <p>Buka <a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/learn/Flutter-Arch/flutter/lib/pages/root/flutter_root_page.dart" target="_blank" rel="noopener noreferrer">🦊 flutter/lib/pages/root/flutter_root_page.dart <span class="branch-tag">learn/Flutter-Arch</span> ↗</a>. Amati deklarasi <code>_paths</code> pada baris 19–22 dan pastikan urutan indeksnya selaras dengan list <code>_pages</code>.</p>
 </section>

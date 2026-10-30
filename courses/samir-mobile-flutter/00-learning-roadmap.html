@@ -114,10 +114,12 @@ graph TD
 <h4>Mengapa Urutan Ini Efektif?</h4>
 </div>
 <ul>
-<li>Anda tidak dapat memahami <strong>Arsitektur Hybrid (Level 3)</strong> sebelum mengetahui <strong>cara modul Flutter di-boot oleh host dan berkomunikasi di awal (Level 2)</strong>.</li>
-<li>Anda tidak dapat menelusuri <strong>Alur Bisnis Tagihan & Profil (Level 5)</strong> sebelum memahami <strong>mekanisme navigasi GoRouter dan Native Route Chrome (Level 4)</strong>.</li>
-<li>Anda tidak dapat melakukan <strong>Debugging dan Maintenance (Level 7)</strong> dengan percaya diri sebelum memahami <strong>mekanisme penandatanganan request (two-pass MD5), dynamic key, dan MethodChannel bridge (Level 6)</strong>.</li>
-</ul>
+<li>Anda tidak dapat memahami <strong>Arsitektur Hybrid (Level 3)</strong> sebelum mengetahui <strong>cara modul Flutter di-boot oleh host dan berkomunikasi di awal (Level 2)</strong>.
+</li>
+<li>Anda tidak dapat menelusuri <strong>Alur Bisnis Tagihan & Profil (Level 5)</strong> sebelum memahami <strong>mekanisme navigasi GoRouter dan Native Route Chrome (Level 4)</strong>.
+</li>
+<li>Anda tidak dapat melakukan <strong>Debugging dan Maintenance (Level 7)</strong> dengan percaya diri sebelum memahami <strong>mekanisme penandatanganan request (two-pass MD5), dynamic key, dan MethodChannel bridge (Level 6)</strong>.
+</li></ul>
 </section>
 <section id="sec-level-1-kenali-modul-flutter-struktur-folder-tooling" class="doc-section">
 <h3>📌 Level 1 — Kenali Modul Flutter, Struktur Folder, & Tooling</h3>
@@ -129,41 +131,50 @@ graph TD
 <h4>B. Pengetahuan yang Diperoleh</h4>
 </div>
 <ul>
-<li>Mengetahui profil modul: <code>flutter_app_project</code>, Flutter SDK <code>3.41.9</code>, Dart SDK <code>3.11.5</code>.</li>
-<li>Memahami konsep Add-to-App di mana Flutter dibundle sebagai library (CocoaPods Pod di iOS via <code>podhelper.rb</code> dan AAR/Module di Android).</li>
-<li>Memahami struktur modular di dalam <code>flutter/lib</code>: pemisahan <code>common/</code> (platform bridge, http client, router, utils) dan <code>pages/</code> (<code>mine/</code>, <code>repay/</code>, <code>root/</code>).</li>
-<li>Mengetahui dependensi utama: <code>dio: ^5.9.0</code>, <code>go_router: ^16.0.0</code>, <code>crypto: ^3.0.6</code>, <code>lottie: ^3.3.3</code>.</li>
-</ul>
+<li>Mengetahui profil modul: <code>flutter_app_project</code>, Flutter SDK <code>3.41.9</code>, Dart SDK <code>3.11.5</code>.
+</li>
+<li>Memahami konsep Add-to-App di mana Flutter dibundle sebagai library (CocoaPods Pod di iOS via <code>podhelper.rb</code> dan AAR/Module di Android).
+</li>
+<li>Memahami struktur modular di dalam <code>flutter/lib</code>: pemisahan <code>common/</code> (platform bridge, http client, router, utils) dan <code>pages/</code> (<code>mine/</code>, <code>repay/</code>, <code>root/</code>).
+</li>
+<li>Mengetahui dependensi utama: <code>dio: ^5.9.0</code>, <code>go_router: ^16.0.0</code>, <code>crypto: ^3.0.6</code>, <code>lottie: ^3.3.3</code>.
+</li></ul>
 <div id="sub-c-dokumen-yang-harus-dibaca" class="doc-subsection">
 <h4>C. Dokumen yang Harus Dibaca</h4>
 </div>
 <ol>
-<li><a href="01-project-foundation/01-application-overview.html">01-application-overview.md</a></li>
-<li><a href="01-project-foundation/02-repository-structure.html">02-repository-structure.md</a></li>
-<li><a href="01-project-foundation/03-technology-stack-and-build.html">03-technology-stack-and-build.md</a></li>
-</ol>
+<li><a href="01-project-foundation/01-application-overview.html">01-application-overview.md</a>
+</li>
+<li><a href="01-project-foundation/02-repository-structure.html">02-repository-structure.md</a>
+</li>
+<li><a href="01-project-foundation/03-technology-stack-and-build.html">03-technology-stack-and-build.md</a>
+</li></ol>
 <div id="sub-d-konsep-kunci-sebelum-melanjutkan" class="doc-subsection">
 <h4>D. Konsep Kunci Sebelum Melanjutkan</h4>
 </div>
 <ul>
-<li>Perbedaan antara aplikasi Flutter standalone vs modul Flutter Add-to-App.</li>
-<li>Folder internal <code>.android/</code> dan <code>.ios/</code> yang digenerate oleh Flutter tools untuk testing vs integrasi host sebenarnya di <code>ios/</code> dan <code>android/</code>.</li>
-</ul>
+<li>Perbedaan antara aplikasi Flutter standalone vs modul Flutter Add-to-App.
+</li>
+<li>Folder internal <code>.android/</code> dan <code>.ios/</code> yang digenerate oleh Flutter tools untuk testing vs integrasi host sebenarnya di <code>ios/</code> dan <code>android/</code>.
+</li></ul>
 <div id="sub-e-pertanyaan-yang-harus-bisa-dijawab-setelah-selesai" class="doc-subsection">
 <h4>E. Pertanyaan yang Harus Bisa Dijawab Setelah Selesai</h4>
 </div>
 <ol>
-<li>Apa fungsi utama modul Flutter di dalam aplikasi SAMIR mobile secara keseluruhan?</li>
-<li>Halaman mana saja yang diimplementasikan menggunakan Flutter dan halaman mana yang tetap native di iOS?</li>
-<li>Mengapa di file <code>pubspec.yaml</code> tertulis <code>publish_to: &#x27;none&#x27;</code>?</li>
-</ol>
+<li>Apa fungsi utama modul Flutter di dalam aplikasi SAMIR mobile secara keseluruhan?
+</li>
+<li>Halaman mana saja yang diimplementasikan menggunakan Flutter dan halaman mana yang tetap native di iOS?
+</li>
+<li>Mengapa di file <code>pubspec.yaml</code> tertulis <code>publish_to: &#x27;none&#x27;</code>?
+</li></ol>
 <div id="sub-f-latihan-eksplorasi-source-code-observasional" class="doc-subsection">
 <h4>F. Latihan Eksplorasi Source Code (Observasional)</h4>
 </div>
 <ul>
-<li>Buka file <a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/learn/Flutter-Arch/flutter/pubspec.yaml" target="_blank" rel="noopener noreferrer">🦊 flutter/pubspec.yaml <span class="branch-tag">learn/Flutter-Arch</span> ↗</a>, amati baris 21–24 untuk memastikan versi Flutter dan Dart.</li>
-<li>Periksa folder <a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/learn/Flutter-Arch/flutter/lib" target="_blank" rel="noopener noreferrer">🦊 flutter/lib <span class="branch-tag">learn/Flutter-Arch</span> ↗</a>, catat struktur direktori di bawah <code>common/</code> dan <code>pages/</code>.</li>
-</ul>
+<li>Buka file <a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/learn/Flutter-Arch/flutter/pubspec.yaml" target="_blank" rel="noopener noreferrer">🦊 flutter/pubspec.yaml <span class="branch-tag">learn/Flutter-Arch</span> ↗</a>, amati baris 21–24 untuk memastikan versi Flutter dan Dart.
+</li>
+<li>Periksa folder <a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/learn/Flutter-Arch/flutter/lib" target="_blank" rel="noopener noreferrer">🦊 flutter/lib <span class="branch-tag">learn/Flutter-Arch</span> ↗</a>, catat struktur direktori di bawah <code>common/</code> dan <code>pages/</code>.
+</li></ul>
 <div id="sub-g-kriteria-kelulusan-level-1" class="doc-subsection">
 <h4>G. Kriteria Kelulusan Level 1</h4>
 </div>
@@ -179,43 +190,54 @@ graph TD
 <h4>B. Pengetahuan yang Diperoleh</h4>
 </div>
 <ul>
-<li>Urutan inisialisasi di <code>main.dart</code>: <code>WidgetsFlutterBinding.ensureInitialized()</code>, <code>Global.init()</code>, <code>httpClient.init()</code>, <code>FlutterNativeRouteDispatcher.setup()</code>, dan <code>runApp()</code>.</li>
-<li>Mekanisme handshake <code>FlutterNativeRouteDispatcher.notifyNativeReady()</code> yang memanggil method channel <code>flutterReady</code> setelah frame pertama (<code>endOfFrame</code>).</li>
-<li>Pola multi-tab menggunakan <code>FlutterRootPage</code> dan <code>IndexedStack</code> yang menjaga status widget Mine dan Repay tetap hidup di memori.</li>
-<li>Peran <code>FlutterRootController.selectedPath</code> (<code>ValueNotifier</code>) dalam mengontrol pergantian tampilan tab.</li>
-</ul>
+<li>Urutan inisialisasi di <code>main.dart</code>: <code>WidgetsFlutterBinding.ensureInitialized()</code>, <code>Global.init()</code>, <code>httpClient.init()</code>, <code>FlutterNativeRouteDispatcher.setup()</code>, dan <code>runApp()</code>.
+</li>
+<li>Mekanisme handshake <code>FlutterNativeRouteDispatcher.notifyNativeReady()</code> yang memanggil method channel <code>flutterReady</code> setelah frame pertama (<code>endOfFrame</code>).
+</li>
+<li>Pola multi-tab menggunakan <code>FlutterRootPage</code> dan <code>IndexedStack</code> yang menjaga status widget Mine dan Repay tetap hidup di memori.
+</li>
+<li>Peran <code>FlutterRootController.selectedPath</code> (<code>ValueNotifier</code>) dalam mengontrol pergantian tampilan tab.
+</li></ul>
 <div id="sub-c-dokumen-yang-harus-dibaca" class="doc-subsection">
 <h4>C. Dokumen yang Harus Dibaca</h4>
 </div>
 <ol>
-<li><a href="02-understanding-app-startup/01-flutter-entry-point.html">01-flutter-entry-point.md</a></li>
-<li><a href="02-understanding-app-startup/02-module-lifecycle-and-host-sync.html">02-module-lifecycle-and-host-sync.md</a></li>
-<li><a href="02-understanding-app-startup/03-startup-sequence-and-initial-routing.html">03-startup-sequence-and-initial-routing.md</a></li>
-<li><a href="02-understanding-app-startup/04-root-container-and-tab-switching.html">04-root-container-and-tab-switching.md</a></li>
-<li>Diagram: <a href="diagrams/flutter-startup-and-ready.html">flutter-startup-and-ready.md</a></li>
-</ol>
+<li><a href="02-understanding-app-startup/01-flutter-entry-point.html">01-flutter-entry-point.md</a>
+</li>
+<li><a href="02-understanding-app-startup/02-module-lifecycle-and-host-sync.html">02-module-lifecycle-and-host-sync.md</a>
+</li>
+<li><a href="02-understanding-app-startup/03-startup-sequence-and-initial-routing.html">03-startup-sequence-and-initial-routing.md</a>
+</li>
+<li><a href="02-understanding-app-startup/04-root-container-and-tab-switching.html">04-root-container-and-tab-switching.md</a>
+</li>
+<li>Diagram: <a href="diagrams/flutter-startup-and-ready.html">flutter-startup-and-ready.md</a>
+</li></ol>
 <div id="sub-d-konsep-kunci-sebelum-melanjutkan" class="doc-subsection">
 <h4>D. Konsep Kunci Sebelum Melanjutkan</h4>
 </div>
 <ul>
-<li>Lifecycle Flutter Engine tunggal (Single Engine) yang di-share antara tab Tagihan dan tab Saya.</li>
-<li><code>IndexedStack</code> vs Re-creating route: mengapa <code>IndexedStack</code> dipilih untuk pengalaman pergantian tab instan tanpa freeze.</li>
-</ul>
+<li>Lifecycle Flutter Engine tunggal (Single Engine) yang di-share antara tab Tagihan dan tab Saya.
+</li>
+<li><code>IndexedStack</code> vs Re-creating route: mengapa <code>IndexedStack</code> dipilih untuk pengalaman pergantian tab instan tanpa freeze.
+</li></ul>
 <div id="sub-e-pertanyaan-yang-harus-bisa-dijawab-setelah-selesai" class="doc-subsection">
 <h4>E. Pertanyaan yang Harus Bisa Dijawab Setelah Selesai</h4>
 </div>
 <ol>
-<li>Apa yang terjadi jika method channel <code>flutterReady</code> gagal dikirimkan ke native host?</li>
-<li>Bagaimana <code>FlutterRootController</code> memberi tahu <code>FlutterRootPage</code> bahwa tab yang aktif telah berganti dari Repay ke Mine?</li>
-<li>Mengapa <code>httpClient.init()</code> dipanggil dua kali (di awal dan setelah <code>Global.init()</code>)?</li>
-</ol>
+<li>Apa yang terjadi jika method channel <code>flutterReady</code> gagal dikirimkan ke native host?
+</li>
+<li>Bagaimana <code>FlutterRootController</code> memberi tahu <code>FlutterRootPage</code> bahwa tab yang aktif telah berganti dari Repay ke Mine?
+</li>
+<li>Mengapa <code>httpClient.init()</code> dipanggil dua kali (di awal dan setelah <code>Global.init()</code>)?
+</li></ol>
 <div id="sub-f-latihan-eksplorasi-source-code" class="doc-subsection">
 <h4>F. Latihan Eksplorasi Source Code</h4>
 </div>
 <ul>
-<li>Buka <a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/learn/Flutter-Arch/flutter/lib/main.dart" target="_blank" rel="noopener noreferrer">🦊 flutter/lib/main.dart <span class="branch-tag">learn/Flutter-Arch</span> ↗</a>, telusuri baris 11–19 untuk melihat 5 langkah bootstrapping.</li>
-<li>Buka <a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/learn/Flutter-Arch/flutter/lib/pages/root/flutter_root_page.dart" target="_blank" rel="noopener noreferrer">🦊 flutter/lib/pages/root/flutter_root_page.dart <span class="branch-tag">learn/Flutter-Arch</span> ↗</a>, periksa bagaimana <code>IndexedStack</code> membungkus <code>MineHomePage</code> dan <code>RepayHomePage</code> dengan <code>PageLifecycleVisibility</code>.</li>
-</ul>
+<li>Buka <a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/learn/Flutter-Arch/flutter/lib/main.dart" target="_blank" rel="noopener noreferrer">🦊 flutter/lib/main.dart <span class="branch-tag">learn/Flutter-Arch</span> ↗</a>, telusuri baris 11–19 untuk melihat 5 langkah bootstrapping.
+</li>
+<li>Buka <a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/learn/Flutter-Arch/flutter/lib/pages/root/flutter_root_page.dart" target="_blank" rel="noopener noreferrer">🦊 flutter/lib/pages/root/flutter_root_page.dart <span class="branch-tag">learn/Flutter-Arch</span> ↗</a>, periksa bagaimana <code>IndexedStack</code> membungkus <code>MineHomePage</code> dan <code>RepayHomePage</code> dengan <code>PageLifecycleVisibility</code>.
+</li></ul>
 <div id="sub-g-kriteria-kelulusan-level-2" class="doc-subsection">
 <h4>G. Kriteria Kelulusan Level 2</h4>
 </div>
@@ -231,39 +253,53 @@ graph TD
 <h4>B. Pengetahuan yang Diperoleh</h4>
 </div>
 <ul>
-<li>Konsep Single-Engine Add-to-App Architecture: Satu FlutterEngine mengelola seluruh view Flutter di dalam host aplikasi.</li>
-<li>Pola arsitektur per fitur di bawah <code>pages/&lt;feature&gt;/</code>:</li>
-<li><code>models/</code>: Data class / deserialisasi JSON.</li>
-<li><code>services/</code>: Business logic dan komunikasi API.</li>
-<li><code>widgets/</code>: Sub-komponen visual UI yang dideklarasikan menggunakan <code>part</code> dan <code>part of</code>.</li>
-<li><code>&lt;feature&gt;_page.dart</code>: Halaman utama yang mengorkestrasi state dan lifecycle.</li>
-<li>Pustaka komponen bersama di <code>common/widgets</code>: <code>BasePage</code>, <code>NavTitleBar</code>, <code>AppLoadingOverlay</code>, <code>AppDialogHost</code>.</li>
-</ul>
+<li>Konsep Single-Engine Add-to-App Architecture: Satu FlutterEngine mengelola seluruh view Flutter di dalam host aplikasi.
+</li>
+<li>Pola arsitektur per fitur di bawah <code>pages/&lt;feature&gt;/</code>:
+<ul>
+<li><code>models/</code>: Data class / deserialisasi JSON.
+</li>
+<li><code>services/</code>: Business logic dan komunikasi API.
+</li>
+<li><code>widgets/</code>: Sub-komponen visual UI yang dideklarasikan menggunakan <code>part</code> dan <code>part of</code>.
+</li>
+<li><code>&lt;feature&gt;_page.dart</code>: Halaman utama yang mengorkestrasi state dan lifecycle.
+</li></ul>
+</li>
+<li>Pustaka komponen bersama di <code>common/widgets</code>: <code>BasePage</code>, <code>NavTitleBar</code>, <code>AppLoadingOverlay</code>, <code>AppDialogHost</code>.
+</li></ul>
 <div id="sub-c-dokumen-yang-harus-dibaca" class="doc-subsection">
 <h4>C. Dokumen yang Harus Dibaca</h4>
 </div>
 <ol>
-<li><a href="03-understanding-architecture/01-architecture-overview.html">01-architecture-overview.md</a></li>
-<li><a href="03-understanding-architecture/02-layers-and-responsibilities.html">02-layers-and-responsibilities.md</a></li>
-<li><a href="03-understanding-architecture/03-dependency-direction.html">03-dependency-direction.md</a></li>
-<li><a href="03-understanding-architecture/04-shared-components-and-services.html">04-shared-components-and-services.md</a></li>
-<li>Diagram: <a href="diagrams/flutter-architecture-overview.html">flutter-architecture-overview.md</a></li>
-</ol>
+<li><a href="03-understanding-architecture/01-architecture-overview.html">01-architecture-overview.md</a>
+</li>
+<li><a href="03-understanding-architecture/02-layers-and-responsibilities.html">02-layers-and-responsibilities.md</a>
+</li>
+<li><a href="03-understanding-architecture/03-dependency-direction.html">03-dependency-direction.md</a>
+</li>
+<li><a href="03-understanding-architecture/04-shared-components-and-services.html">04-shared-components-and-services.md</a>
+</li>
+<li>Diagram: <a href="diagrams/flutter-architecture-overview.html">flutter-architecture-overview.md</a>
+</li></ol>
 <div id="sub-d-konsep-kunci-sebelum-melanjutkan" class="doc-subsection">
 <h4>D. Konsep Kunci Sebelum Melanjutkan</h4>
 </div>
 <ul>
-<li>In-memory state vs Local Persistent Storage: Mengapa Flutter SAMIR mendelegasikan persistensi data sensitif ke Keychain/UserDefaults native.</li>
-<li>Clean separation: UI tidak memanggil <code>HttpClient</code> secara langsung, melainkan melalui class <code>Service</code>.</li>
-</ul>
+<li>In-memory state vs Local Persistent Storage: Mengapa Flutter SAMIR mendelegasikan persistensi data sensitif ke Keychain/UserDefaults native.
+</li>
+<li>Clean separation: UI tidak memanggil <code>HttpClient</code> secara langsung, melainkan melalui class <code>Service</code>.
+</li></ul>
 <div id="sub-e-pertanyaan-yang-harus-bisa-dijawab-setelah-selesai" class="doc-subsection">
 <h4>E. Pertanyaan yang Harus Bisa Dijawab Setelah Selesai</h4>
 </div>
 <ol>
-<li>Apa keuntungan menggunakan struktur <code>models/</code>, <code>services/</code>, dan <code>widgets/</code> di dalam setiap fitur Flutter?</li>
-<li>Mengapa file widget seperti <code>mine_home_header.dart</code> menggunakan sintaks <code>part of &#x27;mine_home_page.dart&#x27;</code> alih-alih import biasa?</li>
-<li>Bagaimana <code>BasePage</code> membantu standardisasi handling error, loading, dan empty state?</li>
-</ol>
+<li>Apa keuntungan menggunakan struktur <code>models/</code>, <code>services/</code>, dan <code>widgets/</code> di dalam setiap fitur Flutter?
+</li>
+<li>Mengapa file widget seperti <code>mine_home_header.dart</code> menggunakan sintaks <code>part of &#x27;mine_home_page.dart&#x27;</code> alih-alih import biasa?
+</li>
+<li>Bagaimana <code>BasePage</code> membantu standardisasi handling error, loading, dan empty state?
+</li></ol>
 <div id="sub-f-kriteria-kelulusan-level-3" class="doc-subsection">
 <h4>F. Kriteria Kelulusan Level 3</h4>
 </div>
@@ -279,21 +315,28 @@ graph TD
 <h4>B. Pengetahuan yang Diperoleh</h4>
 </div>
 <ul>
-<li>Konfigurasi <code>GoRouter</code> di <code>routers.dart</code> dengan route paths: <code>/root</code>, <code>/mine</code>, <code>/mine/personal</code>, <code>/repay</code>.</li>
-<li>Kelas pembantu <code>Routers</code>: <code>Routers.go()</code>, <code>Routers.push()</code>, <code>Routers.replace()</code>, <code>Routers.pop()</code>.</li>
-<li>Mekanisme krusial <code>NativeRouteChrome</code>: Mengirimkan method channel <code>setNativeTabBarHidden</code> ke native host saat pengguna berpindah dari root tab ke child page (misal <code>/mine/personal</code>), untuk mencegah tab bar berkedip (flicker).</li>
-<li>Penggunaan <code>_NativeRouteLifecycleObserver</code> untuk sinkronisasi chrome saat aplikasi kembali ke foreground.</li>
-</ul>
+<li>Konfigurasi <code>GoRouter</code> di <code>routers.dart</code> dengan route paths: <code>/root</code>, <code>/mine</code>, <code>/mine/personal</code>, <code>/repay</code>.
+</li>
+<li>Kelas pembantu <code>Routers</code>: <code>Routers.go()</code>, <code>Routers.push()</code>, <code>Routers.replace()</code>, <code>Routers.pop()</code>.
+</li>
+<li>Mekanisme krusial <code>NativeRouteChrome</code>: Mengirimkan method channel <code>setNativeTabBarHidden</code> ke native host saat pengguna berpindah dari root tab ke child page (misal <code>/mine/personal</code>), untuk mencegah tab bar berkedip (flicker).
+</li>
+<li>Penggunaan <code>_NativeRouteLifecycleObserver</code> untuk sinkronisasi chrome saat aplikasi kembali ke foreground.
+</li></ul>
 <div id="sub-c-dokumen-yang-harus-dibaca" class="doc-subsection">
 <h4>C. Dokumen yang Harus Dibaca</h4>
 </div>
 <ol>
-<li><a href="04-understanding-navigation/01-feature-inventory.html">01-feature-inventory.md</a></li>
-<li><a href="04-understanding-navigation/02-navigation-fundamentals.html">02-navigation-fundamentals.md</a></li>
-<li><a href="04-understanding-navigation/03-complete-navigation-map.html">03-complete-navigation-map.md</a></li>
-<li><a href="04-understanding-navigation/04-native-route-chrome-and-tabbar-sync.html">04-native-route-chrome-and-tabbar-sync.md</a></li>
-<li>Diagram: <a href="diagrams/flutter-navigation-and-chrome.html">flutter-navigation-and-chrome.md</a></li>
-</ol>
+<li><a href="04-understanding-navigation/01-feature-inventory.html">01-feature-inventory.md</a>
+</li>
+<li><a href="04-understanding-navigation/02-navigation-fundamentals.html">02-navigation-fundamentals.md</a>
+</li>
+<li><a href="04-understanding-navigation/03-complete-navigation-map.html">03-complete-navigation-map.md</a>
+</li>
+<li><a href="04-understanding-navigation/04-native-route-chrome-and-tabbar-sync.html">04-native-route-chrome-and-tabbar-sync.md</a>
+</li>
+<li>Diagram: <a href="diagrams/flutter-navigation-and-chrome.html">flutter-navigation-and-chrome.md</a>
+</li></ol>
 <div id="sub-d-kriteria-kelulusan-level-4" class="doc-subsection">
 <h4>D. Kriteria Kelulusan Level 4</h4>
 </div>
@@ -309,27 +352,42 @@ graph TD
 <h4>B. Pengetahuan yang Diperoleh</h4>
 </div>
 <ul>
-<li>Alur sinkronisasi akun: Native host memanggil <code>getRootPageData</code>, menginjeksi token sesi (<code>mid</code>, <code>userNo</code>, <code>custId</code>, <code>dynamicSignKey</code>) ke <code>Global.saveUser()</code>.</li>
-<li>Fitur Tagihan (<code>RepayHomePage</code>):</li>
-<li>Mengambil daftar pinjaman aktif dari endpoint <code>repayment/repayOrderList</code>.</li>
-<li>Mengambil nomor Virtual Account / kode bayar dari <code>queryAbroadDeDuctList</code>.</li>
-<li>Memicu pop-up insentif pembayaran ke native via <code>requestRepayBenefitPopup</code>.</li>
-<li>Fitur Profil (<code>MineHomePage</code> & <code>MinePersonalPage</code>):</li>
-<li>Mengambil konfigurasi menu dinamis via <code>product/V4/mergeUserCenterSchema</code>.</li>
-<li>Mengarahkan aksi klik menu ke Web URL, skema <code>samir://</code>, atau halaman native.</li>
-<li>Penanganan Token Expired (Error 10006): <code>Global.clearUser()</code> membersihkan memori dan memicu <code>Routers.gotoLogin()</code>.</li>
-</ul>
+<li>Alur sinkronisasi akun: Native host memanggil <code>getRootPageData</code>, menginjeksi token sesi (<code>mid</code>, <code>userNo</code>, <code>custId</code>, <code>dynamicSignKey</code>) ke <code>Global.saveUser()</code>.
+</li>
+<li>Fitur Tagihan (<code>RepayHomePage</code>):
+<ul>
+<li>Mengambil daftar pinjaman aktif dari endpoint <code>repayment/repayOrderList</code>.
+</li>
+<li>Mengambil nomor Virtual Account / kode bayar dari <code>queryAbroadDeDuctList</code>.
+</li>
+<li>Memicu pop-up insentif pembayaran ke native via <code>requestRepayBenefitPopup</code>.
+</li></ul>
+</li>
+<li>Fitur Profil (<code>MineHomePage</code> & <code>MinePersonalPage</code>):
+<ul>
+<li>Mengambil konfigurasi menu dinamis via <code>product/V4/mergeUserCenterSchema</code>.
+</li>
+<li>Mengarahkan aksi klik menu ke Web URL, skema <code>samir://</code>, atau halaman native.
+</li></ul>
+</li>
+<li>Penanganan Token Expired (Error 10006): <code>Global.clearUser()</code> membersihkan memori dan memicu <code>Routers.gotoLogin()</code>.
+</li></ul>
 <div id="sub-c-dokumen-yang-harus-dibaca" class="doc-subsection">
 <h4>C. Dokumen yang Harus Dibaca</h4>
 </div>
 <ol>
-<li><a href="05-learning-business-flows/01-user-journey-overview.html">01-user-journey-overview.md</a></li>
-<li><a href="05-learning-business-flows/02-authentication-and-session-sync.html">02-authentication-and-session-sync.md</a></li>
-<li><a href="05-learning-business-flows/03-repayment-feature-flows.html">03-repayment-feature-flows.md</a></li>
-<li><a href="05-learning-business-flows/04-mine-and-personal-flows.html">04-mine-and-personal-flows.md</a></li>
-<li><a href="05-learning-business-flows/05-cross-boundary-journeys.html">05-cross-boundary-journeys.md</a></li>
-<li>Diagram: <a href="diagrams/flutter-repayment-flow.html">flutter-repayment-flow.md</a></li>
-</ol>
+<li><a href="05-learning-business-flows/01-user-journey-overview.html">01-user-journey-overview.md</a>
+</li>
+<li><a href="05-learning-business-flows/02-authentication-and-session-sync.html">02-authentication-and-session-sync.md</a>
+</li>
+<li><a href="05-learning-business-flows/03-repayment-feature-flows.html">03-repayment-feature-flows.md</a>
+</li>
+<li><a href="05-learning-business-flows/04-mine-and-personal-flows.html">04-mine-and-personal-flows.md</a>
+</li>
+<li><a href="05-learning-business-flows/05-cross-boundary-journeys.html">05-cross-boundary-journeys.md</a>
+</li>
+<li>Diagram: <a href="diagrams/flutter-repayment-flow.html">flutter-repayment-flow.md</a>
+</li></ol>
 <div id="sub-d-kriteria-kelulusan-level-5" class="doc-subsection">
 <h4>D. Kriteria Kelulusan Level 5</h4>
 </div>
@@ -345,29 +403,46 @@ graph TD
 <h4>B. Pengetahuan yang Diperoleh</h4>
 </div>
 <ul>
-<li>Konfigurasi Dio di <code>HttpClient</code>: interceptor loading, log, custom HTTP adapter dengan bypass SSL cert (<code>badCertificateCallback</code>) dan proxy support.</li>
-<li>Algoritma tanda tangan keamanan (<code>signParamMap</code>):</li>
-<li>Urutkan parameter secara alfabetis (<code>SplayTreeMap</code>).</li>
-<li>Concatenate nilai primitive + <code>dynamicSignKey</code> (atau fallback UUID).</li>
-<li>Pass 1: MD5 hash string parameter.</li>
-<li>Pass 2: MD5 hash (Pass 1 + <code>&#x27;qwer1234_&#x27; + appName</code>).</li>
-<li>Integrasi platform parameter (<code>param_utils.dart</code>): Mengambil parameter perangkat terverifikasi dari host native via <code>getNativeRequestParams</code>.</li>
-<li>Matriks lengkap MethodChannel:</li>
-<li><code>samir_native_channel</code>: <code>getNativeAppEnv</code>, <code>getNativeRequestParams</code>, <code>getRootPageData</code>, <code>openNativeRoute</code>, <code>closeFlutterPage</code>, <code>setNativeTabBarHidden</code>, <code>requestRepayBenefitPopup</code>.</li>
-<li><code>samir_tracking_channel</code>: Event tracking ke native data pipeline.</li>
-<li>Native -> Flutter Calls: <code>showFlutterRoute</code>, <code>refreshMineHome</code>, <code>refreshRepayHome</code>.</li>
-</ul>
+<li>Konfigurasi Dio di <code>HttpClient</code>: interceptor loading, log, custom HTTP adapter dengan bypass SSL cert (<code>badCertificateCallback</code>) dan proxy support.
+</li>
+<li>Algoritma tanda tangan keamanan (<code>signParamMap</code>):
+<ul>
+<li>Urutkan parameter secara alfabetis (<code>SplayTreeMap</code>).
+</li>
+<li>Concatenate nilai primitive + <code>dynamicSignKey</code> (atau fallback UUID).
+</li>
+<li>Pass 1: MD5 hash string parameter.
+</li>
+<li>Pass 2: MD5 hash (Pass 1 + <code>&#x27;qwer1234_&#x27; + appName</code>).
+</li></ul>
+</li>
+<li>Integrasi platform parameter (<code>param_utils.dart</code>): Mengambil parameter perangkat terverifikasi dari host native via <code>getNativeRequestParams</code>.
+</li>
+<li>Matriks lengkap MethodChannel:
+<ul>
+<li><code>samir_native_channel</code>: <code>getNativeAppEnv</code>, <code>getNativeRequestParams</code>, <code>getRootPageData</code>, <code>openNativeRoute</code>, <code>closeFlutterPage</code>, <code>setNativeTabBarHidden</code>, <code>requestRepayBenefitPopup</code>.
+</li>
+<li><code>samir_tracking_channel</code>: Event tracking ke native data pipeline.
+</li>
+<li>Native -> Flutter Calls: <code>showFlutterRoute</code>, <code>refreshMineHome</code>, <code>refreshRepayHome</code>.
+</li></ul>
+</li></ul>
 <div id="sub-c-dokumen-yang-harus-dibaca" class="doc-subsection">
 <h4>C. Dokumen yang Harus Dibaca</h4>
 </div>
 <ol>
-<li><a href="06-understanding-data-and-dependencies/01-dependency-catalog.html">01-dependency-catalog.md</a></li>
-<li><a href="06-understanding-data-and-dependencies/02-networking-and-api-flow.html">02-networking-and-api-flow.md</a></li>
-<li><a href="06-understanding-data-and-dependencies/03-parameter-signing-and-security.html">03-parameter-signing-and-security.md</a></li>
-<li><a href="06-understanding-data-and-dependencies/04-state-management-and-persistence.html">04-state-management-and-persistence.md</a></li>
-<li><a href="06-understanding-data-and-dependencies/05-flutter-native-channel-bridge.html">05-flutter-native-channel-bridge.md</a></li>
-<li>Diagram: <a href="diagrams/flutter-native-channel-matrix.html">flutter-native-channel-matrix.md</a></li>
-</ol>
+<li><a href="06-understanding-data-and-dependencies/01-dependency-catalog.html">01-dependency-catalog.md</a>
+</li>
+<li><a href="06-understanding-data-and-dependencies/02-networking-and-api-flow.html">02-networking-and-api-flow.md</a>
+</li>
+<li><a href="06-understanding-data-and-dependencies/03-parameter-signing-and-security.html">03-parameter-signing-and-security.md</a>
+</li>
+<li><a href="06-understanding-data-and-dependencies/04-state-management-and-persistence.html">04-state-management-and-persistence.md</a>
+</li>
+<li><a href="06-understanding-data-and-dependencies/05-flutter-native-channel-bridge.html">05-flutter-native-channel-bridge.md</a>
+</li>
+<li>Diagram: <a href="diagrams/flutter-native-channel-matrix.html">flutter-native-channel-matrix.md</a>
+</li></ol>
 <div id="sub-d-kriteria-kelulusan-level-6" class="doc-subsection">
 <h4>D. Kriteria Kelulusan Level 6</h4>
 </div>
@@ -383,21 +458,28 @@ graph TD
 <h4>B. Pengetahuan yang Diperoleh</h4>
 </div>
 <ul>
-<li>Penggunaan <code>ProxyDebugPage</code> untuk mengarahkan traffic Flutter ke Charles / Proxyman / Mitmproxy di environment non-PROD.</li>
-<li>Integrasi in-app HTTP inspector (Chucker Flutter) pada branch testing.</li>
-<li>Penanganan error: hierarki exception Dio, pesan toast, dan fallback data.</li>
-<li>Audit Technical Debt: Ketergantungan pada singleton statis <code>Global</code>, potensi race condition saat startup, dan ketiadaan offline caching lokal.</li>
-<li>Checklist analisis dampak (Change Impact Analysis) sebelum mengajukan PR.</li>
-</ul>
+<li>Penggunaan <code>ProxyDebugPage</code> untuk mengarahkan traffic Flutter ke Charles / Proxyman / Mitmproxy di environment non-PROD.
+</li>
+<li>Integrasi in-app HTTP inspector (Chucker Flutter) pada branch testing.
+</li>
+<li>Penanganan error: hierarki exception Dio, pesan toast, dan fallback data.
+</li>
+<li>Audit Technical Debt: Ketergantungan pada singleton statis <code>Global</code>, potensi race condition saat startup, dan ketiadaan offline caching lokal.
+</li>
+<li>Checklist analisis dampak (Change Impact Analysis) sebelum mengajukan PR.
+</li></ul>
 <div id="sub-c-dokumen-yang-harus-dibaca" class="doc-subsection">
 <h4>C. Dokumen yang Harus Dibaca</h4>
 </div>
 <ol>
-<li><a href="07-learning-to-debug-and-maintain/01-error-handling.html">01-error-handling.md</a></li>
-<li><a href="07-learning-to-debug-and-maintain/02-testing-and-debugging.html">02-testing-and-debugging.md</a></li>
-<li><a href="07-learning-to-debug-and-maintain/03-coupling-and-technical-debt.html">03-coupling-and-technical-debt.md</a></li>
-<li><a href="07-learning-to-debug-and-maintain/04-change-impact-analysis.html">04-change-impact-analysis.md</a></li>
-</ol>
+<li><a href="07-learning-to-debug-and-maintain/01-error-handling.html">01-error-handling.md</a>
+</li>
+<li><a href="07-learning-to-debug-and-maintain/02-testing-and-debugging.html">02-testing-and-debugging.md</a>
+</li>
+<li><a href="07-learning-to-debug-and-maintain/03-coupling-and-technical-debt.html">03-coupling-and-technical-debt.md</a>
+</li>
+<li><a href="07-learning-to-debug-and-maintain/04-change-impact-analysis.html">04-change-impact-analysis.md</a>
+</li></ol>
 <div id="sub-d-kriteria-kelulusan-level-7" class="doc-subsection">
 <h4>D. Kriteria Kelulusan Level 7</h4>
 </div>
@@ -413,11 +495,14 @@ graph TD
 <h4>B. Dokumen yang Harus Dibaca</h4>
 </div>
 <ol>
-<li><a href="08-reference/01-codebase-glossary.html">01-codebase-glossary.md</a></li>
-<li><a href="08-reference/02-source-code-index.html">02-source-code-index.md</a></li>
-<li><a href="08-reference/03-existing-documentation-audit.html">03-existing-documentation-audit.md</a></li>
-<li><a href="08-reference/04-open-questions-and-unverified-findings.html">04-open-questions-and-unverified-findings.md</a></li>
-</ol>
+<li><a href="08-reference/01-codebase-glossary.html">01-codebase-glossary.md</a>
+</li>
+<li><a href="08-reference/02-source-code-index.html">02-source-code-index.md</a>
+</li>
+<li><a href="08-reference/03-existing-documentation-audit.html">03-existing-documentation-audit.md</a>
+</li>
+<li><a href="08-reference/04-open-questions-and-unverified-findings.html">04-open-questions-and-unverified-findings.md</a>
+</li></ol>
 </section>
 
     <!-- BAGIAN 2 & 3: ARCHITECTURAL CRITIQUE & BLUEPRINT -->

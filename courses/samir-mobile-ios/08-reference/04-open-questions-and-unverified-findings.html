@@ -101,10 +101,12 @@
 <h3>🎯 A. Learning Objective</h3>
 <p>Setelah mempelajari dokumen ini, Anda diharapkan mampu:</p>
 <ol>
-<li>Mengetahui batas-batas pengetahuan (<em>knowledge boundaries</em>) yang dapat dibuktikan murni dari kode sumber client iOS.</li>
-<li>Mengetahui topik-topik arsitektur dan operasional yang memerlukan koordinasi lintas divisi.</li>
-<li>Menggunakan daftar pertanyaan ini sebagai agenda wawancara terarah (<em>onboarding technical interview</em>) dengan tim internal SAMIR.</li>
-</ol>
+<li>Mengetahui batas-batas pengetahuan (<em>knowledge boundaries</em>) yang dapat dibuktikan murni dari kode sumber client iOS.
+</li>
+<li>Mengetahui topik-topik arsitektur dan operasional yang memerlukan koordinasi lintas divisi.
+</li>
+<li>Menggunakan daftar pertanyaan ini sebagai agenda wawancara terarah (<em>onboarding technical interview</em>) dengan tim internal SAMIR.
+</li></ol>
 </section>
 <section id="sec-prereq" class="doc-section">
 <h3>📌 B. Daftar Temuan Belum Terverifikasi (Unverified Findings)</h3>
@@ -112,69 +114,96 @@
 <h4>1. Otomasi CI/CD & Alur Rilis App Store <code>[Unverified]</code></h4>
 </div>
 <ul>
-<li><strong>Status:</strong> Tidak dapat diverifikasi dari repository git.</li>
-<li><strong>Kondisi Lapangan:</strong></li>
-<li>Tidak ditemukan direktori <code>.github/workflows/</code>, <code>.gitlab-ci.yml</code>, <code>Bitrise.yml</code>, maupun folder <code>fastlane/</code>.</li>
-<li>Skema Xcode (<code>IDSamirLoan.xcscheme</code>, <code>TEST.xcscheme</code>, <code>PROD.xcscheme</code>) dikonfigurasi lengkap dengan build configurations terpisah.</li>
-<li><strong>Pertanyaan Terbuka untuk Tech Lead:</strong></li>
-</ul>
+<li><strong>Status:</strong> Tidak dapat diverifikasi dari repository git.
+</li>
+<li><strong>Kondisi Lapangan:</strong>
+<ul>
+<li>Tidak ditemukan direktori <code>.github/workflows/</code>, <code>.gitlab-ci.yml</code>, <code>Bitrise.yml</code>, maupun folder <code>fastlane/</code>.
+</li>
+<li>Skema Xcode (<code>IDSamirLoan.xcscheme</code>, <code>TEST.xcscheme</code>, <code>PROD.xcscheme</code>) dikonfigurasi lengkap dengan build configurations terpisah.
+</li></ul>
+</li>
+<li><strong>Pertanyaan Terbuka untuk Tech Lead:</strong>
 <ol>
-<li><em>Apakah build IPA dan pengunggahan ke TestFlight/App Store Connect dilakukan secara manual via Xcode Organizer atau menggunakan dedicated CI server (seperti Jenkins / Mac Mini self-hosted)?</em></li>
-<li><em>Di mana sertifikat signing (Distribution Certificate & Provisioning Profiles) dikelola (apakah via Fastlane Match, manual portal Apple, atau Xcode Managed)?</em></li>
-</ol>
+<li><em>Apakah build IPA dan pengunggahan ke TestFlight/App Store Connect dilakukan secara manual via Xcode Organizer atau menggunakan dedicated CI server (seperti Jenkins / Mac Mini self-hosted)?</em>
+</li>
+<li><em>Di mana sertifikat signing (Distribution Certificate & Provisioning Profiles) dikelola (apakah via Fastlane Match, manual portal Apple, atau Xcode Managed)?</em>
+</li></ol>
+</li></ul>
 <div id="sub-2-algoritma-credit-scoring-ambang-batas-persetujuan-pinjaman-inferred" class="doc-subsection">
 <h4>2. Algoritma Credit Scoring & Ambang Batas Persetujuan Pinjaman <code>[Inferred]</code></h4>
 </div>
 <ul>
-<li><strong>Status:</strong> Terbukti secara inferensi dari alur polling client.</li>
-<li><strong>Kondisi Lapangan:</strong></li>
-<li>Client iOS mengumpulkan data telemetri yang sangat kaya (lokasi GPS, orientasi sensor gerak, device fingerprint TrustDecision, data kontak darurat, foto OCR KTP, dan biometrik Advance AI).</li>
-<li>Client melakukan polling berkala ke endpoint <code>/app/index/getAppIndexNew</code> atau <code>/app/loan/checkAuditStatus</code> selama 30 hingga 60 detik.</li>
-<li><strong>Pertanyaan Terbuka untuk Backend / Risk Engine Team:</strong></li>
-</ul>
+<li><strong>Status:</strong> Terbukti secara inferensi dari alur polling client.
+</li>
+<li><strong>Kondisi Lapangan:</strong>
+<ul>
+<li>Client iOS mengumpulkan data telemetri yang sangat kaya (lokasi GPS, orientasi sensor gerak, device fingerprint TrustDecision, data kontak darurat, foto OCR KTP, dan biometrik Advance AI).
+</li>
+<li>Client melakukan polling berkala ke endpoint <code>/app/index/getAppIndexNew</code> atau <code>/app/loan/checkAuditStatus</code> selama 30 hingga 60 detik.
+</li></ul>
+</li>
+<li><strong>Pertanyaan Terbuka untuk Backend / Risk Engine Team:</strong>
 <ol>
-<li><em>Berapa ambang batas waktu (timeout) maksimum proses verifikasi otomatis sebelum dialihkan ke manual review oleh tim verifikator manusia?</em></li>
-<li><em>Apakah ada skenario di mana pengguna diminta melakukan upload dokumen tambahan (seperti mutasi rekening bank atau ID card kantor) secara dinamis jika skor kredit berada di zona batas?</em></li>
-</ol>
+<li><em>Berapa ambang batas waktu (timeout) maksimum proses verifikasi otomatis sebelum dialihkan ke manual review oleh tim verifikator manusia?</em>
+</li>
+<li><em>Apakah ada skenario di mana pengguna diminta melakukan upload dokumen tambahan (seperti mutasi rekening bank atau ID card kantor) secara dinamis jika skor kredit berada di zona batas?</em>
+</li></ol>
+</li></ul>
 <div id="sub-3-masa-depan-isolasi-reaktif-rxswift-di-loanconfirmmodule-unverified" class="doc-subsection">
 <h4>3. Masa Depan Isolasi Reaktif RxSwift di <code>LoanConfirmModule</code> <code>[Unverified]</code></h4>
 </div>
 <ul>
-<li><strong>Status:</strong> Tidak ada catatan dokumentasi mengenai alasan pemilihan teknologi ini.</li>
-<li><strong>Kondisi Lapangan:</strong></li>
-<li>Hanya modul konfirmasi pinjaman yang menggunakan RxSwift/RxCocoa (2.250 baris di <code>LoanConfirmViewController_Rx.swift</code>). Seluruh modul lain menggunakan pola MVC/MVP konvensional.</li>
-<li><strong>Pertanyaan Terbuka untuk iOS Lead:</strong></li>
-</ul>
+<li><strong>Status:</strong> Tidak ada catatan dokumentasi mengenai alasan pemilihan teknologi ini.
+</li>
+<li><strong>Kondisi Lapangan:</strong>
+<ul>
+<li>Hanya modul konfirmasi pinjaman yang menggunakan RxSwift/RxCocoa (2.250 baris di <code>LoanConfirmViewController_Rx.swift</code>). Seluruh modul lain menggunakan pola MVC/MVP konvensional.
+</li></ul>
+</li>
+<li><strong>Pertanyaan Terbuka untuk iOS Lead:</strong>
 <ol>
-<li><em>Apakah <code>LoanConfirmModule</code> merupakan modul percontohan (pilot project) yang rencananya akan diperluas ke modul lain, ataukah merupakan sisa eksperimen masa lalu yang direncanakan untuk di-refactor kembali ke standar MVP?</em></li>
-<li><em>Apakah tim memiliki roadmap jangka panjang untuk migrasi ke Swift Concurrency (<code>async/await</code>) atau Combine untuk menggantikan RxSwift?</em></li>
-</ol>
+<li><em>Apakah <code>LoanConfirmModule</code> merupakan modul percontohan (pilot project) yang rencananya akan diperluas ke modul lain, ataukah merupakan sisa eksperimen masa lalu yang direncanakan untuk di-refactor kembali ke standar MVP?</em>
+</li>
+<li><em>Apakah tim memiliki roadmap jangka panjang untuk migrasi ke Swift Concurrency (<code>async/await</code>) atau Combine untuk menggantikan RxSwift?</em>
+</li></ol>
+</li></ul>
 <div id="sub-4-batasan-ruang-lingkup-upload-aliyun-oss-inferred" class="doc-subsection">
 <h4>4. Batasan Ruang Lingkup Upload Aliyun OSS <code>[Inferred]</code></h4>
 </div>
 <ul>
-<li><strong>Status:</strong> Terbukti penggunaan SDK untuk foto identitas, namun cakupan penuh belum terverifikasi.</li>
-<li><strong>Kondisi Lapangan:</strong></li>
-<li>Pod <code>AliyunOSSiOS</code> aktif di <code>Podfile</code>.</li>
-<li>Terlihat penggunaan upload token sementara (STS) untuk mengirim file gambar KTP terkompresi.</li>
-<li><strong>Pertanyaan Terbuka untuk Backend Team:</strong></li>
-</ul>
+<li><strong>Status:</strong> Terbukti penggunaan SDK untuk foto identitas, namun cakupan penuh belum terverifikasi.
+</li>
+<li><strong>Kondisi Lapangan:</strong>
+<ul>
+<li>Pod <code>AliyunOSSiOS</code> aktif di <code>Podfile</code>.
+</li>
+<li>Terlihat penggunaan upload token sementara (STS) untuk mengirim file gambar KTP terkompresi.
+</li></ul>
+</li>
+<li><strong>Pertanyaan Terbuka untuk Backend Team:</strong>
 <ol>
-<li><em>Apakah file log lokal, database SQLite, atau payload telemetri perangkat juga dikirimkan langsung ke bucket OSS Aliyun saat terjadi crash/anomali, ataukah seluruh data analitik hanya dikirim via HTTP gateway?</em></li>
-</ol>
+<li><em>Apakah file log lokal, database SQLite, atau payload telemetri perangkat juga dikirimkan langsung ke bucket OSS Aliyun saat terjadi crash/anomali, ataukah seluruh data analitik hanya dikirim via HTTP gateway?</em>
+</li></ol>
+</li></ul>
 <div id="sub-5-logika-pendeteksian-reviewer-apple-pada-appstarthide-inferred" class="doc-subsection">
 <h4>5. Logika Pendeteksian Reviewer Apple pada <code>appStartHide</code> <code>[Inferred]</code></h4>
 </div>
 <ul>
-<li><strong>Status:</strong> Mekanisme server-side tidak terlihat dari kode client.</li>
-<li><strong>Kondisi Lapangan:</strong></li>
-<li>Aplikasi memanggil endpoint <code>/app/common/appStartHide</code> pada tahap inisialisasi awal di <code>IDSamirMainModule.swift:L48</code>.</li>
-<li>Jika flag bernilai <code>true</code>, beberapa elemen antarmuka atau promo khusus disembunyikan.</li>
-<li><strong>Pertanyaan Terbuka untuk Product Owner:</strong></li>
-</ul>
+<li><strong>Status:</strong> Mekanisme server-side tidak terlihat dari kode client.
+</li>
+<li><strong>Kondisi Lapangan:</strong>
+<ul>
+<li>Aplikasi memanggil endpoint <code>/app/common/appStartHide</code> pada tahap inisialisasi awal di <code>IDSamirMainModule.swift:L48</code>.
+</li>
+<li>Jika flag bernilai <code>true</code>, beberapa elemen antarmuka atau promo khusus disembunyikan.
+</li></ul>
+</li>
+<li><strong>Pertanyaan Terbuka untuk Product Owner:</strong>
 <ol>
-<li><em>Parameter apa yang digunakan oleh backend untuk membedakan reviewer Apple dari pengguna riil di Indonesia (apakah filter IP geolokasi AS/Cupertino, nomor ponsel dummy reviewer, atau header <code>appVersion</code> yang belum terdaftar di PROD)?</em></li>
-</ol>
+<li><em>Parameter apa yang digunakan oleh backend untuk membedakan reviewer Apple dari pengguna riil di Indonesia (apakah filter IP geolokasi AS/Cupertino, nomor ponsel dummy reviewer, atau header <code>appVersion</code> yang belum terdaftar di PROD)?</em>
+</li></ol>
+</li></ul>
 </section>
 <section id="sec-simple" class="doc-section">
 <h3>📌 C. Matriks Pertanyaan Berdasarkan Pemangku Kepentingan (Stakeholders)</h3>
@@ -188,18 +217,21 @@
 <section id="sec-walkthrough" class="doc-section">
 <h3>🧠 E. Knowledge Check</h3>
 <ol>
-<li>Mengapa keberadaan alur CI/CD diklasifikasikan sebagai <code>[Unverified]</code> dalam proses reverse engineering ini?</li>
-<li>Mengapa logika penentuan status reviewer Apple (<code>appStartHide</code>) tidak dapat dibuktikan 100% hanya dari kode sumber client iOS?</li>
-<li>Apa risiko terbesar mempertahankan modul RxSwift yang terisolasi tanpa konfirmasi strategi jangka panjang dari iOS Lead?</li>
-</ol>
+<li>Mengapa keberadaan alur CI/CD diklasifikasikan sebagai <code>[Unverified]</code> dalam proses reverse engineering ini?
+</li>
+<li>Mengapa logika penentuan status reviewer Apple (<code>appStartHide</code>) tidak dapat dibuktikan 100% hanya dari kode sumber client iOS?
+</li>
+<li>Apa risiko terbesar mempertahankan modul RxSwift yang terisolasi tanpa konfirmasi strategi jangka panjang dari iOS Lead?
+</li></ol>
 </section>
 <section id="sec-walkthrough" class="doc-section">
 <h3>🏁 E. Completion Criteria</h3>
 <p>Anda telah menguasai dokumen ini jika:</p>
 <ul>
-<li>Anda memahami batas antara fakta implementasi yang telah terbukti di kode sumber dan hipotesis teknis yang membutuhkan klarifikasi.</li>
-<li>Anda siap membawa daftar pertanyaan ini ke sesi sinkronisasi teknis bersama tim SAMIR.</li>
-</ul>
+<li>Anda memahami batas antara fakta implementasi yang telah terbukti di kode sumber dan hipotesis teknis yang membutuhkan klarifikasi.
+</li>
+<li>Anda siap membawa daftar pertanyaan ini ke sesi sinkronisasi teknis bersama tim SAMIR.
+</li></ul>
 <p>Lanjut ke kumpulan diagram arsitektur: <a href="../diagrams/application-startup.html">diagrams/application-startup.md</a></p>
 </section>
 

@@ -101,28 +101,36 @@
 <h3>🎯 A. Learning Objective</h3>
 <p>Setelah mempelajari dokumen ini, pembaca akan mampu:</p>
 <ol>
-<li>Mendefinisikan konsep arsitektur <strong>Modular Monolith</strong> dalam konteks pengembangan aplikasi iOS.</li>
-<li>Memahami 3 pilar utama arsitektur SAMIR iOS: <strong>Module Framework</strong> (<code>CZSwiftModuleLib</code>), <strong>Service Registry</strong> (<code>SamirServiceModule</code>), dan <strong>URL Router</strong> (<code>CZSwiftRouterLib</code>).</li>
-<li>Menjelaskan trade-off antara monolit modular berbasis folder vs framework dinamis (.framework) terpisah.</li>
-</ol>
+<li>Mendefinisikan konsep arsitektur <strong>Modular Monolith</strong> dalam konteks pengembangan aplikasi iOS.
+</li>
+<li>Memahami 3 pilar utama arsitektur SAMIR iOS: <strong>Module Framework</strong> (<code>CZSwiftModuleLib</code>), <strong>Service Registry</strong> (<code>SamirServiceModule</code>), dan <strong>URL Router</strong> (<code>CZSwiftRouterLib</code>).
+</li>
+<li>Menjelaskan trade-off antara monolit modular berbasis folder vs framework dinamis (.framework) terpisah.
+</li></ol>
 </section>
 <section id="sec-prereq" class="doc-section">
 <h3>📋 B. Prerequisites</h3>
 <ul>
-<li>Sudah menyelesaikan kurikulum <a href="../01-project-foundation/01-application-overview.html">Level 1</a> dan <a href="../02-understanding-app-startup/01-ios-entry-point.html">Level 2</a>.</li>
-<li>Mengetahui konsep dasar Dependency Inversion dan Decoupling pada Object-Oriented Programming.</li>
-</ul>
+<li>Sudah menyelesaikan kurikulum <a href="../01-project-foundation/01-application-overview.html">Level 1</a> dan <a href="../02-understanding-app-startup/01-ios-entry-point.html">Level 2</a>.
+</li>
+<li>Mengetahui konsep dasar Dependency Inversion dan Decoupling pada Object-Oriented Programming.
+</li></ul>
 </section>
 <section id="sec-simple" class="doc-section">
 <h3>💡 C. Simple Explanation (Analogi Mall & Toko-Toko Terpisah)</h3>
 <p>Bayangkan sebuah pusat perbelanjaan (Mall):</p>
 <ul>
-<li><strong>Mall (Monolit)</strong>: Semua berada dalam satu gedung fisik yang sama (satu binary aplikasi target <code>IDSamirLoan</code>).</li>
-<li><strong>Toko-Toko (Modul Bisnis)</strong>: Di dalam mall terdapat toko buku, toko pakaian, dan restoran (<code>SamirLoanModule</code>, <code>SamirAuthModule</code>, <code>SamirMineModule</code>). Masing-masing toko memiliki tata letak dan staf sendiri.</li>
-<li><strong>Pusat Informasi & Interkom (Service Registry & Router)</strong>:</li>
-<li>Jika toko buku ingin menanyakan apakah seorang pelanggan adalah member VIP, staf toko buku tidak perlu berjalan ke kantor pusat keanggotaan; mereka cukup menghubungi <strong>Meja Layanan (<code>IDServiceManager.loginService()?.isLogin()</code>)</strong>.</li>
-<li>Jika seorang pelanggan ingin pergi dari restoran ke bioskop, ada papan petunjuk arah berbasis rute (<strong><code>samir://auth/identity</code></strong>).</li>
-</ul>
+<li><strong>Mall (Monolit)</strong>: Semua berada dalam satu gedung fisik yang sama (satu binary aplikasi target <code>IDSamirLoan</code>).
+</li>
+<li><strong>Toko-Toko (Modul Bisnis)</strong>: Di dalam mall terdapat toko buku, toko pakaian, dan restoran (<code>SamirLoanModule</code>, <code>SamirAuthModule</code>, <code>SamirMineModule</code>). Masing-masing toko memiliki tata letak dan staf sendiri.
+</li>
+<li><strong>Pusat Informasi & Interkom (Service Registry & Router)</strong>:
+<ul>
+<li>Jika toko buku ingin menanyakan apakah seorang pelanggan adalah member VIP, staf toko buku tidak perlu berjalan ke kantor pusat keanggotaan; mereka cukup menghubungi <strong>Meja Layanan (<code>IDServiceManager.loginService()?.isLogin()</code>)</strong>.
+</li>
+<li>Jika seorang pelanggan ingin pergi dari restoran ke bioskop, ada papan petunjuk arah berbasis rute (<strong><code>samir://auth/identity</code></strong>).
+</li></ul>
+</li></ul>
 <p>Dengan cara ini, masing-masing toko dapat merenovasi ruangannya tanpa merusak struktur gedung mall.</p>
 </section>
 <section id="sec-actual" class="doc-section">
@@ -195,60 +203,64 @@ graph TD
 </div>
 <p>Modul-modul bisnis tidak di-import secara eksplisit oleh <code>AppDelegate</code>. Sebaliknya:</p>
 <ul>
-<li>Setiap modul bisnis memiliki class modul yang mengadopsi protokol <code>CZModuleProtocol</code> (misal: <code>IDSamirMainModule</code>, <code>IDSamirLoanModule</code>).</li>
-<li>Modul didaftarkan melalui konfigurasi XML di <a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/learn/iOS-Arch/ios/IDSamirLoan/Application/Configuration/Module/IDModuleList.plist" target="_blank" rel="noopener noreferrer">🦊 IDModuleList.plist <span class="branch-tag">learn/iOS-Arch</span> ↗</a>.</li>
-<li>Saat boot, <code>CZModuleManager</code> menggunakan <code>NSClassFromString</code> untuk menginstansiasi class modul secara dinamis.</li>
-<li>Hasil: Modul tidak memiliki dependensi kompilasi terhadap <code>AppDelegate</code>!</li>
-</ul>
+<li>Setiap modul bisnis memiliki class modul yang mengadopsi protokol <code>CZModuleProtocol</code> (misal: <code>IDSamirMainModule</code>, <code>IDSamirLoanModule</code>).
+</li>
+<li>Modul didaftarkan melalui konfigurasi XML di <a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/learn/iOS-Arch/ios/IDSamirLoan/Application/Configuration/Module/IDModuleList.plist" target="_blank" rel="noopener noreferrer">🦊 IDModuleList.plist <span class="branch-tag">learn/iOS-Arch</span> ↗</a>.
+</li>
+<li>Saat boot, <code>CZModuleManager</code> menggunakan <code>NSClassFromString</code> untuk menginstansiasi class modul secara dinamis.
+</li>
+<li>Hasil: Modul tidak memiliki dependensi kompilasi terhadap <code>AppDelegate</code>!
+</li></ul>
 <div id="sub-2-pilar-2-pertukaran-data-lintas-modul-samirservicemodule" class="doc-subsection">
 <h4>2. Pilar 2: Pertukaran Data Lintas Modul (<code>SamirServiceModule</code>)</h4>
 </div>
 <p>Jika modul A membutuhkan data atau aksi dari modul B (contoh: modul Pinjaman butuh info sesi login), modul A <strong>dilarang keras</strong> meng-import <code>SamirLoginModule</code>.</p>
 <ul>
-<li>Modul login mendaftarkan <code>IDLoginModuleServiceHandler</code> ke <a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/learn/iOS-Arch/ios/IDSamirLoan/Application/Configuration/Module/IDServiceList.plist" target="_blank" rel="noopener noreferrer">🦊 IDServiceList.plist <span class="branch-tag">learn/iOS-Arch</span> ↗</a> yang mengadopsi protokol <code>IDLoginModuleServiceProtocol</code>.</li>
-<li>Modul pinjaman cukup memanggil:</li>
-</ul>
+<li>Modul login mendaftarkan <code>IDLoginModuleServiceHandler</code> ke <a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/learn/iOS-Arch/ios/IDSamirLoan/Application/Configuration/Module/IDServiceList.plist" target="_blank" rel="noopener noreferrer">🦊 IDServiceList.plist <span class="branch-tag">learn/iOS-Arch</span> ↗</a> yang mengadopsi protokol <code>IDLoginModuleServiceProtocol</code>.
+</li>
+<li>Modul pinjaman cukup memanggil:
+</li></ul>
 <pre><code class="language-swift">  let isLoggedIn = IDServiceManager.loginService()?.isLogin() ?? false</code></pre>
 <ul>
-<li><code>CZModuleManager</code> menginstansiasi handler tersebut secara lazy dan thread-safe (menggunakan antrean serial <code>serviceCacheQueue</code>).</li>
-</ul>
+<li><code>CZModuleManager</code> menginstansiasi handler tersebut secara lazy dan thread-safe (menggunakan antrean serial <code>serviceCacheQueue</code>).
+</li></ul>
 <div id="sub-3-pilar-3-navigasi-bebas-ketergantungan-samirroutermodule" class="doc-subsection">
 <h4>3. Pilar 3: Navigasi Bebas Ketergantungan (<code>SamirRouterModule</code>)</h4>
 </div>
 <p>Ketika user berada di halaman Beranda dan ingin membuka verifikasi identitas:</p>
 <ul>
-<li>Alih-alih melakukan <code>navigationController?.pushViewController(IDNewOCRViewController(), animated: true)</code> (yang akan memaksa Beranda meng-import modul Auth), Beranda memanggil:</li>
-</ul>
+<li>Alih-alih melakukan <code>navigationController?.pushViewController(IDNewOCRViewController(), animated: true)</code> (yang akan memaksa Beranda meng-import modul Auth), Beranda memanggil:
+</li></ul>
 <pre><code class="language-swift">  IDRouterManager.id_perfromWithURLString(IDRouterSchemeConstants.Auth.identity.rawValue)</code></pre>
 <ul>
-<li><code>CZRouterCenter</code> mencocokkan skema <code>samir://auth/identity</code> dan mendispatch panggilan ke <code>IDSamirAuthModuleRouterHandler</code>.</li>
-</ul>
+<li><code>CZRouterCenter</code> mencocokkan skema <code>samir://auth/identity</code> dan mendispatch panggilan ke <code>IDSamirAuthModuleRouterHandler</code>.
+</li></ul>
 </section>
 <section id="sec-walkthrough" class="doc-section">
 <h3>🪜 E. Step-by-Step Walkthrough: Alur Komunikasi Lintas Modul</h3>
 <p>Mari kita telusuri bagaimana Beranda (<code>SamirLoanModule</code>) memicu login saat user yang belum login menekan tombol "Ajukan Pinjaman":</p>
 <ol>
-<li><strong>Step 1 — Deteksi Sesi</strong>:</li>
-</ol>
+<li><strong>Step 1 — Deteksi Sesi</strong>:
+</li></ol>
 <p>Presenter beranda memanggil protokol layanan:</p>
 <p><code>let isLogin = IDServiceManager.loginService()?.isLogin() ?? false</code></p>
-<ol>
-<li><strong>Step 2 — Trigger Login Action</strong>:</li>
-</ol>
+<ol start="2">
+<li><strong>Step 2 — Trigger Login Action</strong>:
+</li></ol>
 <p>Jika <code>isLogin == false</code>, beranda memanggil:</p>
 <p><code>IDServiceManager.loginService()?.loginAction()</code></p>
-<ol>
-<li><strong>Step 3 — Presentasi Form Login</strong>:</li>
-</ol>
+<ol start="3">
+<li><strong>Step 3 — Presentasi Form Login</strong>:
+</li></ol>
 <p><code>IDLoginModuleServiceHandler.loginAction()</code> mengeksekusi <code>IDLoginManager.shared.loginAction()</code>.</p>
 <p><code>IDLoginManager</code> mengambil top ViewController di layar (<code>UIViewController.cz.topViewController()</code>) dan memunculkan <code>IDLoginNavViewController</code> secara modal.</p>
-<ol>
-<li><strong>Step 4 — Login Berhasil</strong>:</li>
-</ol>
+<ol start="4">
+<li><strong>Step 4 — Login Berhasil</strong>:
+</li></ol>
 <p>Setelah user memasukkan OTP dan login berhasil, <code>IDLoginManager</code> mengirim notifikasi siaran <code>IDN_SamirLoginModule_LoginSuccess_Notification</code>.</p>
-<ol>
-<li><strong>Step 5 — Reaksi Beranda</strong>:</li>
-</ol>
+<ol start="5">
+<li><strong>Step 5 — Reaksi Beranda</strong>:
+</li></ol>
 <p><code>IDHomeViewController</code> yang mendengarkan notifikasi tersebut otomatis me-refresh data produk pinjaman (<code>requstQueryProduct()</code>).</p>
 <p>Semua langkah di atas berjalan mulus tanpa ada satu baris pun <code>import SamirLoginModule</code> di dalam <code>SamirLoanModule</code>!</p>
 </section>
@@ -262,32 +274,45 @@ graph TD
 <h3>🔬 G. Practical Example: Pola Presenter di Setiap Modul</h3>
 <p>Setiap modul bisnis mengadopsi pola variasi MVP buatan sendiri:</p>
 <ul>
-<li><strong><code>IDHomeViewController</code></strong>: Mengatur view lifecycle dan event UI (tap tombol).</li>
-<li><strong><code>IDAssessPresenter</code></strong>: Menerima perintah dari controller, memformat data, dan memanggil network service.</li>
-<li><strong><code>IDLoanService</code></strong>: Mengeksekusi request jaringan <code>IDNetworkRequest.id_startPOSTRequest</code>.</li>
-<li><strong><code>IDProductModel</code></strong>: Struct / class representasi JSON dari KakaJSON.</li>
-</ul>
+<li><strong><code>IDHomeViewController</code></strong>: Mengatur view lifecycle dan event UI (tap tombol).
+</li>
+<li><strong><code>IDAssessPresenter</code></strong>: Menerima perintah dari controller, memformat data, dan memanggil network service.
+</li>
+<li><strong><code>IDLoanService</code></strong>: Mengeksekusi request jaringan <code>IDNetworkRequest.id_startPOSTRequest</code>.
+</li>
+<li><strong><code>IDProductModel</code></strong>: Struct / class representasi JSON dari KakaJSON.
+</li></ul>
 <p><em>Pengecualian:</em> <code>LoanConfirmModule</code> menggunakan pola <strong>MVVM-Rx</strong> dengan <code>LoanConfirmViewController_Rx</code> dan <code>LoanConfirmViewModel</code> (didukung oleh driver reaktif RxCocoa).</p>
 </section>
 <section id="sec-mistakes" class="doc-section">
 <h3>⚠️ H. Common Mistakes & Debugging</h3>
 <ul>
-<li><strong>Melakukan Import Antarmodul Secara Ilegal</strong>:</li>
-<li><em>Kesalahan</em>: Menulis <code>import SamirLoginModule</code> di dalam file milik <code>SamirLoanModule</code>.</li>
-<li><em>Dampak</em>: Menghancurkan batas modularitas (<em>architectural erosion</em>) dan berisiko menciptakan circular dependency.</li>
-<li><em>Solusi</em>: Selalu gunakan <code>IDServiceManager.loginService()</code> untuk mengakses kapabilitas login.</li>
-<li><strong>Menambahkan Route Duplikat</strong>:</li>
-<li><em>Kesalahan</em>: Menambahkan router baru dengan host yang sama pada modul berbeda.</li>
-<li><em>Dampak</em>: <code>CZRouterCenter.addRouter</code> memiliki baris <code>assert(!self.isDuplicateRouter(router!))</code> yang akan membuat aplikasi langsung crash saat startup debug!</li>
-</ul>
+<li><strong>Melakukan Import Antarmodul Secara Ilegal</strong>:
+<ul>
+<li><em>Kesalahan</em>: Menulis <code>import SamirLoginModule</code> di dalam file milik <code>SamirLoanModule</code>.
+</li>
+<li><em>Dampak</em>: Menghancurkan batas modularitas (<em>architectural erosion</em>) dan berisiko menciptakan circular dependency.
+</li>
+<li><em>Solusi</em>: Selalu gunakan <code>IDServiceManager.loginService()</code> untuk mengakses kapabilitas login.
+</li></ul>
+</li>
+<li><strong>Menambahkan Route Duplikat</strong>:
+<ul>
+<li><em>Kesalahan</em>: Menambahkan router baru dengan host yang sama pada modul berbeda.
+</li>
+<li><em>Dampak</em>: <code>CZRouterCenter.addRouter</code> memiliki baris <code>assert(!self.isDuplicateRouter(router!))</code> yang akan membuat aplikasi langsung crash saat startup debug!
+</li></ul>
+</li></ul>
 </section>
 <section id="sec-check" class="doc-section">
 <h3>🧠 I. Knowledge Check</h3>
 <ol>
-<li>Apa 3 pilar utama arsitektur SAMIR iOS yang memungkinkan komunikasi tanpa tight-coupling?</li>
-<li>Bagaimana <code>CZModuleManager</code> menginstansiasi class modul tanpa meng-import class tersebut di compile time?</li>
-<li>Modul mana yang menjadi satu-satunya modul yang mengimplementasikan arsitektur reaktif RxSwift?</li>
-</ol>
+<li>Apa 3 pilar utama arsitektur SAMIR iOS yang memungkinkan komunikasi tanpa tight-coupling?
+</li>
+<li>Bagaimana <code>CZModuleManager</code> menginstansiasi class modul tanpa meng-import class tersebut di compile time?
+</li>
+<li>Modul mana yang menjadi satu-satunya modul yang mengimplementasikan arsitektur reaktif RxSwift?
+</li></ol>
 <p><strong>Latihan Observasi</strong>:</p>
 <p>Buka file <code>ios/IDSamirLoan/Application/SamirServiceModule/Classes/IDServiceManager.swift</code>. Periksa method <code>loginService()</code>, <code>mainService()</code>, <code>loanService()</code>, dan <code>reapyService()</code>. Amati bagaimana method tersebut bertindak sebagai Service Locator.</p>
 </section>

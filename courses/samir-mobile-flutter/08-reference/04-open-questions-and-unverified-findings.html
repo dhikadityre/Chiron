@@ -101,10 +101,12 @@
 <h3>🎯 A. Learning Objective</h3>
 <p>Setelah menyelesaikan dokumen ini, pembaca akan mampu:</p>
 <ol>
-<li>Mengidentifikasi isu arsitektur dan keamanan yang memerlukan klarifikasi manajemen teknis.</li>
-<li>Memahami batas verifikasi kode statis versus verifikasi dinamis di lingkungan production.</li>
-<li>Memberikan kontribusi pada agenda perbaikan teknis (<em>technical backlog</em>) tim mobile.</li>
-</ol>
+<li>Mengidentifikasi isu arsitektur dan keamanan yang memerlukan klarifikasi manajemen teknis.
+</li>
+<li>Memahami batas verifikasi kode statis versus verifikasi dinamis di lingkungan production.
+</li>
+<li>Memberikan kontribusi pada agenda perbaikan teknis (<em>technical backlog</em>) tim mobile.
+</li></ol>
 </section>
 <section id="sec-prereq" class="doc-section">
 <h3>📌 B. Daftar Isu Terbuka & Pertanyaan Arsitektural</h3>
@@ -112,58 +114,62 @@
 <h4>1. Isu Terbuka 1: Kebijakan Bypass Sertifikat SSL di Production</h4>
 </div>
 <ul>
-<li><strong>Status</strong>: <code>[Unverified - High Security Impact]</code></li>
-<li><strong>Deskripsi</strong>:</li>
-</ul>
+<li><strong>Status</strong>: <code>[Unverified - High Security Impact]</code>
+</li>
+<li><strong>Deskripsi</strong>:
+</li></ul>
 <p>Di <a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/learn/Flutter-Arch/flutter/lib/common/http/http_client.dart" target="_blank" rel="noopener noreferrer">🦊 flutter/lib/common/http/http_client.dart <span class="branch-tag">learn/Flutter-Arch</span> ↗</a> (baris 46–49), <code>client.badCertificateCallback</code> mengembalikan <code>true</code> secara permanen.</p>
 <ul>
-<li><strong>Pertanyaan untuk DevSecOps</strong>:</li>
-</ul>
+<li><strong>Pertanyaan untuk DevSecOps</strong>:
+</li></ul>
 <p>Apakah ada alasan khusus mengapa bypass sertifikat dibiarkan aktif di build production? Apakah backend SAMIR menggunakan sertifikat internal yang tidak diterbitkan oleh CA publik resmi, atau ini murni artefak debugging yang terlewat dipagari oleh <code>!AppEnv.isProd</code>?</p>
 <ul>
-<li><strong>Rekomendasi Tindakan</strong>:</li>
-</ul>
+<li><strong>Rekomendasi Tindakan</strong>:
+</li></ul>
 <p>Konfirmasikan ke Lead Architect untuk menambahkan guard:</p>
 <pre><code class="language-dart">  client.badCertificateCallback = (cert, host, port) =&gt; !AppEnv.isProd;</code></pre>
 <div id="sub-2-isu-terbuka-2-masa-berlaku-kunci-salt-fallback-766b035b" class="doc-subsection">
 <h4>2. Isu Terbuka 2: Masa Berlaku Kunci Salt Fallback <code>766b035b-...</code></h4>
 </div>
 <ul>
-<li><strong>Status</strong>: <code>[Unverified - API Contract]</code></li>
-<li><strong>Deskripsi</strong>:</li>
-</ul>
+<li><strong>Status</strong>: <code>[Unverified - API Contract]</code>
+</li>
+<li><strong>Deskripsi</strong>:
+</li></ul>
 <p>Di <a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/learn/Flutter-Arch/flutter/lib/common/http/sign_utils.dart" target="_blank" rel="noopener noreferrer">🦊 flutter/lib/common/http/sign_utils.dart <span class="branch-tag">learn/Flutter-Arch</span> ↗</a>, jika <code>Global.dynamicSignKey</code> bernilai null, modul menggunakan string fallback <code>&#x27;766b035b-8d2f-454a-abad-4e8ab138a99a&#x27;</code>.</p>
 <ul>
-<li><strong>Pertanyaan untuk Tim Backend</strong>:</li>
-</ul>
+<li><strong>Pertanyaan untuk Tim Backend</strong>:
+</li></ul>
 <p>Apakah kunci fallback ini bersifat permanen di server backend SAMIR, atau memiliki tanggal kedaluwarsa? Jika backend melakukan rotasi kunci default, request dari guest user (sebelum login) akan gagal divalidasi.</p>
 <div id="sub-3-isu-terbuka-3-ketiadaan-mekanisme-retry-otomatis-pada-request-idempoten" class="doc-subsection">
 <h4>3. Isu Terbuka 3: Ketiadaan Mekanisme Retry Otomatis pada Request Idempoten</h4>
 </div>
 <ul>
-<li><strong>Status</strong>: <code>[Inferred - Performance Optimization]</code></li>
-<li><strong>Deskripsi</strong>:</li>
-</ul>
+<li><strong>Status</strong>: <code>[Inferred - Performance Optimization]</code>
+</li>
+<li><strong>Deskripsi</strong>:
+</li></ul>
 <p>Saat koneksi internet mengalami packet drop sesaat, Dio langsung melempar error dan memunculkan Toast tanpa melakukan upaya percobaan ulang (<em>retry with exponential backoff</em>).</p>
 <ul>
-<li><strong>Pertanyaan untuk Tim Mobile</strong>:</li>
-</ul>
+<li><strong>Pertanyaan untuk Tim Mobile</strong>:
+</li></ul>
 <p>Apakah perlu ditambahkan interceptor retry otomatis (misal: 2x retry berjarak 1 detik) khusus untuk endpoint pembacaan data (<code>GET</code> atau query tagihan yang aman dari efek samping ganda)?</p>
 <div id="sub-4-isu-terbuka-4-skenario-pergantian-akun-cepat-fast-account-switching" class="doc-subsection">
 <h4>4. Isu Terbuka 4: Skenario Pergantian Akun Cepat (<em>Fast Account Switching</em>)</h4>
 </div>
 <ul>
-<li><strong>Status</strong>: <code>[Unverified - Edge Case]</code></li>
-<li><strong>Deskripsi</strong>:</li>
-</ul>
+<li><strong>Status</strong>: <code>[Unverified - Edge Case]</code>
+</li>
+<li><strong>Deskripsi</strong>:
+</li></ul>
 <p>Pengguna A logout di tab native, lalu segera login dengan nomor telepon Pengguna B tanpa mematikan aplikasi.</p>
 <ul>
-<li><strong>Pertanyaan Verifikasi</strong>:</li>
-</ul>
+<li><strong>Pertanyaan Verifikasi</strong>:
+</li></ul>
 <p>Apakah <code>IndexedStack</code> di <code>FlutterRootPage</code> menjamin pembersihan seluruh variabel privat (seperti <code>_model.orders</code> di <code>RepayHomePage</code>) sebelum data Pengguna B dimuat, sehingga tidak ada <em>data leak</em> sesaat di layar kaca?</p>
 <ul>
-<li><strong>Rekomendasi Tindakan</strong>:</li>
-</ul>
+<li><strong>Rekomendasi Tindakan</strong>:
+</li></ul>
 <p>Lakukan automated integration test khusus untuk skenario pergantian akun berulang.</p>
 </section>
 <section id="sec-simple" class="doc-section">

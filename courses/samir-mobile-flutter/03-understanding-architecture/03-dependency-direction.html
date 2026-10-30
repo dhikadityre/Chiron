@@ -101,11 +101,14 @@
 <h3>🎯 A. Learning Objective</h3>
 <p>Setelah menyelesaikan dokumen ini, pembaca akan mampu:</p>
 <ol>
-<li>Memahami diagram graf arah ketergantungan satu arah (unidirectional dependency graph).</li>
-<li>Mengetahui mengapa folder <code>common/</code> dilarang mengimpor komponen dari folder <code>pages/</code>.</li>
-<li>Memahami prinsip isolasi antar-fitur: Modul <code>mine/</code> tidak boleh bergantung pada modul <code>repay/</code>.</li>
-<li>Menghindari jebakan ketergantungan melingkar (<em>circular dependency</em>) pada Dart.</li>
-</ol>
+<li>Memahami diagram graf arah ketergantungan satu arah (unidirectional dependency graph).
+</li>
+<li>Mengetahui mengapa folder <code>common/</code> dilarang mengimpor komponen dari folder <code>pages/</code>.
+</li>
+<li>Memahami prinsip isolasi antar-fitur: Modul <code>mine/</code> tidak boleh bergantung pada modul <code>repay/</code>.
+</li>
+<li>Menghindari jebakan ketergantungan melingkar (<em>circular dependency</em>) pada Dart.
+</li></ol>
 </section>
 <section id="sec-prereq" class="doc-section">
 <h3>📋 B. Prerequisites</h3>
@@ -115,10 +118,12 @@
 <h3>💡 C. Simple Explanation (Analogi & Konsep Sederhana)</h3>
 <p>Bayangkan sebuah sistem saluran air di gedung pencakar langit:</p>
 <ul>
-<li>Air selalu mengalir <strong>dari atas ke bawah</strong> mengikuti gravitasi: dari tandon atap (Presentation), melalui filter penyaring (Business Service), ke pompa distribusi utama (Network/Bridge).</li>
-<li>Jika ada pipa yang mengalirkan air dari pompa bawah langsung kembali ke filter tanpa katup pengaman, sistem akan mengalami <em>water hammer</em> (arus balik) dan pipa bisa meledak.</li>
-<li>Demikian pula di dalam kode: <strong>Presentation bergantung pada Service</strong>, <strong>Service bergantung pada Network</strong>, tetapi <strong>Network dilarang bergantung pada Presentation</strong>.</li>
-</ul>
+<li>Air selalu mengalir <strong>dari atas ke bawah</strong> mengikuti gravitasi: dari tandon atap (Presentation), melalui filter penyaring (Business Service), ke pompa distribusi utama (Network/Bridge).
+</li>
+<li>Jika ada pipa yang mengalirkan air dari pompa bawah langsung kembali ke filter tanpa katup pengaman, sistem akan mengalami <em>water hammer</em> (arus balik) dan pipa bisa meledak.
+</li>
+<li>Demikian pula di dalam kode: <strong>Presentation bergantung pada Service</strong>, <strong>Service bergantung pada Network</strong>, tetapi <strong>Network dilarang bergantung pada Presentation</strong>.
+</li></ul>
 </section>
 <section id="sec-actual" class="doc-section">
 <h3>💻 D. Actual Implementation (Bukti di Kode Sumber)</h3>
@@ -152,24 +157,26 @@
 <h4>2. Aturan Emas Arah Dependensi di SAMIR Flutter</h4>
 </div>
 <ol>
-<li><strong>Aturan 1 (Downward Dependency)</strong>:</li>
-</ol>
+<li><strong>Aturan 1 (Downward Dependency)</strong>:
+</li></ol>
 <p>Lapisan atas boleh mengimpor lapisan di bawahnya, tetapi lapisan bawah <strong>dilarang keras</strong> mengimpor lapisan di atasnya.</p>
 <ul>
-<li><em>Benar</em>: <code>RepayHomePage</code> mengimpor <code>RepayHomeService</code>.</li>
-<li><em>Salah</em>: <code>HttpClient</code> mengimpor <code>RepayHomePage</code>.</li>
-</ul>
+<li><em>Benar</em>: <code>RepayHomePage</code> mengimpor <code>RepayHomeService</code>.
+</li>
+<li><em>Salah</em>: <code>HttpClient</code> mengimpor <code>RepayHomePage</code>.
+</li></ul>
 <ol>
-<li><strong>Aturan 2 (Feature Isolation / Zero Lateral Dependency)</strong>:</li>
-</ol>
+<li><strong>Aturan 2 (Feature Isolation / Zero Lateral Dependency)</strong>:
+</li></ol>
 <p>Fitur di dalam <code>pages/</code> dilarang saling mengimpor secara horizontal.</p>
 <ul>
-<li><em>Dilarang</em>: <code>pages/mine/home/mine_home_page.dart</code> mengimpor <code>pages/repay/home/repay_home_page.dart</code>.</li>
-<li>Jika fitur Mine perlu mengarahkan pengguna ke Tagihan, gunakan routing semantik via <code>Routers.go(RoutePaths.repayHome)</code>.</li>
-</ul>
+<li><em>Dilarang</em>: <code>pages/mine/home/mine_home_page.dart</code> mengimpor <code>pages/repay/home/repay_home_page.dart</code>.
+</li>
+<li>Jika fitur Mine perlu mengarahkan pengguna ke Tagihan, gunakan routing semantik via <code>Routers.go(RoutePaths.repayHome)</code>.
+</li></ul>
 <ol>
-<li><strong>Aturan 3 (Common is Pure Infrastructure)</strong>:</li>
-</ol>
+<li><strong>Aturan 3 (Common is Pure Infrastructure)</strong>:
+</li></ol>
 <p>Folder <code>common/</code> bertindak sebagai pustaka bersama dan <strong>tidak boleh mengetahui keberadaan halaman bisnis apapun</strong>, kecuali file <a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/learn/Flutter-Arch/flutter/lib/common/router/routers.dart" target="_blank" rel="noopener noreferrer">🦊 routers.dart <span class="branch-tag">learn/Flutter-Arch</span> ↗</a> yang bertindak sebagai Composition Root (pabrik rute utama).</p>
 <div id="sub-3-pemanfaatan-part-dan-part-of-untuk-membatasi-scope" class="doc-subsection">
 <h4>3. Pemanfaatan <code>part</code> dan <code>part of</code> untuk Membatasi Scope</h4>
@@ -184,21 +191,22 @@ part &#x27;widgets/repay_theme.dart&#x27;;</code></pre>
 <pre><code class="language-dart">part of &#x27;../repay_home_page.dart&#x27;;</code></pre>
 <p>Efek teknis:</p>
 <ul>
-<li>File <code>repay_order_card.dart</code> tidak dapat diimpor secara sembarangan oleh file di luar <code>repay_home_page.dart</code>.</li>
-<li>Menjamin enkapsulasi kuat dan mencegah keterikatan tidak disengaja dari modul lain.</li>
-</ul>
+<li>File <code>repay_order_card.dart</code> tidak dapat diimpor secara sembarangan oleh file di luar <code>repay_home_page.dart</code>.
+</li>
+<li>Menjamin enkapsulasi kuat dan mencegah keterikatan tidak disengaja dari modul lain.
+</li></ul>
 </section>
 <section id="sec-walkthrough" class="doc-section">
 <h3>🪜 E. Step-by-Step Walkthrough: Mencegah Ketergantungan Siklik</h3>
 <p>Katakanlah tim ingin menambahkan tombol pintas <em>"Lihat Riwayat Tagihan"</em> di dalam kartu profil <code>MineHomePage</code>:</p>
 <ul>
-<li><strong>Cara Salah (Melanggar Arah Dependensi)</strong>:</li>
-</ul>
+<li><strong>Cara Salah (Melanggar Arah Dependensi)</strong>:
+</li></ul>
 <p><code>MineHomePage</code> mengimpor <code>repay_home_page.dart</code> dan memanggil <code>Navigator.push(context, MaterialPageRoute(builder: (_) =&gt; RepayHomePage()))</code>.</p>
 <p><em>Dampak buruk</em>: Menciptakan keterikatan erat. Jika halaman Repay mengalami refactoring parameter, halaman Mine ikut rusak (<em>cascade compile error</em>).</p>
 <ul>
-<li><strong>Cara Benar (Mengikuti Arsitektur Decoupled)</strong>:</li>
-</ul>
+<li><strong>Cara Benar (Mengikuti Arsitektur Decoupled)</strong>:
+</li></ul>
 <p><code>MineHomePage</code> memanggil helper router netral:</p>
 <pre><code class="language-dart">  Routers.go(RoutePaths.repayHome);</code></pre>
 <p><code>Routers</code> menginstruksikan <code>FlutterRootController.select(&#x27;/repay&#x27;)</code> tanpa membuat keterikatan kode langsung antara kedua halaman.</p>
@@ -206,38 +214,46 @@ part &#x27;widgets/repay_theme.dart&#x27;;</code></pre>
 <section id="sec-why" class="doc-section">
 <h3>⚖️ F. Why It Matters (Trade-Offs & Implikasi Teknis)</h3>
 <ul>
-<li><strong>Kecepatan Kompilasi & Hot Reload</strong>:</li>
-</ul>
+<li><strong>Kecepatan Kompilasi & Hot Reload</strong>:
+</li></ul>
 <p>Dart Compiler (terutama mode AOT saat release build) dapat mengoptimalkan dead-code elimination (tree shaking) secara maksimal jika graf dependensi berbentuk <em>Directed Acyclic Graph (DAG)</em> yang bersih. Ketergantungan melingkar memperlambat proses analisis tipe statis dan hot reload.</p>
 <ul>
-<li><strong>Kemudahan Menulis Unit Test</strong>:</li>
-</ul>
+<li><strong>Kemudahan Menulis Unit Test</strong>:
+</li></ul>
 <p>Karena <code>RepayHomeService</code> tidak memiliki dependensi terhadap Flutter Widget atau <code>BuildContext</code>, service tersebut dapat diuji (<em>unit tested</em>) secara murni di console command line menggunakan mock HTTP client tanpa perlu meluncurkan emulator grafis.</p>
 </section>
 <section id="sec-example" class="doc-section">
 <h3>🔬 G. Practical Example (Skenario Penggunaan Nyata)</h3>
 <p>Jika Anda memeriksa file <a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/learn/Flutter-Arch/flutter/lib/common/http/http_client.dart" target="_blank" rel="noopener noreferrer">🦊 flutter/lib/common/http/http_client.dart <span class="branch-tag">learn/Flutter-Arch</span> ↗</a>:</p>
 <ul>
-<li><code>HttpClient</code> hanya mengimpor <code>Global</code>, <code>ParamUtils</code>, <code>Response</code>, <code>AppEnv</code>, <code>Routers</code>, dan <code>Toast</code>.</li>
-<li>Ia tidak mengimpor satu pun model bisnis (seperti <code>RepayOrderModel</code>). Data dikembalikan dalam bentuk tipe generik <code>dynamic</code> atau <code>BaseResponse&lt;T&gt;</code>, membiarkan layer Service di atasnya yang melakukan casting tipe konkret.</li>
-</ul>
+<li><code>HttpClient</code> hanya mengimpor <code>Global</code>, <code>ParamUtils</code>, <code>Response</code>, <code>AppEnv</code>, <code>Routers</code>, dan <code>Toast</code>.
+</li>
+<li>Ia tidak mengimpor satu pun model bisnis (seperti <code>RepayOrderModel</code>). Data dikembalikan dalam bentuk tipe generik <code>dynamic</code> atau <code>BaseResponse&lt;T&gt;</code>, membiarkan layer Service di atasnya yang melakukan casting tipe konkret.
+</li></ul>
 </section>
 <section id="sec-mistakes" class="doc-section">
 <h3>⚠️ H. Common Mistakes & Debugging</h3>
 <ul>
-<li><strong>Mengimpor <code>package:flutter_app_project/pages/...</code> di dalam folder <code>common/</code></strong>:</li>
-<li>Ini adalah anti-pattern terbesar yang merusak integritas arsitektur. Satu-satunya perkecualian adalah <code>common/router/routers.dart</code>.</li>
-<li><strong>Menyimpan Referensi <code>BuildContext</code> di dalam Service Class</strong>:</li>
-<li>Menyimpan <code>BuildContext</code> di dalam class service akan menahan memori widget tree dan menyebabkan crash <code>Looking up a deactivated widget&#x27;s ancestor is unsafe</code>.</li>
-</ul>
+<li><strong>Mengimpor <code>package:flutter_app_project/pages/...</code> di dalam folder <code>common/</code></strong>:
+<ul>
+<li>Ini adalah anti-pattern terbesar yang merusak integritas arsitektur. Satu-satunya perkecualian adalah <code>common/router/routers.dart</code>.
+</li></ul>
+</li>
+<li><strong>Menyimpan Referensi <code>BuildContext</code> di dalam Service Class</strong>:
+<ul>
+<li>Menyimpan <code>BuildContext</code> di dalam class service akan menahan memori widget tree dan menyebabkan crash <code>Looking up a deactivated widget&#x27;s ancestor is unsafe</code>.
+</li></ul>
+</li></ul>
 </section>
 <section id="sec-check" class="doc-section">
 <h3>🧠 I. Knowledge Check</h3>
 <ol>
-<li>Mengapa subfitur di dalam folder <code>pages/</code> dilarang saling mengimpor secara langsung?</li>
-<li>Bagaimana cara yang benar jika halaman profil ingin mengarahkan pengguna ke halaman tagihan?</li>
-<li>Apa manfaat penggunaan direktif <code>part</code> dan <code>part of</code> pada sub-widget fitur?</li>
-</ol>
+<li>Mengapa subfitur di dalam folder <code>pages/</code> dilarang saling mengimpor secara langsung?
+</li>
+<li>Bagaimana cara yang benar jika halaman profil ingin mengarahkan pengguna ke halaman tagihan?
+</li>
+<li>Apa manfaat penggunaan direktif <code>part</code> dan <code>part of</code> pada sub-widget fitur?
+</li></ol>
 <p><strong>Latihan Observasi</strong>:</p>
 <p>Buka file <a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/learn/Flutter-Arch/flutter/lib/common/http/param_utils.dart" target="_blank" rel="noopener noreferrer">🦊 flutter/lib/common/http/param_utils.dart <span class="branch-tag">learn/Flutter-Arch</span> ↗</a>. Periksa daftar <code>import</code> di baris 1–6 dan buktikan bahwa tidak ada satupun import yang mengarah ke folder <code>pages/</code>.</p>
 </section>

@@ -101,11 +101,14 @@
 <h3>🎯 A. Learning Objective</h3>
 <p>Setelah menyelesaikan dokumen ini, pembaca akan mampu:</p>
 <ol>
-<li>Mengidentifikasi seluruh halaman yang aktif di dalam modul Flutter SAMIR.</li>
-<li>Membedakan antara Root Tab Screens (di-host dalam <code>IndexedStack</code>) dan Secondary Pushed Screens.</li>
-<li>Menjelaskan fungsi bisnis dari masing-masing layar bagi nasabah pinjaman online SAMIR.</li>
-<li>Mengetahui layar khusus pengujian (<em>debug tools</em>) yang tersedia pada build non-PROD.</li>
-</ol>
+<li>Mengidentifikasi seluruh halaman yang aktif di dalam modul Flutter SAMIR.
+</li>
+<li>Membedakan antara Root Tab Screens (di-host dalam <code>IndexedStack</code>) dan Secondary Pushed Screens.
+</li>
+<li>Menjelaskan fungsi bisnis dari masing-masing layar bagi nasabah pinjaman online SAMIR.
+</li>
+<li>Mengetahui layar khusus pengujian (<em>debug tools</em>) yang tersedia pada build non-PROD.
+</li></ol>
 </section>
 <section id="sec-prereq" class="doc-section">
 <h3>📋 B. Prerequisites</h3>
@@ -115,10 +118,12 @@
 <h3>💡 C. Simple Explanation (Analogi & Konsep Sederhana)</h3>
 <p>Bayangkan denah sebuah gedung kantor pelayanan publik:</p>
 <ul>
-<li><strong>Lantai Utama (Root Container)</strong>: Memiliki dua loket utama berdampingan yang selalu terbuka, yaitu <strong>Loket Pembayaran / Tagihan (Repay)</strong> dan <strong>Loket Layanan Akun Nasabah (Mine)</strong>.</li>
-<li><strong>Ruang Dokumen Pribadi (Personal Auth)</strong>: Terletak di belakang loket akun nasabah; nasabah dipersilakan masuk ke ruangan ini jika ingin memeriksa atau memperbarui kelengkapan dokumen KTP.</li>
-<li><strong>Pintu Rahasia Teknisi (Proxy Debug & Chucker)</strong>: Panel tersembunyi di sudut ruangan yang hanya bisa dibuka oleh teknisi gedung untuk menginspeksi pipa saluran air dan kabel listrik (lalu lintas jaringan).</li>
-</ul>
+<li><strong>Lantai Utama (Root Container)</strong>: Memiliki dua loket utama berdampingan yang selalu terbuka, yaitu <strong>Loket Pembayaran / Tagihan (Repay)</strong> dan <strong>Loket Layanan Akun Nasabah (Mine)</strong>.
+</li>
+<li><strong>Ruang Dokumen Pribadi (Personal Auth)</strong>: Terletak di belakang loket akun nasabah; nasabah dipersilakan masuk ke ruangan ini jika ingin memeriksa atau memperbarui kelengkapan dokumen KTP.
+</li>
+<li><strong>Pintu Rahasia Teknisi (Proxy Debug & Chucker)</strong>: Panel tersembunyi di sudut ruangan yang hanya bisa dibuka oleh teknisi gedung untuk menginspeksi pipa saluran air dan kabel listrik (lalu lintas jaringan).
+</li></ul>
 </section>
 <section id="sec-actual" class="doc-section">
 <h3>💻 D. Actual Implementation (Bukti di Kode Sumber)</h3>
@@ -133,88 +138,123 @@
 <h4>1. <code>FlutterRootPage</code> (<code>/root</code>)</h4>
 </div>
 <ul>
-<li><strong>Fungsi</strong>: Wadah persisten tunggal yang menjaga state kedua tab native tetap hidup di memori.</li>
-<li><strong>Komponen Utama</strong>:</li>
-<li><code>IndexedStack</code>: Membungkus <code>MineHomePage</code> dan <code>RepayHomePage</code>.</li>
-<li><code>AnnotatedRegion&lt;SystemUiOverlayStyle&gt;</code>: Menjaga warna ikon status bar tetap kontras gelap (<code>AppSystemUiStyle.onLightBackground</code>).</li>
-<li><code>PageLifecycleVisibility</code>: Mendistribusikan visibilitas ke child yang sedang aktif.</li>
-</ul>
+<li><strong>Fungsi</strong>: Wadah persisten tunggal yang menjaga state kedua tab native tetap hidup di memori.
+</li>
+<li><strong>Komponen Utama</strong>:
+<ul>
+<li><code>IndexedStack</code>: Membungkus <code>MineHomePage</code> dan <code>RepayHomePage</code>.
+</li>
+<li><code>AnnotatedRegion&lt;SystemUiOverlayStyle&gt;</code>: Menjaga warna ikon status bar tetap kontras gelap (<code>AppSystemUiStyle.onLightBackground</code>).
+</li>
+<li><code>PageLifecycleVisibility</code>: Mendistribusikan visibilitas ke child yang sedang aktif.
+</li></ul>
+</li></ul>
 <div id="sub-2-repayhomepage-repay" class="doc-subsection">
 <h4>2. <code>RepayHomePage</code> (<code>/repay</code>)</h4>
 </div>
 <ul>
-<li><strong>Fungsi</strong>: Pusat manajemen pelunasan pinjaman aktif nasabah.</li>
-<li><strong>Fitur Utama</strong>:</li>
-<li><strong>Ringkasan Tagihan</strong>: Total nominal jatuh tempo, tanggal tenggat pembayaran, dan status keterlambatan (denda).</li>
-<li><strong>Daftar Kontrak Pinjaman</strong>: Kartu perincian per transaksi (<code>RepayOrderCard</code>).</li>
-<li><strong>Kode Pembayaran / Virtual Account</strong>: Mengambil kode bayar dari endpoint <code>queryAbroadDeDuctList</code> untuk bank BCA, Mandiri, BRI, BNI, Permata, Alfamart, dan Indomaret.</li>
-<li><strong>Pop-up Insentif Pelunasan</strong>: Memicu <code>requestRepayBenefitPopup(&#x27;repay_home&#x27;)</code> ke host native untuk menampilkan diskon pelunasan tepat waktu.</li>
-<li><strong>Tautan Customer Support</strong>: Tombol pintas bantuan langsung ke tim penagihan.</li>
-</ul>
+<li><strong>Fungsi</strong>: Pusat manajemen pelunasan pinjaman aktif nasabah.
+</li>
+<li><strong>Fitur Utama</strong>:
+<ul>
+<li><strong>Ringkasan Tagihan</strong>: Total nominal jatuh tempo, tanggal tenggat pembayaran, dan status keterlambatan (denda).
+</li>
+<li><strong>Daftar Kontrak Pinjaman</strong>: Kartu perincian per transaksi (<code>RepayOrderCard</code>).
+</li>
+<li><strong>Kode Pembayaran / Virtual Account</strong>: Mengambil kode bayar dari endpoint <code>queryAbroadDeDuctList</code> untuk bank BCA, Mandiri, BRI, BNI, Permata, Alfamart, dan Indomaret.
+</li>
+<li><strong>Pop-up Insentif Pelunasan</strong>: Memicu <code>requestRepayBenefitPopup(&#x27;repay_home&#x27;)</code> ke host native untuk menampilkan diskon pelunasan tepat waktu.
+</li>
+<li><strong>Tautan Customer Support</strong>: Tombol pintas bantuan langsung ke tim penagihan.
+</li></ul>
+</li></ul>
 <div id="sub-3-minehomepage-mine" class="doc-subsection">
 <h4>3. <code>MineHomePage</code> (<code>/mine</code>)</h4>
 </div>
 <ul>
-<li><strong>Fungsi</strong>: Dasbor akun nasabah dan pusat pengaturan aplikasi.</li>
-<li><strong>Fitur Utama</strong>:</li>
-<li><strong>Header Nasabah</strong>: Avatar, nomor ponsel tersamarkan (<code>0812****7890</code>), status kredit, dan badge limit pinjaman.</li>
-<li><strong>Grid Menu Navigasi</strong>:</li>
-<li>Riwayat Pinjaman (<code>/samir/loan-record</code> via WebView/Native).</li>
-<li>Daftar Kupon Promo (<code>/samir/coupon/list</code>).</li>
-<li>Peningkatan Limit Kredit (<code>/samir/credit-enhancement</code>).</li>
-<li>Kelengkapan Dokumen KYC (<code>samir://mine/infoAuthList</code>).</li>
-<li>Pusat Bantuan FAQ (<code>/samir/faq</code>).</li>
-<li>Tentang Kami (<code>samir://mine/aboutUs</code>).</li>
-<li>Pengaturan Privasi & Akun (<code>samir://mine/setting</code>).</li>
-<li>Hubungi Layanan Pelanggan (<code>customerAction</code>).</li>
-<li><strong>Lencana Pesan (Badge)</strong>: Menampilkan titik merah jika ada notifikasi baru dari <code>msg/queryCount</code>.</li>
-<li><strong>Kanal Media Sosial</strong>: Seksi resmi Instagram, Facebook, dan WhatsApp di bagian bawah halaman.</li>
-</ul>
+<li><strong>Fungsi</strong>: Dasbor akun nasabah dan pusat pengaturan aplikasi.
+</li>
+<li><strong>Fitur Utama</strong>:
+<ul>
+<li><strong>Header Nasabah</strong>: Avatar, nomor ponsel tersamarkan (<code>0812****7890</code>), status kredit, dan badge limit pinjaman.
+</li>
+<li><strong>Grid Menu Navigasi</strong>:
+<ul>
+<li>Riwayat Pinjaman (<code>/samir/loan-record</code> via WebView/Native).
+</li>
+<li>Daftar Kupon Promo (<code>/samir/coupon/list</code>).
+</li>
+<li>Peningkatan Limit Kredit (<code>/samir/credit-enhancement</code>).
+</li>
+<li>Kelengkapan Dokumen KYC (<code>samir://mine/infoAuthList</code>).
+</li>
+<li>Pusat Bantuan FAQ (<code>/samir/faq</code>).
+</li>
+<li>Tentang Kami (<code>samir://mine/aboutUs</code>).
+</li>
+<li>Pengaturan Privasi & Akun (<code>samir://mine/setting</code>).
+</li>
+<li>Hubungi Layanan Pelanggan (<code>customerAction</code>).
+</li></ul>
+</li>
+<li><strong>Lencana Pesan (Badge)</strong>: Menampilkan titik merah jika ada notifikasi baru dari <code>msg/queryCount</code>.
+</li>
+<li><strong>Kanal Media Sosial</strong>: Seksi resmi Instagram, Facebook, dan WhatsApp di bagian bawah halaman.
+</li></ul>
+</li></ul>
 <div id="sub-4-minepersonalpage-minepersonal" class="doc-subsection">
 <h4>4. <code>MinePersonalPage</code> (<code>/mine/personal</code>)</h4>
 </div>
 <ul>
-<li><strong>Fungsi</strong>: Menampilkan daftar rincian verifikasi data nasabah (e-KTP, informasi pekerjaan, kontak darurat, rekening bank).</li>
-<li><strong>Karakteristik Navigasi</strong>: Ketika halaman ini dibuka, <code>NativeRouteChrome</code> otomatis menyembunyikan Tab Bar native agar layar terasa luas dan fokus.</li>
-</ul>
+<li><strong>Fungsi</strong>: Menampilkan daftar rincian verifikasi data nasabah (e-KTP, informasi pekerjaan, kontak darurat, rekening bank).
+</li>
+<li><strong>Karakteristik Navigasi</strong>: Ketika halaman ini dibuka, <code>NativeRouteChrome</code> otomatis menyembunyikan Tab Bar native agar layar terasa luas dan fokus.
+</li></ul>
 <div id="sub-5-proxydebugpage" class="doc-subsection">
 <h4>5. <code>ProxyDebugPage</code></h4>
 </div>
 <ul>
-<li><strong>Fungsi</strong>: Sarana pengetesan jaringan untuk tim QA dan developer di environment non-PROD (Dev & Test).</li>
-<li><strong>Fitur</strong>: Memasukkan IP dan port proxy lokal (misal <code>192.168.1.10:8888</code>) untuk menghubungkan koneksi Dio Flutter ke Charles Proxy atau Proxyman tanpa perlu root certificate manual di OS.</li>
-</ul>
+<li><strong>Fungsi</strong>: Sarana pengetesan jaringan untuk tim QA dan developer di environment non-PROD (Dev & Test).
+</li>
+<li><strong>Fitur</strong>: Memasukkan IP dan port proxy lokal (misal <code>192.168.1.10:8888</code>) untuk menghubungkan koneksi Dio Flutter ke Charles Proxy atau Proxyman tanpa perlu root certificate manual di OS.
+</li></ul>
 </section>
 <section id="sec-why" class="doc-section">
 <h3>⚖️ F. Why It Matters (Trade-Offs & Implikasi Teknis)</h3>
 <ul>
-<li><strong>Inventori Terbatas Menjamin Kecepatan</strong>:</li>
-</ul>
+<li><strong>Inventori Terbatas Menjamin Kecepatan</strong>:
+</li></ul>
 <p>Modul Flutter SAMIR sengaja difokuskan hanya pada modul Tagihan dan Akun Nasabah, sementara modul Pengajuan Pinjaman (Loan Application) dan Kamera KYC tetap di Native. Strategi ini meminimalkan ukuran biner framework Flutter sambil memaksimalkan portabilitas logika penagihan di kedua platform.</p>
 </section>
 <section id="sec-example" class="doc-section">
 <h3>🔬 G. Practical Example (Skenario Penggunaan Nyata)</h3>
 <p>Jika nasabah belum login dan membuka Tab Tagihan:</p>
 <ol>
-<li><code>RepayHomePage</code> mendeteksi <code>isLogin == false</code>.</li>
-<li>Widget merender <code>RepayEmptyState</code> dengan tombol besar <em>"Masuk / Daftar"</em>.</li>
-<li>Ketika tombol ditekan, Flutter memanggil <code>FlutterNativeChannelRoute.openNativeRoute(&#x27;repayLoginAction&#x27;)</code> untuk membuka form login OTP di modul Native Swift.</li>
-</ol>
+<li><code>RepayHomePage</code> mendeteksi <code>isLogin == false</code>.
+</li>
+<li>Widget merender <code>RepayEmptyState</code> dengan tombol besar <em>"Masuk / Daftar"</em>.
+</li>
+<li>Ketika tombol ditekan, Flutter memanggil <code>FlutterNativeChannelRoute.openNativeRoute(&#x27;repayLoginAction&#x27;)</code> untuk membuka form login OTP di modul Native Swift.
+</li></ol>
 </section>
 <section id="sec-mistakes" class="doc-section">
 <h3>⚠️ H. Common Mistakes & Debugging</h3>
 <ul>
-<li><strong>Mencoba Mengakses <code>ProxyDebugPage</code> di Build Production</strong>:</li>
-<li>Pada build PROD, akses ke halaman debug dinonaktifkan secara ketat untuk mematuhi regulasi keamanan OJK dan standar perlindungan data pribadi perbankan.</li>
-</ul>
+<li><strong>Mencoba Mengakses <code>ProxyDebugPage</code> di Build Production</strong>:
+<ul>
+<li>Pada build PROD, akses ke halaman debug dinonaktifkan secara ketat untuk mematuhi regulasi keamanan OJK dan standar perlindungan data pribadi perbankan.
+</li></ul>
+</li></ul>
 </section>
 <section id="sec-check" class="doc-section">
 <h3>🧠 I. Knowledge Check</h3>
 <ol>
-<li>Halaman Flutter mana yang bertanggung jawab menampilkan daftar kode bayar Virtual Account (VA)?</li>
-<li>Apa yang terjadi pada Tab Bar native saat pengguna berpindah dari <code>MineHomePage</code> ke <code>MinePersonalPage</code>?</li>
-<li>Sebutkan dua layar pengujian (<em>debugging</em>) yang terpasang di modul Flutter SAMIR!</li>
-</ol>
+<li>Halaman Flutter mana yang bertanggung jawab menampilkan daftar kode bayar Virtual Account (VA)?
+</li>
+<li>Apa yang terjadi pada Tab Bar native saat pengguna berpindah dari <code>MineHomePage</code> ke <code>MinePersonalPage</code>?
+</li>
+<li>Sebutkan dua layar pengujian (<em>debugging</em>) yang terpasang di modul Flutter SAMIR!
+</li></ol>
 <p><strong>Latihan Observasi</strong>:</p>
 <p>Buka file <a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/learn/Flutter-Arch/flutter/lib/common/router/route_paths.dart" target="_blank" rel="noopener noreferrer">🦊 flutter/lib/common/router/route_paths.dart <span class="branch-tag">learn/Flutter-Arch</span> ↗</a>. Periksa 4 rute konstanta yang terdaftar di dalamnya.</p>
 </section>

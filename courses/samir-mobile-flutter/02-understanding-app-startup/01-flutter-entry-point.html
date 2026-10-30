@@ -101,12 +101,16 @@
 <h3>🎯 A. Learning Objective</h3>
 <p>Setelah menyelesaikan dokumen ini, pembaca akan mampu:</p>
 <ol>
-<li>Menjelaskan 5 langkah booting di dalam fungsi <code>main()</code> sebelum dan sesudah <code>runApp()</code>.</li>
-<li>Mengetahui mengapa <code>httpClient.init()</code> dipanggil tepat setelah <code>Global.init()</code>.</li>
-<li>Memahami peran <code>FlutterNativeRouteDispatcher.setup()</code> dalam mendaftarkan method call handler.</li>
-<li>Menjelaskan mekanisme <code>notifyNativeReady()</code> yang menunggu siklus <code>WidgetsBinding.instance.endOfFrame</code>.</li>
-<li>Memahami struktur pembungkus <code>MyApp</code> (<code>AppLoadingOverlay</code> dan <code>AppDialogHost</code>).</li>
-</ol>
+<li>Menjelaskan 5 langkah booting di dalam fungsi <code>main()</code> sebelum dan sesudah <code>runApp()</code>.
+</li>
+<li>Mengetahui mengapa <code>httpClient.init()</code> dipanggil tepat setelah <code>Global.init()</code>.
+</li>
+<li>Memahami peran <code>FlutterNativeRouteDispatcher.setup()</code> dalam mendaftarkan method call handler.
+</li>
+<li>Menjelaskan mekanisme <code>notifyNativeReady()</code> yang menunggu siklus <code>WidgetsBinding.instance.endOfFrame</code>.
+</li>
+<li>Memahami struktur pembungkus <code>MyApp</code> (<code>AppLoadingOverlay</code> dan <code>AppDialogHost</code>).
+</li></ol>
 </section>
 <section id="sec-prereq" class="doc-section">
 <h3>📋 B. Prerequisites</h3>
@@ -116,12 +120,16 @@
 <h3>💡 C. Simple Explanation (Analogi & Konsep Sederhana)</h3>
 <p>Bayangkan Anda membuka sebuah restoran siap saji di dalam stasiun kereta:</p>
 <ol>
-<li><strong>Langkah 1</strong>: Anda menyalakan listrik dan mengecek daftar menu dari kantor pusat (<code>Global.init()</code>).</li>
-<li><strong>Langkah 2</strong>: Anda menyalakan mesin kasir dan kompor (<code>httpClient.init()</code>).</li>
-<li><strong>Langkah 3</strong>: Anda menyalakan saluran radio komunikasi dengan pengelola stasiun kereta (<code>FlutterNativeRouteDispatcher.setup()</code>).</li>
-<li><strong>Langkah 4</strong>: Anda membuka pintu gerai dan menata meja (<code>runApp(const MyApp())</code>).</li>
-<li><strong>Langkah 5</strong>: Begitu semua hidangan tertata rapi di etalase (<code>endOfFrame</code>), Anda menekan tombol lampu hijau di dinding untuk memberi tahu kepala stasiun: <em>"Gerai siap melayani penumpang!"</em> (<code>notifyNativeReady()</code>).</li>
-</ol>
+<li><strong>Langkah 1</strong>: Anda menyalakan listrik dan mengecek daftar menu dari kantor pusat (<code>Global.init()</code>).
+</li>
+<li><strong>Langkah 2</strong>: Anda menyalakan mesin kasir dan kompor (<code>httpClient.init()</code>).
+</li>
+<li><strong>Langkah 3</strong>: Anda menyalakan saluran radio komunikasi dengan pengelola stasiun kereta (<code>FlutterNativeRouteDispatcher.setup()</code>).
+</li>
+<li><strong>Langkah 4</strong>: Anda membuka pintu gerai dan menata meja (<code>runApp(const MyApp())</code>).
+</li>
+<li><strong>Langkah 5</strong>: Begitu semua hidangan tertata rapi di etalase (<code>endOfFrame</code>), Anda menekan tombol lampu hijau di dinding untuk memberi tahu kepala stasiun: <em>"Gerai siap melayani penumpang!"</em> (<code>notifyNativeReady()</code>).
+</li></ol>
 </section>
 <section id="sec-actual" class="doc-section">
 <h3>💻 D. Actual Implementation (Bukti di Kode Sumber)</h3>
@@ -176,15 +184,19 @@
 }</code></pre>
 <p>Fitur-fitur kritis pada <code>MyApp</code>:</p>
 <ol>
-<li><strong>Font Standar</strong>: Menggunakan keluarga font <strong>Lato</strong> melalui utilitas <code>FontUtils.applyToTheme()</code>.</li>
-<li><strong>GoRouter Integration</strong>: Menggunakan <code>MaterialApp.router</code> yang didelegasikan ke instance singleton <code>appRouter</code>.</li>
-<li><strong>Custom Back Button</strong>: Menggunakan <code>AppBackButtonDispatcher</code> untuk menangani tombol back fisik (khusus Android atau gesture navigasi).</li>
-<li><strong>Lapisan Overlay Global</strong>:</li>
-</ol>
+<li><strong>Font Standar</strong>: Menggunakan keluarga font <strong>Lato</strong> melalui utilitas <code>FontUtils.applyToTheme()</code>.
+</li>
+<li><strong>GoRouter Integration</strong>: Menggunakan <code>MaterialApp.router</code> yang didelegasikan ke instance singleton <code>appRouter</code>.
+</li>
+<li><strong>Custom Back Button</strong>: Menggunakan <code>AppBackButtonDispatcher</code> untuk menangani tombol back fisik (khusus Android atau gesture navigasi).
+</li>
+<li><strong>Lapisan Overlay Global</strong>:
 <ul>
-<li><code>AppDialogHost</code>: Mengelola tampilan dialog konfirmasi bisnis tanpa mengganggu router utama.</li>
-<li><code>AppLoadingOverlay</code>: Menampilkan spinner loading modal transparan saat request jaringan berlangsung.</li>
-</ul>
+<li><code>AppDialogHost</code>: Mengelola tampilan dialog konfirmasi bisnis tanpa mengganggu router utama.
+</li>
+<li><code>AppLoadingOverlay</code>: Menampilkan spinner loading modal transparan saat request jaringan berlangsung.
+</li></ul>
+</li></ol>
 </section>
 <section id="sec-walkthrough" class="doc-section">
 <h3>🪜 E. Step-by-Step Walkthrough: Handshake <code>flutterReady</code></h3>
@@ -222,38 +234,46 @@ sequenceDiagram
 <section id="sec-why" class="doc-section">
 <h3>⚖️ F. Why It Matters (Trade-Offs & Implikasi Teknis)</h3>
 <ul>
-<li><strong>Mengapa Wajib Menunggu <code>endOfFrame</code> Sebelum Memanggil <code>flutterReady</code>?</strong></li>
-</ul>
+<li><strong>Mengapa Wajib Menunggu <code>endOfFrame</code> Sebelum Memanggil <code>flutterReady</code>?</strong>
+</li></ul>
 <p>Jika native host langsung menampilkan tampilan Flutter sebelum frame pertama selesai digambar oleh Skia/Impeller, pengguna akan melihat <strong>layar hitam atau putih sesaat (blank frame flicker)</strong>. Dengan menunggu <code>WidgetsBinding.instance.endOfFrame</code>, Flutter menjamin bahwa visual UI sudah siap 100% sebelum host melepaskan splash screen native.</p>
 <ul>
-<li><strong>Mengapa <code>httpClient.init()</code> Dijalankan Ulang di <code>main()</code>?</strong></li>
-</ul>
+<li><strong>Mengapa <code>httpClient.init()</code> Dijalankan Ulang di <code>main()</code>?</strong>
+</li></ul>
 <p>Meskipun <code>HttpClient</code> memiliki singleton constructor yang memanggil <code>init()</code>, header default seperti <code>appId</code> dan <code>appVersion</code> baru terisi setelah <code>Global.init()</code> selesai membaca data dari native. Memanggil ulang <code>httpClient.init()</code> memastikan seluruh request HTTP membawa identitas tenant yang valid.</p>
 </section>
 <section id="sec-example" class="doc-section">
 <h3>🔬 G. Practical Example (Skenario Penggunaan Nyata)</h3>
 <p>Jika host iOS memanggil method <code>showFlutterRoute</code> saat aplikasi baru saja dibuka:</p>
 <ul>
-<li><code>FlutterNativeRouteDispatcher.setup()</code> sudah dipanggil di baris 15 <code>main.dart</code>, sebelum <code>runApp()</code>.</li>
-<li>Artinya, listener method channel sudah aktif dan siap menerima rute dari native bahkan sebelum frame UI pertama selesai digambar, mencegah terbuangnya event routing yang dikirim oleh host.</li>
-</ul>
+<li><code>FlutterNativeRouteDispatcher.setup()</code> sudah dipanggil di baris 15 <code>main.dart</code>, sebelum <code>runApp()</code>.
+</li>
+<li>Artinya, listener method channel sudah aktif dan siap menerima rute dari native bahkan sebelum frame UI pertama selesai digambar, mencegah terbuangnya event routing yang dikirim oleh host.
+</li></ul>
 </section>
 <section id="sec-mistakes" class="doc-section">
 <h3>⚠️ H. Common Mistakes & Debugging</h3>
 <ul>
-<li><strong>Memanggil Panggilan Jaringan Sebelum <code>Global.init()</code> Selesai</strong>:</li>
-<li>Request akan dikirimkan tanpa parameter <code>appId</code> atau dengan baseUrl default yang salah (mengarah ke domain test secara tidak sengaja).</li>
-<li><strong>Menghilangkan <code>await WidgetsBinding.instance.endOfFrame</code></strong>:</li>
-<li>Dapat memicu keluhan QA mengenai kedipan layar putih (white flash) saat pengguna pertama kali berpindah ke Tab Tagihan.</li>
-</ul>
+<li><strong>Memanggil Panggilan Jaringan Sebelum <code>Global.init()</code> Selesai</strong>:
+<ul>
+<li>Request akan dikirimkan tanpa parameter <code>appId</code> atau dengan baseUrl default yang salah (mengarah ke domain test secara tidak sengaja).
+</li></ul>
+</li>
+<li><strong>Menghilangkan <code>await WidgetsBinding.instance.endOfFrame</code></strong>:
+<ul>
+<li>Dapat memicu keluhan QA mengenai kedipan layar putih (white flash) saat pengguna pertama kali berpindah ke Tab Tagihan.
+</li></ul>
+</li></ul>
 </section>
 <section id="sec-check" class="doc-section">
 <h3>🧠 I. Knowledge Check</h3>
 <ol>
-<li>Apa method channel yang dipanggil oleh Flutter untuk memberi tahu native host bahwa rendering awal telah selesai?</li>
-<li>Dua widget pembungkus apa yang dipasang pada properti <code>builder</code> di <code>MaterialApp.router</code>?</li>
-<li>Mengapa <code>FlutterNativeRouteDispatcher.setup()</code> harus dipanggil sebelum <code>runApp()</code>?</li>
-</ol>
+<li>Apa method channel yang dipanggil oleh Flutter untuk memberi tahu native host bahwa rendering awal telah selesai?
+</li>
+<li>Dua widget pembungkus apa yang dipasang pada properti <code>builder</code> di <code>MaterialApp.router</code>?
+</li>
+<li>Mengapa <code>FlutterNativeRouteDispatcher.setup()</code> harus dipanggil sebelum <code>runApp()</code>?
+</li></ol>
 <p><strong>Latihan Observasi</strong>:</p>
 <p>Buka <a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/learn/Flutter-Arch/flutter/lib/main.dart" target="_blank" rel="noopener noreferrer">🦊 flutter/lib/main.dart <span class="branch-tag">learn/Flutter-Arch</span> ↗</a> pada baris 17–19. Catat bagaimana fungsi <code>endOfFrame</code> dan <code>notifyNativeReady</code> dirangkai menggunakan sintaks <code>await</code>.</p>
 </section>

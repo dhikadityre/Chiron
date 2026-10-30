@@ -105,11 +105,14 @@
 <h3>🎯 A. Learning Objective</h3>
 <p>Setelah menyelesaikan dokumen ini, pembaca akan mampu:</p>
 <ol>
-<li>Menjelaskan 4 skenario interaksi lintas batas antara Flutter dan Native Host.</li>
-<li>Memahami siklus lengkap re-autentikasi saat token kedaluwarsa (Loop Error 10006).</li>
-<li>Menelusuri transisi dari menu Flutter ke alur kamera e-KYC OCR Native (<code>samir://mine/infoAuthList</code>).</li>
-<li>Memahami bagaimana event analytics page view di Flutter diteruskan ke SDK analitik host native via <code>samir_tracking_channel</code>.</li>
-</ol>
+<li>Menjelaskan 4 skenario interaksi lintas batas antara Flutter dan Native Host.
+</li>
+<li>Memahami siklus lengkap re-autentikasi saat token kedaluwarsa (Loop Error 10006).
+</li>
+<li>Menelusuri transisi dari menu Flutter ke alur kamera e-KYC OCR Native (<code>samir://mine/infoAuthList</code>).
+</li>
+<li>Memahami bagaimana event analytics page view di Flutter diteruskan ke SDK analitik host native via <code>samir_tracking_channel</code>.
+</li></ol>
 </section>
 <section id="sec-prereq" class="doc-section">
 <h3>📋 B. Prerequisites</h3>
@@ -119,10 +122,12 @@
 <h3>💡 C. Simple Explanation (Analogi & Konsep Sederhana)</h3>
 <p>Bayangkan perjalanan antar-negara di Uni Eropa:</p>
 <ul>
-<li>Anda dapat berkendara bebas di dalam wilayah satu negara tanpa paspor (Navigasi internal GoRouter di modul Flutter).</li>
-<li>Namun, ketika Anda ingin menaiki pesawat penerbangan internasional (Verifikasi Wajah / e-KYC), Anda harus melewati gerbang pemeriksaan paspor imigrasi bandara (Modul Native).</li>
-<li>Sistem keamanan bandara memeriksa paspor Anda, mencap bukti keberangkatan, dan setelah penerbangan selesai, Anda kembali melangkah ke terminal kedatangan dengan status paspor yang sudah diperbarui.</li>
-</ul>
+<li>Anda dapat berkendara bebas di dalam wilayah satu negara tanpa paspor (Navigasi internal GoRouter di modul Flutter).
+</li>
+<li>Namun, ketika Anda ingin menaiki pesawat penerbangan internasional (Verifikasi Wajah / e-KYC), Anda harus melewati gerbang pemeriksaan paspor imigrasi bandara (Modul Native).
+</li>
+<li>Sistem keamanan bandara memeriksa paspor Anda, mencap bukti keberangkatan, dan setelah penerbangan selesai, Anda kembali melangkah ke terminal kedatangan dengan status paspor yang sudah diperbarui.
+</li></ul>
 </section>
 <section id="sec-actual" class="doc-section">
 <h3>💻 D. Actual Implementation (Bukti di Kode Sumber)</h3>
@@ -167,35 +172,40 @@ sequenceDiagram
 </div>
 <p>Ketika nasabah di <code>MineHomePage</code> menekan menu <em>"Sertifikasi Informasi"</em>:</p>
 <ol>
-<li>Flutter mengeksekusi:</li>
-</ol>
+<li>Flutter mengeksekusi:
+</li></ol>
 <pre><code class="language-dart">   FlutterNativeChannelRoute.openNativeRoute(&#x27;samir://mine/infoAuthList&#x27;);</code></pre>
-<ol>
-<li>Native host menangkap skema URL <code>samir://mine/infoAuthList</code> pada router internal <code>CZSwiftRouterLib</code>.</li>
-<li>Native memunculkan <code>IDAuthLiveViewController</code> (modul Native Swift) yang memanfaatkan SDK kamera hardware untuk:</li>
-</ol>
+<ol start="2">
+<li>Native host menangkap skema URL <code>samir://mine/infoAuthList</code> pada router internal <code>CZSwiftRouterLib</code>.
+</li>
+<li>Native memunculkan <code>IDAuthLiveViewController</code> (modul Native Swift) yang memanfaatkan SDK kamera hardware untuk:
 <ul>
-<li>Deteksi keaslian wajah (Liveness Detection berkedip & menoleh).</li>
-<li>Pengambilan foto e-KTP dengan pemrosesan tepi gambar berkecepatan 60 FPS.</li>
-</ul>
-<ol>
-<li>Setelah verifikasi sukses, native menutup layar kamera dan mengirimkan sinyal <code>refreshMineHome</code> ke Flutter.</li>
-<li>Halaman profil Flutter seketika menampilkan status KYC lengkap.</li>
-</ol>
+<li>Deteksi keaslian wajah (Liveness Detection berkedip & menoleh).
+</li>
+<li>Pengambilan foto e-KTP dengan pemrosesan tepi gambar berkecepatan 60 FPS.
+</li></ul>
+</li>
+<li>Setelah verifikasi sukses, native menutup layar kamera dan mengirimkan sinyal <code>refreshMineHome</code> ke Flutter.
+</li>
+<li>Halaman profil Flutter seketika menampilkan status KYC lengkap.
+</li></ol>
 <div id="sub-3-skenario-3-pembukaan-layanan-pelanggan-cs-live-chat" class="doc-subsection">
 <h4>3. Skenario 3: Pembukaan Layanan Pelanggan (CS Live Chat)</h4>
 </div>
 <p>Ketika nasabah menekan tombol layanan pelanggan di <code>RepayHomePage</code> atau <code>MineHomePage</code>:</p>
 <ol>
-<li>Flutter mengeksekusi:</li>
-</ol>
+<li>Flutter mengeksekusi:
+</li></ol>
 <pre><code class="language-dart">   FlutterNativeChannelRoute.openNativeRoute(&#x27;customerAction&#x27;);</code></pre>
-<ol>
-<li>Host native memanggil inisialisasi SDK Live Chat pihak ketiga (seperti Meiqia / Zendesk).</li>
-<li>Layar obrolan chat dibuka sebagai modal controller native.</li>
-<li>Seluruh percakapan dan pengunggahan berkas bukti transfer ditangani oleh SDK native.</li>
-<li>Saat pengguna menutup chat, antarmuka Flutter di latar belakang tetap berada pada posisi scroll dan status yang sama tanpa reload ulang.</li>
-</ol>
+<ol start="2">
+<li>Host native memanggil inisialisasi SDK Live Chat pihak ketiga (seperti Meiqia / Zendesk).
+</li>
+<li>Layar obrolan chat dibuka sebagai modal controller native.
+</li>
+<li>Seluruh percakapan dan pengunggahan berkas bukti transfer ditangani oleh SDK native.
+</li>
+<li>Saat pengguna menutup chat, antarmuka Flutter di latar belakang tetap berada pada posisi scroll dan status yang sama tanpa reload ulang.
+</li></ol>
 <div id="sub-4-skenario-4-pipeline-pelacakan-analitik-terpadu" class="doc-subsection">
 <h4>4. Skenario 4: Pipeline Pelacakan Analitik Terpadu</h4>
 </div>
@@ -214,47 +224,57 @@ sequenceDiagram
   }
 }</code></pre>
 <ul>
-<li><code>MineHomePage</code> mendefinisikan <code>trackPageEventName =&gt; &#x27;me&#x27;</code>.</li>
-<li><code>RepayHomePage</code> mendefinisikan <code>trackPageEventName =&gt; &#x27;repayment&#x27;</code>.</li>
-<li>Setiap kali halaman menjadi aktif, event dikirim via <code>samir_tracking_channel</code> ke pipeline analitik native host (Sensors Analytics / Firebase / Tingyun APM) sehingga data dashboard metrik tim produk tetap konsisten antara layar native dan Flutter.</li>
-</ul>
+<li><code>MineHomePage</code> mendefinisikan <code>trackPageEventName =&gt; &#x27;me&#x27;</code>.
+</li>
+<li><code>RepayHomePage</code> mendefinisikan <code>trackPageEventName =&gt; &#x27;repayment&#x27;</code>.
+</li>
+<li>Setiap kali halaman menjadi aktif, event dikirim via <code>samir_tracking_channel</code> ke pipeline analitik native host (Sensors Analytics / Firebase / Tingyun APM) sehingga data dashboard metrik tim produk tetap konsisten antara layar native dan Flutter.
+</li></ul>
 </section>
 <section id="sec-walkthrough" class="doc-section">
 <h3>⚖️ E. Why It Matters (Trade-Offs & Implikasi Teknis)</h3>
 <ul>
-<li><strong>Menghindari Duplikasi SDK Berat</strong>:</li>
-</ul>
+<li><strong>Menghindari Duplikasi SDK Berat</strong>:
+</li></ul>
 <p>SDK kamera liveness detection dan live chat customer service berukuran sangat besar (bisa mencapai 20–40 MB binary size). Mengintegrasikannya dua kali (di Native dan di Flutter) akan membuat ukuran instalasi aplikasi membengkak secara drastis. Dengan mendelegasikan aksi melalui <code>openNativeRoute</code>, Flutter memanfaatkan SDK yang sudah ada di native host.</p>
 <ul>
-<li><strong>Konsistensi Single Pipeline Analytics</strong>:</li>
-</ul>
+<li><strong>Konsistensi Single Pipeline Analytics</strong>:
+</li></ul>
 <p>Jika Flutter mengirim analitik langsung ke server via HTTP tersendiri, parameter perangkat keras (seperti IDFA, IMEI, akselerometer, dan status jaringan seluler) bisa berbeda dengan yang dicatat oleh native. Meneruskan event ke <code>samir_tracking_channel</code> menjamin seluruh log analytics memiliki metadata perangkat yang seragam.</p>
 </section>
 <section id="sec-why" class="doc-section">
 <h3>🔬 F. Practical Example (Skenario Penggunaan Nyata)</h3>
 <p>Seorang pengguna menerima SMS tagihan dengan link <code>samir://repay</code>:</p>
 <ol>
-<li>Pengguna mengetuk link di aplikasi Pesan iPhone.</li>
-<li>iOS SpringBoard membuka aplikasi SAMIR via URL Scheme <code>samir://</code>.</li>
-<li><code>CZAppDelegate</code> di native mendeteksi rute <code>repay</code> dan memilih tab 1.</li>
-<li>Native mengirimkan <code>showFlutterRoute(&#x27;/repay&#x27;)</code> ke Flutter Engine.</li>
-<li>Flutter langsung menampilkan <code>RepayHomePage</code> dengan daftar tagihan yang relevan.</li>
-</ol>
+<li>Pengguna mengetuk link di aplikasi Pesan iPhone.
+</li>
+<li>iOS SpringBoard membuka aplikasi SAMIR via URL Scheme <code>samir://</code>.
+</li>
+<li><code>CZAppDelegate</code> di native mendeteksi rute <code>repay</code> dan memilih tab 1.
+</li>
+<li>Native mengirimkan <code>showFlutterRoute(&#x27;/repay&#x27;)</code> ke Flutter Engine.
+</li>
+<li>Flutter langsung menampilkan <code>RepayHomePage</code> dengan daftar tagihan yang relevan.
+</li></ol>
 </section>
 <section id="sec-example" class="doc-section">
 <h3>⚠️ G. Common Mistakes & Debugging</h3>
 <ul>
-<li><strong>Mengirim String Parameter Native Tanpa Serialisasi yang Valid</strong>:</li>
-<li>Saat memanggil <code>openNativeRoute(url, params: {...})</code>, seluruh nilai di dalam map harus bertipe tipe primitif Dart (<code>String</code>, <code>int</code>, <code>double</code>, <code>bool</code>). Mengirim objek custom akan memicu crash <code>PlatformException: Unsupported value</code>.</li>
-</ul>
+<li><strong>Mengirim String Parameter Native Tanpa Serialisasi yang Valid</strong>:
+<ul>
+<li>Saat memanggil <code>openNativeRoute(url, params: {...})</code>, seluruh nilai di dalam map harus bertipe tipe primitif Dart (<code>String</code>, <code>int</code>, <code>double</code>, <code>bool</code>). Mengirim objek custom akan memicu crash <code>PlatformException: Unsupported value</code>.
+</li></ul>
+</li></ul>
 </section>
 <section id="sec-mistakes" class="doc-section">
 <h3>🧠 H. Knowledge Check</h3>
 <ol>
-<li>Apa nama method channel yang digunakan khusus untuk menyalurkan event analytics dari Flutter ke native?</li>
-<li>Bagaimana modul kamera liveness detection diakses dari dalam halaman profil Flutter?</li>
-<li>Sebutkan nama event page view yang dikirimkan saat pengguna membuka halaman Tagihan!</li>
-</ol>
+<li>Apa nama method channel yang digunakan khusus untuk menyalurkan event analytics dari Flutter ke native?
+</li>
+<li>Bagaimana modul kamera liveness detection diakses dari dalam halaman profil Flutter?
+</li>
+<li>Sebutkan nama event page view yang dikirimkan saat pengguna membuka halaman Tagihan!
+</li></ol>
 <p><strong>Latihan Observasi</strong>:</p>
 <p>Buka file <a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/learn/Flutter-Arch/flutter/lib/common/platform/flutter_native_channel_route.dart" target="_blank" rel="noopener noreferrer">🦊 flutter/lib/common/platform/flutter_native_channel_route.dart <span class="branch-tag">learn/Flutter-Arch</span> ↗</a>. Periksa fungsi <code>openNativeRoute</code> pada baris 6–18 dan amati bagaimana parameter <code>arguments[&#x27;url&#x27;]</code> dan <code>arguments[&#x27;params&#x27;]</code> dikemas.</p>
 </section>

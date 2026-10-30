@@ -101,11 +101,14 @@
 <h3>🎯 A. Learning Objective</h3>
 <p>Setelah menyelesaikan dokumen ini, pembaca akan mampu:</p>
 <ol>
-<li>Membedakan informasi historis yang sudah usang (<em>deprecated</em>) dari arsitektur yang aktif saat ini.</li>
-<li>Memahami asal-usul modul Flutter SAMIR dari proses migrasi monorepo Android & iOS.</li>
-<li>Menilai status pencapaian 4 fase rekomendasi migrasi Flutter di SAMIR.</li>
-<li>Mengetahui rencana arsitektur yang tertunda (seperti rencana penggunaan <em>Pigeon</em>).</li>
-</ol>
+<li>Membedakan informasi historis yang sudah usang (<em>deprecated</em>) dari arsitektur yang aktif saat ini.
+</li>
+<li>Memahami asal-usul modul Flutter SAMIR dari proses migrasi monorepo Android & iOS.
+</li>
+<li>Menilai status pencapaian 4 fase rekomendasi migrasi Flutter di SAMIR.
+</li>
+<li>Mengetahui rencana arsitektur yang tertunda (seperti rencana penggunaan <em>Pigeon</em>).
+</li></ol>
 </section>
 <section id="sec-prereq" class="doc-section">
 <h3>📋 B. Prerequisites</h3>
@@ -115,10 +118,12 @@
 <h3>💡 C. Simple Explanation (Analogi & Konsep Sederhana)</h3>
 <p>Bayangkan denah cetak biru (<em>blueprint</em>) awal sebuah rumah yang digambar oleh arsitek 2 tahun lalu:</p>
 <ul>
-<li>Denah tersebut mencatat rencana pembangunan 4 lantai dengan lift hidrolik.</li>
-<li>Ketika rumah selesai dibangun, kontraktor memutuskan membangun 2 lantai dengan tangga darurat karena pertimbangan efisiensi dan regulasi setempat.</li>
-<li>Dokumen audit ini bertindak sebagai perbandingan <em>"Rencana vs Kenyataan Fisik"</em> agar teknisi baru tidak mencari tombol lift hidrolik yang sebenarnya tidak pernah dipasang.</li>
-</ul>
+<li>Denah tersebut mencatat rencana pembangunan 4 lantai dengan lift hidrolik.
+</li>
+<li>Ketika rumah selesai dibangun, kontraktor memutuskan membangun 2 lantai dengan tangga darurat karena pertimbangan efisiensi dan regulasi setempat.
+</li>
+<li>Dokumen audit ini bertindak sebagai perbandingan <em>"Rencana vs Kenyataan Fisik"</em> agar teknisi baru tidak mencari tombol lift hidrolik yang sebenarnya tidak pernah dipasang.
+</li></ul>
 </section>
 <section id="sec-actual" class="doc-section">
 <h3>📌 D. Tabel Matriks Perbandingan: Dokumentasi Lama vs Kode Aktual</h3>
@@ -131,32 +136,37 @@
 </div>
 <p>Pada dokumen <code>flutter-migration.md</code> baris 14, tim arsitek awal merekomendasikan penggunaan <strong>Pigeon</strong> (alat pembuat kode otomatis type-safe platform channel dari Google):</p>
 <ul>
-<li><strong>Realitas</strong>: Tim memilih mengimplementasikan <code>MethodChannel</code> secara manual via <code>FlutterNativeChannel.commonChannel.invokeCommon()</code>.</li>
-<li><strong>Alasan Kompromi</strong>:</li>
-</ul>
+<li><strong>Realitas</strong>: Tim memilih mengimplementasikan <code>MethodChannel</code> secara manual via <code>FlutterNativeChannel.commonChannel.invokeCommon()</code>.
+</li>
+<li><strong>Alasan Kompromi</strong>:
+</li></ul>
 <p>Pigeon membutuhkan skrip build tambahan (<code>dart run pigeon</code>) setiap kali ada perubahan parameter, serta menghasilkan file wrapper Objective-C / Swift yang kaku. Dengan menggunakan manual MethodChannel + Dictionary, tim dapat melakukan iterasi penambahan method baru dengan sangat cepat tanpa mengganggu build pipeline Xcode.</p>
 <div id="sub-2-status-modul-native-pasca-migrasi" class="doc-subsection">
 <h4>2. Status Modul Native Pasca-Migrasi</h4>
 </div>
 <ul>
-<li>Modul <code>SamirRepayModule</code> di iOS kini hanya berfungsi sebagai pemegang container <code>IDRepayViewController</code>.</li>
-<li>Seluruh logika kalkulasi denda, formatting mata uang Rupiah, dan integrasi nomor Virtual Account kini 100% hidup di dalam folder <code>flutter/lib/pages/repay/</code>.</li>
-<li>Tidak ada lagi duplikasi pemeliharaan logika penagihan di Native Swift.</li>
-</ul>
+<li>Modul <code>SamirRepayModule</code> di iOS kini hanya berfungsi sebagai pemegang container <code>IDRepayViewController</code>.
+</li>
+<li>Seluruh logika kalkulasi denda, formatting mata uang Rupiah, dan integrasi nomor Virtual Account kini 100% hidup di dalam folder <code>flutter/lib/pages/repay/</code>.
+</li>
+<li>Tidak ada lagi duplikasi pemeliharaan logika penagihan di Native Swift.
+</li></ul>
 </section>
 <section id="sec-why" class="doc-section">
 <h3>⚖️ F. Why It Matters (Trade-Offs & Implikasi Teknis)</h3>
 <ul>
-<li>Memahami konteks migrasi mencegah developer baru melakukan <em>reinventing the wheel</em> atau menganggap ketiadaan Pigeon sebagai kekurangan kritis. Arsitektur saat ini stabil, berkinerja tinggi, dan telah melayani jutaan transaksi nasabah SAMIR tanpa isu komunikasi platform channel.</li>
-</ul>
+<li>Memahami konteks migrasi mencegah developer baru melakukan <em>reinventing the wheel</em> atau menganggap ketiadaan Pigeon sebagai kekurangan kritis. Arsitektur saat ini stabil, berkinerja tinggi, dan telah melayani jutaan transaksi nasabah SAMIR tanpa isu komunikasi platform channel.
+</li></ul>
 </section>
 <section id="sec-example" class="doc-section">
 <h3>🧠 G. Knowledge Check</h3>
 <ol>
-<li>Alat pembuat kode bridge apa yang sempat direkomendasikan pada dokumen migrasi lama namun tidak jadi diadopsi?</li>
-<li>Dua modul bisnis apa yang sukses dimigrasikan sepenuhnya dari native ke Flutter?</li>
-<li>Mengapa folder <code>.ios</code> dan <code>.android</code> sengaja tidak di-commit ke repositori Git?</li>
-</ol>
+<li>Alat pembuat kode bridge apa yang sempat direkomendasikan pada dokumen migrasi lama namun tidak jadi diadopsi?
+</li>
+<li>Dua modul bisnis apa yang sukses dimigrasikan sepenuhnya dari native ke Flutter?
+</li>
+<li>Mengapa folder <code>.ios</code> dan <code>.android</code> sengaja tidak di-commit ke repositori Git?
+</li></ol>
 <p><strong>Latihan Observasi</strong>:</p>
 <p>Buka file <a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/learn/Flutter-Arch/docs/flutter-migration.md" target="_blank" rel="noopener noreferrer">🦊 docs/flutter-migration.md <span class="branch-tag">learn/Flutter-Arch</span> ↗</a>. Bandingkan poin 1–4 pada section <em>Recommended Migration Order</em> dengan realitas folder di <code>flutter/lib/pages/</code>.</p>
 </section>

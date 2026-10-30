@@ -105,36 +105,44 @@
 <h3>🎯 A. Learning Objective</h3>
 <p>Setelah mempelajari dokumen ini, pembaca akan mampu:</p>
 <ol>
-<li>Menelusuri siklus hidup request HTTP dari pemanggilan di Service hingga pengiriman data oleh Alamofire.</li>
-<li>Memahami daftar 18 parameter umum (<em>common parameters</em>) yang wajib disuntikkan ke setiap request in-house.</li>
-<li>Menjelaskan 3 varian penandatanganan request: Normal, Image Upload, dan App Config.</li>
-<li>Memahami struktur envelope response backend dan penanganan otomatis error code <code>200</code> vs <code>10006</code>.</li>
-<li>Mengetahui konfigurasi evaluasi TLS (<code>validatesDomainName</code>) dan risiko <code>NSAllowsArbitraryLoads = true</code>.</li>
-</ol>
+<li>Menelusuri siklus hidup request HTTP dari pemanggilan di Service hingga pengiriman data oleh Alamofire.
+</li>
+<li>Memahami daftar 18 parameter umum (<em>common parameters</em>) yang wajib disuntikkan ke setiap request in-house.
+</li>
+<li>Menjelaskan 3 varian penandatanganan request: Normal, Image Upload, dan App Config.
+</li>
+<li>Memahami struktur envelope response backend dan penanganan otomatis error code <code>200</code> vs <code>10006</code>.
+</li>
+<li>Mengetahui konfigurasi evaluasi TLS (<code>validatesDomainName</code>) dan risiko <code>NSAllowsArbitraryLoads = true</code>.
+</li></ol>
 </section>
 <section id="sec-prereq" class="doc-section">
 <h3>📋 B. Prerequisites</h3>
 <ul>
-<li>Sudah membaca <a href="01-dependency-catalog.html">01-dependency-catalog.md</a>.</li>
-<li>Mengetahui protokol HTTP (Headers, Body, Method POST/GET, Status Codes).</li>
-</ul>
+<li>Sudah membaca <a href="01-dependency-catalog.html">01-dependency-catalog.md</a>.
+</li>
+<li>Mengetahui protokol HTTP (Headers, Body, Method POST/GET, Status Codes).
+</li></ul>
 </section>
 <section id="sec-simple" class="doc-section">
 <h3>💡 C. Simple Explanation (Analogi Surat Resmi Bersegel Lilin)</h3>
 <p>Di zaman kerajaan, seorang utusan yang membawa surat ke istana pusat:</p>
 <ol>
-<li><strong>Surat Perintah</strong>: Surat berisi instruksi spesifik (misal: "Kirim data KTP nasabah").</li>
-<li><strong>Kop Surat Standar (<code>ApiParamsHelper</code>)</strong>: Di bagian atas surat wajib dicap identitas pengirim (nomor HP, tipe perangkat iPhone, versi aplikasi, ID instalasi, jam pengiriman).</li>
-<li><strong>Segel Lilin Khusus Raja (<code>sign</code> via <code>LibNetSignGenerator</code>)</strong>: Sebelum surat dikirim, stempel rahasia dicapkan ke atas lilin panas menggunakan cincin stempel raja (<strong><code>staticKey</code></strong>).</li>
-<li><strong>Pemeriksaan di Pintu Gerbang (Backend)</strong>: Penjaga gerbang memeriksa segel lilin:</li>
-</ol>
+<li><strong>Surat Perintah</strong>: Surat berisi instruksi spesifik (misal: "Kirim data KTP nasabah").
+</li>
+<li><strong>Kop Surat Standar (<code>ApiParamsHelper</code>)</strong>: Di bagian atas surat wajib dicap identitas pengirim (nomor HP, tipe perangkat iPhone, versi aplikasi, ID instalasi, jam pengiriman).
+</li>
+<li><strong>Segel Lilin Khusus Raja (<code>sign</code> via <code>LibNetSignGenerator</code>)</strong>: Sebelum surat dikirim, stempel rahasia dicapkan ke atas lilin panas menggunakan cincin stempel raja (<strong><code>staticKey</code></strong>).
+</li>
+<li><strong>Pemeriksaan di Pintu Gerbang (Backend)</strong>: Penjaga gerbang memeriksa segel lilin:
 <ul>
-<li>Jika segel rusak atau huruf di surat diubah satu saja -> <strong>Surat Ditolak / Dihancurkan</strong>.</li>
-<li>Jika cap stempel sah -> <strong>Surat Diterima</strong>.</li>
-</ul>
-<ol>
-<li><strong>Amplop Balasan (Envelope <code>{code, msg, result}</code>)</strong>: Istana membalas dengan amplop standar yang berisi status (<code>200</code> = Berhasil) dan peti harta (<code>result</code>).</li>
-</ol>
+<li>Jika segel rusak atau huruf di surat diubah satu saja -> <strong>Surat Ditolak / Dihancurkan</strong>.
+</li>
+<li>Jika cap stempel sah -> <strong>Surat Diterima</strong>.
+</li></ul>
+</li>
+<li><strong>Amplop Balasan (Envelope <code>{code, msg, result}</code>)</strong>: Istana membalas dengan amplop standar yang berisi status (<code>200</code> = Berhasil) dan peti harta (<code>result</code>).
+</li></ol>
 </section>
 <section id="sec-actual" class="doc-section">
 <h3>💻 D. Actual Implementation: Pipeline Jaringan Lengkap</h3>
@@ -194,28 +202,31 @@ sequenceDiagram
 <p>Path: <a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/learn/iOS-Arch/ios/IDSamirLoan/Application/SamirNetworkModule/Classes/Signature/IDNetworkSignatureHandler.swift" target="_blank" rel="noopener noreferrer">🦊 ios/IDSamirLoan/Application/SamirNetworkModule/Classes/Signature/IDNetworkSignatureHandler.swift <span class="branch-tag">learn/iOS-Arch</span> ↗</a></p>
 <p>Tersedia 3 varian tanda tangan:</p>
 <ol>
-<li><strong>Normal Request Sign (<code>normalRequestSign</code>)</strong>:</li>
-</ol>
+<li><strong>Normal Request Sign (<code>normalRequestSign</code>)</strong>:
 <ul>
-<li>Digunakan oleh 95% request API.</li>
-<li>Mengambil seluruh parameter (umum + payload fitur) -> dikonversi ke JSON string berurutan.</li>
-<li>Memanggil <code>NetworkRequestSignWrapper.ns_encrypt(forNormal: jsonStr, staticKey: IDNetworkManager.shared.static_key ?? &quot;&quot;)</code>.</li>
-<li>Menghasilkan nilai string yang dimasukkan ke field <code>sign</code>.</li>
-</ul>
-<ol>
-<li><strong>Image Upload Sign (<code>imageRequestSign</code>)</strong>:</li>
-</ol>
+<li>Digunakan oleh 95% request API.
+</li>
+<li>Mengambil seluruh parameter (umum + payload fitur) -> dikonversi ke JSON string berurutan.
+</li>
+<li>Memanggil <code>NetworkRequestSignWrapper.ns_encrypt(forNormal: jsonStr, staticKey: IDNetworkManager.shared.static_key ?? &quot;&quot;)</code>.
+</li>
+<li>Menghasilkan nilai string yang dimasukkan ke field <code>sign</code>.
+</li></ul>
+</li>
+<li><strong>Image Upload Sign (<code>imageRequestSign</code>)</strong>:
 <ul>
-<li>Khusus untuk unggah foto KTP atau selfie wajah.</li>
-<li>Memanggil <code>NetworkRequestSignWrapper.ns_encrypt(withImage: jsonStr, staticKey: ...)</code>.</li>
-</ul>
-<ol>
-<li><strong>App Config Sign (<code>appConfigRequestSign</code>)</strong>:</li>
-</ol>
+<li>Khusus untuk unggah foto KTP atau selfie wajah.
+</li>
+<li>Memanggil <code>NetworkRequestSignWrapper.ns_encrypt(withImage: jsonStr, staticKey: ...)</code>.
+</li></ul>
+</li>
+<li><strong>App Config Sign (<code>appConfigRequestSign</code>)</strong>:
 <ul>
-<li>Khusus untuk request pra-login (seperti <code>app-configuration</code>).</li>
-<li>Tidak membawa parameter pengguna dan menggunakan <code>staticKey = &quot;&quot;</code> (string kosong).</li>
-</ul>
+<li>Khusus untuk request pra-login (seperti <code>app-configuration</code>).
+</li>
+<li>Tidak membawa parameter pengguna dan menggunakan <code>staticKey = &quot;&quot;</code> (string kosong).
+</li></ul>
+</li></ol>
 <div class="callout best-practice"><p>[!CRITICAL] <strong>Larangan Keras Developer</strong>: Menambah, mengubah nama, atau menghapus salah satu field di <code>ApiParamsHelper</code> <strong>AKAN MERUSAK PERHITUNGAN <code>sign</code></strong>! Backend akan langsung menolak request dengan error tanda tangan tidak valid. Setiap perubahan parameter wajib disinkronkan dengan tim backend.</p></div>
 <div id="sub-3-envelope-respon-backend-status-code" class="doc-subsection">
 <h4>3. Envelope Respon Backend & Status Code</h4>
@@ -230,73 +241,79 @@ sequenceDiagram
     }
 }</code></pre>
 <ul>
-<li><strong><code>code == &quot;200&quot;</code></strong>: Sukses bisnis. <code>IDNetworkRequest</code> langsung mengekstrak objek <code>result</code> dan mengopernya ke block <code>success(req)</code>.</li>
-<li><strong><code>code == &quot;10006&quot;</code></strong>: Sesi kedaluwarsa. <code>IDNetworkRequest</code> otomatis memicu <code>reloginWhenRequestError()</code>.</li>
-<li><strong>Kode Error Lain</strong>: Dianggap kegagalan bisnis. Error dilempar ke block <code>failure(req)</code> dengan error domain <code>NSError.cz_stringErrorCode</code> dan pesan <code>cz_errorMessage</code>.</li>
-</ul>
+<li><strong><code>code == &quot;200&quot;</code></strong>: Sukses bisnis. <code>IDNetworkRequest</code> langsung mengekstrak objek <code>result</code> dan mengopernya ke block <code>success(req)</code>.
+</li>
+<li><strong><code>code == &quot;10006&quot;</code></strong>: Sesi kedaluwarsa. <code>IDNetworkRequest</code> otomatis memicu <code>reloginWhenRequestError()</code>.
+</li>
+<li><strong>Kode Error Lain</strong>: Dianggap kegagalan bisnis. Error dilempar ke block <code>failure(req)</code> dengan error domain <code>NSError.cz_stringErrorCode</code> dan pesan <code>cz_errorMessage</code>.
+</li></ul>
 <div id="sub-4-permintaan-pihak-ketiga-eksternal" class="doc-subsection">
 <h4>4. Permintaan Pihak Ketiga / Eksternal</h4>
 </div>
 <p>Jika aplikasi perlu memanggil API pihak ketiga di luar server SAMIR (contoh: API Advance AI atau server pelacakan risiko):</p>
 <ul>
-<li>Gunakan helper:</li>
-</ul>
+<li>Gunakan helper:
+</li></ul>
 <pre><code class="language-swift">  IDNetworkRequest.id_startPOSTExternalRequest(url, params: [...])</code></pre>
 <ul>
-<li>Helper ini sengaja <strong>melewati penandatanganan <code>sign</code></strong>, tidak menyuntikkan parameter umum SAMIR, dan tidak memeriksa envelope <code>{code, msg, result}</code>.</li>
-</ul>
+<li>Helper ini sengaja <strong>melewati penandatanganan <code>sign</code></strong>, tidak menyuntikkan parameter umum SAMIR, dan tidak memeriksa envelope <code>{code, msg, result}</code>.
+</li></ul>
 <div id="sub-5-evaluasi-keamanan-tls-reachability" class="doc-subsection">
 <h4>5. Evaluasi Keamanan TLS & Reachability</h4>
 </div>
 <ul>
-<li><strong>Dynamic Server Trust (<code>CZDynamicServerTrustManager</code>)</strong>:</li>
-</ul>
+<li><strong>Dynamic Server Trust (<code>CZDynamicServerTrustManager</code>)</strong>:
+</li></ul>
 <p>Aplikasi memvalidasi nama domain sertifikat SSL <strong>hanya pada build PROD</strong> (<code>validatesDomainName = cz_buildProd()</code>). Pada build TEST, validasi nama domain dilonggarkan untuk mempermudah pengujian dengan sertifikat staging atau self-signed.</p>
 <ul>
-<li><strong>ATS Bypass (<code>NSAllowsArbitraryLoads = true</code>)</strong>:</li>
-</ul>
+<li><strong>ATS Bypass (<code>NSAllowsArbitraryLoads = true</code>)</strong>:
+</li></ul>
 <p>Di file <code>IDSamirLoan-Info.plist</code>, pengaturan ini aktif. Ini memungkinkan aplikasi memuat konten HTTP biasa pada webview H5 atau komunikasi mitra perbankan tertentu.</p>
 <p><em>Catatan Audit:</em> Ini adalah celah keamanan yang harus terus dipantau agar server produksi selalu dipaksa HTTPS.</p>
 <ul>
-<li><strong>Reachability (<code>CZNetworkReachabilityBridge</code>)</strong>:</li>
-</ul>
+<li><strong>Reachability (<code>CZNetworkReachabilityBridge</code>)</strong>:
+</li></ul>
 <p>Memantau koneksi internet secara realtime. Properti <code>IDNetworkManager.shared.networkEnable</code> dapat diperiksa kapan saja sebelum melakukan request.</p>
 <div id="sub-6-audit-arsitektur-apakah-cznetworklib-masih-digunakan" class="doc-subsection">
 <h4>6. Audit Arsitektur: Apakah <code>CZNetworkLib</code> Masih Digunakan?</h4>
 </div>
 <p>Di dalam direktori proyek masih ditemukan folder <a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/learn/iOS-Arch/ios/IDSamirLoan/Application/CZNetworkLib/" target="_blank" rel="noopener noreferrer">🦊 ios/IDSamirLoan/Application/CZNetworkLib/ <span class="branch-tag">learn/iOS-Arch</span> ↗</a>. Apakah library ini masih aktif?</p>
-<h5 id="item-a-bukti-penelusuran-code-truth">A. Bukti Penelusuran (Code Truth):</h5>
+<div class="doc-subpoint-block" id="item-a-bukti-penelusuran-code-truth">
+<h5>A. Bukti Penelusuran (Code Truth):</h5>
 <ol>
-<li><strong>Import Dikomentari di Seluruh Bridging Header</strong>:</li>
-</ol>
+<li><strong>Import Dikomentari di Seluruh Bridging Header</strong>:
 <ul>
-<li>Di <code>IDSamirLoan-Bridging-Header.h:L15</code>:</li>
-</ul>
+<li>Di <code>IDSamirLoan-Bridging-Header.h:L15</code>:
+</li></ul>
+</li></ol>
 <pre><code class="language-objc">     //#import &lt;CZNetworkLib/CZNetworkLib.h&gt;</code></pre>
 <ul>
-<li>Di <code>SamirNetworkModule-Bridging-Header.h:L6</code>:</li>
-</ul>
+<li>Di <code>SamirNetworkModule-Bridging-Header.h:L6</code>:
+</li></ul>
 <pre><code class="language-objc">     //#import &lt;CZNetworkLib/CZNetworkLib.h&gt;</code></pre>
 <ul>
-<li>Di <code>IDNetworkManager.swift:L10</code>:</li>
-</ul>
+<li>Di <code>IDNetworkManager.swift:L10</code>:
+</li></ul>
 <pre><code class="language-swift">     //import CZNetworkLib</code></pre>
-<ol>
-<li><strong>Dependensi AFNetworking Sudah Dicopot</strong>:</li>
-</ol>
+<ol start="2">
+<li><strong>Dependensi AFNetworking Sudah Dicopot</strong>:
 <ul>
-<li>Di <code>Podfile:L24-25</code>:</li>
-</ul>
+<li>Di <code>Podfile:L24-25</code>:
+</li></ul>
+</li></ol>
 <pre><code class="language-ruby">     pod &#x27;Alamofire&#x27;
      # pod &#x27;AFNetworking&#x27;</code></pre>
-<ol>
-<li><strong>Pipeline Eksekusi Aktif</strong>:</li>
-</ol>
+<ol start="3">
+<li><strong>Pipeline Eksekusi Aktif</strong>:
 <ul>
-<li>Seluruh request jaringan HTTP diinisiasi melalui <code>SamirNetworkModule</code> (<code>IDNetworkRequest.swift</code> dan <code>IDNetworkManager.swift</code>), lalu diteruskan ke Alamofire melalui adapter <code>CZAlamofireBridge.swift</code>.</li>
-</ul>
-<h5 id="item-b-kesimpulan">B. Kesimpulan:</h5>
+<li>Seluruh request jaringan HTTP diinisiasi melalui <code>SamirNetworkModule</code> (<code>IDNetworkRequest.swift</code> dan <code>IDNetworkManager.swift</code>), lalu diteruskan ke Alamofire melalui adapter <code>CZAlamofireBridge.swift</code>.
+</li></ul>
+</li></ol>
+</div>
+<div class="doc-subpoint-block" id="item-b-kesimpulan">
+<h5>B. Kesimpulan:</h5>
 <p><code>CZNetworkLib</code> <strong>SUDAH TIDAK DIGUNAKAN (DEPRECATED / DEAD CODE)</strong>. Library ini merupakan peninggalan masa lalu saat aplikasi masih berbasis Objective-C dan AFNetworking. Folder yang tertinggal hanya berisi file pembantu kategori yang tidak lagi terpanggil dalam rantai request aktif.</p>
+</div>
 </section>
 <section id="sec-walkthrough" class="doc-section">
 <h3>🪜 E. Step-by-Step Walkthrough: Cara Memanggil Endpoint Baru di Service</h3>
@@ -336,19 +353,26 @@ DefaultTimeout = 90</code></pre>
 <section id="sec-mistakes" class="doc-section">
 <h3>⚠️ H. Common Mistakes & Debugging</h3>
 <ul>
-<li><strong>Mengirim Nilai <code>nil</code> di Dictionary Parameter</strong>:</li>
-<li>Menyertakan nilai <code>nil</code> di dalam dictionary Swift dapat memicu crash atau menghilangkan kunci saat dikonversi ke JSON, yang mengakibatkan perbedaan tanda tangan antara klien dan server.</li>
-<li><strong>Lupa Base URL Pada External Request</strong>:</li>
-<li>Saat menggunakan <code>id_startPOSTExternalRequest</code>, Anda <strong>wajib</strong> menyetel <code>req.cz_baseUrl</code> secara eksplisit karena ia tidak menggunakan <code>apiBaseUrl</code> default.</li>
-</ul>
+<li><strong>Mengirim Nilai <code>nil</code> di Dictionary Parameter</strong>:
+<ul>
+<li>Menyertakan nilai <code>nil</code> di dalam dictionary Swift dapat memicu crash atau menghilangkan kunci saat dikonversi ke JSON, yang mengakibatkan perbedaan tanda tangan antara klien dan server.
+</li></ul>
+</li>
+<li><strong>Lupa Base URL Pada External Request</strong>:
+<ul>
+<li>Saat menggunakan <code>id_startPOSTExternalRequest</code>, Anda <strong>wajib</strong> menyetel <code>req.cz_baseUrl</code> secara eksplisit karena ia tidak menggunakan <code>apiBaseUrl</code> default.
+</li></ul>
+</li></ul>
 </section>
 <section id="sec-check" class="doc-section">
 <h3>🧠 I. Knowledge Check</h3>
 <ol>
-<li>Berapa parameter umum yang disuntikkan secara otomatis oleh <code>ApiParamsHelper</code>?</li>
-<li>Apa yang membedakan method <code>id_startPOSTRequest</code> dengan <code>id_startPOSTExternalRequest</code>?</li>
-<li>Mengapa penambahan field baru di parameter request harus dikoordinasikan dengan backend?</li>
-</ol>
+<li>Berapa parameter umum yang disuntikkan secara otomatis oleh <code>ApiParamsHelper</code>?
+</li>
+<li>Apa yang membedakan method <code>id_startPOSTRequest</code> dengan <code>id_startPOSTExternalRequest</code>?
+</li>
+<li>Mengapa penambahan field baru di parameter request harus dikoordinasikan dengan backend?
+</li></ol>
 </section>
 <section id="sec-completion" class="doc-section">
 <h3>🏁 J. Completion Criteria</h3>

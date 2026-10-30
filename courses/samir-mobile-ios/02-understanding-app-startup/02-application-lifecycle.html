@@ -101,29 +101,36 @@
 <h3>🎯 A. Learning Objective</h3>
 <p>Setelah mempelajari dokumen ini, pembaca akan mampu:</p>
 <ol>
-<li>Memahami arsitektur delegasi siklus hidup: <code>UIApplication</code> -> <code>CZAppDelegate</code> -> <code>CZModuleManager</code> -> <code>[CZModuleProtocol]</code>.</li>
-<li>Menyebutkan 6 modul bisnis yang terdaftar di <code>IDModuleList.plist</code> dan urutan penerimaan event-nya.</li>
-<li>Menjelaskan mengapa modul tidak perlu memodifikasi <code>AppDelegate</code> saat membutuhkan penanganan event sistem (misal: push notification, backgrounding, open URL).</li>
-<li>Mengetahui bug/technical debt pada pengurutan prioritas modul di <code>CZModuleManager.swift</code>.</li>
-</ol>
+<li>Memahami arsitektur delegasi siklus hidup: <code>UIApplication</code> -> <code>CZAppDelegate</code> -> <code>CZModuleManager</code> -> <code>[CZModuleProtocol]</code>.
+</li>
+<li>Menyebutkan 6 modul bisnis yang terdaftar di <code>IDModuleList.plist</code> dan urutan penerimaan event-nya.
+</li>
+<li>Menjelaskan mengapa modul tidak perlu memodifikasi <code>AppDelegate</code> saat membutuhkan penanganan event sistem (misal: push notification, backgrounding, open URL).
+</li>
+<li>Mengetahui bug/technical debt pada pengurutan prioritas modul di <code>CZModuleManager.swift</code>.
+</li></ol>
 </section>
 <section id="sec-prereq" class="doc-section">
 <h3>📋 B. Prerequisites</h3>
 <ul>
-<li>Sudah membaca <a href="01-ios-entry-point.html">01-ios-entry-point.md</a>.</li>
-<li>Memahami protokol standar <code>UIApplicationDelegate</code> pada iOS.</li>
-</ul>
+<li>Sudah membaca <a href="01-ios-entry-point.html">01-ios-entry-point.md</a>.
+</li>
+<li>Memahami protokol standar <code>UIApplicationDelegate</code> pada iOS.
+</li></ul>
 </section>
 <section id="sec-simple" class="doc-section">
 <h3>💡 C. Simple Explanation (Analogi Siaran Radio Sentral)</h3>
 <p>Dalam arsitektur iOS konvensional, file <code>AppDelegate.swift</code> sering kali menjadi "God Object" raksasa beribu-ribu baris karena setiap library dan fitur (Facebook SDK, Firebase, Push Notification, Deep Link, APM) menumpuk kode inisialisasinya di sana.</p>
 <p>Di SAMIR iOS, sistem menggunakan analogi <strong>Siaran Radio Sentral</strong>:</p>
 <ul>
-<li><code>CZAppDelegate</code> adalah pemancar sentral yang menangkap sinyal dari sistem operasi iOS (contoh: "Aplikasi baru saja dibuka!", "Ada notifikasi push masuk!", "Pengguna memencet tombol Home").</li>
-<li>Pemancar ini tidak memproses sinyal sendiri; ia meneruskannya ke manajer modul (<code>CZModuleManager</code>).</li>
-<li><code>CZModuleManager</code> menyiarkan sinyal tersebut ke setiap "stasiun radio" modul fitur (<code>IDSamirMainModule</code>, <code>IDSamirLoanModule</code>, dll).</li>
-<li>Setiap modul menangani sinyal tersebut sesuai urusannya masing-masing tanpa menyentuh kode modul lain.</li>
-</ul>
+<li><code>CZAppDelegate</code> adalah pemancar sentral yang menangkap sinyal dari sistem operasi iOS (contoh: "Aplikasi baru saja dibuka!", "Ada notifikasi push masuk!", "Pengguna memencet tombol Home").
+</li>
+<li>Pemancar ini tidak memproses sinyal sendiri; ia meneruskannya ke manajer modul (<code>CZModuleManager</code>).
+</li>
+<li><code>CZModuleManager</code> menyiarkan sinyal tersebut ke setiap "stasiun radio" modul fitur (<code>IDSamirMainModule</code>, <code>IDSamirLoanModule</code>, dll).
+</li>
+<li>Setiap modul menangani sinyal tersebut sesuai urusannya masing-masing tanpa menyentuh kode modul lain.
+</li></ul>
 </section>
 <section id="sec-actual" class="doc-section">
 <h3>💻 D. Actual Implementation (Bukti Kode Sumber)</h3>
@@ -131,7 +138,7 @@
 <h4>1. <code>CZAppDelegate</code>: Delegat Sentral yang Ramping</h4>
 </div>
 <p>Path: <a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/learn/iOS-Arch/ios/IDSamirLoan/Application/CZSwiftModuleLib/Classes/CZAppDelegate.swift#L19-L87" target="_blank" rel="noopener noreferrer">🦊 ios/IDSamirLoan/Application/CZSwiftModuleLib/Classes/CZAppDelegate.swift <span class="branch-tag">learn/iOS-Arch</span> ↗</a></p>
-<p>Perhatikan bahwa <code>CZAppDelegate</code> hanya memiliki 88 baris kode! Tidak ada logika bisnis pinjaman di sini. Setiap fungsi delegat hanya meneruskan panggilan ke <code>CZModuleManager.shared</code>:</p>
+<p>Perhatikan bahwa <code>CZAppDelegate</code> hanya memiliki <strong>88 baris kode</strong>! Tidak ada logika bisnis pinjaman di sini. Setiap fungsi delegat hanya meneruskan panggilan ke <code>CZModuleManager.shared</code>:</p>
 <pre><code class="language-swift">public class CZAppDelegate: UIResponder, UIApplicationDelegate {
     public lazy var window: UIWindow? = {
         return UIWindow(frame: UIScreen.main.bounds)
@@ -154,6 +161,7 @@
     }
     // ... metode delegat lainnya
 }</code></pre>
+<div class="callout best-practice"><p>[!IMPORTANT] <strong>Mengapa Berukuran Sangat Ringkas?</strong> <code>CZAppDelegate</code> menerapkan pola <strong>Thin Proxy / Forwarding Delegator</strong>. File ini tidak menginisialisasi SDK, tidak membuat Root View Controller, dan tidak mengeksekusi logika pinjaman apa pun.  <strong>Catatan Kritis Arsitektur:</strong> Sering muncul kesalahpahaman bahwa delegat ini langsung memanggil <code>IDSamirMainModule</code>. Faktanya, <strong>seluruh fungsi delegat hanya meneruskan panggilan ke <code>CZModuleManager.shared</code></strong>, bukan ke <code>IDSamirMainModule</code>. <code>IDSamirMainModule</code> hanyalah salah satu penerima sinyal melalui perulangan yang dilakukan oleh <code>CZModuleManager</code>.</p></div>
 <div id="sub-2-czmodulemanager-distribusi-event-ke-modul" class="doc-subsection">
 <h4>2. <code>CZModuleManager</code>: Distribusi Event ke Modul</h4>
 </div>
@@ -169,13 +177,66 @@
     }
     return result
 }</code></pre>
+<div class="doc-subpoint-block" id="item-mengapa-melakukan-perulangan-untuk-tujuan-apa">
+<h5>Mengapa Melakukan Perulangan & Untuk Tujuan Apa?</h5>
+<ol>
+<li><strong>Pola Mediator & Multicast Event Dispatcher:</strong>
+</li></ol>
+<p>iOS UIKit hanya mengenal satu instance delegat (<code>UIApplicationDelegate</code>). Untuk mendistribusikan sinyal sistem ke modul-modul yang terpisah secara independen, <code>CZModuleManager</code> bertindak sebagai <em>Mediator</em>. Perulangan (<em>looping</em>) memastikan setiap modul dalam <code>moduleContextArray</code> menerima sinyal lifecycle yang sama tanpa modul-modul tersebut harus saling mengenal (<em>zero coupling</em>).</p>
+<ol start="2">
+<li><strong>Isolasi Inisialisasi Fitur:</strong>
+</li></ol>
+<p>Setiap modul bertanggung jawab atas konfigurasinya masing-masing (misal: registrasi router internal, setup tema, atau listener background).</p>
+</div>
+<div class="doc-subpoint-block" id="item-dampak-jika-perulangan-terlewat-atau-pendaftaran-modul-gagal">
+<h5>Dampak Jika Perulangan Terlewat atau Pendaftaran Modul Gagal:</h5>
+<ul>
+<li><strong>Jika Perulangan Ke-skip / Lupa Dipanggil:</strong>
+</li></ul>
+<p>Modul utama (<code>IDSamirMainModule</code>) tidak akan pernah menyiapkan <code>UIWindow</code>, root view controller, token APNs, atau <em>prewarming</em> Flutter engine. Aplikasi akan macet pada layar hitam (<em>black screen</em>) atau <em>freeze</em> saat splash screen.</p>
+<ul>
+<li><strong>Jika Pendaftaran Modul Gagal (misal salah ketik nama class di <code>IDModuleList.plist</code>):</strong>
+</li></ul>
+<p><code>NSClassFromString(moduleName)</code> mengembalikan <code>nil</code> sehingga registrasi gagal diam-diam (<em>silent failure</em>). Modul yang gagal tidak dimasukkan ke dalam <code>moduleContextArray</code>. Akibatnya:</p>
+<ul>
+<li>Modul tidak akan pernah menerima event lifecycle dari sistem operasi.
+</li>
+<li>Route URL modul tersebut (<code>routers()</code>) tidak didaftarkan ke <code>CZRouterCenter</code>, menyebabkan navigasi atau deeplink ke fitur tersebut gagal total (<em>page not found</em> / 404).
+</li></ul>
+</div>
 <div id="sub-3-daftar-modul-terdaftar-idmodulelistplist" class="doc-subsection">
 <h4>3. Daftar Modul Terdaftar (<code>IDModuleList.plist</code>)</h4>
 </div>
 <p>Path: <a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/learn/iOS-Arch/ios/IDSamirLoan/Application/Configuration/Module/IDModuleList.plist" target="_blank" rel="noopener noreferrer">🦊 ios/IDSamirLoan/Application/Configuration/Module/IDModuleList.plist <span class="branch-tag">learn/iOS-Arch</span> ↗</a></p>
 <p>Hanya ada <strong>6 modul resmi</strong> yang didaftarkan ke dalam siklus hidup aplikasi:</p>
 <div class="table-container"><table class="data-table"><thead><tr><th>Kunci Plist</th><th>Nama Class Konkret</th><th>Prioritas Teoretis</th><th>Peran Utama</th></tr></thead><tbody><tr><td><strong><code>SamirMainModule</code></strong></td><td><code>IDSamirMainModule</code></td><td><code>.mostHigh</code> (2000)</td><td>Inisialisasi window, root VC, environment, APNs, Flutter prewarm</td></tr><tr><td><strong><code>SamirAuthModule</code></strong></td><td><code>IDSamirAuthModule</code></td><td><code>.normal</code> (0)</td><td>Pendaftaran route verifikasi e-KYC</td></tr><tr><td><strong><code>SamirLoanModule</code></strong></td><td><code>IDSamirLoanModule</code></td><td><code>.normal</code> (0)</td><td>Pendaftaran route pinjaman & penilaian kredit</td></tr><tr><td><strong><code>SamirWebViewModule</code></strong></td><td><code>IDSamirWebViewModule</code></td><td><code>.normal</code> (0)</td><td>Pendaftaran route browser web H5</td></tr><tr><td><strong><code>SamirRepayModule</code></strong></td><td><code>IDSamirRepayModule</code></td><td><code>.normal</code> (0)</td><td>Pendaftaran route tagihan & pelunasan</td></tr><tr><td><strong><code>SamirMineModule</code></strong></td><td><code>IDSamirMineModule</code></td><td><code>.normal</code> (0)</td><td>Pendaftaran route profil & pengaturan</td></tr></tbody></table></div>
-<div class="callout best-practice"><p>[!NOTE] <code>SamirLoginModule</code> dan <code>SamirPointsModule</code> <strong>bukan</strong> modul terdaftar di plist ini! <code>SamirLoginModule</code> diakses via protokol layanan (<code>IDServiceManager.loginService()</code>), sedangkan <code>SamirPointsModule</code> berfungsi sebagai utility library.</p></div>
+<div id="sub-4-deep-dive-mengapa-samirloginmodule-tidak-terdaftar-di-idmodulelistplist" class="doc-subsection">
+<h4>4. Deep Dive: Mengapa <code>SamirLoginModule</code> Tidak Terdaftar di <code>IDModuleList.plist</code>?</h4>
+</div>
+<p>Sering timbul pertanyaan arsitektur: <em>Mengapa modul login yang begitu penting tidak terdaftar di <code>IDModuleList.plist</code>?</em></p>
+<ol>
+<li><strong>Perbedaan Tanggung Jawab: Lifecycle Module vs Service Locator:</strong>
+<ul>
+<li><strong><code>IDModuleList.plist</code></strong> hanya untuk class yang mengadopsi <code>CZModuleProtocol</code> (turunan <code>UIApplicationDelegate</code>) yang memerlukan <em>hooks</em> siklus hidup aplikasi sejak detik pertama aplikasi menyala.
+</li>
+<li><strong><code>SamirLoginModule</code></strong> tidak memerlukan <em>lifecycle hooks</em> sistem operasi (tidak perlu tahu kapan aplikasi masuk background atau selesai booting). Modul ini bekerja berdasarkan kebutuhan (<em>on-demand</em>) saat user berinteraksi dengan fitur yang membutuhkan autentikasi.
+</li></ul>
+</li>
+<li><strong>Tempat Registrasi Sebenarnya: <code>IDServiceList.plist</code>:</strong>
+</li></ol>
+<p><code>SamirLoginModule</code> didaftarkan sebagai penyedia layanan (<em>service provider</em>) di <a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/learn/iOS-Arch/ios/IDSamirLoan/Application/Configuration/Module/IDServiceList.plist" target="_blank" rel="noopener noreferrer">🦊 ios/IDSamirLoan/Application/Configuration/Module/IDServiceList.plist <span class="branch-tag">learn/iOS-Arch</span> ↗</a>:</p>
+<pre><code class="language-xml">   &lt;key&gt;IDLoginModuleServiceProtocol&lt;/key&gt;
+   &lt;string&gt;IDLoginModuleServiceHandler&lt;/string&gt;</code></pre>
+<p>Class pelaksananya adalah <a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/learn/iOS-Arch/ios/IDSamirLoan/Application/SamirLoginModule/Classes/IDService/IDLoginModuleServiceHandler.swift#L10" target="_blank" rel="noopener noreferrer">🦊 <code>IDLoginModuleServiceHandler</code> <span class="branch-tag">learn/iOS-Arch</span> ↗</a> yang diakses secara decoupling melalui <code>IDServiceManager.loginService()</code>.</p>
+<ol start="3">
+<li><strong>Keuntungan Arsitektural & Performa:</strong>
+<ul>
+<li>*<em>Performa Startup Cepat (</em>Fast Launch<em>):</em><em> Service di <code>IDServiceList.plist</code> bersifat </em>lazy initialization<em> (hanya dibuat saat pertama kali dipanggil). Memasukkan modul login ke siklus startup hanya akan memperlambat waktu peluncuran (</em>cold start*).
+</li>
+<li><strong>Dampak jika tidak didaftarkan di <code>IDModuleList.plist</code>:</strong> Tidak ada dampak negatif sama sekali karena arsitektur SAMIR memang memisahkan antara <em>Lifecycle Broadcaster</em> dan <em>Protocol-based Service Locator</em>.
+</li></ul>
+</li></ol>
+<div class="callout best-practice"><p>[!NOTE] Sama halnya dengan <code>SamirLoginModule</code>, <code>SamirPointsModule</code> juga <strong>bukan</strong> modul terdaftar di <code>IDModuleList.plist</code>, melainkan berfungsi sebagai <em>utility / tracking library</em>.</p></div>
 </section>
 <section id="sec-walkthrough" class="doc-section">
 <h3>🪜 E. Step-by-Step Walkthrough: Propagasi Event Masuk Background</h3>
@@ -206,12 +267,16 @@ sequenceDiagram
   </div>
 </div>
 <ol>
-<li><strong>Step 1</strong>: Sistem operasi mengirimkan sinyal <code>applicationDidEnterBackground</code> ke proses aplikasi.</li>
-<li><strong>Step 2</strong>: <code>CZAppDelegate.applicationDidEnterBackground</code> menangkap sinyal dan langsung memanggil <code>CZModuleManager.shared.applicationDidEnterBackground</code>.</li>
-<li><strong>Step 3</strong>: <code>CZModuleManager</code> memeriksa apakah ada modul di <code>moduleContextArray</code> yang mengimplementasikan method tersebut.</li>
-<li><strong>Step 4</strong>: Secara bersamaan, notifikasi broadcast sistem <code>UIApplication.didEnterBackgroundNotification</code> diterima oleh <code>IDMainTabBarController</code> (baris 38 di <code>IDMainTabBarController.swift</code>).</li>
-<li><strong>Step 5</strong>: <code>IDMainTabBarController</code> memanggil <code>baseVC.enterBackground()</code> pada ViewController teratas untuk menghitung durasi user melihat halaman (<code>startTimeStamp</code> hingga <code>endTimeStamp</code>) demi kebutuhan pelaporan skor risiko fraud.</li>
-</ol>
+<li><strong>Step 1</strong>: Sistem operasi mengirimkan sinyal <code>applicationDidEnterBackground</code> ke proses aplikasi.
+</li>
+<li><strong>Step 2</strong>: <code>CZAppDelegate.applicationDidEnterBackground</code> menangkap sinyal dan langsung memanggil <code>CZModuleManager.shared.applicationDidEnterBackground</code>.
+</li>
+<li><strong>Step 3</strong>: <code>CZModuleManager</code> memeriksa apakah ada modul di <code>moduleContextArray</code> yang mengimplementasikan method tersebut.
+</li>
+<li><strong>Step 4</strong>: Secara bersamaan, notifikasi broadcast sistem <code>UIApplication.didEnterBackgroundNotification</code> diterima oleh <code>IDMainTabBarController</code> (baris 38 di <code>IDMainTabBarController.swift</code>).
+</li>
+<li><strong>Step 5</strong>: <code>IDMainTabBarController</code> memanggil <code>baseVC.enterBackground()</code> pada ViewController teratas untuk menghitung durasi user melihat halaman (<code>startTimeStamp</code> hingga <code>endTimeStamp</code>) demi kebutuhan pelaporan skor risiko fraud.
+</li></ol>
 </section>
 <section id="sec-why" class="doc-section">
 <h3>⚖️ F. Why It Matters: Audit Bug Prioritas Modul (<code>CZModuleManager</code>)</h3>
@@ -233,28 +298,57 @@ moduleContextArray.append(moduleContext)</code></pre>
 <h3>🔬 G. Practical Example (Menambahkan Penanganan Lifecycle di Modul Baru)</h3>
 <p>Jika tim developer ingin menambahkan modul analitik baru yang harus membersihkan cache setiap kali aplikasi masuk background:</p>
 <ol>
-<li>Buat class baru yang mengadopsi protokol <code>CZModuleProtocol</code>.</li>
-<li>Implementasikan method <code>applicationDidEnterBackground(_:)</code> di dalam class tersebut.</li>
-<li>Daftarkan class tersebut di <code>IDModuleList.plist</code>.</li>
-<li>Anda <strong>tidak perlu mengubah satu baris pun di <code>CZAppDelegate.swift</code></strong>! Modul Anda akan otomatis menerima panggilan background saat aplikasi berjalan.</li>
-</ol>
+<li>Buat class baru yang mengadopsi protokol <code>CZModuleProtocol</code>.
+</li>
+<li>Implementasikan method <code>applicationDidEnterBackground(_:)</code> di dalam class tersebut.
+</li>
+<li>Daftarkan class tersebut di <code>IDModuleList.plist</code>.
+</li>
+<li>Anda <strong>tidak perlu mengubah satu baris pun di <code>CZAppDelegate.swift</code></strong>! Modul Anda akan otomatis menerima panggilan background saat aplikasi berjalan.
+</li></ol>
 </section>
 <section id="sec-mistakes" class="doc-section">
 <h3>⚠️ H. Common Mistakes & Debugging</h3>
 <ul>
-<li><strong>Typo Nama Class di Plist</strong>:</li>
-<li>Jika nama class di <code>IDModuleList.plist</code> salah ketik (misal <code>IDSamirAuthModuleX</code>), <code>NSClassFromString</code> akan mengembalikan <code>nil</code>. Registrasi gagal secara diam-diam (<em>silent failure</em>) tanpa pesan error yang jelas.</li>
-<li><strong>Mengira <code>SamirLoginModule</code> Terdaftar di Lifecycle</strong>:</li>
-<li><code>SamirLoginModule</code> tidak menerima event <code>didFinishLaunchingWithOptions</code>. Jangan menaruh kode inisialisasi lifecycle di folder login!</li>
-</ul>
+<li><strong>Mengira <code>CZAppDelegate</code> Memanggil Langsung <code>IDSamirMainModule</code></strong>:
+<ul>
+<li><code>CZAppDelegate</code> murni mendelegasikan event ke <code>CZModuleManager.shared</code>. <code>IDSamirMainModule</code> hanyalah salah satu penerima sinyal bersama modul-modul lainnya.
+</li></ul>
+</li>
+<li><strong>Typo Nama Class di Plist</strong>:
+<ul>
+<li>Jika nama class di <code>IDModuleList.plist</code> salah ketik (misal <code>IDSamirAuthModuleX</code>), <code>NSClassFromString</code> akan mengembalikan <code>nil</code>. Registrasi gagal secara diam-diam (<em>silent failure</em>) tanpa pesan error yang jelas.
+</li></ul>
+</li>
+<li><strong>Mengira <code>SamirLoginModule</code> Terdaftar di Lifecycle</strong>:
+<ul>
+<li><code>SamirLoginModule</code> tidak menerima event <code>didFinishLaunchingWithOptions</code>. Modul login didaftarkan di <code>IDServiceList.plist</code> dan diakses melalui <code>IDServiceManager.loginService()</code>. Jangan menaruh kode inisialisasi lifecycle di folder login!
+</li></ul>
+</li></ul>
 </section>
 <section id="sec-check" class="doc-section">
 <h3>🧠 I. Knowledge Check</h3>
 <ol>
-<li>Berapa baris kode kira-kira ukuran file <code>CZAppDelegate.swift</code> dan mengapa ukurannya bisa sangat ringkas?</li>
-<li>Sebutkan 6 modul yang terdaftar secara resmi di <code>IDModuleList.plist</code>!</li>
-<li>Apa konsekuensi teknis dari kelalaian penyetelan <code>moduleContext.modulePriority</code> di <code>CZModuleManager.swift</code>?</li>
-</ol>
+<li><strong>Berapa baris kode kira-kira ukuran file <code>CZAppDelegate.swift</code> dan mengapa ukurannya bisa sangat ringkas?</strong>
+<ul>
+<li><em>Jawaban</em>: ~88 baris kode. Sangat ringkas karena menerapkan <em>Thin Proxy / Forwarding Delegator</em> tanpa logika bisnis. Semua event diteruskan ke <code>CZModuleManager.shared</code> (bukan langsung ke <code>IDSamirMainModule</code>).
+</li></ul>
+</li>
+<li><strong>Sebutkan 6 modul yang terdaftar secara resmi di <code>IDModuleList.plist</code>!</strong>
+<ul>
+<li><em>Jawaban</em>: <code>SamirMainModule</code>, <code>SamirAuthModule</code>, <code>SamirLoanModule</code>, <code>SamirWebViewModule</code>, <code>SamirRepayModule</code>, <code>SamirMineModule</code>.
+</li></ul>
+</li>
+<li><strong>Mengapa <code>SamirLoginModule</code> tidak didaftarkan di <code>IDModuleList.plist</code>?</strong>
+<ul>
+<li><em>Jawaban</em>: Karena login adalah komponen layanan (<em>on-demand service</em>) yang didaftarkan di <code>IDServiceList.plist</code> via <code>IDLoginModuleServiceProtocol</code>, bukan modul siklus hidup aplikasi. Ini menghemat <em>startup time</em>.
+</li></ul>
+</li>
+<li><strong>Apa konsekuensi teknis dari kelalaian penyetelan <code>moduleContext.modulePriority</code> di <code>CZModuleManager.swift</code>?</strong>
+<ul>
+<li><em>Jawaban</em>: Seluruh modul mendapatkan prioritas default <code>.normal</code> (0), sehingga fungsi sorting modul menjadi <em>no-op</em>. Urutan eksekusi murni bergantung pada urutan dictionary di plist.
+</li></ul>
+</li></ol>
 <p><strong>Latihan Observasi</strong>:</p>
 <p>Buka file <code>ios/IDSamirLoan/Application/CZSwiftModuleLib/Classes/CZModuleManager.swift</code>. Temukan baris 87–97 dan buktikan sendiri bahwa <code>moduleContext.modulePriority</code> tidak pernah mengambil nilai dari <code>moduleObject.loadPriority</code>.</p>
 </section>
@@ -262,9 +356,10 @@ moduleContextArray.append(moduleContext)</code></pre>
 <h3>🏁 J. Completion Criteria</h3>
 <p>Anda telah menguasai dokumen ini jika Anda dapat menjelaskan mekanisme pengiriman sinyal lifecycle dari <code>CZAppDelegate</code> ke <code>CZModuleManager</code> serta struktur 6 modul terdaftar.</p>
 <ul>
-<li>Dokumen berikutnya: <a href="03-startup-sequence-and-initial-routing.html">03-startup-sequence-and-initial-routing.md</a></li>
-<li>Pembahasan mendalam arsitektur internal: <a href="04-czmodulemanager-deep-dive.html">04-czmodulemanager-deep-dive.md</a> (Analisis fallback <code>moduleName</code> vs <code>bundleName</code>, pendaftaran router & URL rewriter, serta thread safety service locator).</li>
-</ul>
+<li>Dokumen berikutnya: <a href="03-startup-sequence-and-initial-routing.html">03-startup-sequence-and-initial-routing.md</a>
+</li>
+<li>Pembahasan mendalam arsitektur internal: <a href="04-czmodulemanager-deep-dive.html">04-czmodulemanager-deep-dive.md</a> (Analisis fallback <code>moduleName</code> vs <code>bundleName</code>, pendaftaran router & URL rewriter, serta thread safety service locator).
+</li></ul>
 </section>
 
     <!-- BAGIAN 2 & 3: ARCHITECTURAL CRITIQUE & BLUEPRINT -->
@@ -456,6 +551,10 @@ public final class AppStartupCoordinator {
                 <span class="toc-leaf-dot"></span>
                 <a class="toc-tree-link" href="#sub-3-daftar-modul-terdaftar-idmodulelistplist">3. Daftar Modul Terdaftar (<span class="toc-code">IDModuleList.plist</span>)</a>
               </div>
+              <div class="toc-node-row">
+                <span class="toc-leaf-dot"></span>
+                <a class="toc-tree-link" href="#sub-4-deep-dive-mengapa-samirloginmodule-tidak-terdaftar-di-idmodulelistplist">4. Deep Dive: Mengapa <span class="toc-code">SamirLoginModule</span> Tidak Terdaftar di <span class="toc-code">IDModuleList.plist</span>?</a>
+              </div>
             </div>
           </div>
           <div class="toc-node-row">
@@ -559,6 +658,10 @@ public final class AppStartupCoordinator {
             <div class="toc-node-row">
               <span class="toc-leaf-dot"></span>
               <a class="toc-tree-link" href="#sub-3-daftar-modul-terdaftar-idmodulelistplist" onclick="toggleMobileToc()">3. Daftar Modul Terdaftar (<span class="toc-code">IDModuleList.plist</span>)</a>
+            </div>
+            <div class="toc-node-row">
+              <span class="toc-leaf-dot"></span>
+              <a class="toc-tree-link" href="#sub-4-deep-dive-mengapa-samirloginmodule-tidak-terdaftar-di-idmodulelistplist" onclick="toggleMobileToc()">4. Deep Dive: Mengapa <span class="toc-code">SamirLoginModule</span> Tidak Terdaftar di <span class="toc-code">IDModuleList.plist</span>?</a>
             </div>
           </div>
         </div>
@@ -907,7 +1010,7 @@ public final class AppStartupCoordinator {
       }
     } catch (e) {}
 
-    const sectionIds = ['sec-title', 'sec-obj', 'sec-prereq', 'sec-simple', 'sec-actual', 'sub-1-czappdelegate-delegat-sentral-yang-ramping', 'sub-2-czmodulemanager-distribusi-event-ke-modul', 'sub-3-daftar-modul-terdaftar-idmodulelistplist', 'sec-walkthrough', 'sec-why', 'sec-example', 'sec-mistakes', 'sec-check', 'sec-completion', 'sub-solid', 'sub-blueprint', 'sub-quiz'];
+    const sectionIds = ['sec-title', 'sec-obj', 'sec-prereq', 'sec-simple', 'sec-actual', 'sub-1-czappdelegate-delegat-sentral-yang-ramping', 'sub-2-czmodulemanager-distribusi-event-ke-modul', 'sub-3-daftar-modul-terdaftar-idmodulelistplist', 'sub-4-deep-dive-mengapa-samirloginmodule-tidak-terdaftar-di-idmodulelistplist', 'sec-walkthrough', 'sec-why', 'sec-example', 'sec-mistakes', 'sec-check', 'sec-completion', 'sub-solid', 'sub-blueprint', 'sub-quiz'];
     const tocLinks = document.querySelectorAll('.toc-tree-link');
 
     window.addEventListener('scroll', () => {

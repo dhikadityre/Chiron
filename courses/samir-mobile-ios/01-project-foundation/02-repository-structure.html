@@ -97,27 +97,33 @@
 <h3>🎯 A. Learning Objective</h3>
 <p>Setelah mempelajari dokumen ini, pembaca akan mampu:</p>
 <ol>
-<li>Menavigasi struktur folder tingkat tinggi repositori (iOS, Flutter, Android, Docs).</li>
-<li>Memahami pembagian direktori di dalam <code>ios/IDSamirLoan/Application/</code>: pustaka fondasi (<code>CZ*</code>), modul bisnis (<code>Samir*Module</code>), dan konfigurasi.</li>
-<li>Memahami konsep <strong>Xcode 16 Synchronized Groups</strong> (<code>objectVersion 73</code>) yang membuat file di filesystem otomatis terdaftar di Xcode project tanpa perlu modifikasi manual <code>project.pbxproj</code>.</li>
-</ol>
+<li>Menavigasi struktur folder tingkat tinggi repositori (iOS, Flutter, Android, Docs).
+</li>
+<li>Memahami pembagian direktori di dalam <code>ios/IDSamirLoan/Application/</code>: pustaka fondasi (<code>CZ*</code>), modul bisnis (<code>Samir*Module</code>), dan konfigurasi.
+</li>
+<li>Memahami konsep <strong>Xcode 16 Synchronized Groups</strong> (<code>objectVersion 73</code>) yang membuat file di filesystem otomatis terdaftar di Xcode project tanpa perlu modifikasi manual <code>project.pbxproj</code>.
+</li></ol>
 </section>
 <section id="sec-prereq" class="doc-section">
 <h3>📋 B. Prerequisites</h3>
 <ul>
-<li>Sudah membaca <a href="01-application-overview.html">01-application-overview.md</a>.</li>
-<li>Memiliki pemahaman dasar mengenai struktur proyek iOS CocoaPods dan Flutter Module.</li>
-</ul>
+<li>Sudah membaca <a href="01-application-overview.html">01-application-overview.md</a>.
+</li>
+<li>Memiliki pemahaman dasar mengenai struktur proyek iOS CocoaPods dan Flutter Module.
+</li></ul>
 </section>
 <section id="sec-simple" class="doc-section">
 <h3>💡 C. Simple Explanation (Analogi Lemari Arsip Bersekat)</h3>
 <p>Bayangkan sebuah kantor manajemen yang memiliki lemari arsip besar:</p>
 <ul>
-<li><strong>Laci 1 (<code>CZ*</code>)</strong>: Alat-alat kantor standar (stepler, pemotong kertas, lem) yang netral dan dapat digunakan oleh siapa saja.</li>
-<li><strong>Laci 2 (<code>Samir*Module</code>)</strong>: Berkas kerja spesifik untuk setiap divisi (Divisi Pinjaman, Divisi Penagihan, Divisi Keanggotaan).</li>
-<li><strong>Laci 3 (<code>flutter/</code>)</strong>: Meja kerja digital khusus yang menangani halaman-halaman modern tertentu agar dapat berbagi kode dengan Android.</li>
-<li><strong>Buku Panduan (<code>Configuration/</code>)</strong>: Daftar nama divisi dan protokol kerja sama antardivisi.</li>
-</ul>
+<li><strong>Laci 1 (<code>CZ*</code>)</strong>: Alat-alat kantor standar (stepler, pemotong kertas, lem) yang netral dan dapat digunakan oleh siapa saja.
+</li>
+<li><strong>Laci 2 (<code>Samir*Module</code>)</strong>: Berkas kerja spesifik untuk setiap divisi (Divisi Pinjaman, Divisi Penagihan, Divisi Keanggotaan).
+</li>
+<li><strong>Laci 3 (<code>flutter/</code>)</strong>: Meja kerja digital khusus yang menangani halaman-halaman modern tertentu agar dapat berbagi kode dengan Android.
+</li>
+<li><strong>Buku Panduan (<code>Configuration/</code>)</strong>: Daftar nama divisi dan protokol kerja sama antardivisi.
+</li></ul>
 <p>Dengan pembagian yang rapi ini, pengembang modul Pinjaman tidak perlu membongkar berkas milik modul Keanggotaan saat ingin mengubah tampilan formulir pinjaman.</p>
 </section>
 <section id="sec-actual" class="doc-section">
@@ -149,41 +155,68 @@
 <h4>3. Arsitektur Folder <code>ios/IDSamirLoan/Application/</code></h4>
 </div>
 <p>Seluruh logika aplikasi native terpusat di folder <code>Application/</code>. Terbagi menjadi dua kategori utama:</p>
-<h5 id="item-kategori-a-pustaka-fondasi-internal-cz">Kategori A: Pustaka Fondasi Internal (<code>CZ*</code>)</h5>
+<div class="doc-subpoint-block" id="item-kategori-a-pustaka-fondasi-internal-cz">
+<h5>Kategori A: Pustaka Fondasi Internal (<code>CZ*</code>)</h5>
 <p>Dibuat dengan prefix <code>CZ</code>, pustaka ini tidak mengandung aturan bisnis (business logic-agnostic):</p>
 <ul>
-<li><a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/learn/iOS-Arch/ios/IDSamirLoan/Application/CZSwiftModuleLib" target="_blank" rel="noopener noreferrer">🦊 CZSwiftModuleLib/ <span class="branch-tag">learn/iOS-Arch</span> ↗</a>: Kerangka runtime modular, <code>CZModuleManager</code>, <code>CZAppDelegate</code>, dan lifecycle routing.</li>
-<li><a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/learn/iOS-Arch/ios/IDSamirLoan/Application/CZSwiftRouterLib" target="_blank" rel="noopener noreferrer">🦊 CZSwiftRouterLib/ <span class="branch-tag">learn/iOS-Arch</span> ↗</a>: URL Router engine, matcher regex, dan router table.</li>
-<li><a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/learn/iOS-Arch/ios/IDSamirLoan/Application/CZSwiftEnviromentLib" target="_blank" rel="noopener noreferrer">🦊 CZSwiftEnviromentLib/ <span class="branch-tag">learn/iOS-Arch</span> ↗</a>: Konfigurasi environment (<code>AppEnv.swift</code>, <code>CZEnvironmentManager</code>).</li>
-<li><a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/learn/iOS-Arch/ios/IDSamirLoan/Application/CZSwiftStorageLib" target="_blank" rel="noopener noreferrer">🦊 CZSwiftStorageLib/ <span class="branch-tag">learn/iOS-Arch</span> ↗</a>: Abstraksi cache disk & memory (<code>CZCache</code>).</li>
-<li><a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/learn/iOS-Arch/ios/IDSamirLoan/Application/CZSwiftAntiFraudLib" target="_blank" rel="noopener noreferrer">🦊 CZSwiftAntiFraudLib/ <span class="branch-tag">learn/iOS-Arch</span> ↗</a>: Deteksi jailbreak, sidik jari perangkat (<code>CZFpid</code>), dan utilitas anti-fraud.</li>
-<li><a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/learn/iOS-Arch/ios/IDSamirLoan/Application/CZSwiftUIKit" target="_blank" rel="noopener noreferrer">🦊 CZSwiftUIKit/ <span class="branch-tag">learn/iOS-Arch</span> ↗</a>: Komponen UI kustom, banner, empty state, dan puluhan ekstensi UIKit.</li>
-<li><a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/learn/iOS-Arch/ios/IDSamirLoan/Application/CZSwiftUtils" target="_blank" rel="noopener noreferrer">🦊 CZSwiftUtils/ <span class="branch-tag">learn/iOS-Arch</span> ↗</a>: Helper string, tanggal, regex, debouncer, dan logging.</li>
-<li><a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/learn/iOS-Arch/ios/IDSamirLoan/Application/CZNetworkLib" target="_blank" rel="noopener noreferrer">🦊 CZNetworkLib/ <span class="branch-tag">learn/iOS-Arch</span> ↗</a>: Library jaringan warisan (ObjC/AFNetworking).</li>
-</ul>
-<h5 id="item-kategori-b-modul-bisnis-samirmodule">Kategori B: Modul Bisnis (<code>Samir*Module</code>)</h5>
+<li><a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/learn/iOS-Arch/ios/IDSamirLoan/Application/CZSwiftModuleLib" target="_blank" rel="noopener noreferrer">🦊 CZSwiftModuleLib/ <span class="branch-tag">learn/iOS-Arch</span> ↗</a>: Kerangka runtime modular, <code>CZModuleManager</code>, <code>CZAppDelegate</code>, dan lifecycle routing.
+</li>
+<li><a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/learn/iOS-Arch/ios/IDSamirLoan/Application/CZSwiftRouterLib" target="_blank" rel="noopener noreferrer">🦊 CZSwiftRouterLib/ <span class="branch-tag">learn/iOS-Arch</span> ↗</a>: URL Router engine, matcher regex, dan router table.
+</li>
+<li><a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/learn/iOS-Arch/ios/IDSamirLoan/Application/CZSwiftEnviromentLib" target="_blank" rel="noopener noreferrer">🦊 CZSwiftEnviromentLib/ <span class="branch-tag">learn/iOS-Arch</span> ↗</a>: Konfigurasi environment (<code>AppEnv.swift</code>, <code>CZEnvironmentManager</code>).
+</li>
+<li><a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/learn/iOS-Arch/ios/IDSamirLoan/Application/CZSwiftStorageLib" target="_blank" rel="noopener noreferrer">🦊 CZSwiftStorageLib/ <span class="branch-tag">learn/iOS-Arch</span> ↗</a>: Abstraksi cache disk & memory (<code>CZCache</code>).
+</li>
+<li><a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/learn/iOS-Arch/ios/IDSamirLoan/Application/CZSwiftAntiFraudLib" target="_blank" rel="noopener noreferrer">🦊 CZSwiftAntiFraudLib/ <span class="branch-tag">learn/iOS-Arch</span> ↗</a>: Deteksi jailbreak, sidik jari perangkat (<code>CZFpid</code>), dan utilitas anti-fraud.
+</li>
+<li><a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/learn/iOS-Arch/ios/IDSamirLoan/Application/CZSwiftUIKit" target="_blank" rel="noopener noreferrer">🦊 CZSwiftUIKit/ <span class="branch-tag">learn/iOS-Arch</span> ↗</a>: Komponen UI kustom, banner, empty state, dan puluhan ekstensi UIKit.
+</li>
+<li><a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/learn/iOS-Arch/ios/IDSamirLoan/Application/CZSwiftUtils" target="_blank" rel="noopener noreferrer">🦊 CZSwiftUtils/ <span class="branch-tag">learn/iOS-Arch</span> ↗</a>: Helper string, tanggal, regex, debouncer, dan logging.
+</li>
+<li><a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/learn/iOS-Arch/ios/IDSamirLoan/Application/CZNetworkLib" target="_blank" rel="noopener noreferrer">🦊 CZNetworkLib/ <span class="branch-tag">learn/iOS-Arch</span> ↗</a>: Library jaringan warisan (ObjC/AFNetworking).
+</li></ul>
+</div>
+<div class="doc-subpoint-block" id="item-kategori-b-modul-bisnis-samirmodule">
+<h5>Kategori B: Modul Bisnis (<code>Samir*Module</code>)</h5>
 <p>Dibuat dengan prefix <code>Samir</code>, setiap folder merepresentasikan satu domain bisnis mandiri:</p>
 <ul>
-<li><a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/learn/iOS-Arch/ios/IDSamirLoan/Application/SamirMainModule" target="_blank" rel="noopener noreferrer">🦊 SamirMainModule/ <span class="branch-tag">learn/iOS-Arch</span> ↗</a>: Bootstrapping, splash screen, tab bar controller (<code>IDMainTabBarController</code>), konfigurasi global, deep link dispatcher.</li>
-<li><a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/learn/iOS-Arch/ios/IDSamirLoan/Application/SamirLoginModule" target="_blank" rel="noopener noreferrer">🦊 SamirLoginModule/ <span class="branch-tag">learn/iOS-Arch</span> ↗</a>: Layar login OTP SMS/WA, password, verifikasi 2FA, dan manajemen sesi pengguna (<code>IDLoginManager</code>).</li>
-<li><a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/learn/iOS-Arch/ios/IDSamirLoan/Application/SamirAuthModule" target="_blank" rel="noopener noreferrer">🦊 SamirAuthModule/ <span class="branch-tag">learn/iOS-Arch</span> ↗</a>: Alur verifikasi identitas (e-KYC): OCR KTP (<code>IDNewOCRViewController</code>), info dasar, pekerjaan, kontak darurat, rekening bank, dan liveness detection.</li>
-<li><a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/learn/iOS-Arch/ios/IDSamirLoan/Application/SamirLoanModule" target="_blank" rel="noopener noreferrer">🦊 SamirLoanModule/ <span class="branch-tag">learn/iOS-Arch</span> ↗</a>: Halaman Beranda (<code>IDHomeViewController</code>), penilaian kuota kredit (<code>IDQuatoAssessViewController</code>), dan alur konfirmasi pinjaman berbasis RxSwift (<code>LoanConfirmModule/</code>).</li>
-<li><a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/learn/iOS-Arch/ios/IDSamirLoan/Application/SamirRepayModule" target="_blank" rel="noopener noreferrer">🦊 SamirRepayModule/ <span class="branch-tag">learn/iOS-Arch</span> ↗</a>: Host native untuk tab Tagihan (<code>IDRepayViewController</code>) yang mendelegasikan rendering ke Flutter.</li>
-<li><a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/learn/iOS-Arch/ios/IDSamirLoan/Application/SamirMineModule" target="_blank" rel="noopener noreferrer">🦊 SamirMineModule/ <span class="branch-tag">learn/iOS-Arch</span> ↗</a>: Host native untuk tab Saya (<code>IDMineViewController</code>) yang mendelegasikan rendering ke Flutter, plus layar native pengaturan/bantuan.</li>
-<li><a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/learn/iOS-Arch/ios/IDSamirLoan/Application/SamirWebViewModule" target="_blank" rel="noopener noreferrer">🦊 SamirWebViewModule/ <span class="branch-tag">learn/iOS-Arch</span> ↗</a>: Kontainer browser H5 (<code>IDBusinessWebViewController</code>), auto login URL (<code>UnionLoginWebHelper</code>), dan jembatan JavaScript (<code>IDWebViewJsHandler</code>).</li>
-<li><a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/learn/iOS-Arch/ios/IDSamirLoan/Application/SamirNetworkModule" target="_blank" rel="noopener noreferrer">🦊 SamirNetworkModule/ <span class="branch-tag">learn/iOS-Arch</span> ↗</a>: Pipeline HTTP modern berbasis Alamofire, parameter global default (<code>ApiParamsHelper</code>), dan penandatanganan request vendor (<code>LibNetSignGenerator.framework</code>).</li>
-<li><a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/learn/iOS-Arch/ios/IDSamirLoan/Application/SamirPointsModule" target="_blank" rel="noopener noreferrer">🦊 SamirPointsModule/ <span class="branch-tag">learn/iOS-Arch</span> ↗</a>: Abstraksi pelaporan event analitik (Firebase, AppsFlyer, TikTok SDK, custom tracking backend).</li>
-<li><a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/learn/iOS-Arch/ios/IDSamirLoan/Application/SamirRouterModule" target="_blank" rel="noopener noreferrer">🦊 SamirRouterModule/ <span class="branch-tag">learn/iOS-Arch</span> ↗</a>: Konstanta skema URL router (<code>IDRouterConstants</code>) dan fasad pemanggilan (<code>IDRouterManager</code>).</li>
-<li><a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/learn/iOS-Arch/ios/IDSamirLoan/Application/SamirServiceModule" target="_blank" rel="noopener noreferrer">🦊 SamirServiceModule/ <span class="branch-tag">learn/iOS-Arch</span> ↗</a>: Kontrak antarmuka (protokol) untuk komunikasi data lintas modul tanpa tight coupling.</li>
-<li><a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/learn/iOS-Arch/ios/IDSamirLoan/Application/SamirCommonModule" target="_blank" rel="noopener noreferrer">🦊 SamirCommonModule/ <span class="branch-tag">learn/iOS-Arch</span> ↗</a>: Jembatan integrasi Flutter (<code>FlutterEngineManager</code>, <code>FlutterNativeChannel</code>), base class UI, dan konfigurasi umum.</li>
-</ul>
-<h5 id="item-kategori-c-konfigurasi-tooling">Kategori C: Konfigurasi & Tooling</h5>
+<li><a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/learn/iOS-Arch/ios/IDSamirLoan/Application/SamirMainModule" target="_blank" rel="noopener noreferrer">🦊 SamirMainModule/ <span class="branch-tag">learn/iOS-Arch</span> ↗</a>: Bootstrapping, splash screen, tab bar controller (<code>IDMainTabBarController</code>), konfigurasi global, deep link dispatcher.
+</li>
+<li><a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/learn/iOS-Arch/ios/IDSamirLoan/Application/SamirLoginModule" target="_blank" rel="noopener noreferrer">🦊 SamirLoginModule/ <span class="branch-tag">learn/iOS-Arch</span> ↗</a>: Layar login OTP SMS/WA, password, verifikasi 2FA, dan manajemen sesi pengguna (<code>IDLoginManager</code>).
+</li>
+<li><a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/learn/iOS-Arch/ios/IDSamirLoan/Application/SamirAuthModule" target="_blank" rel="noopener noreferrer">🦊 SamirAuthModule/ <span class="branch-tag">learn/iOS-Arch</span> ↗</a>: Alur verifikasi identitas (e-KYC): OCR KTP (<code>IDNewOCRViewController</code>), info dasar, pekerjaan, kontak darurat, rekening bank, dan liveness detection.
+</li>
+<li><a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/learn/iOS-Arch/ios/IDSamirLoan/Application/SamirLoanModule" target="_blank" rel="noopener noreferrer">🦊 SamirLoanModule/ <span class="branch-tag">learn/iOS-Arch</span> ↗</a>: Halaman Beranda (<code>IDHomeViewController</code>), penilaian kuota kredit (<code>IDQuatoAssessViewController</code>), dan alur konfirmasi pinjaman berbasis RxSwift (<code>LoanConfirmModule/</code>).
+</li>
+<li><a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/learn/iOS-Arch/ios/IDSamirLoan/Application/SamirRepayModule" target="_blank" rel="noopener noreferrer">🦊 SamirRepayModule/ <span class="branch-tag">learn/iOS-Arch</span> ↗</a>: Host native untuk tab Tagihan (<code>IDRepayViewController</code>) yang mendelegasikan rendering ke Flutter.
+</li>
+<li><a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/learn/iOS-Arch/ios/IDSamirLoan/Application/SamirMineModule" target="_blank" rel="noopener noreferrer">🦊 SamirMineModule/ <span class="branch-tag">learn/iOS-Arch</span> ↗</a>: Host native untuk tab Saya (<code>IDMineViewController</code>) yang mendelegasikan rendering ke Flutter, plus layar native pengaturan/bantuan.
+</li>
+<li><a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/learn/iOS-Arch/ios/IDSamirLoan/Application/SamirWebViewModule" target="_blank" rel="noopener noreferrer">🦊 SamirWebViewModule/ <span class="branch-tag">learn/iOS-Arch</span> ↗</a>: Kontainer browser H5 (<code>IDBusinessWebViewController</code>), auto login URL (<code>UnionLoginWebHelper</code>), dan jembatan JavaScript (<code>IDWebViewJsHandler</code>).
+</li>
+<li><a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/learn/iOS-Arch/ios/IDSamirLoan/Application/SamirNetworkModule" target="_blank" rel="noopener noreferrer">🦊 SamirNetworkModule/ <span class="branch-tag">learn/iOS-Arch</span> ↗</a>: Pipeline HTTP modern berbasis Alamofire, parameter global default (<code>ApiParamsHelper</code>), dan penandatanganan request vendor (<code>LibNetSignGenerator.framework</code>).
+</li>
+<li><a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/learn/iOS-Arch/ios/IDSamirLoan/Application/SamirPointsModule" target="_blank" rel="noopener noreferrer">🦊 SamirPointsModule/ <span class="branch-tag">learn/iOS-Arch</span> ↗</a>: Abstraksi pelaporan event analitik (Firebase, AppsFlyer, TikTok SDK, custom tracking backend).
+</li>
+<li><a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/learn/iOS-Arch/ios/IDSamirLoan/Application/SamirRouterModule" target="_blank" rel="noopener noreferrer">🦊 SamirRouterModule/ <span class="branch-tag">learn/iOS-Arch</span> ↗</a>: Konstanta skema URL router (<code>IDRouterConstants</code>) dan fasad pemanggilan (<code>IDRouterManager</code>).
+</li>
+<li><a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/learn/iOS-Arch/ios/IDSamirLoan/Application/SamirServiceModule" target="_blank" rel="noopener noreferrer">🦊 SamirServiceModule/ <span class="branch-tag">learn/iOS-Arch</span> ↗</a>: Kontrak antarmuka (protokol) untuk komunikasi data lintas modul tanpa tight coupling.
+</li>
+<li><a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/learn/iOS-Arch/ios/IDSamirLoan/Application/SamirCommonModule" target="_blank" rel="noopener noreferrer">🦊 SamirCommonModule/ <span class="branch-tag">learn/iOS-Arch</span> ↗</a>: Jembatan integrasi Flutter (<code>FlutterEngineManager</code>, <code>FlutterNativeChannel</code>), base class UI, dan konfigurasi umum.
+</li></ul>
+</div>
+<div class="doc-subpoint-block" id="item-kategori-c-konfigurasi-tooling">
+<h5>Kategori C: Konfigurasi & Tooling</h5>
 <ul>
-<li><a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/learn/iOS-Arch/ios/IDSamirLoan/Application/Configuration/Module/IDModuleList.plist" target="_blank" rel="noopener noreferrer">🦊 Configuration/Module/IDModuleList.plist <span class="branch-tag">learn/iOS-Arch</span> ↗</a>: Daftar 6 modul runtime terdaftar.</li>
-<li><a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/learn/iOS-Arch/ios/IDSamirLoan/Application/Configuration/Module/IDServiceList.plist" target="_blank" rel="noopener noreferrer">🦊 Configuration/Module/IDServiceList.plist <span class="branch-tag">learn/iOS-Arch</span> ↗</a>: Daftar 4 handler protokol layanan.</li>
-<li><a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/learn/iOS-Arch/ios/IDSamirLoan/Application/Configuration/Environment/app_environment.sh" target="_blank" rel="noopener noreferrer">🦊 Configuration/Environment/app_environment.sh <span class="branch-tag">learn/iOS-Arch</span> ↗</a>: Skrip pembangun makro preprocessor <code>environment_preprocess.h</code>.</li>
-<li><a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/learn/iOS-Arch/ios/IDSamirLoan/Application/Debug" target="_blank" rel="noopener noreferrer">🦊 Debug/ <span class="branch-tag">learn/iOS-Arch</span> ↗</a>: Tooling in-app debug (<code>DebugUI.swift</code>, <code>DebugListViewController.swift</code>).</li>
-</ul>
+<li><a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/learn/iOS-Arch/ios/IDSamirLoan/Application/Configuration/Module/IDModuleList.plist" target="_blank" rel="noopener noreferrer">🦊 Configuration/Module/IDModuleList.plist <span class="branch-tag">learn/iOS-Arch</span> ↗</a>: Daftar 6 modul runtime terdaftar.
+</li>
+<li><a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/learn/iOS-Arch/ios/IDSamirLoan/Application/Configuration/Module/IDServiceList.plist" target="_blank" rel="noopener noreferrer">🦊 Configuration/Module/IDServiceList.plist <span class="branch-tag">learn/iOS-Arch</span> ↗</a>: Daftar 4 handler protokol layanan.
+</li>
+<li><a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/learn/iOS-Arch/ios/IDSamirLoan/Application/Configuration/Environment/app_environment.sh" target="_blank" rel="noopener noreferrer">🦊 Configuration/Environment/app_environment.sh <span class="branch-tag">learn/iOS-Arch</span> ↗</a>: Skrip pembangun makro preprocessor <code>environment_preprocess.h</code>.
+</li>
+<li><a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/learn/iOS-Arch/ios/IDSamirLoan/Application/Debug" target="_blank" rel="noopener noreferrer">🦊 Debug/ <span class="branch-tag">learn/iOS-Arch</span> ↗</a>: Tooling in-app debug (<code>DebugUI.swift</code>, <code>DebugListViewController.swift</code>).
+</li></ul>
+</div>
 <div id="sub-4-struktur-modul-flutter-flutterlib" class="doc-subsection">
 <h4>4. Struktur Modul Flutter (<code>flutter/lib/</code>)</h4>
 </div>
@@ -202,67 +235,214 @@
 <h3>🪜 E. Step-by-Step Walkthrough: Konvensi Penempatan File Baru</h3>
 <p>Jika Anda diminta membuat fitur atau layar baru di SAMIR iOS, ikuti aturan folder berikut:</p>
 <ol>
-<li><strong>Tentukan Modul Pemilik</strong>:</li>
-</ol>
+<li><strong>Tentukan Modul Pemilik</strong>:
 <ul>
-<li>Jika fitur berkaitan dengan pinjaman, tempatkan di bawah <code>SamirLoanModule</code>.</li>
-<li>Jika fitur verifikasi data user, tempatkan di bawah <code>SamirAuthModule</code>.</li>
-</ul>
-<ol>
-<li><strong>Gunakan Subfolder Konvensional</strong>:</li>
-</ol>
+<li>Jika fitur berkaitan dengan pinjaman, tempatkan di bawah <code>SamirLoanModule</code>.
+</li>
+<li>Jika fitur verifikasi data user, tempatkan di bawah <code>SamirAuthModule</code>.
+</li></ul>
+</li>
+<li><strong>Gunakan Subfolder Konvensional</strong>:
 <ul>
-<li><code>Classes/IDController/</code>: Tempat file <code>UIViewController</code> (contoh: <code>IDNewLoanHistoryViewController.swift</code>).</li>
-<li><code>Classes/IDPresenter/</code>: Tempat business logic & koordinasi data.</li>
-<li><code>Classes/IDService/</code>: Tempat network service pemanggil API.</li>
-<li><code>Classes/IDModel/</code>: Tempat struct/class data model KakaJSON.</li>
-<li><code>Classes/IDView/</code>: Tempat UIView kustom, tableview cell, popup view.</li>
-</ul>
-<ol>
-<li><strong>Simpan File di Filesystem</strong>:</li>
-</ol>
+<li><code>Classes/IDController/</code>: Tempat file <code>UIViewController</code> (contoh: <code>IDNewLoanHistoryViewController.swift</code>).
+</li>
+<li><code>Classes/IDPresenter/</code>: Tempat business logic & koordinasi data.
+</li>
+<li><code>Classes/IDService/</code>: Tempat network service pemanggil API.
+</li>
+<li><code>Classes/IDModel/</code>: Tempat struct/class data model KakaJSON.
+</li>
+<li><code>Classes/IDView/</code>: Tempat UIView kustom, tableview cell, popup view.
+</li></ul>
+</li>
+<li><strong>Simpan File di Filesystem</strong>:
 <ul>
-<li>Karena proyek ini menggunakan format <strong>Xcode 16 Synchronized Groups</strong>, Anda cukup membuat file di folder tersebut. Xcode akan otomatis mendeteksi file baru saat kompilasi berikutnya tanpa perlu "Add Files to IDSamirLoan" secara manual.</li>
-</ul>
+<li>Karena proyek ini menggunakan format <strong>Xcode 16 Synchronized Groups</strong>, Anda cukup membuat file di folder tersebut. Xcode akan otomatis mendeteksi file baru saat kompilasi berikutnya tanpa perlu "Add Files to IDSamirLoan" secara manual.
+</li></ul>
+</li></ol>
 </section>
 <section id="sec-why" class="doc-section">
-<h3>⚖️ F. Why It Matters (Keuntungan Arsitektur Folder Ini)</h3>
+<h3>⚖️ F. Why It Matters (Keuntungan Arsitektur Folder Ini & Xcode 16 Synchronized Groups)</h3>
+<div id="sub-1-isolasi-domain-bisnis" class="doc-subsection">
+<h4>1. Isolasi Domain Bisnis</h4>
+</div>
+<p>Setiap modul bisnis berdiri sendiri (<code>SamirLoanModule</code>, <code>SamirAuthModule</code>, dll.). Developer yang sedang mengembangkan alur verifikasi identitas (e-KYC) di modul Auth tidak akan sengaja menyentuh atau memicu konflik pada file milik modul Pinjaman atau Tagihan.</p>
+<div id="sub-2-deep-dive-xcode-16-synchronized-groups-vs-traditional-groups" class="doc-subsection">
+<h4>2. Deep Dive: Xcode 16 Synchronized Groups vs Traditional Groups</h4>
+</div>
+<p>Salah satu evolusi arsitektur paling signifikan pada proyek SAMIR iOS adalah adopsi <strong>Xcode 16 Synchronized Groups</strong> (<code>PBXFileSystemSynchronizedRootGroup</code>).</p>
+<div class="doc-subpoint-block" id="item-a-konsep-cara-kerjanya-under-the-hood">
+<h5>A. Konsep & Cara Kerjanya (Under the Hood)</h5>
+<p>Sebelum Xcode 16, manajemen file di Xcode terkenal kaku dan sering menjadi penyebab utama <em>merge conflict</em>:</p>
+
+<div class="mermaid-interactive-card">
+  <div class="mermaid-card-toolbar">
+    <span class="title">📊 Diagram Alur #1</span>
+    <button class="mermaid-zoom-trigger" onclick="openDiagramZoom('diag-1', 'Diagram Alur #1')">🔍 Perbesar Diagram</button>
+  </div>
+  <div class="mermaid-content-wrapper" id="diag-1">
+    <div class="mermaid">
+graph TD
+    subgraph Cara_Lama ["Cara Tradisional (Xcode <= 15)"]
+        FL1["File Fisik di Disk (LoginView.swift)"] -.->|Dicatat manual satu per satu| PBX1["project.pbxproj"]
+        PBX1 --> REF["PBXFileReference (UUID)"]
+        PBX1 --> BUILD["PBXBuildFile (UUID)"]
+        PBX1 --> PHASE["PBXSourcesBuildPhase (Compile List)"]
+    end
+
+    subgraph Cara_Baru ["Xcode 16 Synchronized Groups"]
+        FL2["Folder Fisik di Disk (/IDSamirLoan/)"] -->|Cukup daftarkan 1 Root Folder| PBX2["project.pbxproj"]
+        PBX2 --> SYNC["PBXFileSystemSynchronizedRootGroup"]
+        SYNC -.->|Xcode otomatis scan isi folder| COMP["Compiler (swiftc / Clang)"]
+    end
+    </div>
+  </div>
+</div>
+<ol>
+<li><strong>Cara Lama (Traditional Groups: <code>PBXGroup</code> & <code>PBXFileReference</code>):</strong>
 <ul>
-<li><strong>Menghindari Konflik Merge (Git Merge Conflicts)</strong>:</li>
-</ul>
-<p>Dengan format grup tersinkronisasi Xcode 16 (<code>PBXFileSystemSynchronizedRootGroup</code>), file <code>project.pbxproj</code> tidak lagi mencatat setiap penambahan file Swift baru. Ini mengeliminasi 90% konflik git saat bekerja dalam tim besar!</p>
+<li>Setiap file baru yang ditambahkan harus memiliki entri UUID unik di berkas <code>project.pbxproj</code>:
 <ul>
-<li><strong>Isolasi Domain Bisnis</strong>:</li>
-</ul>
-<p>Setiap modul berdiri sendiri. Developer yang sedang mengerjakan modul Auth tidak akan sengaja menyentuh file milik modul Repay.</p>
+<li><code>PBXFileReference</code>: Catatan keberadaan file dan jalurnya.
+</li>
+<li><code>PBXBuildFile</code>: Catatan bahwa file ini harus dibangun oleh build system.
+</li>
+<li><code>PBXSourcesBuildPhase</code>: Daftar urutan kompilasi target.
+</li></ul>
+</li>
+<li><strong>Masalah:</strong> Jika Developer A membuat <code>LoginView.swift</code> di cabangnya, dan Developer B membuat <code>RegisterView.swift</code> di cabangnya, saat kedua branch di-<em>merge</em>, berkas <code>project.pbxproj</code> hampir pasti mengalami <strong>Git Merge Conflict</strong> karena keduanya mengedit baris yang sama.
+</li></ul>
+</li>
+<li><strong>Cara Baru: Xcode 16 Synchronized Groups (<code>PBXFileSystemSynchronizedRootGroup</code>):</strong>
+<ul>
+<li>Diperkenalkan di Xcode 16 (<code>objectVersion = 73</code>).
+</li>
+<li>Xcode tidak lagi mencatat file satu per satu. Cukup mendaftarkan 1 referensi folder root di filesystem.
+</li>
+<li>Semua file <code>.swift</code>, <code>.m</code>, atau asset di dalam folder tersebut <strong>secara otomatis diikutsertakan ke dalam proses kompilasi target</strong>.
+</li>
+<li><strong>Bukti Nyata di Repositori SAMIR:</strong> Dapat dilihat pada <a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/learn/iOS-Arch/ios/IDSamirLoan.xcodeproj/project.pbxproj" target="_blank" rel="noopener noreferrer">🦊 ios/IDSamirLoan.xcodeproj/project.pbxproj <span class="branch-tag">learn/iOS-Arch</span> ↗</a>:
+</li></ul>
+</li></ol>
+<pre><code class="language-ruby">     /* Begin PBXFileSystemSynchronizedRootGroup section */
+     9E587E972F63ED4E000284C3 /* IDSamirLoan */ = {
+         isa = PBXFileSystemSynchronizedRootGroup; 
+         exceptions = (
+             9E58819D2F63ED4E000284C3 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, 
+             9E58819E2F63ED4E000284C3 /* PBXFileSystemSynchronizedGroupBuildPhaseMembershipExceptionSet */, 
+         ); 
+         path = IDSamirLoan; 
+         sourceTree = &quot;&lt;group&gt;&quot;; 
+     };
+     /* End PBXFileSystemSynchronizedRootGroup section */</code></pre>
+<ul>
+<li>*<em>Pengecualian File Non-Kompilasi (</em>Exception Sets<em>):</em>* File yang tidak boleh dikompilasi (seperti <code>Info.plist</code>, script <code>.sh</code>, atau dynamic framework) dicatat secara ringkas dalam <code>PBXFileSystemSynchronizedBuildFileExceptionSet</code>:
+</li></ul>
+<pre><code class="language-ruby">     membershipExceptions = (
+         Application/Configuration/Environment/app_environment.sh,
+         &quot;Application/IDSamirLoan-Info.plist&quot;,
+     );</code></pre>
+</div>
+<div class="doc-subpoint-block" id="item-b-cara-mengimplementasikannya-adopsi-di-xcode-16">
+<h5>B. Cara Mengimplementasikannya (Adopsi di Xcode 16)</h5>
+<ol>
+<li><strong>Konversi Group Lama ke Synchronized Group:</strong>
+<ul>
+<li>Di <strong>Project Navigator</strong> Xcode (panel kiri), klik kanan pada Group (folder kuning) yang ada.
+</li>
+<li>Pilih menu <strong>"Convert to Synchronized Group..."</strong>.
+</li>
+<li>Pilih folder fisik di disk yang ingin dijadikan sumber sinkronisasi.
+</li>
+<li>Ikon folder akan berubah menjadi ikon folder dengan simbol <strong>panah sinkronisasi</strong>.
+</li></ul>
+</li>
+<li><strong>Membuat Synchronized Group Baru:</strong>
+<ul>
+<li>Cukup <em>drag and drop</em> folder dari Finder langsung ke dalam Project Navigator di Xcode 16.
+</li>
+<li>Pilih opsi <strong>"Create Synchronized Group"</strong>.
+</li></ul>
+</li>
+<li>*<em>Mengatur Pengecualian (</em>Exceptions<em>):</em>*
+<ul>
+<li>Jika ada file di folder tersebut yang tidak ingin dikompilasi (misal dokumentasi <code>.md</code> atau skrip utilitas):
+<ul>
+<li>Klik file tersebut di Xcode -> buka <strong>File Inspector</strong> (panel kanan / <code>Cmd+Option+1</code>).
+</li>
+<li>Pada bagian <strong>Target Membership</strong>, hapus centang target aplikasi. Xcode otomatis mendaftarkannya ke exception set.
+</li></ul>
+</li></ul>
+</li></ol>
+</div>
+<div class="doc-subpoint-block" id="item-c-jika-ingin-memakai-kembali-ke-cara-lama-traditional-groups">
+<h5>C. Jika Ingin Memakai / Kembali ke Cara Lama (Traditional Groups)</h5>
+<p>Jika ingin membatalkan (<em>revert</em>) atau bekerja menggunakan metode lama:</p>
+<ol>
+<li><strong>Mengembalikan Group:</strong>
+<ul>
+<li>Klik kanan pada Synchronized Group di Project Navigator.
+</li>
+<li>Pilih opsi <strong>"Convert to Group..."</strong> (atau <em>"Revert to Group"</em>).
+</li>
+<li>Xcode akan mengekstrak seluruh file fisik di folder tersebut dan menuliskan kembali ribuan baris <code>PBXFileReference</code> dan <code>PBXBuildFile</code> ke dalam <code>project.pbxproj</code>.
+</li></ul>
+</li>
+<li><strong>Aturan Penambahan File Cara Lama:</strong>
+<ul>
+<li>Setiap file baru wajib ditambahkan lewat Xcode: <strong>File -> Add Files to "IDSamirLoan"...</strong>.
+</li>
+<li>Wajib mencentang opsi <strong>"Copy items if needed"</strong> dan mencentang <strong>Target Membership</strong>.
+</li>
+<li>File baru yang dibuat lewat Terminal atau editor luar (VS Code/Antigravity) <strong>tidak akan terkompilasi</strong> sampai di-link manual di Xcode.
+</li></ul>
+</li></ol>
+</div>
+<div class="doc-subpoint-block" id="item-d-analisis-trade-off-synchronized-groups-vs-cara-lama">
+<h5>D. Analisis Trade-off: Synchronized Groups vs Cara Lama</h5>
+<div class="table-container"><table class="data-table"><thead><tr><th>Aspek</th><th>Xcode 16 Synchronized Groups (Modern)</th><th>Traditional Groups (Cara Lama)</th></tr></thead><tbody><tr><td><strong>Git Merge Conflicts</strong></td><td>🟢 <strong>Hampir 0% konflik</strong> di <code>project.pbxproj</code>. Menambah atau menghapus 50 file baru tidak mengubah <code>project.pbxproj</code>.</td><td>🔴 <strong>Sering konflik parah</strong> saat 2 developer menambah file baru secara bersamaan di branch berbeda.</td></tr><tr><td><strong>Kesesuaian Filesystem</strong></td><td>🟢 <strong>100% Cermin Nyata</strong>. Susunan di Project Navigator Xcode identik dengan struktur fisik di Finder/disk.</td><td>🟡 Folder di Xcode adalah grup virtual; lokasi fisik di disk bisa tercecer dan membingungkan.</td></tr><tr><td><strong>Otomasi & Tooling Luar</strong></td><td>🟢 Sangat ramah IDE eksternal (Antigravity IDE, Cursor, VS Code, script generator). Cukup <code>touch MyFile.swift</code>, file langsung terdaftar.</td><td>🔴 File baru dari luar Xcode tidak akan terkompilasi kecuali di-link manual via GUI Xcode atau tool generator.</td></tr><tr><td><strong>Kompatibilitas Versi Xcode</strong></td><td>🔴 <strong>Wajib Xcode 16+</strong>. Anggota tim atau CI/CD runner yang masih menggunakan Xcode 15 ke bawah tidak dapat membuka proyek (<code>objectVersion 73</code>).</td><td>🟢 Kompatibel dengan seluruh versi Xcode terdahulu.</td></tr><tr><td><strong>Risiko File Sampah (Drafts)</strong></td><td>🟡 <strong>Rentan terkompilasi tidak sengaja</strong>. Jika membuat file backup <code>Test.swift.bak</code> di dalam folder, compiler akan mencoba mengompilasinya kecuali di-ignore.</td><td>🟢 Aman dari file sampah lokal, karena hanya file yang di-link eksplisit yang dikompilasi.</td></tr><tr><td><strong>Fleksibilitas Multi-Target</strong></td><td>🟡 Default-nya semua file dalam folder masuk ke target yang sama. Perlu konfigurasi <em>Exception</em> jika ingin memisah target secara granular.</td><td>🟢 Fleksibel memilih target per-file secara bebas lewat GUI Target Membership.</td></tr></tbody></table></div>
+</div>
+<div class="doc-subpoint-block" id="item-e-kesimpulan-rekomendasi-tim-samir">
+<h5>E. Kesimpulan & Rekomendasi Tim SAMIR</h5>
+<p>Penerapan Synchronized Groups di target <code>IDSamirLoan</code> mempercepat kecepatan pengembangan secara signifikan (<em>developer velocity</em>), mengeliminasi <em>conflict resolution</em> yang berisiko merusak struktur project, dan mendukung alur kerja modern berbasis AI Agent serta multi-editor.</p>
+</div>
 </section>
 <section id="sec-example" class="doc-section">
 <h3>🔬 G. Practical Example (Studi Kasus)</h3>
 <p>Mari kita lihat file <a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/learn/iOS-Arch/ios/IDSamirLoan/Application/SamirLoanModule/Classes/IDController/IDHomeViewController.swift" target="_blank" rel="noopener noreferrer">🦊 ios/IDSamirLoan/Application/SamirLoanModule/Classes/IDController/IDHomeViewController.swift <span class="branch-tag">learn/iOS-Arch</span> ↗</a>.</p>
 <p>File ini terbagi menjadi beberapa file extension dalam folder yang sama:</p>
 <ul>
-<li><code>IDHomeViewController.swift</code> (~45 KB) — logika controller utama.</li>
-<li><code>IDHomeViewController+Popup.swift</code> (~36 KB) — penanganan popup banner & dialog.</li>
-<li><code>IDHomeViewController+Deeplink.swift</code> (~5.6 KB) — penanganan navigasi deep link dari push/banner.</li>
-</ul>
+<li><code>IDHomeViewController.swift</code> (~45 KB) — logika controller utama.
+</li>
+<li><code>IDHomeViewController+Popup.swift</code> (~36 KB) — penanganan popup banner & dialog.
+</li>
+<li><code>IDHomeViewController+Deeplink.swift</code> (~5.6 KB) — penanganan navigasi deep link dari push/banner.
+</li></ul>
 <p>Pemisahan file dengan extension membantu merapikan ViewController yang berukuran masif (monolitik).</p>
 </section>
 <section id="sec-mistakes" class="doc-section">
 <h3>⚠️ H. Common Mistakes & Debugging</h3>
 <ul>
-<li><strong>Salah Folder Modul</strong>: Meletakkan file controller baru langsung di root folder <code>Application/</code>.</li>
-<li><strong>Dampak</strong>: Merusak kerapian modularisasi dan menyulitkan pencarian kepemilikan kode.</li>
-<li><strong>Nama File Mirip di Folder Berbeda</strong>: Terdapat beberapa file historis dengan nama serupa (contoh: <code>IDAuthLiveViewController.swift</code> di <code>SamirAuthModule/Classes/IDViewController</code> vs file di <code>IDViewControllerV2</code>).</li>
-<li><strong>Cara Menghindari</strong>: Selalu periksa folder <code>IDViewControllerV2</code> untuk implementasi aktif terbaru.</li>
-</ul>
+<li><strong>Salah Folder Modul</strong>: Meletakkan file controller baru langsung di root folder <code>Application/</code>.
+<ul>
+<li><strong>Dampak</strong>: Merusak kerapian modularisasi dan menyulitkan pencarian kepemilikan kode.
+</li></ul>
+</li>
+<li><strong>Nama File Mirip di Folder Berbeda</strong>: Terdapat beberapa file historis dengan nama serupa (contoh: <code>IDAuthLiveViewController.swift</code> di <code>SamirAuthModule/Classes/IDViewController</code> vs file di <code>IDViewControllerV2</code>).
+<ul>
+<li><strong>Cara Menghindari</strong>: Selalu periksa folder <code>IDViewControllerV2</code> untuk implementasi aktif terbaru.
+</li></ul>
+</li></ul>
 </section>
 <section id="sec-check" class="doc-section">
 <h3>🧠 I. Knowledge Check</h3>
 <ol>
-<li>Di mana letak file <code>Podfile</code> dan file <code>main.swift</code> dalam struktur repositori?</li>
-<li>Sebutkan 3 pustaka fondasi internal dengan prefix <code>CZ</code> dan fungsinya masing-masing!</li>
-<li>Mengapa penambahan file baru ke dalam folder <code>Application/SamirLoanModule/</code> otomatis terbaca oleh Xcode 16?</li>
-</ol>
+<li>Di mana letak file <code>Podfile</code> dan file <code>main.swift</code> dalam struktur repositori?
+</li>
+<li>Sebutkan 3 pustaka fondasi internal dengan prefix <code>CZ</code> dan fungsinya masing-masing!
+</li>
+<li>Mengapa penambahan file baru ke dalam folder <code>Application/SamirLoanModule/</code> otomatis terbaca oleh Xcode 16?
+</li></ol>
 <p><strong>Latihan Observasi</strong>:</p>
 <p>Jalankan pencarian nama folder <code>LoanConfirmModule</code> di dalam <code>SamirLoanModule</code>. Perhatikan bahwa modul ini memiliki subfolder <code>Controllers/</code>, <code>ViewModels/</code>, <code>Views/</code>, <code>Services/</code>, dan <code>Models/</code> tersendiri di dalam modul pinjaman.</p>
 </section>
@@ -467,9 +647,21 @@ public final class AppSessionManager: SessionProvider {
             <span class="toc-leaf-dot"></span>
             <a class="toc-tree-link" href="#sec-walkthrough">E. Step-by-Step Walkthrough: Konvensi Penempatan File Baru</a>
           </div>
-          <div class="toc-node-row">
-            <span class="toc-leaf-dot"></span>
-            <a class="toc-tree-link" href="#sec-why">F. Why It Matters (Keuntungan Arsitektur Folder Ini)</a>
+          <div class="toc-tree-node" id="toc-node-sec-why">
+            <div class="toc-node-row">
+              <span class="toc-caret" onclick="toggleTocBranch(this)">▾</span>
+              <a class="toc-tree-link" href="#sec-why">F. Why It Matters (Keuntungan Arsitektur Folder Ini &amp; Xcode 16 Synchronized Groups)</a>
+            </div>
+            <div class="toc-branch">
+              <div class="toc-node-row">
+                <span class="toc-leaf-dot"></span>
+                <a class="toc-tree-link" href="#sub-1-isolasi-domain-bisnis">1. Isolasi Domain Bisnis</a>
+              </div>
+              <div class="toc-node-row">
+                <span class="toc-leaf-dot"></span>
+                <a class="toc-tree-link" href="#sub-2-deep-dive-xcode-16-synchronized-groups-vs-traditional-groups">2. Deep Dive: Xcode 16 Synchronized Groups vs Traditional Groups</a>
+              </div>
+            </div>
           </div>
           <div class="toc-node-row">
             <span class="toc-leaf-dot"></span>
@@ -575,9 +767,21 @@ public final class AppSessionManager: SessionProvider {
           <span class="toc-leaf-dot"></span>
           <a class="toc-tree-link" href="#sec-walkthrough" onclick="toggleMobileToc()">E. Step-by-Step Walkthrough: Konvensi Penempatan File Baru</a>
         </div>
-        <div class="toc-node-row">
-          <span class="toc-leaf-dot"></span>
-          <a class="toc-tree-link" href="#sec-why" onclick="toggleMobileToc()">F. Why It Matters (Keuntungan Arsitektur Folder Ini)</a>
+        <div class="toc-tree-node" id="mob-toc-node-sec-why">
+          <div class="toc-node-row">
+            <span class="toc-caret" onclick="toggleTocBranch(this)">▾</span>
+            <a class="toc-tree-link" href="#sec-why" onclick="toggleMobileToc()">F. Why It Matters (Keuntungan Arsitektur Folder Ini &amp; Xcode 16 Synchronized Groups)</a>
+          </div>
+          <div class="toc-branch">
+            <div class="toc-node-row">
+              <span class="toc-leaf-dot"></span>
+              <a class="toc-tree-link" href="#sub-1-isolasi-domain-bisnis" onclick="toggleMobileToc()">1. Isolasi Domain Bisnis</a>
+            </div>
+            <div class="toc-node-row">
+              <span class="toc-leaf-dot"></span>
+              <a class="toc-tree-link" href="#sub-2-deep-dive-xcode-16-synchronized-groups-vs-traditional-groups" onclick="toggleMobileToc()">2. Deep Dive: Xcode 16 Synchronized Groups vs Traditional Groups</a>
+            </div>
+          </div>
         </div>
         <div class="toc-node-row">
           <span class="toc-leaf-dot"></span>
@@ -916,7 +1120,7 @@ public final class AppSessionManager: SessionProvider {
       }
     } catch (e) {}
 
-    const sectionIds = ['sec-title', 'sec-obj', 'sec-prereq', 'sec-simple', 'sec-actual', 'sub-1-root-direktori-repositori', 'sub-2-isi-direktori-ios', 'sub-3-arsitektur-folder-iosidsamirloanapplication', 'sub-4-struktur-modul-flutter-flutterlib', 'sec-walkthrough', 'sec-why', 'sec-example', 'sec-mistakes', 'sec-check', 'sec-completion', 'sub-solid', 'sub-blueprint', 'sub-quiz'];
+    const sectionIds = ['sec-title', 'sec-obj', 'sec-prereq', 'sec-simple', 'sec-actual', 'sub-1-root-direktori-repositori', 'sub-2-isi-direktori-ios', 'sub-3-arsitektur-folder-iosidsamirloanapplication', 'sub-4-struktur-modul-flutter-flutterlib', 'sec-walkthrough', 'sec-why', 'sub-1-isolasi-domain-bisnis', 'sub-2-deep-dive-xcode-16-synchronized-groups-vs-traditional-groups', 'sec-example', 'sec-mistakes', 'sec-check', 'sec-completion', 'sub-solid', 'sub-blueprint', 'sub-quiz'];
     const tocLinks = document.querySelectorAll('.toc-tree-link');
 
     window.addEventListener('scroll', () => {

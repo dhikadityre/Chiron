@@ -105,11 +105,14 @@
 <h3>🎯 A. Learning Objective</h3>
 <p>Setelah menyelesaikan dokumen ini, pembaca akan mampu:</p>
 <ol>
-<li>Menjelaskan 4 tingkatan manajemen state yang diterapkan pada modul Flutter SAMIR.</li>
-<li>Memahami peran <code>Global</code> sebagai toko status memori runtime (<em>in-memory session cache</em>).</li>
-<li>Menjelaskan keunggulan penggunaan <code>ValueNotifier</code> pada <code>FlutterRootController</code> dibandingkan paket state management pihak ketiga yang berat.</li>
-<li>Memahami justifikasi arsitektur mengapa modul Flutter SAMIR tidak menggunakan SharedPreferences atau SQLite lokal.</li>
-</ol>
+<li>Menjelaskan 4 tingkatan manajemen state yang diterapkan pada modul Flutter SAMIR.
+</li>
+<li>Memahami peran <code>Global</code> sebagai toko status memori runtime (<em>in-memory session cache</em>).
+</li>
+<li>Menjelaskan keunggulan penggunaan <code>ValueNotifier</code> pada <code>FlutterRootController</code> dibandingkan paket state management pihak ketiga yang berat.
+</li>
+<li>Memahami justifikasi arsitektur mengapa modul Flutter SAMIR tidak menggunakan SharedPreferences atau SQLite lokal.
+</li></ol>
 </section>
 <section id="sec-prereq" class="doc-section">
 <h3>📋 B. Prerequisites</h3>
@@ -119,12 +122,16 @@
 <h3>💡 C. Simple Explanation (Analogi & Konsep Sederhana)</h3>
 <p>Bayangkan sebuah hotel berbintang dengan terminal komputer di setiap kamar:</p>
 <ul>
-<li><strong>Komputer di Kamar (Modul Flutter)</strong>: Memiliki memori RAM cepat untuk menampilkan tagihan minibar dan suhu AC saat tamu berada di kamar.</li>
-<li>Namun, komputer kamar tidak memiliki hard disk penyimpanan permanen.</li>
-<li>Jika tamu check-out atau listrik hotel dipadamkan, seluruh data kamar langsung bersih tanpa meninggalkan jejak.</li>
-<li>Seluruh arsip identitas KTP dan nomor kartu kredit nasabah tersimpan aman di server pusat brankas hotel (<strong>Native Host Keychain</strong>).</li>
-<li>Pendekatan ini menjamin bahwa data tamu lama tidak akan pernah bisa diintip oleh tamu berikutnya yang menginap di kamar tersebut.</li>
-</ul>
+<li><strong>Komputer di Kamar (Modul Flutter)</strong>: Memiliki memori RAM cepat untuk menampilkan tagihan minibar dan suhu AC saat tamu berada di kamar.
+</li>
+<li>Namun, komputer kamar tidak memiliki hard disk penyimpanan permanen.
+</li>
+<li>Jika tamu check-out atau listrik hotel dipadamkan, seluruh data kamar langsung bersih tanpa meninggalkan jejak.
+</li>
+<li>Seluruh arsip identitas KTP dan nomor kartu kredit nasabah tersimpan aman di server pusat brankas hotel (<strong>Native Host Keychain</strong>).
+</li>
+<li>Pendekatan ini menjamin bahwa data tamu lama tidak akan pernah bisa diintip oleh tamu berikutnya yang menginap di kamar tersebut.
+</li></ul>
 </section>
 <section id="sec-actual" class="doc-section">
 <h3>💻 D. Actual Implementation (Bukti di Kode Sumber)</h3>
@@ -154,27 +161,32 @@
 </div>
 <p>Pada <a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/learn/Flutter-Arch/flutter/lib/common/global.dart" target="_blank" rel="noopener noreferrer">🦊 flutter/lib/common/global.dart <span class="branch-tag">learn/Flutter-Arch</span> ↗</a>:</p>
 <ul>
-<li>Menggunakan variabel statis (<code>static String? mid</code>).</li>
-<li>Keunggulan: Akses synchronous berkecepatan tinggi tanpa overhead <code>async/await</code> setiap kali nilai dibaca di <code>param_utils.dart</code>.</li>
-<li>Siklus hidup: Terikat langsung pada lifecycle proses Dart VM yang dikelola oleh <code>FlutterEngine</code>.</li>
-</ul>
+<li>Menggunakan variabel statis (<code>static String? mid</code>).
+</li>
+<li>Keunggulan: Akses synchronous berkecepatan tinggi tanpa overhead <code>async/await</code> setiap kali nilai dibaca di <code>param_utils.dart</code>.
+</li>
+<li>Siklus hidup: Terikat langsung pada lifecycle proses Dart VM yang dikelola oleh <code>FlutterEngine</code>.
+</li></ul>
 <div id="sub-3-tingkat-2-reaktivitas-ringan-dengan-valuenotifier" class="doc-subsection">
 <h4>3. Tingkat 2: Reaktivitas Ringan dengan <code>ValueNotifier</code></h4>
 </div>
 <p>Pada <a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/learn/Flutter-Arch/flutter/lib/common/router/flutter_root_controller.dart" target="_blank" rel="noopener noreferrer">🦊 flutter/lib/common/router/flutter_root_controller.dart <span class="branch-tag">learn/Flutter-Arch</span> ↗</a>:</p>
 <ul>
-<li><code>static final ValueNotifier&lt;String?&gt; selectedPath = ValueNotifier&lt;String?&gt;(null);</code></li>
-<li>Hanya membutuhkan 1 listener di <code>_FlutterRootPageState</code>.</li>
-<li>Menghilangkan kebutuhan pustaka seperti <code>Provider</code>, <code>Riverpod</code>, atau <code>Bloc</code> yang memerlukan pembungkus kompleks di widget tree.</li>
-</ul>
+<li><code>static final ValueNotifier&lt;String?&gt; selectedPath = ValueNotifier&lt;String?&gt;(null);</code>
+</li>
+<li>Hanya membutuhkan 1 listener di <code>_FlutterRootPageState</code>.
+</li>
+<li>Menghilangkan kebutuhan pustaka seperti <code>Provider</code>, <code>Riverpod</code>, atau <code>Bloc</code> yang memerlukan pembungkus kompleks di widget tree.
+</li></ul>
 <div id="sub-4-tingkat-3-broadcast-signals-flutternativepagesignal" class="doc-subsection">
 <h4>4. Tingkat 3: Broadcast Signals (<code>FlutterNativePageSignal</code>)</h4>
 </div>
 <p>Pada <a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/learn/Flutter-Arch/flutter/lib/common/platform/flutter_native_page_signal.dart" target="_blank" rel="noopener noreferrer">🦊 flutter/lib/common/platform/flutter_native_page_signal.dart <span class="branch-tag">learn/Flutter-Arch</span> ↗</a>:</p>
 <ul>
-<li>Menggunakan <code>StreamController&lt;void&gt;.broadcast()</code>.</li>
-<li>Mengizinkan pemanggilan <code>refreshMineHome()</code> dari thread method channel tanpa perlu referensi ke <code>BuildContext</code> atau instance widget.</li>
-</ul>
+<li>Menggunakan <code>StreamController&lt;void&gt;.broadcast()</code>.
+</li>
+<li>Mengizinkan pemanggilan <code>refreshMineHome()</code> dari thread method channel tanpa perlu referensi ke <code>BuildContext</code> atau instance widget.
+</li></ul>
 <div id="sub-5-mengapa-zero-local-persistence-di-flutter" class="doc-subsection">
 <h4>5. Mengapa Zero Local Persistence di Flutter?</h4>
 </div>
@@ -228,36 +240,41 @@ sequenceDiagram
 <section id="sec-why" class="doc-section">
 <h3>⚖️ F. Why It Matters (Trade-Offs & Implikasi Teknis)</h3>
 <ul>
-<li><strong>Menghindari Bug "Zombie Session"</strong>:</li>
-</ul>
+<li><strong>Menghindari Bug "Zombie Session"</strong>:
+</li></ul>
 <p>Di banyak aplikasi hybrid yang menyimpan token di SharedPreferences Flutter, nasabah yang telah logout di modul native sering kali mendapati halaman Flutter masih menampilkan nama nasabah lama saat tab dibuka kembali (<em>zombie session</em>). Dengan pola in-memory hidrasi SAMIR, status login diverifikasi langsung ke native host setiap kali halaman memuat data.</p>
 <ul>
-<li><strong>Efisiensi Sumber Daya Memori</strong>:</li>
-</ul>
+<li><strong>Efisiensi Sumber Daya Memori</strong>:
+</li></ul>
 <p>Dengan tidak adanya layer cache database offline di Flutter, konsumsi memori modul sangat stabil (di bawah 40 MB) dan tidak ada operasi I/O disk yang membebani kinerja flash storage perangkat.</p>
 </section>
 <section id="sec-example" class="doc-section">
 <h3>🔬 G. Practical Example (Skenario Penggunaan Nyata)</h3>
 <p>Jika aplikasi SAMIR di-terminate secara tiba-tiba oleh sistem operasi karena kekurangan memori:</p>
 <ul>
-<li>Tidak ada state parsial atau file database korup di sandbox Flutter.</li>
-<li>Saat aplikasi dibuka kembali, <code>FlutterEngine</code> baru dihidupkan, dan state dihidrasi ulang dari awal secara aman dari Keychain host native.</li>
-</ul>
+<li>Tidak ada state parsial atau file database korup di sandbox Flutter.
+</li>
+<li>Saat aplikasi dibuka kembali, <code>FlutterEngine</code> baru dihidupkan, dan state dihidrasi ulang dari awal secara aman dari Keychain host native.
+</li></ul>
 </section>
 <section id="sec-mistakes" class="doc-section">
 <h3>⚠️ H. Common Mistakes & Debugging</h3>
 <ul>
-<li><strong>Menambahkan Paket <code>shared_preferences</code> untuk Menyimpan Data Bisnis</strong>:</li>
-<li>Hal ini melanggar prinsip arsitektur SAMIR. Jika data perlu disimpan permanen, kirimkan data tersebut melalui MethodChannel agar disimpan di storage terpusat host native.</li>
-</ul>
+<li><strong>Menambahkan Paket <code>shared_preferences</code> untuk Menyimpan Data Bisnis</strong>:
+<ul>
+<li>Hal ini melanggar prinsip arsitektur SAMIR. Jika data perlu disimpan permanen, kirimkan data tersebut melalui MethodChannel agar disimpan di storage terpusat host native.
+</li></ul>
+</li></ul>
 </section>
 <section id="sec-check" class="doc-section">
 <h3>🧠 I. Knowledge Check</h3>
 <ol>
-<li>Mengapa modul SAMIR Flutter sengaja tidak menggunakan database lokal (seperti SQLite atau SharedPreferences)?</li>
-<li>Di mana kredensial otentikasi utama (<code>mid</code>, <code>userNo</code>) disimpan selama aplikasi berjalan di sisi Flutter?</li>
-<li>Jenis objek reaktif apa yang digunakan oleh <code>FlutterRootController</code> untuk menyebarkan perubahan tab?</li>
-</ol>
+<li>Mengapa modul SAMIR Flutter sengaja tidak menggunakan database lokal (seperti SQLite atau SharedPreferences)?
+</li>
+<li>Di mana kredensial otentikasi utama (<code>mid</code>, <code>userNo</code>) disimpan selama aplikasi berjalan di sisi Flutter?
+</li>
+<li>Jenis objek reaktif apa yang digunakan oleh <code>FlutterRootController</code> untuk menyebarkan perubahan tab?
+</li></ol>
 <p><strong>Latihan Observasi</strong>:</p>
 <p>Buka file <a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/learn/Flutter-Arch/flutter/lib/common/router/flutter_root_controller.dart" target="_blank" rel="noopener noreferrer">🦊 flutter/lib/common/router/flutter_root_controller.dart <span class="branch-tag">learn/Flutter-Arch</span> ↗</a>. Periksa deklarasi <code>selectedPath</code> pada baris 8–10 dan perhatikan tipe generic <code>ValueNotifier&lt;String?&gt;</code>.</p>
 </section>

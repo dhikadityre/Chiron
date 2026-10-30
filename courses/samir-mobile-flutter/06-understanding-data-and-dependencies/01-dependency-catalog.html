@@ -105,11 +105,14 @@
 <h3>🎯 A. Learning Objective</h3>
 <p>Setelah menyelesaikan dokumen ini, pembaca akan mampu:</p>
 <ol>
-<li>Menyebutkan setiap pustaka pihak ketiga yang digunakan pada modul Flutter SAMIR beserta versinya.</li>
-<li>Memahami justifikasi arsitektural di balik pemilihan setiap dependensi.</li>
-<li>Menjelaskan perbedaan dependensi inti (<em>production dependencies</em>) dan dependensi pengembangan (<em>dev dependencies</em>).</li>
-<li>Mengetahui dependensi khusus inspeksi jaringan pada branch pengujian (<code>chucker_flutter</code>).</li>
-</ol>
+<li>Menyebutkan setiap pustaka pihak ketiga yang digunakan pada modul Flutter SAMIR beserta versinya.
+</li>
+<li>Memahami justifikasi arsitektural di balik pemilihan setiap dependensi.
+</li>
+<li>Menjelaskan perbedaan dependensi inti (<em>production dependencies</em>) dan dependensi pengembangan (<em>dev dependencies</em>).
+</li>
+<li>Mengetahui dependensi khusus inspeksi jaringan pada branch pengujian (<code>chucker_flutter</code>).
+</li></ol>
 </section>
 <section id="sec-prereq" class="doc-section">
 <h3>📋 B. Prerequisites</h3>
@@ -119,10 +122,12 @@
 <h3>💡 C. Simple Explanation (Analogi & Konsep Sederhana)</h3>
 <p>Bayangkan sebuah kotak perkakas seorang montir mobil spesialis:</p>
 <ul>
-<li>Montir tidak membuat kunci pas, kompresor udara, atau obeng dari bijih besi mentah; ia memilih perkakas standar industri berlabel resmi (<strong>pub.dev packages</strong>).</li>
-<li>Namun, montir hanya membawa perkakas yang benar-benar esensial agar kotak perkakasnya tidak terlalu berat dibawa-bawa.</li>
-<li><strong>Dio</strong> adalah pompa injeksi bahan bakar bertekanan tinggi, <strong>Crypto</strong> adalah segel kunci pengaman brankas, <strong>GoRouter</strong> adalah sistem GPS navigasi, dan <strong>Lottie</strong> adalah proyektor animasi grafis di dasbor mobil.</li>
-</ul>
+<li>Montir tidak membuat kunci pas, kompresor udara, atau obeng dari bijih besi mentah; ia memilih perkakas standar industri berlabel resmi (<strong>pub.dev packages</strong>).
+</li>
+<li>Namun, montir hanya membawa perkakas yang benar-benar esensial agar kotak perkakasnya tidak terlalu berat dibawa-bawa.
+</li>
+<li><strong>Dio</strong> adalah pompa injeksi bahan bakar bertekanan tinggi, <strong>Crypto</strong> adalah segel kunci pengaman brankas, <strong>GoRouter</strong> adalah sistem GPS navigasi, dan <strong>Lottie</strong> adalah proyektor animasi grafis di dasbor mobil.
+</li></ul>
 </section>
 <section id="sec-actual" class="doc-section">
 <h3>💻 D. Actual Implementation (Bukti di Kode Sumber)</h3>
@@ -140,59 +145,71 @@
 </div>
 <p>Pada branch <code>feature/testing</code> di repositori Nexus:</p>
 <ul>
-<li><strong><code>chucker_flutter</code> (<code>^1.9.2</code>)</strong>:</li>
-<li>Inspector HTTP in-app yang menampilkan notifikasi floating setiap kali request Dio dikirimkan.</li>
-<li>Memungkinkan QA dan developer melihat headers, query parameters, payload JSON, dan response body secara langsung di layar smartphone tanpa menyambungkan kabel USB ke komputer.</li>
-</ul>
+<li><strong><code>chucker_flutter</code> (<code>^1.9.2</code>)</strong>:
+<ul>
+<li>Inspector HTTP in-app yang menampilkan notifikasi floating setiap kali request Dio dikirimkan.
+</li>
+<li>Memungkinkan QA dan developer melihat headers, query parameters, payload JSON, dan response body secara langsung di layar smartphone tanpa menyambungkan kabel USB ke komputer.
+</li></ul>
+</li></ul>
 </section>
 <section id="sec-walkthrough" class="doc-section">
 <h3>📌 E. Analisis Dependency Tree & Ukuran Biner</h3>
 <p>Prinsip utama modul Flutter SAMIR adalah <strong>Minimalist Dependency Footprint</strong>:</p>
 <ul>
-<li>Total dependensi pihak ketiga hanya 4 pustaka utama (<code>dio</code>, <code>crypto</code>, <code>go_router</code>, <code>lottie</code>).</li>
-<li>Tidak ada dependensi state management raksasa (seperti <code>flutter_bloc</code> atau <code>redux</code>), karena state modul ini terisolasi dan ringkas.</li>
-<li>Tidak ada dependensi local storage (seperti <code>hive</code>, <code>isar</code>, atau <code>sqflite</code>), karena seluruh penyimpanan permanen dipercayakan kepada host native.</li>
-</ul>
+<li>Total dependensi pihak ketiga hanya 4 pustaka utama (<code>dio</code>, <code>crypto</code>, <code>go_router</code>, <code>lottie</code>).
+</li>
+<li>Tidak ada dependensi state management raksasa (seperti <code>flutter_bloc</code> atau <code>redux</code>), karena state modul ini terisolasi dan ringkas.
+</li>
+<li>Tidak ada dependensi local storage (seperti <code>hive</code>, <code>isar</code>, atau <code>sqflite</code>), karena seluruh penyimpanan permanen dipercayakan kepada host native.
+</li></ul>
 <p>Efek positif terhadap build:</p>
 <ol>
-<li>Ukuran framework <code>App.framework</code> yang dihasilkan sangat ramping (di bawah 15 MB).</li>
-<li>Waktu kompilasi (<em>compile time</em>) sangat cepat.</li>
-<li>Risiko bentrok versi pustaka C++ bawaan (seperti OpenSSL atau BoringSSL) di host iOS/Android menjadi nol.</li>
-</ol>
+<li>Ukuran framework <code>App.framework</code> yang dihasilkan sangat ramping (di bawah 15 MB).
+</li>
+<li>Waktu kompilasi (<em>compile time</em>) sangat cepat.
+</li>
+<li>Risiko bentrok versi pustaka C++ bawaan (seperti OpenSSL atau BoringSSL) di host iOS/Android menjadi nol.
+</li></ol>
 </section>
 <section id="sec-why" class="doc-section">
 <h3>⚖️ F. Why It Matters (Trade-Offs & Implikasi Teknis)</h3>
 <ul>
-<li><strong>Mengapa Memilih <code>crypto</code> Murni Dart dan Bukan Plugin Native?</strong></li>
-</ul>
+<li><strong>Mengapa Memilih <code>crypto</code> Murni Dart dan Bukan Plugin Native?</strong>
+</li></ul>
 <p>Paket <code>crypto</code> ditulis murni dalam bahasa Dart (<code>pure Dart package</code>). Artinya, fungsi hashing MD5 di <code>sign_utils.dart</code> dieksekusi langsung di dalam isolate Dart tanpa perlu menyeberangi jembatan MethodChannel ke Objective-C atau Kotlin. Hal ini menghasilkan eksekusi tanda tangan parameter berkecepatan mikrodetik tanpa overhead context switching.</p>
 <ul>
-<li><strong>Mengapa Menghindari Pustaka Local Storage Pihak Ketiga?</strong></li>
-</ul>
+<li><strong>Mengapa Menghindari Pustaka Local Storage Pihak Ketiga?</strong>
+</li></ul>
 <p>Menggunakan pustaka seperti SQLite di dalam modul Add-to-App akan menimbulkan duplikasi database: satu database di native dan satu database di Flutter. Inkonsistensi data antar kedua database adalah sumber bug paling sulit didiagnosis. Menghilangkan storage di Flutter memastikan host native tetap menjadi <em>Single Source of Truth</em>.</p>
 </section>
 <section id="sec-example" class="doc-section">
 <h3>🔬 G. Practical Example (Skenario Penggunaan Nyata)</h3>
 <p>Jika tim QA perlu memeriksa mengapa sebuah request gagal di perangkat fisik tanpa Xcode/Android Studio:</p>
 <ul>
-<li>Di branch testing, pustaka <code>chucker_flutter</code> menangkap error melalui <code>ChuckerDioInterceptor</code> di <code>http_client.dart</code>.</li>
-<li>QA cukup mengetuk ikon serangga di layar untuk melihat error HTTP status 500 atau pesan validasi dari server.</li>
-</ul>
+<li>Di branch testing, pustaka <code>chucker_flutter</code> menangkap error melalui <code>ChuckerDioInterceptor</code> di <code>http_client.dart</code>.
+</li>
+<li>QA cukup mengetuk ikon serangga di layar untuk melihat error HTTP status 500 atau pesan validasi dari server.
+</li></ul>
 </section>
 <section id="sec-mistakes" class="doc-section">
 <h3>⚠️ H. Common Mistakes & Debugging</h3>
 <ul>
-<li><strong>Mengupgrade Versi <code>go_router</code> Sembarangan</strong>:</li>
-<li><code>go_router</code> sering merilis breaking changes pada versi mayor (misalnya perubahan dari v12 ke v16 pada signature <code>GoRouterDelegate</code> dan <code>GoRouterState</code>). Selalu verifikasi kompatibilitas <code>routers.dart</code> sebelum menaikkan versi paket ini.</li>
-</ul>
+<li><strong>Mengupgrade Versi <code>go_router</code> Sembarangan</strong>:
+<ul>
+<li><code>go_router</code> sering merilis breaking changes pada versi mayor (misalnya perubahan dari v12 ke v16 pada signature <code>GoRouterDelegate</code> dan <code>GoRouterState</code>). Selalu verifikasi kompatibilitas <code>routers.dart</code> sebelum menaikkan versi paket ini.
+</li></ul>
+</li></ul>
 </section>
 <section id="sec-check" class="doc-section">
 <h3>🧠 I. Knowledge Check</h3>
 <ol>
-<li>Berapa total pustaka pihak ketiga utama di section <code>dependencies:</code> file <code>pubspec.yaml</code> SAMIR?</li>
-<li>Mengapa paket <code>crypto</code> dipilih untuk menghasilkan tanda tangan MD5 alih-alih menggunakan library native via MethodChannel?</li>
-<li>Apa fungsi paket <code>chucker_flutter</code> pada branch testing?</li>
-</ol>
+<li>Berapa total pustaka pihak ketiga utama di section <code>dependencies:</code> file <code>pubspec.yaml</code> SAMIR?
+</li>
+<li>Mengapa paket <code>crypto</code> dipilih untuk menghasilkan tanda tangan MD5 alih-alih menggunakan library native via MethodChannel?
+</li>
+<li>Apa fungsi paket <code>chucker_flutter</code> pada branch testing?
+</li></ol>
 <p><strong>Latihan Observasi</strong>:</p>
 <p>Buka file <a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/learn/Flutter-Arch/flutter/pubspec.yaml" target="_blank" rel="noopener noreferrer">🦊 flutter/pubspec.yaml <span class="branch-tag">learn/Flutter-Arch</span> ↗</a>. Periksa baris 40–46 dan catat 4 pustaka eksternal beserta rentang versinya.</p>
 </section>

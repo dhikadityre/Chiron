@@ -101,11 +101,14 @@
 <h3>🎯 A. Learning Objective</h3>
 <p>Setelah menyelesaikan dokumen ini, pembaca akan mampu:</p>
 <ol>
-<li>Membuka dan mengonfigurasi <code>ProxyDebugPage</code> pada aplikasi build non-PROD.</li>
-<li>Mengarahkan lalu lintas HTTP/HTTPS Dio ke Charles Proxy atau Proxyman tanpa memasang root certificate khusus di sistem operasi perangkat.</li>
-<li>Memahami peran <code>badCertificateCallback</code> dalam menyederhanakan debugging di lingkungan testing.</li>
-<li>Menggunakan alat inspeksi HTTP in-app (<code>chucker_flutter</code>) untuk debugging mandiri oleh tim QA.</li>
-</ol>
+<li>Membuka dan mengonfigurasi <code>ProxyDebugPage</code> pada aplikasi build non-PROD.
+</li>
+<li>Mengarahkan lalu lintas HTTP/HTTPS Dio ke Charles Proxy atau Proxyman tanpa memasang root certificate khusus di sistem operasi perangkat.
+</li>
+<li>Memahami peran <code>badCertificateCallback</code> dalam menyederhanakan debugging di lingkungan testing.
+</li>
+<li>Menggunakan alat inspeksi HTTP in-app (<code>chucker_flutter</code>) untuk debugging mandiri oleh tim QA.
+</li></ol>
 </section>
 <section id="sec-prereq" class="doc-section">
 <h3>📋 B. Prerequisites</h3>
@@ -115,10 +118,12 @@
 <h3>💡 C. Simple Explanation (Analogi & Konsep Sederhana)</h3>
 <p>Bayangkan Anda ingin memeriksa kejernihan air yang mengalir di pipa bawah tanah tanpa membongkar jalan raya:</p>
 <ul>
-<li><strong>Jalur Standar</strong>: Air mengalir langsung dari PDAM ke keran rumah (Koneksi normal ke server backend).</li>
-<li><strong>Katup Inspeksi (<code>ProxyDebugPage</code>)</strong>: Anda memutar tuas katup sementara agar air dialihkan melewati tabung kaca transparan di atas meja laboratorium Anda (<strong>Charles Proxy / Proxyman</strong>).</li>
-<li>Anda dapat mengamati warna air, mengukur kadar garam, dan bahkan menyuntikkan pewarna uji coba (Mock API Response) sebelum mengalirkannya kembali ke keran rumah.</li>
-</ul>
+<li><strong>Jalur Standar</strong>: Air mengalir langsung dari PDAM ke keran rumah (Koneksi normal ke server backend).
+</li>
+<li><strong>Katup Inspeksi (<code>ProxyDebugPage</code>)</strong>: Anda memutar tuas katup sementara agar air dialihkan melewati tabung kaca transparan di atas meja laboratorium Anda (<strong>Charles Proxy / Proxyman</strong>).
+</li>
+<li>Anda dapat mengamati warna air, mengukur kadar garam, dan bahkan menyuntikkan pewarna uji coba (Mock API Response) sebelum mengalirkannya kembali ke keran rumah.
+</li></ul>
 </section>
 <section id="sec-actual" class="doc-section">
 <h3>💻 D. Actual Implementation (Bukti di Kode Sumber)</h3>
@@ -150,11 +155,14 @@
 }</code></pre>
 <p>Cara mengakses halaman ini:</p>
 <ol>
-<li>Buka aplikasi build non-PROD (Dev / Test).</li>
-<li>Masuk ke Tab Saya (<code>/mine</code>) -> ketuk kartu profil untuk membuka <code>MinePersonalPage</code>.</li>
-<li>Gulir ke bagian paling bawah, lalu <strong>ketuk teks nomor versi aplikasi sebanyak 5 kali berturut-turut</strong>.</li>
-<li>Halaman <code>ProxyDebugPage</code> akan terbuka.</li>
-</ol>
+<li>Buka aplikasi build non-PROD (Dev / Test).
+</li>
+<li>Masuk ke Tab Saya (<code>/mine</code>) -> ketuk kartu profil untuk membuka <code>MinePersonalPage</code>.
+</li>
+<li>Gulir ke bagian paling bawah, lalu <strong>ketuk teks nomor versi aplikasi sebanyak 5 kali berturut-turut</strong>.
+</li>
+<li>Halaman <code>ProxyDebugPage</code> akan terbuka.
+</li></ol>
 <div id="sub-2-mekanisme-injeksi-proxy-di-iohttpclientadapter" class="doc-subsection">
 <h4>2. Mekanisme Injeksi Proxy di <code>IOHttpClientAdapter</code></h4>
 </div>
@@ -183,85 +191,93 @@
 <p>Pada aplikasi Flutter biasa, Dart VM mengabaikan pengaturan HTTP Proxy bawaan iOS Settings dan tidak memercayai certificate authority (CA) yang dipasang di keychain perangkat, sehingga pengetesan Proxyman/Charles sering menghasilkan error <code>HandshakeException: CERTIFICATE_VERIFY_FAILED</code>.</p>
 <p>Di SAMIR Flutter:</p>
 <ul>
-<li><strong><code>badCertificateCallback =&gt; true</code></strong> memberitahu Dart VM: <em>"Terima seluruh sertifikat SSL dari host manapun!"</em></li>
-<li>Hal ini memungkinkan Proxyman / Charles melakukan dekripsi HTTPS <em>Man-in-the-Middle (MITM)</em> secara instan tanpa perlu menginstal atau memercayai sertifikat root di iPhone/Android.</li>
-</ul>
+<li><strong><code>badCertificateCallback =&gt; true</code></strong> memberitahu Dart VM: <em>"Terima seluruh sertifikat SSL dari host manapun!"</em>
+</li>
+<li>Hal ini memungkinkan Proxyman / Charles melakukan dekripsi HTTPS <em>Man-in-the-Middle (MITM)</em> secara instan tanpa perlu menginstal atau memercayai sertifikat root di iPhone/Android.
+</li></ul>
 <div id="sub-4-in-app-http-inspector-chucker-flutter-branch-testing-nexus" class="doc-subsection">
 <h4>4. In-App HTTP Inspector: Chucker Flutter (Branch Testing Nexus)</h4>
 </div>
 <p>Pada branch <code>feature/testing</code> di repositori Nexus:</p>
 <ul>
-<li>Paket <code>chucker_flutter: ^1.9.2</code> dipasang sebagai interceptor:</li>
-</ul>
+<li>Paket <code>chucker_flutter: ^1.9.2</code> dipasang sebagai interceptor:
+</li></ul>
 <p><code>_dio.interceptors.add(ChuckerDioInterceptor());</code></p>
 <ul>
-<li>Tombol aksi mengambang (<em>Floating Action Button</em>) berikon serangga (<code>Icons.bug_report</code>) muncul di setiap layar.</li>
-<li>Mengetuk tombol menampilkan dasbor riwayat seluruh request: URL, Request Body, Response JSON, durasi milidetik, dan HTTP status code.</li>
-</ul>
+<li>Tombol aksi mengambang (<em>Floating Action Button</em>) berikon serangga (<code>Icons.bug_report</code>) muncul di setiap layar.
+</li>
+<li>Mengetuk tombol menampilkan dasbor riwayat seluruh request: URL, Request Body, Response JSON, durasi milidetik, dan HTTP status code.
+</li></ul>
 </section>
 <section id="sec-walkthrough" class="doc-section">
 <h3>📌 E. Panduan Langkah Demi Langkah: Menghubungkan ke Proxyman / Charles</h3>
 <ol>
-<li><strong>Jalankan Proxyman di Laptop/Mac</strong>:</li>
-</ol>
+<li><strong>Jalankan Proxyman di Laptop/Mac</strong>:
 <ul>
-<li>Pastikan laptop dan smartphone terhubung ke jaringan Wi-Fi yang sama.</li>
-<li>Catat alamat IP lokal Mac Anda (misalnya: <code>192.168.1.50</code>) dan port Proxyman (default: <code>9090</code>) atau Charles (default: <code>8888</code>).</li>
-</ul>
-<ol>
-<li><strong>Buka <code>ProxyDebugPage</code> di Smartphone</strong>:</li>
-</ol>
+<li>Pastikan laptop dan smartphone terhubung ke jaringan Wi-Fi yang sama.
+</li>
+<li>Catat alamat IP lokal Mac Anda (misalnya: <code>192.168.1.50</code>) dan port Proxyman (default: <code>9090</code>) atau Charles (default: <code>8888</code>).
+</li></ul>
+</li>
+<li><strong>Buka <code>ProxyDebugPage</code> di Smartphone</strong>:
 <ul>
-<li>Ketuk nomor versi 5 kali di <code>MinePersonalPage</code>.</li>
-</ul>
-<ol>
-<li><strong>Masukkan Alamat Proxy</strong>:</li>
-</ol>
+<li>Ketuk nomor versi 5 kali di <code>MinePersonalPage</code>.
+</li></ul>
+</li>
+<li><strong>Masukkan Alamat Proxy</strong>:
 <ul>
-<li>Masukkan string: <code>192.168.1.50:9090</code>.</li>
-<li>Tekan tombol <strong>Simpan</strong>.</li>
-</ul>
-<ol>
-<li><strong>Inspeksi Traffic</strong>:</li>
-</ol>
+<li>Masukkan string: <code>192.168.1.50:9090</code>.
+</li>
+<li>Tekan tombol <strong>Simpan</strong>.
+</li></ul>
+</li>
+<li><strong>Inspeksi Traffic</strong>:
 <ul>
-<li>Lakukan pull-to-refresh di Tab Tagihan.</li>
-<li>Seluruh request <code>repayment/repayOrderList</code> beserta parameter tanda tangan MD5 seketika muncul rapi di layar Proxyman laptop Anda.</li>
-</ul>
-<ol>
-<li><strong>Menonaktifkan Proxy</strong>:</li>
-</ol>
+<li>Lakukan pull-to-refresh di Tab Tagihan.
+</li>
+<li>Seluruh request <code>repayment/repayOrderList</code> beserta parameter tanda tangan MD5 seketika muncul rapi di layar Proxyman laptop Anda.
+</li></ul>
+</li>
+<li><strong>Menonaktifkan Proxy</strong>:
 <ul>
-<li>Kosongkan kolom input teks di <code>ProxyDebugPage</code> lalu tekan Simpan.</li>
-</ul>
+<li>Kosongkan kolom input teks di <code>ProxyDebugPage</code> lalu tekan Simpan.
+</li></ul>
+</li></ol>
 </section>
 <section id="sec-why" class="doc-section">
 <h3>⚖️ F. Why It Matters (Trade-Offs & Implikasi Teknis)</h3>
 <ul>
-<li><strong>Kecepatan Diagnosis Masalah QA</strong>:</li>
-</ul>
+<li><strong>Kecepatan Diagnosis Masalah QA</strong>:
+</li></ul>
 <p>QA sering menghadapi kendala saat memvalidasi API baru: apakah bug berasal dari tampilan Flutter yang salah merender data, atau backend yang mengembalikan nilai kosong? Dengan menyetel proxy IP atau memeriksa Chucker, QA dapat membuktikan sumber masalah dalam hitungan detik tanpa bantuan engineer.</p>
 <ul>
-<li><strong>Isolasi Keamanan Ketat</strong>:</li>
-</ul>
+<li><strong>Isolasi Keamanan Ketat</strong>:
+</li></ul>
 <p>Kode <code>if (AppEnv.isProd) return;</code> memastikan bahwa mekanisme proxy injection dan bypass SSL <strong>mati total</strong> di build App Store / Google Play resmi, melindungi nasabah dari serangan MITM di jaringan Wi-Fi publik.</p>
 </section>
 <section id="sec-example" class="doc-section">
 <h3>⚠️ G. Common Mistakes & Debugging</h3>
 <ul>
-<li><strong>Salah Menulis Format Port Proxy</strong>:</li>
-<li>Menulis <code>http://192.168.1.50:8888</code> (dengan protokol <code>http://</code>) akan ditolak oleh validator regex <code>_isValidProxy()</code>. Format yang benar adalah murni <code>host:port</code> (contoh: <code>192.168.1.50:8888</code>).</li>
-<li><strong>Lupa Menghapus Proxy Setelah Selesai</strong>:</li>
-<li>Jika laptop dimatikan tetapi proxy IP belum dikosongkan di aplikasi, seluruh request berikutnya akan gagal (<em>Connection Refused</em>). Cukup buka kembali <code>ProxyDebugPage</code> dan hapus string proxy.</li>
-</ul>
+<li><strong>Salah Menulis Format Port Proxy</strong>:
+<ul>
+<li>Menulis <code>http://192.168.1.50:8888</code> (dengan protokol <code>http://</code>) akan ditolak oleh validator regex <code>_isValidProxy()</code>. Format yang benar adalah murni <code>host:port</code> (contoh: <code>192.168.1.50:8888</code>).
+</li></ul>
+</li>
+<li><strong>Lupa Menghapus Proxy Setelah Selesai</strong>:
+<ul>
+<li>Jika laptop dimatikan tetapi proxy IP belum dikosongkan di aplikasi, seluruh request berikutnya akan gagal (<em>Connection Refused</em>). Cukup buka kembali <code>ProxyDebugPage</code> dan hapus string proxy.
+</li></ul>
+</li></ul>
 </section>
 <section id="sec-mistakes" class="doc-section">
 <h3>🧠 H. Knowledge Check</h3>
 <ol>
-<li>Bagaimana cara membuka menu tersembunyi <code>ProxyDebugPage</code> di aplikasi SAMIR?</li>
-<li>Mengapa traffic HTTPS Dio dapat di-intercept oleh Proxyman tanpa perlu menginstal sertifikat di iPhone?</li>
-<li>Apa fungsi paket <code>chucker_flutter</code> pada branch pengujian?</li>
-</ol>
+<li>Bagaimana cara membuka menu tersembunyi <code>ProxyDebugPage</code> di aplikasi SAMIR?
+</li>
+<li>Mengapa traffic HTTPS Dio dapat di-intercept oleh Proxyman tanpa perlu menginstal sertifikat di iPhone?
+</li>
+<li>Apa fungsi paket <code>chucker_flutter</code> pada branch pengujian?
+</li></ol>
 <p><strong>Latihan Observasi</strong>:</p>
 <p>Buka file <a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/learn/Flutter-Arch/flutter/lib/pages/mine/debug/proxy_debug_page.dart" target="_blank" rel="noopener noreferrer">🦊 flutter/lib/pages/mine/debug/proxy_debug_page.dart <span class="branch-tag">learn/Flutter-Arch</span> ↗</a>. Periksa fungsi <code>_isValidProxy</code> pada baris 54–62 dan catat aturan validasi batas port <code>1 s/d 65535</code>.</p>
 </section>

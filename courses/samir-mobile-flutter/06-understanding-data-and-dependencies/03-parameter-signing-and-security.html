@@ -105,11 +105,14 @@
 <h3>🎯 A. Learning Objective</h3>
 <p>Setelah menyelesaikan dokumen ini, pembaca akan mampu:</p>
 <ol>
-<li>Memahami ancaman keamanan manipulasi parameter (<em>Man-in-the-Middle request tampering</em>) pada aplikasi finansial.</li>
-<li>Menjelaskan rumus matematis dan dua tahap hashing MD5 yang membentuk nilai parameter <code>sign</code>.</li>
-<li>Memahami mengapa <code>SplayTreeMap</code> digunakan untuk mengurutkan parameter secara leksikografis (A–Z).</li>
-<li>Mengetahui asal-usul <code>dynamicSignKey</code> dari native host dan fallback salt rahasia (<code>766b035b-...</code> dan <code>qwer1234_Samir</code>).</li>
-</ol>
+<li>Memahami ancaman keamanan manipulasi parameter (<em>Man-in-the-Middle request tampering</em>) pada aplikasi finansial.
+</li>
+<li>Menjelaskan rumus matematis dan dua tahap hashing MD5 yang membentuk nilai parameter <code>sign</code>.
+</li>
+<li>Memahami mengapa <code>SplayTreeMap</code> digunakan untuk mengurutkan parameter secara leksikografis (A–Z).
+</li>
+<li>Mengetahui asal-usul <code>dynamicSignKey</code> dari native host dan fallback salt rahasia (<code>766b035b-...</code> dan <code>qwer1234_Samir</code>).
+</li></ol>
 </section>
 <section id="sec-prereq" class="doc-section">
 <h3>📋 B. Prerequisites</h3>
@@ -119,17 +122,19 @@
 <h3>💡 C. Simple Explanation (Analogi & Konsep Sederhana)</h3>
 <p>Bayangkan mengirimkan cek transfer dana melalui kurir:</p>
 <ul>
-<li>Jika Anda hanya menulis nominal di atas kertas biasa, kurir nakal dapat menambahkan angka nol di belakang nominal tersebut.</li>
-<li>Untuk mencegah pemalsuan, bank mewajibkan Anda:</li>
-</ul>
+<li>Jika Anda hanya menulis nominal di atas kertas biasa, kurir nakal dapat menambahkan angka nol di belakang nominal tersebut.
+</li>
+<li>Untuk mencegah pemalsuan, bank mewajibkan Anda:
 <ol>
-<li>Menulis seluruh rincian transaksi berurutan dari A sampai Z.</li>
-<li>Menempelkan stempel lilin pertama menggunakan cincin stempel pribadi Anda (<strong>Pass 1 MD5 dengan <code>dynamicSignKey</code></strong>).</li>
-<li>Menempelkan stempel lilin kedua di atas stempel pertama menggunakan cap resmi lambang bank (<strong>Pass 2 MD5 dengan Salt Rahasia Aplikasi</strong>).</li>
-</ol>
-<ul>
-<li>Jika ada satu huruf atau angka yang diubah di tengah jalan, bentuk stempel lilin akan pecah dan kasir bank akan langsung menolak cek tersebut.</li>
-</ul>
+<li>Menulis seluruh rincian transaksi berurutan dari A sampai Z.
+</li>
+<li>Menempelkan stempel lilin pertama menggunakan cincin stempel pribadi Anda (<strong>Pass 1 MD5 dengan <code>dynamicSignKey</code></strong>).
+</li>
+<li>Menempelkan stempel lilin kedua di atas stempel pertama menggunakan cap resmi lambang bank (<strong>Pass 2 MD5 dengan Salt Rahasia Aplikasi</strong>).
+</li></ol>
+</li>
+<li>Jika ada satu huruf atau angka yang diubah di tengah jalan, bentuk stempel lilin akan pecah dan kasir bank akan langsung menolak cek tersebut.
+</li></ul>
 </section>
 <section id="sec-actual" class="doc-section">
 <h3>💻 D. Actual Implementation (Bukti di Kode Sumber)</h3>
@@ -204,9 +209,10 @@ String signParamMapWithSignKey(
 }</code></pre>
 <p>Mengapa <code>SplayTreeMap</code> wajib digunakan?</p>
 <ul>
-<li><code>Map</code> biasa di Dart mengurutkan entri berdasarkan waktu penyisipan (<em>insertion order</em>). Jika dua perangkat memasukkan parameter dengan urutan berbeda (misal: <code>page</code> sebelum <code>userNo</code>), string gabungan akan berbeda dan tanda tangan akan dianggap tidak valid.</li>
-<li><code>SplayTreeMap</code> secara otomatis mengurutkan semua kunci (<em>keys</em>) secara alfabetis leksikografis (A–Z), menjamin hasil konkatenasi selalu 100% identik di setiap perangkat dan di server.</li>
-</ul>
+<li><code>Map</code> biasa di Dart mengurutkan entri berdasarkan waktu penyisipan (<em>insertion order</em>). Jika dua perangkat memasukkan parameter dengan urutan berbeda (misal: <code>page</code> sebelum <code>userNo</code>), string gabungan akan berbeda dan tanda tangan akan dianggap tidak valid.
+</li>
+<li><code>SplayTreeMap</code> secara otomatis mengurutkan semua kunci (<em>keys</em>) secara alfabetis leksikografis (A–Z), menjamin hasil konkatenasi selalu 100% identik di setiap perangkat dan di server.
+</li></ul>
 <div id="sub-3-parameter-bawaan-platform-defaultparamsbyplatform" class="doc-subsection">
 <h4>3. Parameter Bawaan Platform (<code>_defaultParamsByPlatform</code>)</h4>
 </div>
@@ -222,70 +228,77 @@ String signParamMapWithSignKey(
   &quot;timestamp&quot;: 1729600000
 }</code></pre>
 <ol>
-<li><strong>Pengurutan oleh <code>SplayTreeMap</code></strong>:</li>
-</ol>
+<li><strong>Pengurutan oleh <code>SplayTreeMap</code></strong>:
 <ul>
-<li><code>clientId</code> -> <code>&quot;test_id&quot;</code></li>
-<li><code>orderId</code> -> <code>&quot;ORD123&quot;</code></li>
-<li><code>timestamp</code> -> <code>1729600000</code></li>
-</ul>
-<ol>
-<li><strong>Konkatenasi Nilai Primitif</strong>:</li>
-</ol>
+<li><code>clientId</code> -> <code>&quot;test_id&quot;</code>
+</li>
+<li><code>orderId</code> -> <code>&quot;ORD123&quot;</code>
+</li>
+<li><code>timestamp</code> -> <code>1729600000</code>
+</li></ul>
+</li>
+<li><strong>Konkatenasi Nilai Primitif</strong>:
+</li></ol>
 <p><code>buffer = &quot;test_idORD1231729600000&quot;</code></p>
-<ol>
-<li><strong>Penyisipan Kunci Rahasia 1</strong>:</li>
-</ol>
+<ol start="3">
+<li><strong>Penyisipan Kunci Rahasia 1</strong>:
+</li></ol>
 <p><code>buffer += &quot;766b035b-8d2f-454a-abad-4e8ab138a99a&quot;</code></p>
 <p>Hasil: <code>&quot;test_idORD1231729600000766b035b-8d2f-454a-abad-4e8ab138a99a&quot;</code></p>
-<ol>
-<li><strong>Pass 1 Hashing (MD5)</strong>:</li>
-</ol>
+<ol start="4">
+<li><strong>Pass 1 Hashing (MD5)</strong>:
+</li></ol>
 <p><code>hash1 = md5(buffer) = &quot;e10adc3949ba59abbe56e057f20f883e&quot;</code></p>
-<ol>
-<li><strong>Pass 2 Hashing (MD5 dengan Salt 2)</strong>:</li>
-</ol>
+<ol start="5">
+<li><strong>Pass 2 Hashing (MD5 dengan Salt 2)</strong>:
+</li></ol>
 <p><code>input2 = hash1 + &quot;qwer1234_Samir&quot;</code></p>
 <p><code>sign = md5(input2) = &quot;c33367701511b4f6020ec61ded352059&quot;</code></p>
-<ol>
-<li><strong>Injeksi ke Payload Akhir</strong>:</li>
-</ol>
+<ol start="6">
+<li><strong>Injeksi ke Payload Akhir</strong>:
+</li></ol>
 <p>Kunci <code>&#x27;sign&#x27;</code> disisipkan ke dalam request sebelum dikirim melalui HTTP.</p>
 </section>
 <section id="sec-why" class="doc-section">
 <h3>⚖️ F. Why It Matters (Trade-Offs & Implikasi Teknis)</h3>
 <ul>
-<li><strong>Mencegah Serangan Replay & Modifikasi Nominal</strong>:</li>
-</ul>
+<li><strong>Mencegah Serangan Replay & Modifikasi Nominal</strong>:
+</li></ul>
 <p>Karena <code>timestamp</code> dan seluruh nominal pinjaman di-hash ke dalam <code>sign</code>, penyerang tidak dapat mengubah nominal tagihan di proxy (misal mengubah <code>repayAmount</code> dari Rp 1.000.000 menjadi Rp 10.000) tanpa merusak nilai <code>sign</code>. Backend akan menolak request seketika dengan respon <code>Sign Invalid</code>.</p>
 <ul>
-<li><strong>Hanya Nilai Primitif yang Dihitung</strong>:</li>
-</ul>
+<li><strong>Hanya Nilai Primitif yang Dihitung</strong>:
+</li></ul>
 <p>Baris 33–37 di <code>sign_utils.dart</code> membatasi tipe data ke <code>String</code>, <code>double</code>, <code>int</code>, dan <code>bool</code>. Objek nested seperti <code>Map</code> atau <code>List</code> diabaikan dalam pembentukan buffer untuk menghindari inkonsistensi representasi string JSON antara sistem operasi.</p>
 </section>
 <section id="sec-example" class="doc-section">
 <h3>🔬 G. Practical Example (Skenario Penggunaan Nyata)</h3>
 <p>Jika backend memperbarui algoritma verifikasi tanda tangan dan mewajibkan kunci statis baru:</p>
 <ul>
-<li>Host native mengirimkan <code>staticKey</code> di dalam dictionary <code>getNativeRequestParams</code>.</li>
-<li><code>ParamUtils._defaultParamsByPlatform()</code> menangkap <code>staticKey</code> tersebut pada baris 31–34 dan otomatis memperbarui <code>Global.dynamicSignKey</code>.</li>
-<li>Flutter langsung menghasilkan tanda tangan yang valid tanpa memerlukan rilis update biner aplikasi.</li>
-</ul>
+<li>Host native mengirimkan <code>staticKey</code> di dalam dictionary <code>getNativeRequestParams</code>.
+</li>
+<li><code>ParamUtils._defaultParamsByPlatform()</code> menangkap <code>staticKey</code> tersebut pada baris 31–34 dan otomatis memperbarui <code>Global.dynamicSignKey</code>.
+</li>
+<li>Flutter langsung menghasilkan tanda tangan yang valid tanpa memerlukan rilis update biner aplikasi.
+</li></ul>
 </section>
 <section id="sec-mistakes" class="doc-section">
 <h3>⚠️ H. Common Mistakes & Debugging</h3>
 <ul>
-<li><strong>Menyisipkan Nilai Null ke Parameter</strong>:</li>
-<li><code>sign_utils.dart</code> secara ketat melewati nilai <code>null</code> (<code>if (value != null)</code>). Jika backend mengharapkan string <code>&quot;null&quot;</code> literal, tanda tangan akan berbeda. Hindari mengirim field bernilai null ke endpoint bertanda tangan.</li>
-</ul>
+<li><strong>Menyisipkan Nilai Null ke Parameter</strong>:
+<ul>
+<li><code>sign_utils.dart</code> secara ketat melewati nilai <code>null</code> (<code>if (value != null)</code>). Jika backend mengharapkan string <code>&quot;null&quot;</code> literal, tanda tangan akan berbeda. Hindari mengirim field bernilai null ke endpoint bertanda tangan.
+</li></ul>
+</li></ul>
 </section>
 <section id="sec-check" class="doc-section">
 <h3>🧠 I. Knowledge Check</h3>
 <ol>
-<li>Mengapa parameter request wajib diurutkan leksikografis menggunakan <code>SplayTreeMap</code> sebelum dihitung tanda tangannya?</li>
-<li>Berapa kali proses hashing MD5 dilakukan untuk menghasilkan nilai parameter <code>sign</code>?</li>
-<li>Apa string salt rahasia yang digunakan pada tahap kedua hashing MD5?</li>
-</ol>
+<li>Mengapa parameter request wajib diurutkan leksikografis menggunakan <code>SplayTreeMap</code> sebelum dihitung tanda tangannya?
+</li>
+<li>Berapa kali proses hashing MD5 dilakukan untuk menghasilkan nilai parameter <code>sign</code>?
+</li>
+<li>Apa string salt rahasia yang digunakan pada tahap kedua hashing MD5?
+</li></ol>
 <p><strong>Latihan Observasi</strong>:</p>
 <p>Buka file <a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/learn/Flutter-Arch/flutter/lib/common/http/sign_utils.dart" target="_blank" rel="noopener noreferrer">🦊 flutter/lib/common/http/sign_utils.dart <span class="branch-tag">learn/Flutter-Arch</span> ↗</a>. Periksa fungsi <code>_getSignCipher2()</code> pada baris 12–14 dan catat bagaimana <code>Global.appName</code> digabungkan dengan string <code>&#x27;qwer1234_&#x27;</code>.</p>
 </section>

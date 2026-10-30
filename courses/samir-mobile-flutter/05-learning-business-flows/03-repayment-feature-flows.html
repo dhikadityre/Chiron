@@ -105,11 +105,14 @@
 <h3>🎯 A. Learning Objective</h3>
 <p>Setelah menyelesaikan dokumen ini, pembaca akan mampu:</p>
 <ol>
-<li>Menjelaskan siklus pemuatan data pada halaman <code>RepayHomePage</code> dari <code>initState()</code> hingga rendering kartu.</li>
-<li>Memahami struktur model <code>RepayOrderModel</code> (pokok pinjaman, denda keterlambatan, bunga, dan status kontrak).</li>
-<li>Menjelaskan alur perolehan nomor Virtual Account (VA) dan kode minimarket melalui <code>queryAbroadDeDuctList</code>.</li>
-<li>Mengetahui integrasi method channel <code>requestRepayBenefitPopup</code> untuk menampilkan diskon pelunasan.</li>
-</ol>
+<li>Menjelaskan siklus pemuatan data pada halaman <code>RepayHomePage</code> dari <code>initState()</code> hingga rendering kartu.
+</li>
+<li>Memahami struktur model <code>RepayOrderModel</code> (pokok pinjaman, denda keterlambatan, bunga, dan status kontrak).
+</li>
+<li>Menjelaskan alur perolehan nomor Virtual Account (VA) dan kode minimarket melalui <code>queryAbroadDeDuctList</code>.
+</li>
+<li>Mengetahui integrasi method channel <code>requestRepayBenefitPopup</code> untuk menampilkan diskon pelunasan.
+</li></ol>
 </section>
 <section id="sec-prereq" class="doc-section">
 <h3>📋 B. Prerequisites</h3>
@@ -119,11 +122,14 @@
 <h3>💡 C. Simple Explanation (Analogi & Konsep Sederhana)</h3>
 <p>Bayangkan Anda menerima lembar tagihan listrik bulanan di rumah:</p>
 <ul>
-<li><strong>Bagian Atas (Header Tagihan)</strong>: Menampilkan kotak merah besar bertuliskan <em>"Total Tagihan: Rp 1.500.000 — Jatuh tempo dalam 3 hari!"</em>.</li>
-<li><strong>Rincian Kontrak (Order Card)</strong>: Menguraikan pemakaian kWh, tarif dasar, dan biaya administrasi.</li>
-<li><strong>Voucher Diskon (Benefit Pop-up)</strong>: Lembar kupon diskon Rp 50.000 yang otomatis diselipkan jika Anda membayar sebelum tanggal 20.</li>
-<li><strong>Slip Pembayaran (Deduct Code)</strong>: Deretan nomor rekening Virtual Account bank BCA, Mandiri, dan kode kasir Indomaret yang siap Anda bawa ke ATM atau minimarket terdekat.</li>
-</ul>
+<li><strong>Bagian Atas (Header Tagihan)</strong>: Menampilkan kotak merah besar bertuliskan <em>"Total Tagihan: Rp 1.500.000 — Jatuh tempo dalam 3 hari!"</em>.
+</li>
+<li><strong>Rincian Kontrak (Order Card)</strong>: Menguraikan pemakaian kWh, tarif dasar, dan biaya administrasi.
+</li>
+<li><strong>Voucher Diskon (Benefit Pop-up)</strong>: Lembar kupon diskon Rp 50.000 yang otomatis diselipkan jika Anda membayar sebelum tanggal 20.
+</li>
+<li><strong>Slip Pembayaran (Deduct Code)</strong>: Deretan nomor rekening Virtual Account bank BCA, Mandiri, dan kode kasir Indomaret yang siap Anda bawa ke ATM atau minimarket terdekat.
+</li></ul>
 </section>
 <section id="sec-actual" class="doc-section">
 <h3>💻 D. Actual Implementation (Bukti di Kode Sumber)</h3>
@@ -170,20 +176,26 @@
 }</code></pre>
 <p>Fitur-fitur kritis:</p>
 <ol>
-<li><strong>Otentikasi Selalu Diuji Terlebih Dahulu</strong>: Mengambil <code>getRootPageData</code> sebelum melakukan request API <code>ServerApi.repayList</code>.</li>
-<li><strong>Silent Loading</strong>: Menggunakan <code>showLoading: false</code> agar pemuatan data tagihan di background tidak memblokir antarmuka pengguna dengan modal spinner penuh.</li>
-</ol>
+<li><strong>Otentikasi Selalu Diuji Terlebih Dahulu</strong>: Mengambil <code>getRootPageData</code> sebelum melakukan request API <code>ServerApi.repayList</code>.
+</li>
+<li><strong>Silent Loading</strong>: Menggunakan <code>showLoading: false</code> agar pemuatan data tagihan di background tidak memblokir antarmuka pengguna dengan modal spinner penuh.
+</li></ol>
 <div id="sub-3-pengambilan-kode-bayar-queryabroaddeductlist" class="doc-subsection">
 <h4>3. Pengambilan Kode Bayar (<code>queryAbroadDeDuctList</code>)</h4>
 </div>
 <p>Ketika pengguna menekan tombol <em>"Bayar Sekarang"</em> pada kartu order:</p>
 <ul>
-<li><code>RepayHomeService.queryAbroadDeDuctList(orderId)</code> dipanggil.</li>
-<li>Endpoint mengembalikan daftar saluran pembayaran yang didukung:</li>
-<li>Bank Transfer (BCA, BRI, Mandiri, BNI, Permata, Danamon, CIMB).</li>
-<li>Gerai Ritel / Minimarket (Alfamart, Indomaret).</li>
-<li>Setiap saluran menyertakan instruksi langkah demi langkah transfer ATM / M-Banking dalam Bahasa Indonesia.</li>
-</ul>
+<li><code>RepayHomeService.queryAbroadDeDuctList(orderId)</code> dipanggil.
+</li>
+<li>Endpoint mengembalikan daftar saluran pembayaran yang didukung:
+<ul>
+<li>Bank Transfer (BCA, BRI, Mandiri, BNI, Permata, Danamon, CIMB).
+</li>
+<li>Gerai Ritel / Minimarket (Alfamart, Indomaret).
+</li></ul>
+</li>
+<li>Setiap saluran menyertakan instruksi langkah demi langkah transfer ATM / M-Banking dalam Bahasa Indonesia.
+</li></ul>
 <div id="sub-4-pemicu-pop-up-insentif-pelunasan" class="doc-subsection">
 <h4>4. Pemicu Pop-up Insentif Pelunasan</h4>
 </div>
@@ -235,39 +247,47 @@ sequenceDiagram
 <section id="sec-why" class="doc-section">
 <h3>⚖️ F. Why It Matters (Trade-Offs & Implikasi Teknis)</h3>
 <ul>
-<li><strong>Handling Hari Keterlambatan (<code>overdueDays</code>) Secara Real-time</strong>:</li>
-</ul>
+<li><strong>Handling Hari Keterlambatan (<code>overdueDays</code>) Secara Real-time</strong>:
+</li></ul>
 <p>Jika nasabah membuka aplikasi pada pukul 23:59 dan melewati tengah malam ke pukul 00:01, <code>overdueDays</code> bertambah satu hari dan nominal denda berubah. Mengambil data dari endpoint backend <code>repayment/repayOrderList</code> setiap kali halaman aktif (<code>onPageVisible</code>) memastikan nasabah tidak membayar dengan nominal denda yang salah.</p>
 <ul>
-<li><strong>Konsistensi Format Rupiah</strong>:</li>
-</ul>
+<li><strong>Konsistensi Format Rupiah</strong>:
+</li></ul>
 <p>Util <code>RepayTheme</code> memastikan angka mata uang selalu diformat ke standar Indonesia (contoh: <code>Rp 1.500.000</code>), menghindari format titik/koma yang tertukar yang dapat memicu kebingungan nasabah.</p>
 </section>
 <section id="sec-example" class="doc-section">
 <h3>🔬 G. Practical Example (Skenario Penggunaan Nyata)</h3>
 <p>Ketika nasabah melakukan pelunasan tagihan melalui Virtual Account BCA di BCA Mobile:</p>
 <ol>
-<li>Backend SAMIR menerima notifikasi webhook dari bank aggregator.</li>
-<li>Push notification APNs dikirim ke iPhone nasabah.</li>
-<li>Host native iOS memanggil method channel <code>refreshRepayHome</code>.</li>
-<li><code>RepayHomePage</code> memicu <code>fetchRepayHomeData()</code>.</li>
-<li>Kartu pinjaman yang telah lunas menghilang dari daftar dalam hitungan detik, dan total tagihan berubah menjadi <code>Rp 0</code>.</li>
-</ol>
+<li>Backend SAMIR menerima notifikasi webhook dari bank aggregator.
+</li>
+<li>Push notification APNs dikirim ke iPhone nasabah.
+</li>
+<li>Host native iOS memanggil method channel <code>refreshRepayHome</code>.
+</li>
+<li><code>RepayHomePage</code> memicu <code>fetchRepayHomeData()</code>.
+</li>
+<li>Kartu pinjaman yang telah lunas menghilang dari daftar dalam hitungan detik, dan total tagihan berubah menjadi <code>Rp 0</code>.
+</li></ol>
 </section>
 <section id="sec-mistakes" class="doc-section">
 <h3>⚠️ H. Common Mistakes & Debugging</h3>
 <ul>
-<li><strong>Mengandalkan Cache Lama untuk Nomor Virtual Account</strong>:</li>
-<li>Nomor Virtual Account memiliki batas waktu kedaluwarsa (misalnya 24 jam). Mengambil nomor VA langsung dari API <code>queryAbroadDeDuctList</code> saat tombol bayar ditekan mencegah transfer ke nomor VA yang sudah mati.</li>
-</ul>
+<li><strong>Mengandalkan Cache Lama untuk Nomor Virtual Account</strong>:
+<ul>
+<li>Nomor Virtual Account memiliki batas waktu kedaluwarsa (misalnya 24 jam). Mengambil nomor VA langsung dari API <code>queryAbroadDeDuctList</code> saat tombol bayar ditekan mencegah transfer ke nomor VA yang sudah mati.
+</li></ul>
+</li></ul>
 </section>
 <section id="sec-check" class="doc-section">
 <h3>🧠 I. Knowledge Check</h3>
 <ol>
-<li>Apa nama endpoint API REST yang digunakan untuk mengambil daftar tagihan pinjaman aktif nasabah?</li>
-<li>Method channel apa yang dipanggil oleh Flutter untuk memicu pop-up diskon pembayaran ke host native?</li>
-<li>Apa yang ditampilkan oleh <code>RepayHomePage</code> jika nasabah tidak memiliki pinjaman aktif?</li>
-</ol>
+<li>Apa nama endpoint API REST yang digunakan untuk mengambil daftar tagihan pinjaman aktif nasabah?
+</li>
+<li>Method channel apa yang dipanggil oleh Flutter untuk memicu pop-up diskon pembayaran ke host native?
+</li>
+<li>Apa yang ditampilkan oleh <code>RepayHomePage</code> jika nasabah tidak memiliki pinjaman aktif?
+</li></ol>
 <p><strong>Latihan Observasi</strong>:</p>
 <p>Buka file <a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/learn/Flutter-Arch/flutter/lib/pages/repay/home/services/repay_home_service.dart" target="_blank" rel="noopener noreferrer">🦊 flutter/lib/pages/repay/home/services/repay_home_service.dart <span class="branch-tag">learn/Flutter-Arch</span> ↗</a>. Periksa pemanggilan API <code>ServerApi.repayList</code> dan amati parameter <code>showLoading: false</code> pada baris 37.</p>
 </section>

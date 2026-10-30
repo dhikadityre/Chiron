@@ -105,31 +105,41 @@
 <h3>🎯 A. Learning Objective</h3>
 <p>Setelah mempelajari dokumen ini, pembaca akan mampu:</p>
 <ol>
-<li>Menjelaskan 8 fase utama siklus hidup nasabah pada platform Fintech P2P Lending SAMIR.</li>
-<li>Memahami titik temu antara regulasi fintech (OJK / AFPI) dengan implementasi teknis di aplikasi (e-KYC, persetujuan kontrak digital, penilaian risiko perangkat).</li>
-<li>Mengidentifikasi transisi status nasabah dari Tamu (<em>Guest</em>) -> Terdaftar (<em>Registered</em>) -> Terverifikasi (<em>KYC Complete</em>) -> Memiliki Kuota (<em>Approved Limit</em>) -> Peminjam Aktif (<em>Active Borrower</em>).</li>
-</ol>
+<li>Menjelaskan 8 fase utama siklus hidup nasabah pada platform Fintech P2P Lending SAMIR.
+</li>
+<li>Memahami titik temu antara regulasi fintech (OJK / AFPI) dengan implementasi teknis di aplikasi (e-KYC, persetujuan kontrak digital, penilaian risiko perangkat).
+</li>
+<li>Mengidentifikasi transisi status nasabah dari Tamu (<em>Guest</em>) -> Terdaftar (<em>Registered</em>) -> Terverifikasi (<em>KYC Complete</em>) -> Memiliki Kuota (<em>Approved Limit</em>) -> Peminjam Aktif (<em>Active Borrower</em>).
+</li></ol>
 </section>
 <section id="sec-prereq" class="doc-section">
 <h3>📋 B. Prerequisites</h3>
 <ul>
-<li>Sudah membaca kurikulum <a href="../04-understanding-navigation/01-feature-inventory.html">Level 4: Understanding Navigation</a>.</li>
-<li>Mengetahui istilah dasar finansial seperti plafon kredit, tenor, suku bunga, dan virtual account.</li>
-</ul>
+<li>Sudah membaca kurikulum <a href="../04-understanding-navigation/01-feature-inventory.html">Level 4: Understanding Navigation</a>.
+</li>
+<li>Mengetahui istilah dasar finansial seperti plafon kredit, tenor, suku bunga, dan virtual account.
+</li></ul>
 </section>
 <section id="sec-simple" class="doc-section">
 <h3>💡 C. Simple Explanation (Analogi Pengajuan Pinjaman Mikro Tradisional)</h3>
 <p>Bayangkan seseorang yang membutuhkan dana tunai mendesak untuk modal usaha:</p>
 <ol>
-<li><strong>Melihat Brosur</strong>: Nasabah datang melihat etalase pinjaman (<strong>Fase 1: Onboarding & Home</strong>).</li>
-<li><strong>Membuka Rekening Anggota</strong>: Mengisi formulir pendaftaran dengan nomor ponsel (<strong>Fase 2: Registrasi OTP</strong>).</li>
-<li><strong>Pemeriksaan Dokumen</strong>: Menunjukkan e-KTP fisik, mengisi data kantor tempat bekerja, menyerahkan kontak darurat keluarga, dan menunjukkan wajah asli di depan petugas (<strong>Fase 3: e-KYC & Liveness</strong>).</li>
-<li><strong>Analisis Analis Kredit</strong>: Komite kredit menilai kelayakan nasabah dan menyetujui limit Rp 3.000.000 (<strong>Fase 4: Penilaian Kuota</strong>).</li>
-<li><strong>Tanda Tangan Perjanjian</strong>: Nasabah memilih tenor 30 hari, menggunakan kupon diskon admin, membaca kontrak, dan menandatangani akad pinjaman digital (<strong>Fase 5: Konfirmasi Pinjaman</strong>).</li>
-<li><strong>Uang Masuk ke Rekening</strong>: Dana ditransfer otomatis ke rekening bank nasabah (<strong>Fase 6: Pencairan</strong>).</li>
-<li><strong>Bayar Angsuran</strong>: Pada hari jatuh tempo, nasabah mentransfer via Virtual Account (<strong>Fase 7: Pelunasan</strong>).</li>
-<li><strong>Nasabah Loyal</strong>: Setelah lunas, limit kredit nasabah otomatis naik dan dapat dipinjam kembali secara instan (<strong>Fase 8: Pinjaman Berulang / Cycle</strong>).</li>
-</ol>
+<li><strong>Melihat Brosur</strong>: Nasabah datang melihat etalase pinjaman (<strong>Fase 1: Onboarding & Home</strong>).
+</li>
+<li><strong>Membuka Rekening Anggota</strong>: Mengisi formulir pendaftaran dengan nomor ponsel (<strong>Fase 2: Registrasi OTP</strong>).
+</li>
+<li><strong>Pemeriksaan Dokumen</strong>: Menunjukkan e-KTP fisik, mengisi data kantor tempat bekerja, menyerahkan kontak darurat keluarga, dan menunjukkan wajah asli di depan petugas (<strong>Fase 3: e-KYC & Liveness</strong>).
+</li>
+<li><strong>Analisis Analis Kredit</strong>: Komite kredit menilai kelayakan nasabah dan menyetujui limit Rp 3.000.000 (<strong>Fase 4: Penilaian Kuota</strong>).
+</li>
+<li><strong>Tanda Tangan Perjanjian</strong>: Nasabah memilih tenor 30 hari, menggunakan kupon diskon admin, membaca kontrak, dan menandatangani akad pinjaman digital (<strong>Fase 5: Konfirmasi Pinjaman</strong>).
+</li>
+<li><strong>Uang Masuk ke Rekening</strong>: Dana ditransfer otomatis ke rekening bank nasabah (<strong>Fase 6: Pencairan</strong>).
+</li>
+<li><strong>Bayar Angsuran</strong>: Pada hari jatuh tempo, nasabah mentransfer via Virtual Account (<strong>Fase 7: Pelunasan</strong>).
+</li>
+<li><strong>Nasabah Loyal</strong>: Setelah lunas, limit kredit nasabah otomatis naik dan dapat dipinjam kembali secara instan (<strong>Fase 8: Pinjaman Berulang / Cycle</strong>).
+</li></ol>
 </section>
 <section id="sec-actual" class="doc-section">
 <h3>💻 D. Actual Implementation: Diagram Makro User Journey</h3>
@@ -188,87 +198,115 @@ flowchart TD
 <h4>Fase 1: Discovery & Onboarding (Eksplorasi)</h4>
 </div>
 <ul>
-<li>Pengguna membuka aplikasi SAMIR iOS.</li>
-<li>Aplikasi menampilkan <code>IDLaunchViewController</code> dengan hitung mundur 3 detik.</li>
-<li>Pengguna tiba di <code>IDHomeViewController</code> (Tab 0) dalam mode Tamu (<em>Guest Mode</em>). Layar menampilkan kalkulator simulasi pinjaman dengan nilai default dan tombol ajukan.</li>
-</ul>
+<li>Pengguna membuka aplikasi SAMIR iOS.
+</li>
+<li>Aplikasi menampilkan <code>IDLaunchViewController</code> dengan hitung mundur 3 detik.
+</li>
+<li>Pengguna tiba di <code>IDHomeViewController</code> (Tab 0) dalam mode Tamu (<em>Guest Mode</em>). Layar menampilkan kalkulator simulasi pinjaman dengan nilai default dan tombol ajukan.
+</li></ul>
 <div id="sub-fase-2-authentication-registration-registrasi-akun" class="doc-subsection">
 <h4>Fase 2: Authentication & Registration (Registrasi Akun)</h4>
 </div>
 <ul>
-<li>Pengguna menekan tombol "Ajukan Pinjaman".</li>
-<li>Karena belum ada sesi login (<code>IDServiceManager.loginService()?.isLogin() == false</code>), modal <code>LoginViewV2Controller</code> muncul.</li>
-<li>Pengguna menginput nomor ponsel (+62 / 08).</li>
-<li>Pengguna menerima 6 digit kode OTP via SMS atau WhatsApp dan memasukkannya ke kolom verifikasi.</li>
-<li>Sesi dibuat, kunci <code>staticKey</code> disimpan, dan pengguna kembali ke Beranda sebagai user terotentikasi.</li>
-</ul>
+<li>Pengguna menekan tombol "Ajukan Pinjaman".
+</li>
+<li>Karena belum ada sesi login (<code>IDServiceManager.loginService()?.isLogin() == false</code>), modal <code>LoginViewV2Controller</code> muncul.
+</li>
+<li>Pengguna menginput nomor ponsel (+62 / 08).
+</li>
+<li>Pengguna menerima 6 digit kode OTP via SMS atau WhatsApp dan memasukkannya ke kolom verifikasi.
+</li>
+<li>Sesi dibuat, kunci <code>staticKey</code> disimpan, dan pengguna kembali ke Beranda sebagai user terotentikasi.
+</li></ul>
 <div id="sub-fase-3-identity-verification-e-kyc-kepatuhan-regulasi-finansial" class="doc-subsection">
 <h4>Fase 3: Identity Verification / e-KYC (Kepatuhan Regulasi Finansial)</h4>
 </div>
 <ul>
-<li>Sebelum pinjaman dapat dianalisis, regulasi OJK mewajibkan verifikasi identitas nasabah:</li>
-</ul>
+<li>Sebelum pinjaman dapat dianalisis, regulasi OJK mewajibkan verifikasi identitas nasabah:
 <ol>
-<li><strong>OCR KTP (<code>IDNewOCRViewController</code>)</strong>: Kamera memindai e-KTP asli. SDK Advance AI mengenali NIK dan Nama.</li>
-<li><strong>Data Pribadi (<code>IDNewAuthBasicViewController</code>)</strong>: Input agama, status perkawinan, tingkat pendidikan, dan alamat tempat tinggal.</li>
-<li><strong>Pekerjaan (<code>IDNewAuthJobViewController</code>)</strong>: Input profesi, nama instansi/perusahaan, dan estimasi penghasilan bulanan.</li>
-<li><strong>Kontak Darurat (<code>IDNewAuthContactViewController</code>)</strong>: Input 2 nomor telepon keluarga inti atau rekan kerja.</li>
-<li><strong>Rekening Bank (<code>IDNewBankViewController</code>)</strong>: Mengikat rekening bank yang <strong>namanya wajib cocok 100% dengan nama di e-KTP</strong>.</li>
-<li><strong>Liveness Detection (<code>IDAuthLiveViewController</code>)</strong>: Menggunakan SDK AAILiveness / TrustDecision untuk memastikan pemohon adalah manusia hidup dan bukan foto/video palsu.</li>
-</ol>
+<li><strong>OCR KTP (<code>IDNewOCRViewController</code>)</strong>: Kamera memindai e-KTP asli. SDK Advance AI mengenali NIK dan Nama.
+</li>
+<li><strong>Data Pribadi (<code>IDNewAuthBasicViewController</code>)</strong>: Input agama, status perkawinan, tingkat pendidikan, dan alamat tempat tinggal.
+</li>
+<li><strong>Pekerjaan (<code>IDNewAuthJobViewController</code>)</strong>: Input profesi, nama instansi/perusahaan, dan estimasi penghasilan bulanan.
+</li>
+<li><strong>Kontak Darurat (<code>IDNewAuthContactViewController</code>)</strong>: Input 2 nomor telepon keluarga inti atau rekan kerja.
+</li>
+<li><strong>Rekening Bank (<code>IDNewBankViewController</code>)</strong>: Mengikat rekening bank yang <strong>namanya wajib cocok 100% dengan nama di e-KTP</strong>.
+</li>
+<li><strong>Liveness Detection (<code>IDAuthLiveViewController</code>)</strong>: Menggunakan SDK AAILiveness / TrustDecision untuk memastikan pemohon adalah manusia hidup dan bukan foto/video palsu.
+</li></ol>
+</li></ul>
 <div id="sub-fase-4-credit-risk-assessment-quota-decision-penilaian-kuota" class="doc-subsection">
 <h4>Fase 4: Credit Risk Assessment & Quota Decision (Penilaian Kuota)</h4>
 </div>
 <ul>
-<li>Pengguna diarahkan ke <code>IDQuatoAssessViewController</code> (<code>samir://loan/creditAssess</code>).</li>
-<li>Aplikasi mengirim data profil risiko perangkat (<code>blackBox</code> dari SDK TrustDecision).</li>
-<li>Presenter <code>IDAssessPresenter</code> menjalankan polling status analisa server (<code>requstPollingStatus</code>).</li>
-<li>Hasil keputusan:</li>
-<li><strong>Disetujui</strong>: Plafon kuota (misal: Rp 1.000.000 s/d Rp 5.000.000) dan daftar produk pinjaman aktif.</li>
-<li><strong>Ditolak</strong>: Pengguna diberitahu tanggal kapan mereka dapat mengajukan kembali (cooling-off period).</li>
-</ul>
+<li>Pengguna diarahkan ke <code>IDQuatoAssessViewController</code> (<code>samir://loan/creditAssess</code>).
+</li>
+<li>Aplikasi mengirim data profil risiko perangkat (<code>blackBox</code> dari SDK TrustDecision).
+</li>
+<li>Presenter <code>IDAssessPresenter</code> menjalankan polling status analisa server (<code>requstPollingStatus</code>).
+</li>
+<li>Hasil keputusan:
+<ul>
+<li><strong>Disetujui</strong>: Plafon kuota (misal: Rp 1.000.000 s/d Rp 5.000.000) dan daftar produk pinjaman aktif.
+</li>
+<li><strong>Ditolak</strong>: Pengguna diberitahu tanggal kapan mereka dapat mengajukan kembali (cooling-off period).
+</li></ul>
+</li></ul>
 <div id="sub-fase-5-loan-product-selection-confirmation-akad-pinjaman-digital" class="doc-subsection">
 <h4>Fase 5: Loan Product Selection & Confirmation (Akad Pinjaman Digital)</h4>
 </div>
 <ul>
-<li>Pengguna masuk ke layar reaktif <code>LoanConfirmViewController_Rx</code> (<code>samir://loan/confirm</code>).</li>
-<li>Pengguna menyesuaikan nominal pinjaman dan memilih tenor cicilan.</li>
-<li>Pengguna dapat memilih voucher potongan biaya administrasi melalui <code>samir://loan/voucherSelect</code>.</li>
-<li>Layar menampilkan rincian transparan: Nominal Pinjaman, Biaya Layanan, Bunga, Biaya Asuransi, Potongan Diskon, Tanggal Jatuh Tempo, dan <strong>Nominal Pencairan Bersih</strong>.</li>
-<li>Pengguna membaca klausul perjanjian pinjaman online (<code>IDConfirmContractPopupView</code>) dan menyetujui akad digital.</li>
-</ul>
+<li>Pengguna masuk ke layar reaktif <code>LoanConfirmViewController_Rx</code> (<code>samir://loan/confirm</code>).
+</li>
+<li>Pengguna menyesuaikan nominal pinjaman dan memilih tenor cicilan.
+</li>
+<li>Pengguna dapat memilih voucher potongan biaya administrasi melalui <code>samir://loan/voucherSelect</code>.
+</li>
+<li>Layar menampilkan rincian transparan: Nominal Pinjaman, Biaya Layanan, Bunga, Biaya Asuransi, Potongan Diskon, Tanggal Jatuh Tempo, dan <strong>Nominal Pencairan Bersih</strong>.
+</li>
+<li>Pengguna membaca klausul perjanjian pinjaman online (<code>IDConfirmContractPopupView</code>) dan menyetujui akad digital.
+</li></ul>
 <div id="sub-fase-6-loan-disbursement-pencairan-dana" class="doc-subsection">
 <h4>Fase 6: Loan Disbursement (Pencairan Dana)</h4>
 </div>
 <ul>
-<li>Begitu tombol "Cairkan Dana" ditekan, pesanan dibuat di backend.</li>
-<li>Sistem perbankan mitra memproses transfer dana ke rekening bank yang telah diverifikasi di Fase 3.</li>
-<li>Pengguna menerima notifikasi push keberhasilan pencairan.</li>
-</ul>
+<li>Begitu tombol "Cairkan Dana" ditekan, pesanan dibuat di backend.
+</li>
+<li>Sistem perbankan mitra memproses transfer dana ke rekening bank yang telah diverifikasi di Fase 3.
+</li>
+<li>Pengguna menerima notifikasi push keberhasilan pencairan.
+</li></ul>
 <div id="sub-fase-7-servicing-repayment-pemantauan-pembayaran-tagihan" class="doc-subsection">
 <h4>Fase 7: Servicing & Repayment (Pemantauan & Pembayaran Tagihan)</h4>
 </div>
 <ul>
-<li>Pengguna memantau jadwal cicilan di Tab 1 (Tagihan / Repay Home yang di-host di Flutter).</li>
-<li>Mendekati tanggal jatuh tempo, pengguna mengklik tombol "Bayar".</li>
-<li>Aplikasi menampilkan nomor Virtual Account (BCA, Mandiri, BNI, BRI, Permata) atau barcode retail (Alfamart / Indomaret).</li>
-<li>Setelah pembayaran diterima, backend mengirim konfirmasi pelunasan secara realtime.</li>
-</ul>
+<li>Pengguna memantau jadwal cicilan di Tab 1 (Tagihan / Repay Home yang di-host di Flutter).
+</li>
+<li>Mendekati tanggal jatuh tempo, pengguna mengklik tombol "Bayar".
+</li>
+<li>Aplikasi menampilkan nomor Virtual Account (BCA, Mandiri, BNI, BRI, Permata) atau barcode retail (Alfamart / Indomaret).
+</li>
+<li>Setelah pembayaran diterima, backend mengirim konfirmasi pelunasan secara realtime.
+</li></ul>
 <div id="sub-fase-8-retention-repeat-borrowing-pinjaman-berulang-cycle-loan" class="doc-subsection">
 <h4>Fase 8: Retention & Repeat Borrowing (Pinjaman Berulang / Cycle Loan)</h4>
 </div>
 <ul>
-<li>Setelah pinjaman pertama lunas dengan riwayat kredit yang baik, limit kuota pengguna otomatis dinaikkan.</li>
-<li>Pengguna tidak perlu mengisi formulir KYC ulang! Pada pengajuan berikutnya, pengguna dapat langsung melompat dari Beranda ke Konfirmasi Pinjaman secara instan (<em>one-click loan</em>).</li>
-</ul>
+<li>Setelah pinjaman pertama lunas dengan riwayat kredit yang baik, limit kuota pengguna otomatis dinaikkan.
+</li>
+<li>Pengguna tidak perlu mengisi formulir KYC ulang! Pada pengajuan berikutnya, pengguna dapat langsung melompat dari Beranda ke Konfirmasi Pinjaman secara instan (<em>one-click loan</em>).
+</li></ul>
 </section>
 <section id="sec-why" class="doc-section">
 <h3>⚖️ F. Why It Matters: Mengapa Alur KYC Sangat Panjang?</h3>
 <p>Senior engineer harus memahami bahwa panjangnya alur KYC (6 langkah) bukan sekadar preferensi desain antarmuka, melainkan <strong>kewajiban regulasi perlindungan konsumen dan manajemen risiko kredit</strong> di Indonesia:</p>
 <ul>
-<li>Nama di KTP dan Nama di Rekening Bank harus identik untuk mencegah pencucian uang (<em>Anti-Money Laundering / AML</em>).</li>
-<li>Liveness detection wajib menggunakan SDK bersertifikasi ISO 30107 untuk mencegah penipuan identitas (<em>Identity Theft</em>).</li>
-</ul>
+<li>Nama di KTP dan Nama di Rekening Bank harus identik untuk mencegah pencucian uang (<em>Anti-Money Laundering / AML</em>).
+</li>
+<li>Liveness detection wajib menggunakan SDK bersertifikasi ISO 30107 untuk mencegah penipuan identitas (<em>Identity Theft</em>).
+</li></ul>
 </section>
 <section id="sec-example" class="doc-section">
 <h3>🔬 G. Practical Example: Guard State di Beranda</h3>
@@ -290,19 +328,26 @@ if !isLogin {
 <section id="sec-mistakes" class="doc-section">
 <h3>⚠️ H. Common Mistakes & Debugging</h3>
 <ul>
-<li><strong>Mengabaikan Kegagalan Liveness Detection</strong>:</li>
-<li>Jika liveness gagal karena pencahayaan redup, SDK akan mengembalikan error score. Jangan pernah membypass pemeriksaan liveness di sisi klien karena backend akan selalu memverifikasi ulang hash gambar wajah (<em>face comparison score</em>).</li>
-<li><strong>Asumsi Pengguna Selalu Melakukan KYC Lengkap</strong>:</li>
-<li>Banyak pengguna menutup aplikasi di tengah-tengah alur KYC (misal saat step kontak darurat). Aplikasi harus mampu mendeteksi progres terakhir (<code>step</code>) dan mengantar pengguna kembali ke langkah yang belum selesai saat aplikasi dibuka kembali.</li>
-</ul>
+<li><strong>Mengabaikan Kegagalan Liveness Detection</strong>:
+<ul>
+<li>Jika liveness gagal karena pencahayaan redup, SDK akan mengembalikan error score. Jangan pernah membypass pemeriksaan liveness di sisi klien karena backend akan selalu memverifikasi ulang hash gambar wajah (<em>face comparison score</em>).
+</li></ul>
+</li>
+<li><strong>Asumsi Pengguna Selalu Melakukan KYC Lengkap</strong>:
+<ul>
+<li>Banyak pengguna menutup aplikasi di tengah-tengah alur KYC (misal saat step kontak darurat). Aplikasi harus mampu mendeteksi progres terakhir (<code>step</code>) dan mengantar pengguna kembali ke langkah yang belum selesai saat aplikasi dibuka kembali.
+</li></ul>
+</li></ul>
 </section>
 <section id="sec-check" class="doc-section">
 <h3>🧠 I. Knowledge Check</h3>
 <ol>
-<li>Berapa tahapan utama dalam alur verifikasi identitas (e-KYC)?</li>
-<li>Di layar mana pengguna dapat meninjau rincian biaya potongan admin dan memilih voucher diskon?</li>
-<li>Apa yang membedakan alur pengajuan pinjaman pertama kali (<em>first-time borrower</em>) dengan pinjaman berulang (<em>cycle borrower</em>)?</li>
-</ol>
+<li>Berapa tahapan utama dalam alur verifikasi identitas (e-KYC)?
+</li>
+<li>Di layar mana pengguna dapat meninjau rincian biaya potongan admin dan memilih voucher diskon?
+</li>
+<li>Apa yang membedakan alur pengajuan pinjaman pertama kali (<em>first-time borrower</em>) dengan pinjaman berulang (<em>cycle borrower</em>)?
+</li></ol>
 </section>
 <section id="sec-completion" class="doc-section">
 <h3>🏁 J. Completion Criteria</h3>

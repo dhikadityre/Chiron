@@ -105,11 +105,14 @@
 <h3>🎯 A. Learning Objective</h3>
 <p>Setelah menyelesaikan dokumen ini, pembaca akan mampu:</p>
 <ol>
-<li>Memahami arsitektur singleton <code>HttpClient</code> berbasis pustaka Dio.</li>
-<li>Menjelaskan siklus kerja interceptor: <code>HttpLogInterceptor</code> dan <code>LoadingInterceptor</code>.</li>
-<li>Mengetahui cara kerja bypass sertifikat SSL (<code>badCertificateCallback</code>) dan injeksi proxy IP di non-PROD.</li>
-<li>Menjelaskan format struktur data <code>BaseResponse</code> dan bagaimana kode status HTTP dipetakan ke kode bisnis backend SAMIR.</li>
-</ol>
+<li>Memahami arsitektur singleton <code>HttpClient</code> berbasis pustaka Dio.
+</li>
+<li>Menjelaskan siklus kerja interceptor: <code>HttpLogInterceptor</code> dan <code>LoadingInterceptor</code>.
+</li>
+<li>Mengetahui cara kerja bypass sertifikat SSL (<code>badCertificateCallback</code>) dan injeksi proxy IP di non-PROD.
+</li>
+<li>Menjelaskan format struktur data <code>BaseResponse</code> dan bagaimana kode status HTTP dipetakan ke kode bisnis backend SAMIR.
+</li></ol>
 </section>
 <section id="sec-prereq" class="doc-section">
 <h3>📋 B. Prerequisites</h3>
@@ -119,11 +122,14 @@
 <h3>💡 C. Simple Explanation (Analogi & Konsep Sederhana)</h3>
 <p>Bayangkan sebuah kantor pos diplomatik khusus:</p>
 <ol>
-<li><strong>Surat Masuk</strong>: Setiap surat yang akan dikirim (API Request) otomatis diperiksa kelengkapan prangkonya dan distempel tanggal resmi oleh staf administrasi (<strong><code>LoadingInterceptor</code></strong> & <strong><code>ParamUtils</code></strong>).</li>
-<li><strong>Buku Ekspedisi</strong>: Salinan surat dicatat di buku arsip kantor pos agar mudah dilacak jika terjadi masalah (<strong><code>HttpLogInterceptor</code></strong>).</li>
-<li><strong>Jalur Terowongan Khusus</strong>: Surat dikirim melalui kurir bersepeda motor dengan izin khusus melewati pos pemeriksaan tanpa harus membuka koper diplomatiknya (<strong>Bypass SSL <code>badCertificateCallback</code></strong>).</li>
-<li><strong>Balasan Diterima</strong>: Ketika surat balasan tiba (<strong><code>BaseResponse</code></strong>), jika amplop berisi cap peringatan "Masa Berlaku Paspor Habis" (<strong>Error 10006</strong>), staf pos segera memberi tahu warga tersebut untuk memperbarui paspornya.</li>
-</ol>
+<li><strong>Surat Masuk</strong>: Setiap surat yang akan dikirim (API Request) otomatis diperiksa kelengkapan prangkonya dan distempel tanggal resmi oleh staf administrasi (<strong><code>LoadingInterceptor</code></strong> & <strong><code>ParamUtils</code></strong>).
+</li>
+<li><strong>Buku Ekspedisi</strong>: Salinan surat dicatat di buku arsip kantor pos agar mudah dilacak jika terjadi masalah (<strong><code>HttpLogInterceptor</code></strong>).
+</li>
+<li><strong>Jalur Terowongan Khusus</strong>: Surat dikirim melalui kurir bersepeda motor dengan izin khusus melewati pos pemeriksaan tanpa harus membuka koper diplomatiknya (<strong>Bypass SSL <code>badCertificateCallback</code></strong>).
+</li>
+<li><strong>Balasan Diterima</strong>: Ketika surat balasan tiba (<strong><code>BaseResponse</code></strong>), jika amplop berisi cap peringatan "Masa Berlaku Paspor Habis" (<strong>Error 10006</strong>), staf pos segera memberi tahu warga tersebut untuk memperbarui paspornya.
+</li></ol>
 </section>
 <section id="sec-actual" class="doc-section">
 <h3>💻 D. Actual Implementation (Bukti di Kode Sumber)</h3>
@@ -174,11 +180,14 @@ class HttpClient {
 }</code></pre>
 <p>Fitur-fitur kritis pada konfigurasi:</p>
 <ol>
-<li><strong>Bahasa Standar</strong>: Header default <code>&#x27;language&#x27;: &#x27;id_ID&#x27;</code> memastikan seluruh pesan validasi error dikembalikan dalam Bahasa Indonesia oleh server backend.</li>
-<li><strong>Timeout Panjang (120 Detik)</strong>: Mencegah kegagalan prematur saat nasabah berada di daerah dengan koneksi sinyal seluler lemah (2G/3G di pedalaman).</li>
-<li><strong>Bypass Sertifikat SSL (<code>badCertificateCallback =&gt; true</code>)</strong>: Memungkinkan pengetesan API di staging environment yang menggunakan self-signed certificate atau tunneling internal tanpa error handshake SSL.</li>
-<li><strong>Injeksi Proxy Dinamis</strong>: Mengaitkan socket HTTP Dart ke alamat IP proxy (Charles / Proxyman) yang diisi melalui <code>ProxyDebugPage</code> di environment non-PROD.</li>
-</ol>
+<li><strong>Bahasa Standar</strong>: Header default <code>&#x27;language&#x27;: &#x27;id_ID&#x27;</code> memastikan seluruh pesan validasi error dikembalikan dalam Bahasa Indonesia oleh server backend.
+</li>
+<li><strong>Timeout Panjang (120 Detik)</strong>: Mencegah kegagalan prematur saat nasabah berada di daerah dengan koneksi sinyal seluler lemah (2G/3G di pedalaman).
+</li>
+<li><strong>Bypass Sertifikat SSL (<code>badCertificateCallback =&gt; true</code>)</strong>: Memungkinkan pengetesan API di staging environment yang menggunakan self-signed certificate atau tunneling internal tanpa error handshake SSL.
+</li>
+<li><strong>Injeksi Proxy Dinamis</strong>: Mengaitkan socket HTTP Dart ke alamat IP proxy (Charles / Proxyman) yang diisi melalui <code>ProxyDebugPage</code> di environment non-PROD.
+</li></ol>
 <div id="sub-2-pipeline-interceptor" class="doc-subsection">
 <h4>2. Pipeline Interceptor</h4>
 </div>
@@ -203,12 +212,12 @@ graph LR
   </div>
 </div>
 <ul>
-<li><strong><code>LoadingInterceptor</code></strong>:</li>
-</ul>
+<li><strong><code>LoadingInterceptor</code></strong>:
+</li></ul>
 <p>Memeriksa opsi <code>options.extra[LoadingInterceptor.showLoadingKey]</code>. Jika <code>true</code> (default), modal loading ditampilkan dan ditutup secara otomatis saat siklus request berakhir.</p>
 <ul>
-<li><strong><code>HttpLogInterceptor</code></strong>:</li>
-</ul>
+<li><strong><code>HttpLogInterceptor</code></strong>:
+</li></ul>
 <p>Mencetak tag log terstruktur <code>[HTTP-REQ]</code> dan <code>[HTTP-RESP]</code> di konsol debug untuk mempermudah analisis data oleh developer.</p>
 <div id="sub-3-struktur-amplop-respon-baseresponset" class="doc-subsection">
 <h4>3. Struktur Amplop Respon: <code>BaseResponse&lt;T&gt;</code></h4>
@@ -234,68 +243,75 @@ graph LR
 <section id="sec-walkthrough" class="doc-section">
 <h3>🪜 E. Step-by-Step Walkthrough: Alur Lengkap Eksekusi <code>httpClient.post()</code></h3>
 <ol>
-<li><strong>Pemanggilan Method</strong>:</li>
-</ol>
+<li><strong>Pemanggilan Method</strong>:
+</li></ol>
 <p>Service mengeksekusi <code>httpClient.post(ServerApi.repayList, params: {&#x27;page&#x27;: 1})</code>.</p>
-<ol>
-<li><strong>Penggabungan Parameter & Tanda Tangan</strong>:</li>
-</ol>
+<ol start="2">
+<li><strong>Penggabungan Parameter & Tanda Tangan</strong>:
+</li></ol>
 <p>Sebelum dikirim ke Dio, <code>addDefaultParamsAndSign()</code> menggabungkan parameter bawaan platform (<code>clientId</code>, <code>timestamp</code>, <code>userNo</code>) dan menghitung signature MD5 <code>signParamMap()</code>.</p>
-<ol>
-<li><strong>Loading Trigger</strong>:</li>
-</ol>
+<ol start="3">
+<li><strong>Loading Trigger</strong>:
+</li></ol>
 <p><code>LoadingInterceptor.onRequest</code> memanggil <code>Loading.show()</code>. Layar pengguna diblokir dengan spinner transparan.</p>
-<ol>
-<li><strong>Transport Jaringan</strong>:</li>
-</ol>
+<ol start="4">
+<li><strong>Transport Jaringan</strong>:
+</li></ol>
 <p>Dio mengeksekusi POST ke <code>https://domain-loansapp-test.samir.co.id/api/repayment/repayOrderList</code>.</p>
-<ol>
-<li><strong>Evaluasi Kode Status</strong>:</li>
-</ol>
+<ol start="5">
+<li><strong>Evaluasi Kode Status</strong>:
 <ul>
-<li>Jika HTTP Status <code>200</code> dan <code>BaseResponse.code == &#x27;200&#x27;</code>, fungsi mengembalikan isi <code>baseResponse.data</code>.</li>
-<li>Jika <code>BaseResponse.code == &#x27;10006&#x27;</code>, sesi dibersihkan via <code>Global.clearUser()</code> dan layar login native dibuka.</li>
-<li>Jika <code>code != &#x27;200&#x27;</code>, pesan <code>baseResponse.msg</code> dimunculkan via <code>showToast()</code>.</li>
-</ul>
-<ol>
-<li><strong>Loading Dismissal</strong>:</li>
-</ol>
+<li>Jika HTTP Status <code>200</code> dan <code>BaseResponse.code == &#x27;200&#x27;</code>, fungsi mengembalikan isi <code>baseResponse.data</code>.
+</li>
+<li>Jika <code>BaseResponse.code == &#x27;10006&#x27;</code>, sesi dibersihkan via <code>Global.clearUser()</code> dan layar login native dibuka.
+</li>
+<li>Jika <code>code != &#x27;200&#x27;</code>, pesan <code>baseResponse.msg</code> dimunculkan via <code>showToast()</code>.
+</li></ul>
+</li>
+<li><strong>Loading Dismissal</strong>:
+</li></ol>
 <p><code>LoadingInterceptor.onResponse</code> memanggil <code>Loading.hide()</code>.</p>
 </section>
 <section id="sec-why" class="doc-section">
 <h3>⚖️ F. Why It Matters (Trade-Offs & Implikasi Teknis)</h3>
 <ul>
-<li><strong>Mengapa Menggunakan Timeout 120 Detik?</strong></li>
-</ul>
+<li><strong>Mengapa Menggunakan Timeout 120 Detik?</strong>
+</li></ul>
 <p>Sebagai aplikasi pinjaman online inklusi keuangan di Indonesia, sebagian besar nasabah berada di luar kota-kota besar dengan infrastruktur internet berfluktuasi tinggi. Timeout standar bawaan browser (15–30 detik) akan menghasilkan banyak <em>Connection Timeout Error</em> yang merugikan nasabah saat proses transfer pembayaran.</p>
 <ul>
-<li><strong>Mengapa Otomatis Menampilkan Toast Error di Client?</strong></li>
-</ul>
+<li><strong>Mengapa Otomatis Menampilkan Toast Error di Client?</strong>
+</li></ul>
 <p>Alih-alih mewajibkan setiap fungsi <code>Service</code> atau <code>Page</code> menulis <code>try-catch</code> dan memanggil <code>showToast(error)</code> secara berulang di puluhan tempat, <code>HttpClient._getResponse()</code> menangani feedback visual secara terpusat, menjamin tidak ada error backend yang luput dari pemberitahuan pengguna.</p>
 </section>
 <section id="sec-example" class="doc-section">
 <h3>🔬 G. Practical Example (Skenario Penggunaan Nyata)</h3>
 <p>Jika backend mengalami downtime dan mengembalikan status HTTP 502 Bad Gateway:</p>
 <ul>
-<li><code>_createErrorResponse()</code> menangkap <code>DioExceptionType.badResponse</code>.</li>
-<li>Ia membungkus error menjadi <code>BaseResponse(code: &#x27;Network&#x27;, msg: &#x27;Http status error [502]&#x27;)</code>.</li>
-<li>Aplikasi tidak mengalami unhandled exception crash; Toast peringatan muncul dengan rapi di layar.</li>
-</ul>
+<li><code>_createErrorResponse()</code> menangkap <code>DioExceptionType.badResponse</code>.
+</li>
+<li>Ia membungkus error menjadi <code>BaseResponse(code: &#x27;Network&#x27;, msg: &#x27;Http status error [502]&#x27;)</code>.
+</li>
+<li>Aplikasi tidak mengalami unhandled exception crash; Toast peringatan muncul dengan rapi di layar.
+</li></ul>
 </section>
 <section id="sec-mistakes" class="doc-section">
 <h3>⚠️ H. Common Mistakes & Debugging</h3>
 <ul>
-<li><strong>Lupa Menambahkan <code>showLoading: false</code> pada Panggilan Background</strong>:</li>
-<li>Untuk polling status atau pemuatan data saat tab bar berpindah, selalu tentukan <code>showLoading: false</code> agar pengguna tidak terganggu oleh kedipan spinner modal yang muncul sekilas.</li>
-</ul>
+<li><strong>Lupa Menambahkan <code>showLoading: false</code> pada Panggilan Background</strong>:
+<ul>
+<li>Untuk polling status atau pemuatan data saat tab bar berpindah, selalu tentukan <code>showLoading: false</code> agar pengguna tidak terganggu oleh kedipan spinner modal yang muncul sekilas.
+</li></ul>
+</li></ul>
 </section>
 <section id="sec-check" class="doc-section">
 <h3>🧠 I. Knowledge Check</h3>
 <ol>
-<li>Berapa nilai durasi timeout koneksi (connect, receive, send) yang ditetapkan pada <code>HttpClient</code> SAMIR?</li>
-<li>Apa yang dilakukan oleh <code>IOHttpClientAdapter</code> di environment non-PROD ketika <code>Global.proxyIp</code> terisi?</li>
-<li>Apa perbedaan fungsi antara <code>HttpLogInterceptor</code> dan <code>LoadingInterceptor</code>?</li>
-</ol>
+<li>Berapa nilai durasi timeout koneksi (connect, receive, send) yang ditetapkan pada <code>HttpClient</code> SAMIR?
+</li>
+<li>Apa yang dilakukan oleh <code>IOHttpClientAdapter</code> di environment non-PROD ketika <code>Global.proxyIp</code> terisi?
+</li>
+<li>Apa perbedaan fungsi antara <code>HttpLogInterceptor</code> dan <code>LoadingInterceptor</code>?
+</li></ol>
 <p><strong>Latihan Observasi</strong>:</p>
 <p>Buka file <a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/learn/Flutter-Arch/flutter/lib/common/http/http_client.dart" target="_blank" rel="noopener noreferrer">🦊 flutter/lib/common/http/http_client.dart <span class="branch-tag">learn/Flutter-Arch</span> ↗</a>. Periksa implementasi fungsi <code>_getResponse</code> pada baris 133–149 dan perhatikan penanganan kode error <code>&#x27;10006&#x27;</code>.</p>
 </section>

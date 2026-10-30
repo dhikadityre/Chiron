@@ -105,29 +105,37 @@
 <h3>🎯 A. Learning Objective</h3>
 <p>Setelah mempelajari dokumen ini, pembaca akan mampu:</p>
 <ol>
-<li>Menelusuri alur otentikasi sejak user menekan tombol login hingga sesi tersimpan secara aman di sandbox.</li>
-<li>Memahami mekanisme A/B testing tampilan halaman login (<code>isNewLoginPage()</code>).</li>
-<li>Menjelaskan bagaimana <code>staticKey</code> diperoleh saat login dan mengapa kunci ini mutlak diperlukan oleh seluruh panggilan API berikutnya.</li>
-<li>Memahami implementasi enkripsi AES-GCM 256-bit pada file penyimpanan <code>idn_userFile.plist</code>.</li>
-<li>Memahami alur pembersihan sesi saat user melakukan logout manual atau saat sesi kedaluwarsa.</li>
-</ol>
+<li>Menelusuri alur otentikasi sejak user menekan tombol login hingga sesi tersimpan secara aman di sandbox.
+</li>
+<li>Memahami mekanisme A/B testing tampilan halaman login (<code>isNewLoginPage()</code>).
+</li>
+<li>Menjelaskan bagaimana <code>staticKey</code> diperoleh saat login dan mengapa kunci ini mutlak diperlukan oleh seluruh panggilan API berikutnya.
+</li>
+<li>Memahami implementasi enkripsi AES-GCM 256-bit pada file penyimpanan <code>idn_userFile.plist</code>.
+</li>
+<li>Memahami alur pembersihan sesi saat user melakukan logout manual atau saat sesi kedaluwarsa.
+</li></ol>
 </section>
 <section id="sec-prereq" class="doc-section">
 <h3>📋 B. Prerequisites</h3>
 <ul>
-<li>Sudah membaca <a href="01-user-journey-overview.html">01-user-journey-overview.md</a>.</li>
-<li>Mengetahui konsep kriptografi simetris (AES-GCM) dan autentikasi dua faktor (2FA).</li>
-</ul>
+<li>Sudah membaca <a href="01-user-journey-overview.html">01-user-journey-overview.md</a>.
+</li>
+<li>Mengetahui konsep kriptografi simetris (AES-GCM) dan autentikasi dua faktor (2FA).
+</li></ul>
 </section>
 <section id="sec-simple" class="doc-section">
 <h3>💡 C. Simple Explanation (Analogi Kunci Kamar Hotel Pintar)</h3>
 <p>Bayangkan Anda menginap di hotel pintar modern:</p>
 <ol>
-<li><strong>Lobi Resepsionis (Form Login OTP)</strong>: Anda memberikan nomor telepon dan menerima kode rahasia melalui SMS/WhatsApp untuk membuktikan bahwa Anda pemilik nomor tersebut.</li>
-<li><strong>Kartu Kunci Digital (<code>staticKey</code>)</strong>: Setelah resepsionis memverifikasi kode Anda, resepsionis tidak memberi Anda kunci fisik biasa, melainkan <strong>kartu chip pintar (<code>staticKey</code>)</strong>.</li>
-<li><strong>Membuka Semua Pintu (Tanda Tangan API / Signature)</strong>: Setiap kali Anda ingin masuk ke kamar, lift, atau kolam renang (<strong>Request Endpoint Pinjaman</strong>), sensor hotel mewajibkan kartu chip pintar tersebut ditempelkan (<strong><code>sign</code> dihitung menggunakan <code>staticKey</code></strong>). Tanpa kartu chip ini, pintu mana pun tidak akan terbuka!</li>
-<li><strong>Brankas Kamar (Enkripsi Disk <code>idn_userFile.plist</code>)</strong>: Informasi pribadi Anda (nama, ID nasabah) disimpan di dalam brankas besi kamar yang dikunci rapat dengan kode sandi khusus perangkat (<strong>CryptoKit AES-GCM</strong>).</li>
-</ol>
+<li><strong>Lobi Resepsionis (Form Login OTP)</strong>: Anda memberikan nomor telepon dan menerima kode rahasia melalui SMS/WhatsApp untuk membuktikan bahwa Anda pemilik nomor tersebut.
+</li>
+<li><strong>Kartu Kunci Digital (<code>staticKey</code>)</strong>: Setelah resepsionis memverifikasi kode Anda, resepsionis tidak memberi Anda kunci fisik biasa, melainkan <strong>kartu chip pintar (<code>staticKey</code>)</strong>.
+</li>
+<li><strong>Membuka Semua Pintu (Tanda Tangan API / Signature)</strong>: Setiap kali Anda ingin masuk ke kamar, lift, atau kolam renang (<strong>Request Endpoint Pinjaman</strong>), sensor hotel mewajibkan kartu chip pintar tersebut ditempelkan (<strong><code>sign</code> dihitung menggunakan <code>staticKey</code></strong>). Tanpa kartu chip ini, pintu mana pun tidak akan terbuka!
+</li>
+<li><strong>Brankas Kamar (Enkripsi Disk <code>idn_userFile.plist</code>)</strong>: Informasi pribadi Anda (nama, ID nasabah) disimpan di dalam brankas besi kamar yang dikunci rapat dengan kode sandi khusus perangkat (<strong>CryptoKit AES-GCM</strong>).
+</li></ol>
 </section>
 <section id="sec-actual" class="doc-section">
 <h3>💻 D. Actual Implementation: Alur Otentikasi End-to-End</h3>
@@ -203,21 +211,26 @@ sequenceDiagram
 </div>
 <p>User dapat meminta OTP melalui 3 channel:</p>
 <ul>
-<li><strong>SMS</strong>: Default (<code>type: .sms</code>), memanggil <code>customer/v2/sendSmsCode</code>.</li>
-<li><strong>WhatsApp</strong>: Jika SMS terkendala (<code>type: .whatsapp</code>).</li>
-<li><strong>Voice Call</strong>: Panggilan telepon otomatis yang membacakan kode (<code>type: .voice</code>).</li>
-</ul>
+<li><strong>SMS</strong>: Default (<code>type: .sms</code>), memanggil <code>customer/v2/sendSmsCode</code>.
+</li>
+<li><strong>WhatsApp</strong>: Jika SMS terkendala (<code>type: .whatsapp</code>).
+</li>
+<li><strong>Voice Call</strong>: Panggilan telepon otomatis yang membacakan kode (<code>type: .voice</code>).
+</li></ul>
 <p>Setelah OTP dikirim, presenter mencatat timestamp cooldown di <code>getCodeTimerStamp</code> untuk mencegah user melakukan spam tombol OTP sebelum 60 detik berlalu.</p>
 <div id="sub-3-struktur-model-sesi-idlogincodemodel" class="doc-subsection">
 <h4>3. Struktur Model Sesi (<code>IDLoginCodeModel</code>)</h4>
 </div>
 <p>Setelah verifikasi sukses, backend mengembalikan objek sesi penting:</p>
 <ul>
-<li><code>mid</code>: Master Identifier akun nasabah.</li>
-<li><code>userNo</code>: Nomor unik pengguna di core banking.</li>
-<li><code>mobile</code>: Nomor telepon yang terdaftar.</li>
-<li><strong><code>staticKey</code></strong>: Kunci rahasia dinamis yang <strong>wajib digunakan sebagai seed untuk menandatangani semua request HTTP berikutnya</strong>!</li>
-</ul>
+<li><code>mid</code>: Master Identifier akun nasabah.
+</li>
+<li><code>userNo</code>: Nomor unik pengguna di core banking.
+</li>
+<li><code>mobile</code>: Nomor telepon yang terdaftar.
+</li>
+<li><strong><code>staticKey</code></strong>: Kunci rahasia dinamis yang <strong>wajib digunakan sebagai seed untuk menandatangani semua request HTTP berikutnya</strong>!
+</li></ul>
 <div id="sub-4-penyimpanan-sesi-aman-cryptokitaesgcm" class="doc-subsection">
 <h4>4. Penyimpanan Sesi Aman (<code>CryptoKit.AES.GCM</code>)</h4>
 </div>
@@ -263,28 +276,34 @@ private func userModelEncryptionKey() -&gt; SymmetricKey {
 <p>Path: <a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/learn/iOS-Arch/ios/IDSamirLoan/Application/SamirLoginModule/Classes/IDPresenter/IDLoginManager.swift:L145-170" target="_blank" rel="noopener noreferrer">🦊 ios/IDSamirLoan/Application/SamirLoginModule/Classes/IDPresenter/IDLoginManager.swift <span class="branch-tag">learn/iOS-Arch</span> ↗</a></p>
 <p>Ketika user menekan tombol "Keluar Akun" di halaman Pengaturan:</p>
 <ol>
-<li>Panggil endpoint server <code>customer/cancel</code> untuk membatalkan token di database backend.</li>
-<li><code>removeUserInfoWhenLoginOut()</code>:</li>
-</ol>
+<li>Panggil endpoint server <code>customer/cancel</code> untuk membatalkan token di database backend.
+</li>
+<li><code>removeUserInfoWhenLoginOut()</code>:
 <ul>
-<li>Menghapus file <code>idn_userFile.plist</code> dari direktori <code>ApplicationSupport</code> dan <code>Caches</code>.</li>
-<li>Menghapus <code>BIZ_ID</code> dan countdown OCR dari <code>UserDefaults</code>.</li>
-<li>Mengosongkan <code>static_key</code> di <code>IDNetworkManager</code>.</li>
-<li>Memanggil <code>IDTiktokManager.shared.logout()</code> dan <code>TYUtils.clearTYUserIdentifier()</code>.</li>
-</ul>
-<ol>
-<li>Menyiarkan notifikasi <code>IDN_SamirLoginModule_LoginOut_Notification</code>.</li>
-<li>Seluruh tab (termasuk Flutter Mine dan Repay) mendengarkan notifikasi ini dan mereset tampilannya ke mode Tamu.</li>
-</ol>
+<li>Menghapus file <code>idn_userFile.plist</code> dari direktori <code>ApplicationSupport</code> dan <code>Caches</code>.
+</li>
+<li>Menghapus <code>BIZ_ID</code> dan countdown OCR dari <code>UserDefaults</code>.
+</li>
+<li>Mengosongkan <code>static_key</code> di <code>IDNetworkManager</code>.
+</li>
+<li>Memanggil <code>IDTiktokManager.shared.logout()</code> dan <code>TYUtils.clearTYUserIdentifier()</code>.
+</li></ul>
+</li>
+<li>Menyiarkan notifikasi <code>IDN_SamirLoginModule_LoginOut_Notification</code>.
+</li>
+<li>Seluruh tab (termasuk Flutter Mine dan Repay) mendengarkan notifikasi ini dan mereset tampilannya ke mode Tamu.
+</li></ol>
 <div id="sub-6-investigasi-modul-kyc-samirauthmodule-v1-vs-v2-mana-yang-digunakan" class="doc-subsection">
 <h4>6. Investigasi Modul KYC: <code>SamirAuthModule</code> V1 vs V2 — Mana yang Digunakan?</h4>
 </div>
 <p>Di dalam direktori <a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/learn/iOS-Arch/ios/IDSamirLoan/Application/SamirAuthModule/Classes/" target="_blank" rel="noopener noreferrer">🦊 ios/IDSamirLoan/Application/SamirAuthModule/Classes/ <span class="branch-tag">learn/iOS-Arch</span> ↗</a>, ditemukan struktur folder ganda yang membingungkan:</p>
 <ul>
-<li><strong>Folder Versi 1 (Legacy)</strong>: <code>IDViewController/</code>, <code>IDPresenter/</code>, <code>IDModel/</code>, <code>IDView/</code></li>
-<li><strong>Folder Versi 2 (Aktif)</strong>: <code>IDViewControllerV2/</code>, <code>IDPresenterV2/</code>, <code>IDModelV2/</code>, <code>IDViewV2/</code></li>
-</ul>
-<h5 id="item-a-bukti-penelusuran-kode-sumber-code-truth">A. Bukti Penelusuran Kode Sumber (Code Truth)</h5>
+<li><strong>Folder Versi 1 (Legacy)</strong>: <code>IDViewController/</code>, <code>IDPresenter/</code>, <code>IDModel/</code>, <code>IDView/</code>
+</li>
+<li><strong>Folder Versi 2 (Aktif)</strong>: <code>IDViewControllerV2/</code>, <code>IDPresenterV2/</code>, <code>IDModelV2/</code>, <code>IDViewV2/</code>
+</li></ul>
+<div class="doc-subpoint-block" id="item-a-bukti-penelusuran-kode-sumber-code-truth">
+<h5>A. Bukti Penelusuran Kode Sumber (Code Truth)</h5>
 <p>Untuk memastikan versi mana yang benar-benar dieksekusi oleh aplikasi, periksa implementasi router utama di <a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/learn/iOS-Arch/ios/IDSamirLoan/Application/SamirAuthModule/Classes/IDRouter/IDSamirAuthModuleRouterHandler.swift" target="_blank" rel="noopener noreferrer">🦊 IDSamirAuthModuleRouterHandler.swift:L53-128 <span class="branch-tag">learn/iOS-Arch</span> ↗</a>:</p>
 <pre><code class="language-swift">// Jump to ID card authentication samir://auth/identity
 func openIdentityPage(_ params: [String: Any]?) {
@@ -315,45 +334,55 @@ func openBankcardPage(_ params: [String: Any]?) {
     let vc = IDNewBankViewController() // &lt;-- V2 Controller
     openVC(vc)
 }</code></pre>
-<h5 id="item-b-kesimpulan-arsitektur">B. Kesimpulan Arsitektur:</h5>
+</div>
+<div class="doc-subpoint-block" id="item-b-kesimpulan-arsitektur">
+<h5>B. Kesimpulan Arsitektur:</h5>
 <ol>
-<li><strong>Versi yang Digunakan Secara Nyata Adalah V2</strong>:</li>
-</ol>
+<li><strong>Versi yang Digunakan Secara Nyata Adalah V2</strong>:
 <ul>
-<li>Seluruh endpoint navigasi internal (<code>samir://auth/*</code>) 100% memicu ViewController versi 2 (<code>IDNewOCRViewController</code>, <code>IDNewAuthBasicViewController</code>, dsb).</li>
-<li>Seluruh ViewController V2 tersebut dikontrol oleh <code>IDNewAuthPresenter</code> (V2).</li>
-</ul>
-<ol>
-<li><strong>Status Versi 1 (Legacy / Dead Code)</strong>:</li>
-</ol>
+<li>Seluruh endpoint navigasi internal (<code>samir://auth/*</code>) 100% memicu ViewController versi 2 (<code>IDNewOCRViewController</code>, <code>IDNewAuthBasicViewController</code>, dsb).
+</li>
+<li>Seluruh ViewController V2 tersebut dikontrol oleh <code>IDNewAuthPresenter</code> (V2).
+</li></ul>
+</li>
+<li><strong>Status Versi 1 (Legacy / Dead Code)</strong>:
 <ul>
-<li>File-file V1 seperti <code>IDOCRViewController.swift</code>, <code>IDAuthBasicViewController.swift</code>, dan <code>IDAuthContactViewController.swift</code> tidak memiliki satupun referensi pemanggilan aktif di seluruh proyek (<code>0 reference count</code>).</li>
-<li>Folder V1 merupakan sisa migrasi historis (sekitar Juli 2025) ketika tim merefaktor alur formulir menjadi berbasis data model modular (<code>IDNewAuthIdentitySectionModel</code>).</li>
-<li>Kode V1 aman diklasifikasikan sebagai <em>dead code</em> dan masuk daftar pembersihan (<em>technical debt cleanup</em>).</li>
-</ul>
+<li>File-file V1 seperti <code>IDOCRViewController.swift</code>, <code>IDAuthBasicViewController.swift</code>, dan <code>IDAuthContactViewController.swift</code> tidak memiliki satupun referensi pemanggilan aktif di seluruh proyek (<code>0 reference count</code>).
+</li>
+<li>Folder V1 merupakan sisa migrasi historis (sekitar Juli 2025) ketika tim merefaktor alur formulir menjadi berbasis data model modular (<code>IDNewAuthIdentitySectionModel</code>).
+</li>
+<li>Kode V1 aman diklasifikasikan sebagai <em>dead code</em> dan masuk daftar pembersihan (<em>technical debt cleanup</em>).
+</li></ul>
+</li></ol>
+</div>
 </section>
 <section id="sec-walkthrough" class="doc-section">
 <h3>🪜 E. Step-by-Step Walkthrough: Alur Verifikasi Dua Langkah (2FA)</h3>
 <p>Jika sistem mendeteksi percobaan login dari perangkat baru atau lokasi yang tidak biasa, respon endpoint <code>customer/login</code> akan mengembalikan kode instruksi 2FA:</p>
 <ol>
-<li>Presenter login mendeteksi flag 2FA pada response server.</li>
-<li>Form login tidak ditutup, melainkan mendorong layar <code>IDCodeViewController</code>.</li>
-<li>Pengguna diminta memasukkan PIN keamanan atau kode otentikasi sekunder.</li>
-<li>Method <code>postVerifyCode2FA</code> dipanggil ke endpoint <code>customer/verifyCode2FA</code>.</li>
-<li>Jika verifikasi 2FA sukses, baru <code>saveUserModel</code> dieksekusi dan pengguna dianggap sah memiliki sesi aktif.</li>
-</ol>
+<li>Presenter login mendeteksi flag 2FA pada response server.
+</li>
+<li>Form login tidak ditutup, melainkan mendorong layar <code>IDCodeViewController</code>.
+</li>
+<li>Pengguna diminta memasukkan PIN keamanan atau kode otentikasi sekunder.
+</li>
+<li>Method <code>postVerifyCode2FA</code> dipanggil ke endpoint <code>customer/verifyCode2FA</code>.
+</li>
+<li>Jika verifikasi 2FA sukses, baru <code>saveUserModel</code> dieksekusi dan pengguna dianggap sah memiliki sesi aktif.
+</li></ol>
 </section>
 <section id="sec-why" class="doc-section">
 <h3>⚖️ F. Why It Matters: Peran Sentral <code>staticKey</code></h3>
 <p>Senior engineer harus memahami bahwa <code>staticKey</code> adalah <strong>jantung dari seluruh komunikasi backend SAMIR</strong>:</p>
 <ul>
-<li>Setiap kali Anda memanggil API apa pun di modul Pinjaman, Auth, atau Repay, pustaka <code>IDNetworkSignatureHandler</code> mengambil:</li>
-</ul>
+<li>Setiap kali Anda memanggil API apa pun di modul Pinjaman, Auth, atau Repay, pustaka <code>IDNetworkSignatureHandler</code> mengambil:
+</li></ul>
 <pre><code class="language-swift">  IDNetworkManager.shared.static_key</code></pre>
 <ul>
-<li>Kunci ini dioper ke framework tertutup <code>LibNetSignGenerator.framework</code> untuk membuat string heksadesimal <code>sign</code>.</li>
-<li>Jika <code>staticKey</code> kosong (karena belum login atau file sesi rusak), request bertanda tangan akan ditolak oleh backend dengan kode error autentikasi.</li>
-</ul>
+<li>Kunci ini dioper ke framework tertutup <code>LibNetSignGenerator.framework</code> untuk membuat string heksadesimal <code>sign</code>.
+</li>
+<li>Jika <code>staticKey</code> kosong (karena belum login atau file sesi rusak), request bertanda tangan akan ditolak oleh backend dengan kode error autentikasi.
+</li></ul>
 </section>
 <section id="sec-example" class="doc-section">
 <h3>🔬 G. Practical Example: Sinkronisasi Sesi ke Layar Flutter</h3>
@@ -369,19 +398,26 @@ func openBankcardPage(_ params: [String: Any]?) {
 <section id="sec-mistakes" class="doc-section">
 <h3>⚠️ H. Common Mistakes & Debugging</h3>
 <ul>
-<li><strong>Kunci Sesi Hilang Setelah Aplikasi Di-Kill</strong>:</li>
-<li><em>Penyebab</em>: <code>saveUserModel</code> gagal menulis file karena folder <code>Application Support</code> belum dibuat. Di <code>IDLoginManager.swift</code> baris 174, pastikan <code>FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)</code> selalu dipanggil sebelum penulisan.</li>
-<li><strong>Request API Selalu Error Setelah Login</strong>:</li>
-<li><em>Pengecekan</em>: Periksa apakah <code>IDNetworkManager.shared.static_key</code> sudah terisi dengan benar setelah <code>saveUserModel</code>.</li>
-</ul>
+<li><strong>Kunci Sesi Hilang Setelah Aplikasi Di-Kill</strong>:
+<ul>
+<li><em>Penyebab</em>: <code>saveUserModel</code> gagal menulis file karena folder <code>Application Support</code> belum dibuat. Di <code>IDLoginManager.swift</code> baris 174, pastikan <code>FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)</code> selalu dipanggil sebelum penulisan.
+</li></ul>
+</li>
+<li><strong>Request API Selalu Error Setelah Login</strong>:
+<ul>
+<li><em>Pengecekan</em>: Periksa apakah <code>IDNetworkManager.shared.static_key</code> sudah terisi dengan benar setelah <code>saveUserModel</code>.
+</li></ul>
+</li></ul>
 </section>
 <section id="sec-check" class="doc-section">
 <h3>🧠 I. Knowledge Check</h3>
 <ol>
-<li>Apa fungsi dari <code>staticKey</code> yang diperoleh dari response login?</li>
-<li>Algoritma kriptografi apa yang digunakan untuk mengenkripsi file sesi <code>idn_userFile.plist</code>?</li>
-<li>Apa nama notifikasi broadcast yang disiarkan ke seluruh aplikasi saat login berhasil?</li>
-</ol>
+<li>Apa fungsi dari <code>staticKey</code> yang diperoleh dari response login?
+</li>
+<li>Algoritma kriptografi apa yang digunakan untuk mengenkripsi file sesi <code>idn_userFile.plist</code>?
+</li>
+<li>Apa nama notifikasi broadcast yang disiarkan ke seluruh aplikasi saat login berhasil?
+</li></ol>
 </section>
 <section id="sec-completion" class="doc-section">
 <h3>🏁 J. Completion Criteria</h3>

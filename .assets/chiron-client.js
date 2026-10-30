@@ -64,6 +64,22 @@
           if (res.ok) {
             const data = await res.json();
             const list = data.annotations || [];
+            // Invariant & Safeguard: Jika daemon mengembalikan berkas belum ada (file_exists === false)
+            // dan list kosong, periksa apakah ada anotasi lokal di LocalStorage.
+            // Jangan timpa dengan array kosong, melainkan unggah otomatis ke daemon!
+            if (data.file_exists === false && (!list || list.length === 0)) {
+              try {
+                const cached = localStorage.getItem(storageKey);
+                const localList = cached ? JSON.parse(cached) : [];
+                if (Array.isArray(localList) && localList.length > 0) {
+                  console.info('[ChironSync] Mengunggah anotasi offline dari LocalStorage ke daemon...');
+                  await this.save(lessonRelPath, localList);
+                  return localList;
+                }
+              } catch (e) {
+                console.warn('[ChironSync] Gagal membaca cached offline anotasi:', e);
+              }
+            }
             // Mirror to localStorage as cache
             localStorage.setItem(storageKey, JSON.stringify(list));
             return list;

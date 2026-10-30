@@ -105,11 +105,14 @@
 <h3>🎯 A. Learning Objective</h3>
 <p>Setelah menyelesaikan dokumen ini, pembaca akan mampu:</p>
 <ol>
-<li>Menjelaskan mengapa modul Flutter tidak menyimpan token login di local storage permanen (SharedPreferences/SQLite).</li>
-<li>Menelusuri mekanisme method channel <code>getRootPageData</code> dalam menghidrasi state <code>Global</code>.</li>
-<li>Memahami 5 atribut kredensial pengguna di <code>Global</code>: <code>mid</code>, <code>userNo</code>, <code>custId</code>, <code>dynamicSignKey</code>, dan <code>isLogin</code>.</li>
-<li>Menjelaskan rantai eksekusi pembersihan sesi otomatis saat API mengembalikan error bisnis <code>10006</code>.</li>
-</ol>
+<li>Menjelaskan mengapa modul Flutter tidak menyimpan token login di local storage permanen (SharedPreferences/SQLite).
+</li>
+<li>Menelusuri mekanisme method channel <code>getRootPageData</code> dalam menghidrasi state <code>Global</code>.
+</li>
+<li>Memahami 5 atribut kredensial pengguna di <code>Global</code>: <code>mid</code>, <code>userNo</code>, <code>custId</code>, <code>dynamicSignKey</code>, dan <code>isLogin</code>.
+</li>
+<li>Menjelaskan rantai eksekusi pembersihan sesi otomatis saat API mengembalikan error bisnis <code>10006</code>.
+</li></ol>
 </section>
 <section id="sec-prereq" class="doc-section">
 <h3>📋 B. Prerequisites</h3>
@@ -119,11 +122,14 @@
 <h3>💡 C. Simple Explanation (Analogi & Konsep Sederhana)</h3>
 <p>Bayangkan sebuah gelang akses masuk kamar hotel pintar:</p>
 <ul>
-<li><strong>Kunci Induk Fisik (Native Host)</strong>: Disimpan aman di dalam brankas resepsionis hotel (iOS Keychain).</li>
-<li><strong>Gelang Digital Tamu (Flutter Module)</strong>: Ketika tamu masuk ke restoran hotel (Modul Flutter), resepsionis hotel memprogram gelang digital tamu dengan kode kamar dan nama tamu melalui pemindai nirkabel (<strong><code>getRootPageData</code></strong>).</li>
-<li>Gelang tersebut tidak menyimpan kunci permanen; jika tamu melepas gelang atau keluar hotel, memori gelang kosong seketika.</li>
-<li>Jika kasir restoran mendeteksi bahwa masa sewa kamar tamu telah habis (<strong>Error 10006</strong>), kasir langsung menyetel ulang gelang menjadi kosong (<strong><code>Global.clearUser()</code></strong>) dan mengarahkan tamu kembali ke meja resepsionis untuk check-in ulang (<strong><code>Routers.gotoLogin()</code></strong>).</li>
-</ul>
+<li><strong>Kunci Induk Fisik (Native Host)</strong>: Disimpan aman di dalam brankas resepsionis hotel (iOS Keychain).
+</li>
+<li><strong>Gelang Digital Tamu (Flutter Module)</strong>: Ketika tamu masuk ke restoran hotel (Modul Flutter), resepsionis hotel memprogram gelang digital tamu dengan kode kamar dan nama tamu melalui pemindai nirkabel (<strong><code>getRootPageData</code></strong>).
+</li>
+<li>Gelang tersebut tidak menyimpan kunci permanen; jika tamu melepas gelang atau keluar hotel, memori gelang kosong seketika.
+</li>
+<li>Jika kasir restoran mendeteksi bahwa masa sewa kamar tamu telah habis (<strong>Error 10006</strong>), kasir langsung menyetel ulang gelang menjadi kosong (<strong><code>Global.clearUser()</code></strong>) dan mengarahkan tamu kembali ke meja resepsionis untuk check-in ulang (<strong><code>Routers.gotoLogin()</code></strong>).
+</li></ul>
 </section>
 <section id="sec-actual" class="doc-section">
 <h3>💻 D. Actual Implementation (Bukti di Kode Sumber)</h3>
@@ -185,10 +191,12 @@
 }</code></pre>
 <p>Ketika <code>MineHomeService</code> atau <code>RepayHomeService</code> memuat halaman:</p>
 <ol>
-<li>Layanan memanggil <code>getRootPageData()</code>.</li>
-<li>Data sesi langsung diinjeksikan ke <code>Global.saveUser()</code>.</li>
-<li>Variabel <code>Global.isLogin</code> otomatis terbarui menjadi <code>true</code>.</li>
-</ol>
+<li>Layanan memanggil <code>getRootPageData()</code>.
+</li>
+<li>Data sesi langsung diinjeksikan ke <code>Global.saveUser()</code>.
+</li>
+<li>Variabel <code>Global.isLogin</code> otomatis terbarui menjadi <code>true</code>.
+</li></ol>
 <div id="sub-3-penanganan-otomatis-sesi-kedaluwarsa-error-10006" class="doc-subsection">
 <h4>3. Penanganan Otomatis Sesi Kedaluwarsa (Error 10006)</h4>
 </div>
@@ -249,39 +257,48 @@ sequenceDiagram
 <section id="sec-why" class="doc-section">
 <h3>⚖️ F. Why It Matters (Trade-Offs & Implikasi Teknis)</h3>
 <ul>
-<li><strong>Zero-Storage Security di Flutter</strong>:</li>
-</ul>
+<li><strong>Zero-Storage Security di Flutter</strong>:
+</li></ul>
 <p>Modul Flutter SAMIR tidak menyimpan file database <code>sqflite</code> atau <code>shared_preferences</code> untuk token login. Seluruh data kredensial hanya hidup di memori RAM objek <code>Global</code>. Jika aplikasi ditutup paksa atau di-kill oleh OS, tidak ada jejak kredensial yang tersisa di sandbox file Flutter. Kredensial terlindungi aman di dalam Secure Enclave / Keychain native.</p>
 <ul>
-<li><strong>Konsistensi Lintas Modul</strong>:</li>
-</ul>
+<li><strong>Konsistensi Lintas Modul</strong>:
+</li></ul>
 <p>Ketika pengguna logout di Beranda Native, modul Flutter tidak perlu menghapus file database lokal yang lambat. Pemanggilan <code>getRootPageData</code> berikutnya akan mengembalikan <code>isLogin = false</code>, dan antarmuka Flutter seketika beralih ke <code>RepayEmptyState</code>.</p>
 </section>
 <section id="sec-example" class="doc-section">
 <h3>🔬 G. Practical Example (Skenario Penggunaan Nyata)</h3>
 <p>Jika seorang nasabah mengganti kartu SIM dan mencoba membuka menu profil di Tab Saya:</p>
 <ol>
-<li>Token lama ditolak oleh server dengan response <code>code: &#x27;10006&#x27;</code>.</li>
-<li>Pengguna tidak mengalami crash; sistem otomatis menampilkan Toast <em>"Sesi Anda telah berakhir, silakan masuk kembali"</em>.</li>
-<li>Layar login native seketika muncul untuk meminta verifikasi nomor SIM baru nasabah.</li>
-</ol>
+<li>Token lama ditolak oleh server dengan response <code>code: &#x27;10006&#x27;</code>.
+</li>
+<li>Pengguna tidak mengalami crash; sistem otomatis menampilkan Toast <em>"Sesi Anda telah berakhir, silakan masuk kembali"</em>.
+</li>
+<li>Layar login native seketika muncul untuk meminta verifikasi nomor SIM baru nasabah.
+</li></ol>
 </section>
 <section id="sec-mistakes" class="doc-section">
 <h3>⚠️ H. Common Mistakes & Debugging</h3>
 <ul>
-<li><strong>Mengubah Nilai <code>Global.mid</code> Secara Manual di Widget</strong>:</li>
-<li>Dilarang keras memodifikasi <code>Global.mid = &#x27;...&#x27;</code> di luar fungsi <code>saveUser()</code> atau <code>clearUser()</code>. Mengubah atribut ini secara terpisah dapat membuat <code>isLogin</code> tidak tersinkronisasi.</li>
-<li><strong>Lupa Mengantisipasi Nilai Null pada <code>Global.userNo</code></strong>:</li>
-<li>Pada status guest, <code>Global.userNo</code> bernilai <code>null</code>. Selalu gunakan <em>null-aware operator</em> (<code>Global.userNo?.isNotEmpty ?? false</code>) sebelum menyisipkan parameter ini ke URL atau query.</li>
-</ul>
+<li><strong>Mengubah Nilai <code>Global.mid</code> Secara Manual di Widget</strong>:
+<ul>
+<li>Dilarang keras memodifikasi <code>Global.mid = &#x27;...&#x27;</code> di luar fungsi <code>saveUser()</code> atau <code>clearUser()</code>. Mengubah atribut ini secara terpisah dapat membuat <code>isLogin</code> tidak tersinkronisasi.
+</li></ul>
+</li>
+<li><strong>Lupa Mengantisipasi Nilai Null pada <code>Global.userNo</code></strong>:
+<ul>
+<li>Pada status guest, <code>Global.userNo</code> bernilai <code>null</code>. Selalu gunakan <em>null-aware operator</em> (<code>Global.userNo?.isNotEmpty ?? false</code>) sebelum menyisipkan parameter ini ke URL atau query.
+</li></ul>
+</li></ul>
 </section>
 <section id="sec-check" class="doc-section">
 <h3>🧠 I. Knowledge Check</h3>
 <ol>
-<li>Berapa kode error bisnis dari backend SAMIR yang menandakan bahwa token sesi telah kedaluwarsa?</li>
-<li>Dua tindakan apa yang dieksekusi otomatis oleh <code>HttpClient</code> saat kode error 10006 diterima?</li>
-<li>Sebutkan nama method channel yang digunakan modul Flutter untuk mengambil kredensial sesi dari host native!</li>
-</ol>
+<li>Berapa kode error bisnis dari backend SAMIR yang menandakan bahwa token sesi telah kedaluwarsa?
+</li>
+<li>Dua tindakan apa yang dieksekusi otomatis oleh <code>HttpClient</code> saat kode error 10006 diterima?
+</li>
+<li>Sebutkan nama method channel yang digunakan modul Flutter untuk mengambil kredensial sesi dari host native!
+</li></ol>
 <p><strong>Latihan Observasi</strong>:</p>
 <p>Buka file <a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/learn/Flutter-Arch/flutter/lib/common/global.dart" target="_blank" rel="noopener noreferrer">🦊 flutter/lib/common/global.dart <span class="branch-tag">learn/Flutter-Arch</span> ↗</a>. Amati method <code>clearUser()</code> pada baris 55–61 dan catat seluruh properti yang di-reset menjadi <code>null</code>.</p>
 </section>

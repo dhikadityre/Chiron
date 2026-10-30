@@ -101,11 +101,14 @@
 <h3>🎯 A. Learning Objective</h3>
 <p>Setelah menyelesaikan dokumen ini, pembaca akan mampu:</p>
 <ol>
-<li>Memahami masalah <em>flickering</em> / ketidaksinkronan visual antara Tab Bar native dan halaman Flutter.</li>
-<li>Menjelaskan mekanisme <code>NativeRouteChrome.prepareForLocation()</code> dalam mengirimkan status tab bar sebelum transisi rute dimulai.</li>
-<li>Mengetahui bagaimana <code>_NativeTabBarRouteObserver</code> menangkap perubahan rute otomatis pada <code>didPush</code>, <code>didPop</code>, dan <code>didReplace</code>.</li>
-<li>Memahami logika deduplikasi state di <code>_lastNativeTabBarHidden</code> untuk mencegah pemanggilan berulang MethodChannel yang tidak perlu.</li>
-</ol>
+<li>Memahami masalah <em>flickering</em> / ketidaksinkronan visual antara Tab Bar native dan halaman Flutter.
+</li>
+<li>Menjelaskan mekanisme <code>NativeRouteChrome.prepareForLocation()</code> dalam mengirimkan status tab bar sebelum transisi rute dimulai.
+</li>
+<li>Mengetahui bagaimana <code>_NativeTabBarRouteObserver</code> menangkap perubahan rute otomatis pada <code>didPush</code>, <code>didPop</code>, dan <code>didReplace</code>.
+</li>
+<li>Memahami logika deduplikasi state di <code>_lastNativeTabBarHidden</code> untuk mencegah pemanggilan berulang MethodChannel yang tidak perlu.
+</li></ol>
 </section>
 <section id="sec-prereq" class="doc-section">
 <h3>📋 B. Prerequisites</h3>
@@ -115,11 +118,14 @@
 <h3>💡 C. Simple Explanation (Analogi & Konsep Sederhana)</h3>
 <p>Bayangkan sebuah panggung pertunjukan dengan tirai pembatas di bagian bawah panggung:</p>
 <ul>
-<li>Ketika pertunjukan umum sedang berlangsung di aula besar (Tab Tagihan atau Tab Saya), tirai pembatas bawah dibuka agar penonton dapat melihat deretan tombol kendali panggung (Tab Bar Native).</li>
-<li>Namun, ketika penonton diajak masuk ke ruang bioskop mini di belakang panggung (Halaman Detail Verifikasi Profil), tirai dan lampu tombol bawah harus segera dipadamkan sebelum pintu ruangan ditutup.</li>
-<li>Jika tirai baru dipadamkan terlambat beberapa detik setelah lampu ruangan menyala, penonton akan merasa terganggu oleh kilatan lampu bawah tanah.</li>
-<li><strong><code>NativeRouteChrome</code></strong> bertindak sebagai kru panggung yang memastikan tirai bawah dipadamkan <strong>sepersekian detik sebelum</strong> pintu ruangan bioskop terbuka.</li>
-</ul>
+<li>Ketika pertunjukan umum sedang berlangsung di aula besar (Tab Tagihan atau Tab Saya), tirai pembatas bawah dibuka agar penonton dapat melihat deretan tombol kendali panggung (Tab Bar Native).
+</li>
+<li>Namun, ketika penonton diajak masuk ke ruang bioskop mini di belakang panggung (Halaman Detail Verifikasi Profil), tirai dan lampu tombol bawah harus segera dipadamkan sebelum pintu ruangan ditutup.
+</li>
+<li>Jika tirai baru dipadamkan terlambat beberapa detik setelah lampu ruangan menyala, penonton akan merasa terganggu oleh kilatan lampu bawah tanah.
+</li>
+<li><strong><code>NativeRouteChrome</code></strong> bertindak sebagai kru panggung yang memastikan tirai bawah dipadamkan <strong>sepersekian detik sebelum</strong> pintu ruangan bioskop terbuka.
+</li></ul>
 </section>
 <section id="sec-actual" class="doc-section">
 <h3>💻 D. Actual Implementation (Bukti di Kode Sumber)</h3>
@@ -161,9 +167,10 @@
 }</code></pre>
 <p>Aturan:</p>
 <ul>
-<li>Jika <code>location</code> adalah rute root (<code>/root</code>, <code>/mine</code>, <code>/repay</code>) -> <code>showsNativeTabBar = true</code> -> Tab Bar <strong>TAMPIL</strong>.</li>
-<li>Jika <code>location</code> adalah subhalaman (seperti <code>/mine/personal</code>) -> <code>showsNativeTabBar = false</code> -> Tab Bar <strong>DISEMBUNYIKAN</strong>.</li>
-</ul>
+<li>Jika <code>location</code> adalah rute root (<code>/root</code>, <code>/mine</code>, <code>/repay</code>) -> <code>showsNativeTabBar = true</code> -> Tab Bar <strong>TAMPIL</strong>.
+</li>
+<li>Jika <code>location</code> adalah subhalaman (seperti <code>/mine/personal</code>) -> <code>showsNativeTabBar = false</code> -> Tab Bar <strong>DISEMBUNYIKAN</strong>.
+</li></ul>
 <div id="sub-3-deduplikasi-panggilan-channel-lastnativetabbarhidden" class="doc-subsection">
 <h4>3. Deduplikasi Panggilan Channel (<code>_lastNativeTabBarHidden</code>)</h4>
 </div>
@@ -204,11 +211,14 @@
 }</code></pre>
 <p>Ketika pengguna menekan tombol fisik back di Android atau tombol kembali di navbar:</p>
 <ol>
-<li><code>Navigator</code> melakukan pop.</li>
-<li><code>didPop</code> terpanggil dengan <code>previousRoute.settings.name</code> bernilai <code>/root</code>.</li>
-<li><code>_syncKnownRoutePath</code> memicu <code>_setNativeTabBarHidden(false)</code>.</li>
-<li>Tab bar native langsung tampil kembali di bagian bawah layar tanpa perlu kode manual di widget page.</li>
-</ol>
+<li><code>Navigator</code> melakukan pop.
+</li>
+<li><code>didPop</code> terpanggil dengan <code>previousRoute.settings.name</code> bernilai <code>/root</code>.
+</li>
+<li><code>_syncKnownRoutePath</code> memicu <code>_setNativeTabBarHidden(false)</code>.
+</li>
+<li>Tab bar native langsung tampil kembali di bagian bawah layar tanpa perlu kode manual di widget page.
+</li></ol>
 </section>
 <section id="sec-walkthrough" class="doc-section">
 <h3>🪜 E. Step-by-Step Walkthrough: Alur Navigasi Masuk dan Keluar</h3>
@@ -250,35 +260,39 @@ sequenceDiagram
 <section id="sec-why" class="doc-section">
 <h3>⚖️ F. Why It Matters (Trade-Offs & Implikasi Teknis)</h3>
 <ul>
-<li><strong>Masalah "Tab Bar Flash / Glitch"</strong>:</li>
-</ul>
+<li><strong>Masalah "Tab Bar Flash / Glitch"</strong>:
+</li></ul>
 <p>Di banyak aplikasi Add-to-App, developer sering menyembunyikan tab bar native di dalam <code>initState()</code> halaman anak Flutter. Akibatnya, ada jeda visual sekitar 100–300 ms di mana halaman anak sudah mulai dirender tetapi tab bar native masih menutupi 80 pixel di bagian bawah, sebelum menghilang secara kasar. Dengan arsitektur <code>prepareForLocation</code> SAMIR, perintah hide dieksekusi <strong>sebelum</strong> rute diganti, menghasilkan transisi yang sehalus aplikasi native murni.</p>
 <ul>
-<li><strong>Ketahanan Resumed State</strong>:</li>
-</ul>
+<li><strong>Ketahanan Resumed State</strong>:
+</li></ul>
 <p>Ketika aplikasi diminimalkan (background) saat pengguna berada di halaman personal, lalu dibuka kembali, sistem operasi iOS dapat mereset status view controller. Method <code>syncForCurrentRoute()</code> dipanggil otomatis oleh <code>_NativeRouteLifecycleObserver</code> saat <code>resumed</code> untuk memastikan tab bar tetap tersembunyi.</p>
 </section>
 <section id="sec-example" class="doc-section">
 <h3>🔬 G. Practical Example (Skenario Penggunaan Nyata)</h3>
 <p>Jika QA menguji skenario menekan tombol back berulang kali dengan cepat dari subhalaman:</p>
 <ul>
-<li><code>_lastNativeTabBarHidden</code> memastikan bahwa jika status tab bar sudah <code>false</code> (tampil), panggilan <code>setNativeTabBarHidden</code> tidak dibombardir puluhan kali ke native platform channel, menjaga kestabilan thread komunikasi.</li>
-</ul>
+<li><code>_lastNativeTabBarHidden</code> memastikan bahwa jika status tab bar sudah <code>false</code> (tampil), panggilan <code>setNativeTabBarHidden</code> tidak dibombardir puluhan kali ke native platform channel, menjaga kestabilan thread komunikasi.
+</li></ul>
 </section>
 <section id="sec-mistakes" class="doc-section">
 <h3>⚠️ H. Common Mistakes & Debugging</h3>
 <ul>
-<li><strong>Membuka Rute Menggunakan MaterialPageRoute Tanpa Mengisi Parameter <code>name</code></strong>:</li>
-<li><code>_syncKnownRoutePath</code> membaca <code>route.settings.name</code>. Jika halaman di-push menggunakan <code>MaterialPageRoute(builder: ...)</code> tanpa properti <code>settings: RouteSettings(name: &#x27;/path&#x27;)</code>, observer tidak dapat mengidentifikasi path rute dan sinkronisasi tab bar native akan gagal.</li>
-</ul>
+<li><strong>Membuka Rute Menggunakan MaterialPageRoute Tanpa Mengisi Parameter <code>name</code></strong>:
+<ul>
+<li><code>_syncKnownRoutePath</code> membaca <code>route.settings.name</code>. Jika halaman di-push menggunakan <code>MaterialPageRoute(builder: ...)</code> tanpa properti <code>settings: RouteSettings(name: &#x27;/path&#x27;)</code>, observer tidak dapat mengidentifikasi path rute dan sinkronisasi tab bar native akan gagal.
+</li></ul>
+</li></ul>
 </section>
 <section id="sec-check" class="doc-section">
 <h3>🧠 I. Knowledge Check</h3>
 <ol>
-<li>Mengapa <code>prepareForLocation()</code> harus dipanggil sebelum animasi transisi GoRouter dimulai?</li>
-<li>Apa fungsi dari variabel penampung <code>_lastNativeTabBarHidden</code> di dalam <code>NativeRouteChrome</code>?</li>
-<li>Event apa di dalam <code>_NativeTabBarRouteObserver</code> yang bertanggung jawab memunculkan kembali Tab Bar native saat pengguna kembali dari halaman sekunder?</li>
-</ol>
+<li>Mengapa <code>prepareForLocation()</code> harus dipanggil sebelum animasi transisi GoRouter dimulai?
+</li>
+<li>Apa fungsi dari variabel penampung <code>_lastNativeTabBarHidden</code> di dalam <code>NativeRouteChrome</code>?
+</li>
+<li>Event apa di dalam <code>_NativeTabBarRouteObserver</code> yang bertanggung jawab memunculkan kembali Tab Bar native saat pengguna kembali dari halaman sekunder?
+</li></ol>
 <p><strong>Latihan Observasi</strong>:</p>
 <p>Buka file <a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/learn/Flutter-Arch/flutter/lib/common/router/native_route_chrome.dart" target="_blank" rel="noopener noreferrer">🦊 flutter/lib/common/router/native_route_chrome.dart <span class="branch-tag">learn/Flutter-Arch</span> ↗</a>. Periksa baris 62–75 pada implementasi fungsi <code>_setNativeTabBarHidden</code> dan catat bagaimana parameter <code>force</code> digunakan.</p>
 </section>

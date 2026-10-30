@@ -105,11 +105,14 @@
 <h3>🎯 A. Learning Objective</h3>
 <p>Setelah menyelesaikan dokumen ini, pembaca akan mampu:</p>
 <ol>
-<li>Menjelaskan bagaimana <code>MineHomePage</code> merender profil nasabah dan skema menu secara dinamis dari backend.</li>
-<li>Memahami alur pengambilan jumlah pesan belum dibaca via <code>ServerApi.messageCount</code>.</li>
-<li>Mengetahui arsitektur subhalaman <code>MinePersonalPage</code> dalam memetakan status kelengkapan verifikasi KTP.</li>
-<li>Menjelaskan mekanisme tersembunyi (<em>Easter Egg</em>) ketukan 5 kali pada nomor versi untuk membuka <code>ProxyDebugPage</code>.</li>
-</ol>
+<li>Menjelaskan bagaimana <code>MineHomePage</code> merender profil nasabah dan skema menu secara dinamis dari backend.
+</li>
+<li>Memahami alur pengambilan jumlah pesan belum dibaca via <code>ServerApi.messageCount</code>.
+</li>
+<li>Mengetahui arsitektur subhalaman <code>MinePersonalPage</code> dalam memetakan status kelengkapan verifikasi KTP.
+</li>
+<li>Menjelaskan mekanisme tersembunyi (<em>Easter Egg</em>) ketukan 5 kali pada nomor versi untuk membuka <code>ProxyDebugPage</code>.
+</li></ol>
 </section>
 <section id="sec-prereq" class="doc-section">
 <h3>📋 B. Prerequisites</h3>
@@ -119,9 +122,10 @@
 <h3>💡 C. Simple Explanation (Analogi & Konsep Sederhana)</h3>
 <p>Bayangkan kartu keanggotaan klub eksklusif dan buku paspor Anda:</p>
 <ul>
-<li><strong>Halaman Dasbor Profil (<code>MineHomePage</code>)</strong>: Seperti kartu keanggotaan yang menampilkan foto profil, nomor telepon, status keaktifan keanggotaan, serta deretan tombol fasilitas klub (kolam renang, restoran, pusat kebugaran).</li>
-<li><strong>Halaman Verifikasi (<code>MinePersonalPage</code>)</strong>: Seperti lembaran paspor resmi yang menunjukkan cap status kelengkapan data imigrasi: apakah e-KTP sudah diverifikasi, apakah foto selfie sudah lolos uji keaslian wajah, dan apakah nomor rekening bank sudah tervalidasi.</li>
-</ul>
+<li><strong>Halaman Dasbor Profil (<code>MineHomePage</code>)</strong>: Seperti kartu keanggotaan yang menampilkan foto profil, nomor telepon, status keaktifan keanggotaan, serta deretan tombol fasilitas klub (kolam renang, restoran, pusat kebugaran).
+</li>
+<li><strong>Halaman Verifikasi (<code>MinePersonalPage</code>)</strong>: Seperti lembaran paspor resmi yang menunjukkan cap status kelengkapan data imigrasi: apakah e-KTP sudah diverifikasi, apakah foto selfie sudah lolos uji keaslian wajah, dan apakah nomor rekening bank sudah tervalidasi.
+</li></ul>
 </section>
 <section id="sec-actual" class="doc-section">
 <h3>💻 D. Actual Implementation (Bukti di Kode Sumber)</h3>
@@ -175,33 +179,37 @@
 </div>
 <p>File <a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/learn/Flutter-Arch/flutter/lib/pages/mine/home/widgets/mine_home_header.dart" target="_blank" rel="noopener noreferrer">🦊 flutter/lib/pages/mine/home/widgets/mine_home_header.dart <span class="branch-tag">learn/Flutter-Arch</span> ↗</a> merender bagian atas halaman profil:</p>
 <ul>
-<li><strong>Status Login</strong>: Menampilkan nomor HP tersamarkan (contoh: <code>0812****4321</code>) dan kartu limit pinjaman dengan tombol <em>"Tingkatkan Limit"</em>.</li>
-<li><strong>Status Guest</strong>: Menampilkan teks <em>"Masuk / Daftar"</em> dengan tombol ajakan registrasi akun baru.</li>
-</ul>
+<li><strong>Status Login</strong>: Menampilkan nomor HP tersamarkan (contoh: <code>0812****4321</code>) dan kartu limit pinjaman dengan tombol <em>"Tingkatkan Limit"</em>.
+</li>
+<li><strong>Status Guest</strong>: Menampilkan teks <em>"Masuk / Daftar"</em> dengan tombol ajakan registrasi akun baru.
+</li></ul>
 <div id="sub-3-grid-menu-dinamis-minehomemenu" class="doc-subsection">
 <h4>3. Grid Menu Dinamis: <code>MineHomeMenu</code></h4>
 </div>
 <p>File <a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/learn/Flutter-Arch/flutter/lib/pages/mine/home/widgets/mine_home_menu.dart" target="_blank" rel="noopener noreferrer">🦊 flutter/lib/pages/mine/home/widgets/mine_home_menu.dart <span class="branch-tag">learn/Flutter-Arch</span> ↗</a> merender menu dalam tata letak kartu grid:</p>
 <ul>
-<li>Setiap item menu memiliki ikon, label teks Bahasa Indonesia, deskripsi singkat, dan tujuan rute.</li>
-<li>Ketika menu ditekan, fungsi router melakukan pencocokan skema rute (apakah internal GoRouter atau delegasi <code>openNativeRoute</code>).</li>
-</ul>
+<li>Setiap item menu memiliki ikon, label teks Bahasa Indonesia, deskripsi singkat, dan tujuan rute.
+</li>
+<li>Ketika menu ditekan, fungsi router melakukan pencocokan skema rute (apakah internal GoRouter atau delegasi <code>openNativeRoute</code>).
+</li></ul>
 <div id="sub-4-halaman-verifikasi-dokumen-minepersonalpage" class="doc-subsection">
 <h4>4. Halaman Verifikasi Dokumen: <code>MinePersonalPage</code></h4>
 </div>
 <p>Pada <a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/learn/Flutter-Arch/flutter/lib/pages/mine/personal/mine_personal_page.dart" target="_blank" rel="noopener noreferrer">🦊 flutter/lib/pages/mine/personal/mine_personal_page.dart <span class="branch-tag">learn/Flutter-Arch</span> ↗</a>:</p>
 <ul>
-<li>Menampilkan kartu status verifikasi 4 langkah:</li>
-</ul>
+<li>Menampilkan kartu status verifikasi 4 langkah:
 <ol>
-<li>Identitas e-KTP & Verifikasi Wajah (Liveness).</li>
-<li>Informasi Pekerjaan & Penghasilan Bulanan.</li>
-<li>Kontak Darurat Keluarga / Kerabat.</li>
-<li>Rekening Bank Penerima Pencairan.</li>
-</ol>
-<ul>
-<li>Menggunakan <code>BasePage</code> dengan tombol back yang menyinkronkan status tab bar native kembali ke <code>hidden: false</code>.</li>
-</ul>
+<li>Identitas e-KTP & Verifikasi Wajah (Liveness).
+</li>
+<li>Informasi Pekerjaan & Penghasilan Bulanan.
+</li>
+<li>Kontak Darurat Keluarga / Kerabat.
+</li>
+<li>Rekening Bank Penerima Pencairan.
+</li></ol>
+</li>
+<li>Menggunakan <code>BasePage</code> dengan tombol back yang menyinkronkan status tab bar native kembali ke <code>hidden: false</code>.
+</li></ul>
 <div id="sub-5-pintu-rahasia-pengujian-jaringan-easter-egg" class="doc-subsection">
 <h4>5. Pintu Rahasia Pengujian Jaringan (<em>Easter Egg</em>)</h4>
 </div>
@@ -264,37 +272,43 @@ sequenceDiagram
 <section id="sec-why" class="doc-section">
 <h3>⚖️ F. Why It Matters (Trade-Offs & Implikasi Teknis)</h3>
 <ul>
-<li><strong>Skema Menu Berbasis Backend (Dynamic Server-Driven UI)</strong>:</li>
-</ul>
+<li><strong>Skema Menu Berbasis Backend (Dynamic Server-Driven UI)</strong>:
+</li></ul>
 <p>Dengan mengonsumsi <code>mergeUserCenterSchema</code>, tim backend dan product manager dapat menampilkan atau menyembunyikan menu promo tertentu (misalnya program undian THR atau promo Ramadhan) dari jarak jauh tanpa perlu merilis pembaruan biner ke App Store / Google Play.</p>
 <ul>
-<li><strong>Isolasi Keamanan Menu Debug</strong>:</li>
-</ul>
+<li><strong>Isolasi Keamanan Menu Debug</strong>:
+</li></ul>
 <p>Pengecekan <code>if (AppEnv.isProd) return;</code> memastikan kode debugging proxy tidak dapat dibuka oleh nasabah umum di lingkungan production, menjaga kepatuhan terhadap audit keamanan siber finansial.</p>
 </section>
 <section id="sec-example" class="doc-section">
 <h3>🔬 G. Practical Example (Skenario Penggunaan Nyata)</h3>
 <p>Jika nasabah baru saja diverifikasi e-KTP-nya di modul kamera native:</p>
 <ul>
-<li>Native mengirim sinyal <code>refreshMineHome</code>.</li>
-<li><code>MineHomePage</code> memuat ulang skema profil.</li>
-<li>Status di samping avatar seketika berubah dari <em>"Belum Terverifikasi"</em> menjadi centang hijau <em>"Terverifikasi"</em>.</li>
-</ul>
+<li>Native mengirim sinyal <code>refreshMineHome</code>.
+</li>
+<li><code>MineHomePage</code> memuat ulang skema profil.
+</li>
+<li>Status di samping avatar seketika berubah dari <em>"Belum Terverifikasi"</em> menjadi centang hijau <em>"Terverifikasi"</em>.
+</li></ul>
 </section>
 <section id="sec-mistakes" class="doc-section">
 <h3>⚠️ H. Common Mistakes & Debugging</h3>
 <ul>
-<li><strong>Lupa Mereset Counter Ketukan Versi</strong>:</li>
-<li>Variabel <code>_debugTapCount</code> harus di-reset ke <code>0</code> setelah membuka halaman debug untuk mencegah terpicunya navigasi ganda yang tidak diinginkan.</li>
-</ul>
+<li><strong>Lupa Mereset Counter Ketukan Versi</strong>:
+<ul>
+<li>Variabel <code>_debugTapCount</code> harus di-reset ke <code>0</code> setelah membuka halaman debug untuk mencegah terpicunya navigasi ganda yang tidak diinginkan.
+</li></ul>
+</li></ul>
 </section>
 <section id="sec-check" class="doc-section">
 <h3>🧠 I. Knowledge Check</h3>
 <ol>
-<li>Berapa kali nomor versi harus diketuk untuk membuka menu <code>ProxyDebugPage</code> pada build testing?</li>
-<li>Apa nama endpoint API yang digunakan untuk memeriksa jumlah pesan baru yang belum dibaca nasabah?</li>
-<li>Sebutkan 4 kategori data yang ditampilkan pada kartu verifikasi di <code>MinePersonalPage</code>!</li>
-</ol>
+<li>Berapa kali nomor versi harus diketuk untuk membuka menu <code>ProxyDebugPage</code> pada build testing?
+</li>
+<li>Apa nama endpoint API yang digunakan untuk memeriksa jumlah pesan baru yang belum dibaca nasabah?
+</li>
+<li>Sebutkan 4 kategori data yang ditampilkan pada kartu verifikasi di <code>MinePersonalPage</code>!
+</li></ol>
 <p><strong>Latihan Observasi</strong>:</p>
 <p>Buka file <a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/learn/Flutter-Arch/flutter/lib/pages/mine/home/mine_home_page.dart" target="_blank" rel="noopener noreferrer">🦊 flutter/lib/pages/mine/home/mine_home_page.dart <span class="branch-tag">learn/Flutter-Arch</span> ↗</a>. Amati deklarasi getter <code>trackPageEventName</code> pada baris 57 dan pastikan nilainya adalah string <code>&#x27;me&#x27;</code>.</p>
 </section>

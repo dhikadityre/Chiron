@@ -101,11 +101,14 @@
 <h3>🎯 A. Learning Objective</h3>
 <p>Setelah menyelesaikan dokumen ini, pembaca akan mampu:</p>
 <ol>
-<li>Memprediksi radius dampak (<em>blast radius</em>) saat mengubah file tertentu di dalam modul Flutter.</li>
-<li>Memahami risiko perubahan pada layer Platform Bridge terhadap kompilasi native iOS dan Android.</li>
-<li>Menjalankan 5 langkah verifikasi lokal wajib sebelum membuat pull request.</li>
-<li>Mencegah regresi tanda tangan request yang dapat melumpuhkan seluruh transaksi API.</li>
-</ol>
+<li>Memprediksi radius dampak (<em>blast radius</em>) saat mengubah file tertentu di dalam modul Flutter.
+</li>
+<li>Memahami risiko perubahan pada layer Platform Bridge terhadap kompilasi native iOS dan Android.
+</li>
+<li>Menjalankan 5 langkah verifikasi lokal wajib sebelum membuat pull request.
+</li>
+<li>Mencegah regresi tanda tangan request yang dapat melumpuhkan seluruh transaksi API.
+</li></ol>
 </section>
 <section id="sec-prereq" class="doc-section">
 <h3>📋 B. Prerequisites</h3>
@@ -115,10 +118,12 @@
 <h3>💡 C. Simple Explanation (Analogi & Konsep Sederhana)</h3>
 <p>Bayangkan merenovasi instalasi pipa gas di dalam gedung apartemen bertingkat:</p>
 <ul>
-<li>Jika Anda hanya mengganti kran air di wastafel dapur sendiri (mengubah padding di <code>mine_home_header.dart</code>), dampaknya hanya terasa di dapur Anda sendiri.</li>
-<li>Namun, jika Anda menyentuh katup pipa gas utama di basemen (<strong><code>sign_utils.dart</code></strong> atau <strong><code>flutter_native_channel.dart</code></strong>), kesalahan kecil pada drat pipa dapat mematikan pasokan gas ke seluruh 500 unit apartemen di gedung tersebut.</li>
-<li>Dokumen ini adalah prosedur checklist teknisi sebelum memutar katup pipa utama gedung.</li>
-</ul>
+<li>Jika Anda hanya mengganti kran air di wastafel dapur sendiri (mengubah padding di <code>mine_home_header.dart</code>), dampaknya hanya terasa di dapur Anda sendiri.
+</li>
+<li>Namun, jika Anda menyentuh katup pipa gas utama di basemen (<strong><code>sign_utils.dart</code></strong> atau <strong><code>flutter_native_channel.dart</code></strong>), kesalahan kecil pada drat pipa dapat mematikan pasokan gas ke seluruh 500 unit apartemen di gedung tersebut.
+</li>
+<li>Dokumen ini adalah prosedur checklist teknisi sebelum memutar katup pipa utama gedung.
+</li></ul>
 </section>
 <section id="sec-actual" class="doc-section">
 <h3>📌 D. Matriks Radius Dampak Perubahan (Blast Radius Matrix)</h3>
@@ -144,19 +149,24 @@ flutter analyze</code></pre>
 </div>
 <p>Jika Anda menyentuh file di bawah <code>common/http/</code> atau <code>common/constants/</code>:</p>
 <ol>
-<li>Jalankan aplikasi di simulator.</li>
-<li>Buka Tab Tagihan atau Tab Saya.</li>
-<li>Periksa konsol debug: pastikan API merespon dengan <code>BaseResponse.code == &#x27;200&#x27;</code>.</li>
-<li>Jika muncul error <code>Sign Invalid</code> atau <code>Timestamp Invalid</code>, jangan sekali-kali melakukan commit!</li>
-</ol>
+<li>Jalankan aplikasi di simulator.
+</li>
+<li>Buka Tab Tagihan atau Tab Saya.
+</li>
+<li>Periksa konsol debug: pastikan API merespon dengan <code>BaseResponse.code == &#x27;200&#x27;</code>.
+</li>
+<li>Jika muncul error <code>Sign Invalid</code> atau <code>Timestamp Invalid</code>, jangan sekali-kali melakukan commit!
+</li></ol>
 <div id="sub-langkah-4-uji-sinkronisasi-tab-bar-native" class="doc-subsection">
 <h4>Langkah 4: Uji Sinkronisasi Tab Bar Native</h4>
 </div>
 <ol>
-<li>Buka Tab Saya (<code>/mine</code>) -> pastikan Tab Bar native <strong>tampil</strong>.</li>
-<li>Masuk ke halaman Verifikasi Data Diri (<code>/mine/personal</code>) -> pastikan Tab Bar native <strong>menghilang seketika tanpa kedipan</strong>.</li>
-<li>Tekan tombol Back -> pastikan Tab Bar native <strong>muncul kembali</strong> dengan mulus.</li>
-</ol>
+<li>Buka Tab Saya (<code>/mine</code>) -> pastikan Tab Bar native <strong>tampil</strong>.
+</li>
+<li>Masuk ke halaman Verifikasi Data Diri (<code>/mine/personal</code>) -> pastikan Tab Bar native <strong>menghilang seketika tanpa kedipan</strong>.
+</li>
+<li>Tekan tombol Back -> pastikan Tab Bar native <strong>muncul kembali</strong> dengan mulus.
+</li></ol>
 <div id="sub-langkah-5-kompilasi-host-ios" class="doc-subsection">
 <h4>Langkah 5: Kompilasi Host iOS</h4>
 </div>
@@ -169,30 +179,37 @@ xcodebuild -workspace IDSamirLoan.xcworkspace -scheme TEST -configuration Debug 
 <section id="sec-why" class="doc-section">
 <h3>⚖️ F. Why It Matters (Trade-Offs & Implikasi Teknis)</h3>
 <ul>
-<li><strong>Menghindari Kerusakan Kompilasi di CI/CD</strong>:</li>
-</ul>
+<li><strong>Menghindari Kerusakan Kompilasi di CI/CD</strong>:
+</li></ul>
 <p>Pada repositori monorepo seperti SAMIR, pipeline GitLab CI akan menjalankan automated build untuk host iOS dan Android. Menambahkan dependensi Flutter baru tanpa memperbarui <code>Podfile.lock</code> di iOS akan menggagalkan pipeline seluruh tim mobile engineering.</p>
 <ul>
-<li><strong>Biaya Regresi di Lingkungan Produksi</strong>:</li>
-</ul>
+<li><strong>Biaya Regresi di Lingkungan Produksi</strong>:
+</li></ul>
 <p>Bug pada file UI (seperti teks terpotong) dapat diperbaiki dengan cepat. Namun, bug pada <code>sign_utils.dart</code> yang lolos ke rilis App Store akan membuat ribuan nasabah tidak dapat membayar pinjaman atau melihat profil mereka, berpotensi memicu denda regulasi dari OJK.</p>
 </section>
 <section id="sec-example" class="doc-section">
 <h3>⚠️ G. Common Mistakes & Debugging</h3>
 <ul>
-<li><strong>Mengubah Nama Method Channel Hanya di Sisi Flutter</strong>:</li>
-<li>Mengubah <code>FlutterNativeChannelMethod.requestRepayBenefitPopup</code> tanpa mengoordinasikan dengan engineer iOS yang memelihara <code>FlutterNativeChannel+method.swift</code>.</li>
-<li><strong>Melakukan Commit File <code>.ios/</code> atau <code>.android/</code></strong>:</li>
-<li>File di dalam <code>flutter/.ios/</code> dan <code>flutter/.android/</code> bersifat lokal (<em>git ignored</em>). Jangan pernah memaksakan commit file-file ini ke git repo.</li>
-</ul>
+<li><strong>Mengubah Nama Method Channel Hanya di Sisi Flutter</strong>:
+<ul>
+<li>Mengubah <code>FlutterNativeChannelMethod.requestRepayBenefitPopup</code> tanpa mengoordinasikan dengan engineer iOS yang memelihara <code>FlutterNativeChannel+method.swift</code>.
+</li></ul>
+</li>
+<li><strong>Melakukan Commit File <code>.ios/</code> atau <code>.android/</code></strong>:
+<ul>
+<li>File di dalam <code>flutter/.ios/</code> dan <code>flutter/.android/</code> bersifat lokal (<em>git ignored</em>). Jangan pernah memaksakan commit file-file ini ke git repo.
+</li></ul>
+</li></ul>
 </section>
 <section id="sec-mistakes" class="doc-section">
 <h3>🧠 H. Knowledge Check</h3>
 <ol>
-<li>File apa di modul Flutter yang memiliki tingkat risiko perubahan paling kritis terhadap seluruh API backend?</li>
-<li>Perintah terminal apa yang wajib dijalankan untuk memastikan kode Dart bebas dari peringatan linter?</li>
-<li>Mengapa penambahan plugin baru di <code>pubspec.yaml</code> mewajibkan eksekusi <code>pod install</code> di folder <code>ios/</code>?</li>
-</ol>
+<li>File apa di modul Flutter yang memiliki tingkat risiko perubahan paling kritis terhadap seluruh API backend?
+</li>
+<li>Perintah terminal apa yang wajib dijalankan untuk memastikan kode Dart bebas dari peringatan linter?
+</li>
+<li>Mengapa penambahan plugin baru di <code>pubspec.yaml</code> mewajibkan eksekusi <code>pod install</code> di folder <code>ios/</code>?
+</li></ol>
 <p><strong>Latihan Observasi</strong>:</p>
 <p>Buka file <a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/learn/Flutter-Arch/flutter/lib/common/router/route_paths.dart" target="_blank" rel="noopener noreferrer">🦊 flutter/lib/common/router/route_paths.dart <span class="branch-tag">learn/Flutter-Arch</span> ↗</a>. Periksa apakah ada rute yang digunakan secara bersamaan oleh file lain di luar folder <code>router/</code>.</p>
 </section>

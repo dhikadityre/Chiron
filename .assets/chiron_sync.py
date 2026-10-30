@@ -205,6 +205,10 @@ def execute_open_ide(ide: str, file_path: str, line: int = 1, dry_run: bool = Fa
 def get_sidecar_path(lesson_rel_path: str) -> Path:
     """Computes the canonical .notes.json sidecar file path from an HTML lesson path."""
     clean_path = lesson_rel_path.strip().lstrip("/")
+    courses_idx = clean_path.find("courses/")
+    if courses_idx != -1:
+        clean_path = clean_path[courses_idx:]
+
     if clean_path.endswith(".html"):
         sidecar_rel = clean_path[:-5] + ".notes.json"
     else:

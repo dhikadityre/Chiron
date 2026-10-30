@@ -105,28 +105,35 @@
 <h3>🎯 A. Learning Objective</h3>
 <p>Setelah mempelajari dokumen ini, pembaca akan mampu:</p>
 <ol>
-<li>Menjelaskan secara teknis urutan 6 langkah verifikasi e-KYC dan data yang dikirim pada setiap endpoint.</li>
-<li>Memahami mekanisme polling asynchronous pada penilaian kuota kredit di <code>IDAssessPresenter</code>.</li>
-<li>Membedah arsitektur reaktif dan pembuatan pesanan pinjaman di <code>LoanConfirmViewController_Rx</code>.</li>
-<li>Menelusuri alur pemilihan metode pembayaran (Virtual Account / Gerai Retail) hingga update status pelunasan.</li>
-</ol>
+<li>Menjelaskan secara teknis urutan 6 langkah verifikasi e-KYC dan data yang dikirim pada setiap endpoint.
+</li>
+<li>Memahami mekanisme polling asynchronous pada penilaian kuota kredit di <code>IDAssessPresenter</code>.
+</li>
+<li>Membedah arsitektur reaktif dan pembuatan pesanan pinjaman di <code>LoanConfirmViewController_Rx</code>.
+</li>
+<li>Menelusuri alur pemilihan metode pembayaran (Virtual Account / Gerai Retail) hingga update status pelunasan.
+</li></ol>
 </section>
 <section id="sec-prereq" class="doc-section">
 <h3>📋 B. Prerequisites</h3>
 <ul>
-<li>Sudah membaca <a href="01-user-journey-overview.html">01-user-journey-overview.md</a> dan <a href="02-authentication-and-session-flow.html">02-authentication-and-session-flow.md</a>.</li>
-<li>Mengetahui cara kerja asynchronous polling dan Observer pattern di RxSwift.</li>
-</ul>
+<li>Sudah membaca <a href="01-user-journey-overview.html">01-user-journey-overview.md</a> dan <a href="02-authentication-and-session-flow.html">02-authentication-and-session-flow.md</a>.
+</li>
+<li>Mengetahui cara kerja asynchronous polling dan Observer pattern di RxSwift.
+</li></ul>
 </section>
 <section id="sec-simple" class="doc-section">
 <h3>💡 C. Simple Explanation</h3>
 <p>Bayangkan 4 pilar utama di sebuah bank digital:</p>
 <ol>
-<li><strong>Pilar 1 (Verifikasi Identitas)</strong>: Memastikan pemohon pinjaman adalah warga negara Indonesia yang sah dengan KTP asli dan wajah nyata.</li>
-<li><strong>Pilar 2 (Penilaian Risiko)</strong>: Komputer cerdas bank menganalisis kemampuan finansial pemohon dan menentukan berapa juta rupiah yang boleh dipinjam.</li>
-<li><strong>Pilar 3 (Konfirmasi Akad)</strong>: Nasabah menandatangani perjanjian pinjaman digital, melihat jadwal jatuh tempo, dan meminta pencairan dana.</li>
-<li><strong>Pilar 4 (Pelunasan Tagihan)</strong>: Nasabah mendapatkan kode pembayaran untuk mentransfer cicilan tepat waktu.</li>
-</ol>
+<li><strong>Pilar 1 (Verifikasi Identitas)</strong>: Memastikan pemohon pinjaman adalah warga negara Indonesia yang sah dengan KTP asli dan wajah nyata.
+</li>
+<li><strong>Pilar 2 (Penilaian Risiko)</strong>: Komputer cerdas bank menganalisis kemampuan finansial pemohon dan menentukan berapa juta rupiah yang boleh dipinjam.
+</li>
+<li><strong>Pilar 3 (Konfirmasi Akad)</strong>: Nasabah menandatangani perjanjian pinjaman digital, melihat jadwal jatuh tempo, dan meminta pencairan dana.
+</li>
+<li><strong>Pilar 4 (Pelunasan Tagihan)</strong>: Nasabah mendapatkan kode pembayaran untuk mentransfer cicilan tepat waktu.
+</li></ol>
 </section>
 <section id="sec-actual" class="doc-section">
 <h3>💻 D. Actual Implementation: 4 Alur Inti End-to-End</h3>
@@ -178,53 +185,60 @@ sequenceDiagram
     </div>
   </div>
 </div>
-<h5 id="item-rincian-teknis-per-step">Rincian Teknis Per Step:</h5>
+<div class="doc-subpoint-block" id="item-rincian-teknis-per-step">
+<h5>Rincian Teknis Per Step:</h5>
 <ol>
-<li><strong>Step 1 — OCR KTP (<code>IDNewOCRViewController</code>)</strong>:</li>
-</ol>
+<li><strong>Step 1 — OCR KTP (<code>IDNewOCRViewController</code>)</strong>:
 <ul>
-<li><em>Tindakan</em>: Membuka kamera dengan overlay panduan kartu KTP.</li>
-<li><em>Validasi</em>: Pemeriksaan blur dan pantulan cahaya (<code>CZCheckData</code>).</li>
-<li><em>Endpoint</em>: <code>thirdData/v2/ocr/recognition</code>.</li>
-<li><em>Hasil</em>: Data nama dan NIK diisi otomatis di form untuk dikonfirmasi oleh pengguna.</li>
-</ul>
-<ol>
-<li><strong>Step 2 — Data Pribadi (<code>IDNewAuthBasicViewController</code>)</strong>:</li>
-</ol>
+<li><em>Tindakan</em>: Membuka kamera dengan overlay panduan kartu KTP.
+</li>
+<li><em>Validasi</em>: Pemeriksaan blur dan pantulan cahaya (<code>CZCheckData</code>).
+</li>
+<li><em>Endpoint</em>: <code>thirdData/v2/ocr/recognition</code>.
+</li>
+<li><em>Hasil</em>: Data nama dan NIK diisi otomatis di form untuk dikonfirmasi oleh pengguna.
+</li></ul>
+</li>
+<li><strong>Step 2 — Data Pribadi (<code>IDNewAuthBasicViewController</code>)</strong>:
 <ul>
-<li><em>Tindakan</em>: Mengisi form picker tingkat pendidikan, agama, dan provinsi/kota/kecamatan.</li>
-<li><em>Validasi</em>: Usia legal peminjam wajib berada dalam rentang 18–60 tahun (<code>wetherAgeInLegalRange</code>).</li>
-<li><em>Endpoint</em>: <code>customer/renewMemInfo</code>.</li>
-</ul>
-<ol>
-<li><strong>Step 3 — Pekerjaan (<code>IDNewAuthJobViewController</code>)</strong>:</li>
-</ol>
+<li><em>Tindakan</em>: Mengisi form picker tingkat pendidikan, agama, dan provinsi/kota/kecamatan.
+</li>
+<li><em>Validasi</em>: Usia legal peminjam wajib berada dalam rentang 18–60 tahun (<code>wetherAgeInLegalRange</code>).
+</li>
+<li><em>Endpoint</em>: <code>customer/renewMemInfo</code>.
+</li></ul>
+</li>
+<li><strong>Step 3 — Pekerjaan (<code>IDNewAuthJobViewController</code>)</strong>:
 <ul>
-<li><em>Tindakan</em>: Memilih jenis pekerjaan (Karyawan Swasta, PNS, Wiraswasta), lama bekerja, dan rentang pendapatan.</li>
-<li><em>Endpoint</em>: <code>customer/renewMemInfo</code>.</li>
-</ul>
-<ol>
-<li><strong>Step 4 — Kontak Darurat (<code>IDNewAuthContactViewController</code>)</strong>:</li>
-</ol>
+<li><em>Tindakan</em>: Memilih jenis pekerjaan (Karyawan Swasta, PNS, Wiraswasta), lama bekerja, dan rentang pendapatan.
+</li>
+<li><em>Endpoint</em>: <code>customer/renewMemInfo</code>.
+</li></ul>
+</li>
+<li><strong>Step 4 — Kontak Darurat (<code>IDNewAuthContactViewController</code>)</strong>:
 <ul>
-<li><em>Tindakan</em>: Memasukkan 2 nomor telepon darurat keluarga/pasangan.</li>
-<li><em>Validasi</em>: Nomor tidak boleh sama dengan nomor login pengguna dan kedua kontak tidak boleh identik.</li>
-</ul>
-<ol>
-<li><strong>Step 5 — Ikat Rekening Bank (<code>IDNewBankViewController</code>)</strong>:</li>
-</ol>
+<li><em>Tindakan</em>: Memasukkan 2 nomor telepon darurat keluarga/pasangan.
+</li>
+<li><em>Validasi</em>: Nomor tidak boleh sama dengan nomor login pengguna dan kedua kontak tidak boleh identik.
+</li></ul>
+</li>
+<li><strong>Step 5 — Ikat Rekening Bank (<code>IDNewBankViewController</code>)</strong>:
 <ul>
-<li><em>Tindakan</em>: Mengambil daftar bank mitra via <code>bankCard/ynBankList</code>.</li>
-<li><em>Validasi Kritis</em>: Backend memvalidasi apakah nama pemilik rekening bank sesuai dengan nama pada e-KTP. Jika berbeda, proses ditolak (<em>Anti-Fraud / Anti-Money Laundering Rule</em>).</li>
-<li><em>Endpoint</em>: <code>bankCard/bindCard</code>.</li>
-</ul>
-<ol>
-<li><strong>Step 6 — Verifikasi Wajah Liveness (<code>IDAuthLiveViewController</code>)</strong>:</li>
-</ol>
+<li><em>Tindakan</em>: Mengambil daftar bank mitra via <code>bankCard/ynBankList</code>.
+</li>
+<li><em>Validasi Kritis</em>: Backend memvalidasi apakah nama pemilik rekening bank sesuai dengan nama pada e-KTP. Jika berbeda, proses ditolak (<em>Anti-Fraud / Anti-Money Laundering Rule</em>).
+</li>
+<li><em>Endpoint</em>: <code>bankCard/bindCard</code>.
+</li></ul>
+</li>
+<li><strong>Step 6 — Verifikasi Wajah Liveness (<code>IDAuthLiveViewController</code>)</strong>:
 <ul>
-<li><em>Tindakan</em>: Mengambil token lisensi via <code>auth/ticket/v1/generate-token</code>, lalu mengaktifkan modul kamera deteksi gerakan wajah vendor (AAILiveness).</li>
-<li><em>Endpoint</em>: <code>comment/upload/living</code> dan <code>comment/liveness/decision</code>.</li>
-</ul>
+<li><em>Tindakan</em>: Mengambil token lisensi via <code>auth/ticket/v1/generate-token</code>, lalu mengaktifkan modul kamera deteksi gerakan wajah vendor (AAILiveness).
+</li>
+<li><em>Endpoint</em>: <code>comment/upload/living</code> dan <code>comment/liveness/decision</code>.
+</li></ul>
+</li></ol>
+</div>
 <div id="sub-fitur-inti-2-penilaian-kuota-kredit-polling-status-credit-assess" class="doc-subsection">
 <h4>FITUR INTI 2: Penilaian Kuota Kredit & Polling Status (Credit Assess)</h4>
 </div>
@@ -264,12 +278,15 @@ sequenceDiagram
     </div>
   </div>
 </div>
-<h5 id="item-rincian-teknis-polling">Rincian Teknis Polling:</h5>
+<div class="doc-subpoint-block" id="item-rincian-teknis-polling">
+<h5>Rincian Teknis Polling:</h5>
 <p>Path: <a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/learn/iOS-Arch/ios/IDSamirLoan/Application/SamirLoanModule/Classes/IDPresenter/IDAssessPresenter.swift" target="_blank" rel="noopener noreferrer">🦊 ios/IDSamirLoan/Application/SamirLoanModule/Classes/IDPresenter/IDAssessPresenter.swift <span class="branch-tag">learn/iOS-Arch</span> ↗</a></p>
 <ul>
-<li><strong>Konfigurasi Dinamis</strong>: Interval polling dan batas maksimum percobaan tidak di-hardcode di aplikasi klien, melainkan dikontrol dari response server (<code>pollConfig.interval</code> dan <code>pollConfig.totalCount</code>).</li>
-<li><strong>Pembersihan Timer</strong>: Ketika pengguna menekan tombol back atau tampilan ditutup (<code>viewWillDisappear</code> / <code>detachView</code>), method <code>stopPolling()</code> wajib dipanggil agar timer tidak bocor di latar belakang (<em>memory leak prevention</em>).</li>
-</ul>
+<li><strong>Konfigurasi Dinamis</strong>: Interval polling dan batas maksimum percobaan tidak di-hardcode di aplikasi klien, melainkan dikontrol dari response server (<code>pollConfig.interval</code> dan <code>pollConfig.totalCount</code>).
+</li>
+<li><strong>Pembersihan Timer</strong>: Ketika pengguna menekan tombol back atau tampilan ditutup (<code>viewWillDisappear</code> / <code>detachView</code>), method <code>stopPolling()</code> wajib dipanggil agar timer tidak bocor di latar belakang (<em>memory leak prevention</em>).
+</li></ul>
+</div>
 <div id="sub-fitur-inti-3-alur-konfirmasi-pinjaman-loan-confirmation-rx" class="doc-subsection">
 <h4>FITUR INTI 3: Alur Konfirmasi Pinjaman (Loan Confirmation Rx)</h4>
 </div>
@@ -333,82 +350,101 @@ sequenceDiagram
     </div>
   </div>
 </div>
-<h5 id="item-rincian-arsitektur-reaktif-low-level-execution">Rincian Arsitektur Reaktif (Low-Level Execution):</h5>
+<div class="doc-subpoint-block" id="item-rincian-arsitektur-reaktif-low-level-execution">
+<h5>Rincian Arsitektur Reaktif (Low-Level Execution):</h5>
 <ul>
-<li><strong>Input Disconnect</strong>: Controller tidak pernah memanggil fungsi mutasi state secara langsung di ViewModel. Seluruh aksi pengguna dialirkan melalui <code>PublishSubject</code> di interface <code>LoanConfirmViewModelInput</code>.</li>
-<li><strong>Thread Isolation & Driver</strong>: Seluruh state UI yang diekspos oleh <code>LoanConfirmViewModelOutput</code> dijamin berjalan di <code>MainScheduler</code> menggunakan operator <code>.asDriver(onErrorJustReturn:)</code>, mengeliminasi bug UI freeze atau crash threading.</li>
-<li><strong>State Relay</strong>: ViewModel menggunakan <code>BehaviorRelay</code> internal untuk menyimpan snapshot data terakhir, sehingga jika terjadi re-layout view, data tidak perlu di-fetch ulang dari server.</li>
-</ul>
+<li><strong>Input Disconnect</strong>: Controller tidak pernah memanggil fungsi mutasi state secara langsung di ViewModel. Seluruh aksi pengguna dialirkan melalui <code>PublishSubject</code> di interface <code>LoanConfirmViewModelInput</code>.
+</li>
+<li><strong>Thread Isolation & Driver</strong>: Seluruh state UI yang diekspos oleh <code>LoanConfirmViewModelOutput</code> dijamin berjalan di <code>MainScheduler</code> menggunakan operator <code>.asDriver(onErrorJustReturn:)</code>, mengeliminasi bug UI freeze atau crash threading.
+</li>
+<li><strong>State Relay</strong>: ViewModel menggunakan <code>BehaviorRelay</code> internal untuk menyimpan snapshot data terakhir, sehingga jika terjadi re-layout view, data tidak perlu di-fetch ulang dari server.
+</li></ul>
+</div>
 <div id="sub-fitur-inti-4-alur-pembayaran-tagihan-repayment-flow" class="doc-subsection">
 <h4>FITUR INTI 4: Alur Pembayaran Tagihan (Repayment Flow)</h4>
 </div>
 <p>Path: <a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/learn/iOS-Arch/flutter/lib/pages/repay/home/repay_home_page.dart" target="_blank" rel="noopener noreferrer">🦊 flutter/lib/pages/repay/home/repay_home_page.dart <span class="branch-tag">learn/iOS-Arch</span> ↗</a> dan <a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/learn/iOS-Arch/ios/IDSamirLoan/Application/SamirCommonModule/Classes/FChannel/FlutterNativeChannel+route.swift" target="_blank" rel="noopener noreferrer">🦊 SamirCommonModule/Classes/FChannel/FlutterNativeChannel+route.swift <span class="branch-tag">learn/iOS-Arch</span> ↗</a></p>
 <ol>
-<li><strong>Penyajian Data Tagihan</strong>:</li>
-</ol>
+<li><strong>Penyajian Data Tagihan</strong>:
 <ul>
-<li>Tab 1 (Tagihan) dirender oleh Flutter <code>RepayHomePage</code>.</li>
-<li>Modul Flutter meminta data sesi dan parameter native melalui method channel <code>getNativeRequestParams</code>.</li>
-<li>Menampilkan total tagihan yang belum lunas, tanggal jatuh tempo, dan rincian denda keterlambatan (jika ada).</li>
-</ul>
-<ol>
-<li><strong>Pemilihan Metode Pembayaran</strong>:</li>
-</ol>
+<li>Tab 1 (Tagihan) dirender oleh Flutter <code>RepayHomePage</code>.
+</li>
+<li>Modul Flutter meminta data sesi dan parameter native melalui method channel <code>getNativeRequestParams</code>.
+</li>
+<li>Menampilkan total tagihan yang belum lunas, tanggal jatuh tempo, dan rincian denda keterlambatan (jika ada).
+</li></ul>
+</li>
+<li><strong>Pemilihan Metode Pembayaran</strong>:
 <ul>
-<li>Nasabah memilih channel pembayaran:</li>
-<li><strong>Virtual Account Bank</strong>: BCA, Mandiri, BNI, BRI, Permata, CIMB Niaga.</li>
-<li><strong>Gerai Retail</strong>: Alfamart, Indomaret.</li>
-</ul>
-<ol>
-<li><strong>Penyajian Kode Bayar</strong>:</li>
-</ol>
+<li>Nasabah memilih channel pembayaran:
 <ul>
-<li>Layar menampilkan 16 digit nomor Virtual Account dan panduan langkah transfer (via ATM, Mobile Banking, atau Internet Banking).</li>
-<li>Terdapat tombol "Salin Kode" yang terhubung ke clipboard sistem.</li>
-</ul>
-<ol>
-<li><strong>Verifikasi Pelunasan</strong>:</li>
-</ol>
+<li><strong>Virtual Account Bank</strong>: BCA, Mandiri, BNI, BRI, Permata, CIMB Niaga.
+</li>
+<li><strong>Gerai Retail</strong>: Alfamart, Indomaret.
+</li></ul>
+</li></ul>
+</li>
+<li><strong>Penyajian Kode Bayar</strong>:
 <ul>
-<li>Begitu transfer terdeteksi oleh sistem payment gateway, server mengirimkan notifikasi.</li>
-<li>Flutter me-refresh tampilan tagihan menjadi "Lunas" dan status Beranda kembali membuka limit kuota untuk pinjaman berikutnya.</li>
-</ul>
+<li>Layar menampilkan 16 digit nomor Virtual Account dan panduan langkah transfer (via ATM, Mobile Banking, atau Internet Banking).
+</li>
+<li>Terdapat tombol "Salin Kode" yang terhubung ke clipboard sistem.
+</li></ul>
+</li>
+<li><strong>Verifikasi Pelunasan</strong>:
+<ul>
+<li>Begitu transfer terdeteksi oleh sistem payment gateway, server mengirimkan notifikasi.
+</li>
+<li>Flutter me-refresh tampilan tagihan menjadi "Lunas" dan status Beranda kembali membuka limit kuota untuk pinjaman berikutnya.
+</li></ul>
+</li></ol>
 </section>
 <section id="sec-walkthrough" class="doc-section">
 <h3>🪜 E. Step-by-Step Walkthrough: Validasi Nama Bank pada Alur KYC</h3>
 <p>Salah satu aturan bisnis paling ketat di SAMIR adalah validasi kepemilikan rekening:</p>
 <ol>
-<li>Di <code>IDNewOCRViewController</code>, nama nasabah diekstrak dari KTP: misalkan <em>"BUDI SANTOSO"</em>.</li>
-<li>Di <code>IDNewBankViewController</code>, nasabah memilih Bank Mandiri dan menginput nomor rekening <code>1400012345678</code>.</li>
-<li>Sebelum mengizinkan pengikatan, aplikasi memanggil endpoint <code>bankCard/bindCard</code>.</li>
-<li>Backend melakukan inkuiri nama pemilik rekening ke sistem interbank switching:</li>
-</ol>
+<li>Di <code>IDNewOCRViewController</code>, nama nasabah diekstrak dari KTP: misalkan <em>"BUDI SANTOSO"</em>.
+</li>
+<li>Di <code>IDNewBankViewController</code>, nasabah memilih Bank Mandiri dan menginput nomor rekening <code>1400012345678</code>.
+</li>
+<li>Sebelum mengizinkan pengikatan, aplikasi memanggil endpoint <code>bankCard/bindCard</code>.
+</li>
+<li>Backend melakukan inkuiri nama pemilik rekening ke sistem interbank switching:
 <ul>
-<li>Jika nama bank mengembalikan <em>"BUDI SANTOSO"</em> -> <strong>Validasi Lolos</strong>.</li>
-<li>Jika nama bank mengembalikan <em>"SITI AMINAH"</em> (nama istri/saudara) -> <strong>Validasi Ditolak</strong>.</li>
-</ul>
-<ol>
-<li>Antarmuka menampilkan pesan error: <em>"Nama pemilik rekening bank harus sama persis dengan nama pada KTP Anda demi keamanan pencairan dana."</em></li>
-</ol>
+<li>Jika nama bank mengembalikan <em>"BUDI SANTOSO"</em> -> <strong>Validasi Lolos</strong>.
+</li>
+<li>Jika nama bank mengembalikan <em>"SITI AMINAH"</em> (nama istri/saudara) -> <strong>Validasi Ditolak</strong>.
+</li></ul>
+</li>
+<li>Antarmuka menampilkan pesan error: <em>"Nama pemilik rekening bank harus sama persis dengan nama pada KTP Anda demi keamanan pencairan dana."</em>
+</li></ol>
 </section>
 <section id="sec-why" class="doc-section">
 <h3>⚖️ F. Why It Matters: Pemisahan Bisnis Proved di Kode vs Spekulasi</h3>
 <ul>
-<li><strong>Terbukti di Kode (Verified)</strong>:</li>
-<li>Kode membuktikan adanya batas usia legal 18–60 tahun (<code>validateInputLength</code> dan <code>wetherAgeInLegalRange</code>).</li>
-<li>Kode membuktikan adanya polling status kredit dengan konfigurasi interval dinamis dari server.</li>
-<li>Kode membuktikan pembuatan pesanan pinjaman berjalan di <code>LoanConfirmService</code> dengan tanda tangan <code>LibNetSignGenerator</code>.</li>
-<li><strong>Interpretasi / Perlu Konfirmasi Product Owner (Unverified)</strong>:</li>
-<li>Algoritma pasti <em>credit scoring</em> di server (kriteria apa yang membuat seorang nasabah mendapat limit Rp 1 juta vs Rp 5 juta) berada di backend dan tidak dapat dilihat dari source code klien.</li>
-</ul>
+<li><strong>Terbukti di Kode (Verified)</strong>:
+<ul>
+<li>Kode membuktikan adanya batas usia legal 18–60 tahun (<code>validateInputLength</code> dan <code>wetherAgeInLegalRange</code>).
+</li>
+<li>Kode membuktikan adanya polling status kredit dengan konfigurasi interval dinamis dari server.
+</li>
+<li>Kode membuktikan pembuatan pesanan pinjaman berjalan di <code>LoanConfirmService</code> dengan tanda tangan <code>LibNetSignGenerator</code>.
+</li></ul>
+</li>
+<li><strong>Interpretasi / Perlu Konfirmasi Product Owner (Unverified)</strong>:
+<ul>
+<li>Algoritma pasti <em>credit scoring</em> di server (kriteria apa yang membuat seorang nasabah mendapat limit Rp 1 juta vs Rp 5 juta) berada di backend dan tidak dapat dilihat dari source code klien.
+</li></ul>
+</li></ul>
 </section>
 <section id="sec-example" class="doc-section">
 <h3>🔬 G. Practical Example: Pemilihan Voucher di Alur Konfirmasi</h3>
 <p>Pengguna dapat memilih kupon diskon di <code>IDVoucherSelectViewController</code>. Kupon memiliki aturan validitas:</p>
 <ul>
-<li>Hanya dapat digunakan jika nominal pinjaman memenuhi syarat minimal (<code>minApplyAmount</code>).</li>
-<li>Hanya dapat digunakan sebelum tanggal kedaluwarsa kupon (<code>expireTime</code>).</li>
-</ul>
+<li>Hanya dapat digunakan jika nominal pinjaman memenuhi syarat minimal (<code>minApplyAmount</code>).
+</li>
+<li>Hanya dapat digunakan sebelum tanggal kedaluwarsa kupon (<code>expireTime</code>).
+</li></ul>
 <p>Presenter menghitung pengurangan biaya:</p>
 <p><code>Total Biaya Layanan = Biaya Layanan Normal - Nilai Kupon</code></p>
 <p>dan mengupdate label pada <code>LoanConfirmViewController_Rx</code> secara reaktif.</p>
@@ -416,19 +452,26 @@ sequenceDiagram
 <section id="sec-mistakes" class="doc-section">
 <h3>⚠️ H. Common Mistakes & Debugging</h3>
 <ul>
-<li><strong>Mengabaikan Kode Error Spesifik KYC</strong>:</li>
-<li>Endpoint OCR sering kali mengembalikan error kode jika foto KTP buram atau terpotong. Selalu pastikan error message dari server (<code>msg</code>) ditampilkan ke toast pengguna agar mereka tahu harus mengambil foto ulang dengan lebih jelas.</li>
-<li><strong>Kondisi Balapan pada Polling Kuota</strong>:</li>
-<li>Memulai polling baru tanpa menghentikan timer polling sebelumnya dapat memicu request ganda ke server. Selalu panggil <code>stopPolling()</code> sebelum memulai siklus polling baru.</li>
-</ul>
+<li><strong>Mengabaikan Kode Error Spesifik KYC</strong>:
+<ul>
+<li>Endpoint OCR sering kali mengembalikan error kode jika foto KTP buram atau terpotong. Selalu pastikan error message dari server (<code>msg</code>) ditampilkan ke toast pengguna agar mereka tahu harus mengambil foto ulang dengan lebih jelas.
+</li></ul>
+</li>
+<li><strong>Kondisi Balapan pada Polling Kuota</strong>:
+<ul>
+<li>Memulai polling baru tanpa menghentikan timer polling sebelumnya dapat memicu request ganda ke server. Selalu panggil <code>stopPolling()</code> sebelum memulai siklus polling baru.
+</li></ul>
+</li></ul>
 </section>
 <section id="sec-check" class="doc-section">
 <h3>🧠 I. Knowledge Check</h3>
 <ol>
-<li>Mengapa nama pada rekening bank wajib sama persis dengan nama pada e-KTP pemohon?</li>
-<li>Bagaimana cara kerja interval polling pada layar penilaian kuota kredit (<code>IDQuatoAssessViewController</code>)?</li>
-<li>Sebutkan framework reaktif yang digunakan untuk mengikat data biaya pada layar konfirmasi pinjaman!</li>
-</ol>
+<li>Mengapa nama pada rekening bank wajib sama persis dengan nama pada e-KTP pemohon?
+</li>
+<li>Bagaimana cara kerja interval polling pada layar penilaian kuota kredit (<code>IDQuatoAssessViewController</code>)?
+</li>
+<li>Sebutkan framework reaktif yang digunakan untuk mengikat data biaya pada layar konfirmasi pinjaman!
+</li></ol>
 </section>
 <section id="sec-completion" class="doc-section">
 <h3>🏁 J. Completion Criteria</h3>

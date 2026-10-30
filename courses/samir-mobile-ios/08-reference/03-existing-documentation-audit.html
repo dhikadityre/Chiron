@@ -100,11 +100,14 @@
 <h3>🎯 A. Learning Objective</h3>
 <p>Setelah mempelajari dokumen ini, Anda diharapkan mampu:</p>
 <ol>
-<li>Mengetahui perbedaan nyata (<em>delta discrepancies</em>) antara dokumentasi lama dan kode aktif.</li>
-<li>Memahami evolusi sistem konfigurasi environment dari dekripsi gambar JPG ke <code>AppEnv.swift</code>.</li>
-<li>Menyadari kehadiran integrasi Flutter hybrid yang sama sekali tidak tercatat di dokumentasi lama.</li>
-<li>Menghindari jebakan asumsi teknis saat membaca dokumen-dokumen warisan tim terdahulu.</li>
-</ol>
+<li>Mengetahui perbedaan nyata (<em>delta discrepancies</em>) antara dokumentasi lama dan kode aktif.
+</li>
+<li>Memahami evolusi sistem konfigurasi environment dari dekripsi gambar JPG ke <code>AppEnv.swift</code>.
+</li>
+<li>Menyadari kehadiran integrasi Flutter hybrid yang sama sekali tidak tercatat di dokumentasi lama.
+</li>
+<li>Menghindari jebakan asumsi teknis saat membaca dokumen-dokumen warisan tim terdahulu.
+</li></ol>
 </section>
 <section id="sec-prereq" class="doc-section">
 <h3>📌 B. Matriks Rekonsiliasi: Dokumentasi Lama vs Kode Sumber Aktif</h3>
@@ -138,43 +141,51 @@ public class AppEnv {
 }</code></pre>
 <p><code>CZEnvironmentManager.initWithSecret(secret: &quot;...&quot;)</code> tetap menerima parameter string rahasia untuk menjaga kompatibilitas API, namun isinya langsung menimpa <code>cachedConfigData = AppEnv.default.config</code>.</p>
 <ul>
-<li><strong>Pelajaran untuk Engineer Baru:</strong> Jangan membuang waktu mencari script enkripsi gambar atau mencari tahu mengapa file <code>.jpg</code> tidak ditemukan di bundle aplikasi. Konfigurasi kini murni ditentukan oleh compiler macro Swift.</li>
-</ul>
+<li><strong>Pelajaran untuk Engineer Baru:</strong> Jangan membuang waktu mencari script enkripsi gambar atau mencari tahu mengapa file <code>.jpg</code> tidak ditemukan di bundle aplikasi. Konfigurasi kini murni ditentukan oleh compiler macro Swift.
+</li></ul>
 <div id="sub-2-tab-repay-mine-dialihkan-ke-flutter-verified" class="doc-subsection">
 <h4>2. Tab Repay & Mine Dialihkan ke Flutter <code>[Verified]</code></h4>
 </div>
 <p>Dokumentasi lama mendeskripsikan <code>IDRepayViewController.swift</code> sebagai controller UITableView native yang kompleks dengan custom cell jadwal angsuran.</p>
 <p><strong>Realitas Kode Sumber Terkini:</strong></p>
 <ul>
-<li>Di cabang aktif, saat pengguna mengetuk Tab 1 atau Tab 2, <code>IDMainTabBarController</code> tidak lagi membuka controller native tersebut.</li>
-<li>Sebaliknya, <code>IDMainTabBarController.installPersistentFlutterHost()</code> menaruh satu view controller <code>FlutterViewController</code> yang terus hidup di background.</li>
-<li>Ketika Tab 1 diketuk, native memanggil <code>flutterEngineManager.switchTab(to: 0)</code> untuk memerintahkan Flutter <code>IndexedStack</code> menampilkan halaman <code>/repay</code>.</li>
-<li><strong>Pelajaran untuk Engineer Baru:</strong> Jika Anda diminta memperbaiki bug tampilan pada halaman Pembayaran atau Akun Saya, bug tersebut tidak berada di folder <code>ios/IDSamirLoan/Application/</code>, melainkan di folder <code>flutter/lib/pages/</code>.</li>
-</ul>
+<li>Di cabang aktif, saat pengguna mengetuk Tab 1 atau Tab 2, <code>IDMainTabBarController</code> tidak lagi membuka controller native tersebut.
+</li>
+<li>Sebaliknya, <code>IDMainTabBarController.installPersistentFlutterHost()</code> menaruh satu view controller <code>FlutterViewController</code> yang terus hidup di background.
+</li>
+<li>Ketika Tab 1 diketuk, native memanggil <code>flutterEngineManager.switchTab(to: 0)</code> untuk memerintahkan Flutter <code>IndexedStack</code> menampilkan halaman <code>/repay</code>.
+</li>
+<li><strong>Pelajaran untuk Engineer Baru:</strong> Jika Anda diminta memperbaiki bug tampilan pada halaman Pembayaran atau Akun Saya, bug tersebut tidak berada di folder <code>ios/IDSamirLoan/Application/</code>, melainkan di folder <code>flutter/lib/pages/</code>.
+</li></ul>
 </section>
 <section id="sec-actual" class="doc-section">
 <h3>📌 D. Rekomendasi Penanganan Dokumentasi Lama</h3>
 <ol>
-<li><strong>Jangan Menghapus Dokumentasi Lama:</strong> Folder <code>Documentation/docs-samir/</code> tetap dipertahankan sebagai artefak historis perjalanan arsitektur SAMIR.</li>
-<li><strong>Gunakan <code>iOS-SAMIR-LearningCurve/</code> Sebagai Single Source of Truth:</strong> Seluruh developer baru yang bergabung harus diarahkan ke folder dokumentasi baru ini karena seluruh analisanya telah divalidasi langsung terhadap source code aktif.</li>
-<li><strong>Pemberian Catatan Deprecasi:</strong> Di masa mendatang, buat file <code>DEPRECATED.md</code> di folder lama yang mengarahkan pembaca ke learning guide ini.</li>
-</ol>
+<li><strong>Jangan Menghapus Dokumentasi Lama:</strong> Folder <code>Documentation/docs-samir/</code> tetap dipertahankan sebagai artefak historis perjalanan arsitektur SAMIR.
+</li>
+<li><strong>Gunakan <code>iOS-SAMIR-LearningCurve/</code> Sebagai Single Source of Truth:</strong> Seluruh developer baru yang bergabung harus diarahkan ke folder dokumentasi baru ini karena seluruh analisanya telah divalidasi langsung terhadap source code aktif.
+</li>
+<li><strong>Pemberian Catatan Deprecasi:</strong> Di masa mendatang, buat file <code>DEPRECATED.md</code> di folder lama yang mengarahkan pembaca ke learning guide ini.
+</li></ol>
 </section>
 <section id="sec-walkthrough" class="doc-section">
 <h3>🧠 E. Knowledge Check</h3>
 <ol>
-<li>Mengapa alur dekripsi file konfigurasi <code>environment_*.jpg</code> tidak lagi berjalan di codebase SAMIR aktif?</li>
-<li>Apa perubahan arsitektural terbesar pada Tab 1 (Repay) dan Tab 2 (Mine) yang tidak tercatat di dokumentasi lama?</li>
-<li>Berapa deployment target minimum iOS yang sesungguhnya digunakan oleh proyek saat ini?</li>
-</ol>
+<li>Mengapa alur dekripsi file konfigurasi <code>environment_*.jpg</code> tidak lagi berjalan di codebase SAMIR aktif?
+</li>
+<li>Apa perubahan arsitektural terbesar pada Tab 1 (Repay) dan Tab 2 (Mine) yang tidak tercatat di dokumentasi lama?
+</li>
+<li>Berapa deployment target minimum iOS yang sesungguhnya digunakan oleh proyek saat ini?
+</li></ol>
 </section>
 <section id="sec-why" class="doc-section">
 <h3>🏁 F. Completion Criteria</h3>
 <p>Anda telah menguasai dokumen ini jika:</p>
 <ul>
-<li>Anda mengetahui alasan teknis di balik perbedaan dokumentasi lama dan kode aktif.</li>
-<li>Anda tidak mengasumsikan keberadaan fitur lama yang sudah mati saat melakukan debugging.</li>
-</ul>
+<li>Anda mengetahui alasan teknis di balik perbedaan dokumentasi lama dan kode aktif.
+</li>
+<li>Anda tidak mengasumsikan keberadaan fitur lama yang sudah mati saat melakukan debugging.
+</li></ul>
 <p>Lanjut ke pertanyaan terbuka: <a href="04-open-questions-and-unverified-findings.html">04-open-questions-and-unverified-findings.md</a></p>
 </section>
 

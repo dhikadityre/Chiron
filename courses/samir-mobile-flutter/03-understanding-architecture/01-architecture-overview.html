@@ -101,11 +101,14 @@
 <h3>🎯 A. Learning Objective</h3>
 <p>Setelah menyelesaikan dokumen ini, pembaca akan mampu:</p>
 <ol>
-<li>Menjelaskan diagram blok arsitektur modul Flutter SAMIR dan interaksinya dengan host native.</li>
-<li>Memahami filosofi Single-Engine Add-to-App untuk penghematan memori dan performa switching tab.</li>
-<li>Menguraikan pola arsitektur berlapis (Presentation, Business Service, Data/Network, dan Platform Bridge).</li>
-<li>Memahami bagaimana isolasi modul menjaga kode Flutter tetap teruji dan mudah dipelihara.</li>
-</ol>
+<li>Menjelaskan diagram blok arsitektur modul Flutter SAMIR dan interaksinya dengan host native.
+</li>
+<li>Memahami filosofi Single-Engine Add-to-App untuk penghematan memori dan performa switching tab.
+</li>
+<li>Menguraikan pola arsitektur berlapis (Presentation, Business Service, Data/Network, dan Platform Bridge).
+</li>
+<li>Memahami bagaimana isolasi modul menjaga kode Flutter tetap teruji dan mudah dipelihara.
+</li></ol>
 </section>
 <section id="sec-prereq" class="doc-section">
 <h3>📋 B. Prerequisites</h3>
@@ -115,10 +118,12 @@
 <h3>💡 C. Simple Explanation (Analogi & Konsep Sederhana)</h3>
 <p>Bayangkan sebuah konsulat jenderal asing (Modul Flutter) yang beroperasi di dalam ibu kota negara (Aplikasi Host Native):</p>
 <ul>
-<li>Konsulat memiliki aturan internal dan staf tersendiri untuk mengurus visa dan dokumen warganya (logika bisnis penagihan dan profil nasabah).</li>
-<li>Namun, konsulat tidak mencetak mata uang sendiri atau mengoperasikan bandara sendiri; konsulat bergantung pada bank sentral dan kepolisian bandara negara tuan rumah (Keychain native, otentikasi biometrik, kamera KYC).</li>
-<li>Saluran telepon diplomatik khusus (<strong>MethodChannel</strong>) digunakan untuk bertukar pesan resmi secara aman antara konsulat dan kementerian luar negeri tuan rumah.</li>
-</ul>
+<li>Konsulat memiliki aturan internal dan staf tersendiri untuk mengurus visa dan dokumen warganya (logika bisnis penagihan dan profil nasabah).
+</li>
+<li>Namun, konsulat tidak mencetak mata uang sendiri atau mengoperasikan bandara sendiri; konsulat bergantung pada bank sentral dan kepolisian bandara negara tuan rumah (Keychain native, otentikasi biometrik, kamera KYC).
+</li>
+<li>Saluran telepon diplomatik khusus (<strong>MethodChannel</strong>) digunakan untuk bertukar pesan resmi secara aman antara konsulat dan kementerian luar negeri tuan rumah.
+</li></ul>
 </section>
 <section id="sec-actual" class="doc-section">
 <h3>💻 D. Actual Implementation (Bukti di Kode Sumber)</h3>
@@ -167,90 +172,100 @@
 </div>
 <p>Setiap fitur bisnis di bawah <code>flutter/lib/pages/</code> diatur dengan pola konsisten 3 pilar:</p>
 <ol>
-<li><strong><code>models/</code> (Data Representation)</strong>:</li>
-</ol>
+<li><strong><code>models/</code> (Data Representation)</strong>:
 <ul>
-<li>File data class murni dengan factory <code>fromJson</code> dan helper status.</li>
-<li>Contoh: <a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/learn/Flutter-Arch/flutter/lib/pages/repay/home/models/repay_home_model.dart" target="_blank" rel="noopener noreferrer">🦊 flutter/lib/pages/repay/home/models/repay_home_model.dart <span class="branch-tag">learn/Flutter-Arch</span> ↗</a>.</li>
-</ul>
-<ol>
-<li><strong><code>services/</code> (Business Orchestration)</strong>:</li>
-</ol>
+<li>File data class murni dengan factory <code>fromJson</code> dan helper status.
+</li>
+<li>Contoh: <a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/learn/Flutter-Arch/flutter/lib/pages/repay/home/models/repay_home_model.dart" target="_blank" rel="noopener noreferrer">🦊 flutter/lib/pages/repay/home/models/repay_home_model.dart <span class="branch-tag">learn/Flutter-Arch</span> ↗</a>.
+</li></ul>
+</li>
+<li><strong><code>services/</code> (Business Orchestration)</strong>:
 <ul>
-<li>Bertanggung jawab melakukan pemanggilan <code>httpClient.post()</code> atau <code>httpClient.get()</code>, memvalidasi respon <code>BaseResponse</code>, dan memetakan payload ke Model.</li>
-<li>Contoh: <a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/learn/Flutter-Arch/flutter/lib/pages/mine/home/services/mine_home_service.dart" target="_blank" rel="noopener noreferrer">🦊 flutter/lib/pages/mine/home/services/mine_home_service.dart <span class="branch-tag">learn/Flutter-Arch</span> ↗</a>.</li>
-</ul>
-<ol>
-<li><strong><code>widgets/</code> (Sub-Component Rendering)</strong>:</li>
-</ol>
+<li>Bertanggung jawab melakukan pemanggilan <code>httpClient.post()</code> atau <code>httpClient.get()</code>, memvalidasi respon <code>BaseResponse</code>, dan memetakan payload ke Model.
+</li>
+<li>Contoh: <a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/learn/Flutter-Arch/flutter/lib/pages/mine/home/services/mine_home_service.dart" target="_blank" rel="noopener noreferrer">🦊 flutter/lib/pages/mine/home/services/mine_home_service.dart <span class="branch-tag">learn/Flutter-Arch</span> ↗</a>.
+</li></ul>
+</li>
+<li><strong><code>widgets/</code> (Sub-Component Rendering)</strong>:
 <ul>
-<li>Memecah UI halaman yang kompleks menjadi unit-unit kecil yang fokus.</li>
-<li>Menggunakan sintaks <code>part of</code> untuk menyatu dengan halaman induk tanpa perlu membocorkan class secara publik ke module scope.</li>
-<li>Contoh: <a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/learn/Flutter-Arch/flutter/lib/pages/mine/home/widgets/mine_home_header.dart" target="_blank" rel="noopener noreferrer">🦊 flutter/lib/pages/mine/home/widgets/mine_home_header.dart <span class="branch-tag">learn/Flutter-Arch</span> ↗</a>.</li>
-</ul>
+<li>Memecah UI halaman yang kompleks menjadi unit-unit kecil yang fokus.
+</li>
+<li>Menggunakan sintaks <code>part of</code> untuk menyatu dengan halaman induk tanpa perlu membocorkan class secara publik ke module scope.
+</li>
+<li>Contoh: <a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/learn/Flutter-Arch/flutter/lib/pages/mine/home/widgets/mine_home_header.dart" target="_blank" rel="noopener noreferrer">🦊 flutter/lib/pages/mine/home/widgets/mine_home_header.dart <span class="branch-tag">learn/Flutter-Arch</span> ↗</a>.
+</li></ul>
+</li></ol>
 </section>
 <section id="sec-walkthrough" class="doc-section">
 <h3>🪜 E. Step-by-Step Walkthrough: Alur Permintaan Data Fitur Tagihan</h3>
 <ol>
-<li><strong>State Initialization</strong>:</li>
-</ol>
+<li><strong>State Initialization</strong>:
+</li></ol>
 <p><code>RepayHomePage.initState()</code> dipanggil saat root container pertama kali dibuat.</p>
-<ol>
-<li><strong>Service Invocation</strong>:</li>
-</ol>
+<ol start="2">
+<li><strong>Service Invocation</strong>:
+</li></ol>
 <p>Halaman memanggil <code>RepayHomeService.fetchRepayOrderList()</code>.</p>
-<ol>
-<li><strong>Parameter Assembly & Signature</strong>:</li>
-</ol>
+<ol start="3">
+<li><strong>Parameter Assembly & Signature</strong>:
+</li></ol>
 <p><code>HttpClient</code> memanggil <code>param_utils.dart</code>. Parameter default (<code>clientId</code>, <code>timestamp</code>, <code>userNo</code>) digabungkan dengan <code>dynamicSignKey</code>, lalu di-hash dua kali via MD5 di <code>sign_utils.dart</code>.</p>
-<ol>
-<li><strong>Network Transport</strong>:</li>
-</ol>
+<ol start="4">
+<li><strong>Network Transport</strong>:
+</li></ol>
 <p><code>Dio</code> mengirimkan payload HTTP POST ke <code>AppEnv.apiBaseUrl + &#x27;repayment/repayOrderList&#x27;</code>.</p>
-<ol>
-<li><strong>Response Handling</strong>:</li>
-</ol>
+<ol start="5">
+<li><strong>Response Handling</strong>:
+</li></ol>
 <p><code>HttpClient._getResponse()</code> memeriksa kode respon. Jika <code>code == &#x27;200&#x27;</code>, data dikembalikan ke Service untuk di-deserialize menjadi instance <code>RepayHomeModel</code>.</p>
-<ol>
-<li><strong>UI Rebuild</strong>:</li>
-</ol>
+<ol start="6">
+<li><strong>UI Rebuild</strong>:
+</li></ol>
 <p><code>RepayHomePage</code> memanggil <code>setState()</code> dan merender daftar kartu tagihan (<code>RepayOrderCard</code>).</p>
 </section>
 <section id="sec-why" class="doc-section">
 <h3>⚖️ F. Why It Matters (Trade-Offs & Implikasi Teknis)</h3>
 <ul>
-<li><strong>Mengapa Single Engine Lebih Unggul Dibanding Multiple Engines?</strong></li>
-</ul>
+<li><strong>Mengapa Single Engine Lebih Unggul Dibanding Multiple Engines?</strong>
+</li></ul>
 <p>Setiap instance <code>FlutterEngine</code> mengalokasikan thread isolate Dart, isolate helper, rendering context, dan memori heap terpisah. Di perangkat entry-level dengan RAM 2GB-3GB, menjalankan dua engine dapat memicu Out-of-Memory (OOM) crash dari sistem operasi. Arsitektur Single-Engine SAMIR hanya memakai memori satu kali untuk melayani banyak tab sekaligus.</p>
 <ul>
-<li><strong>Mengapa State Sesi Bersifat In-Memory (<code>Global</code>)?</strong></li>
-</ul>
+<li><strong>Mengapa State Sesi Bersifat In-Memory (<code>Global</code>)?</strong>
+</li></ul>
 <p>Jika Flutter menyimpan token di SQLite atau SharedPreferences lokal secara terpisah dari iOS Keychain, risiko <em>state drift</em> sangat tinggi: pengguna bisa saja logout di Beranda Native, namun modul Flutter masih menganggap pengguna login karena file lokal Flutter belum terhapus. Mendelegasikan kebenaran sesi (<em>Single Source of Truth</em>) ke native mencegah celah keamanan ini.</p>
 </section>
 <section id="sec-example" class="doc-section">
 <h3>🔬 G. Practical Example (Skenario Penggunaan Nyata)</h3>
 <p>Jika backend SAMIR mengubah format data pada respon daftar tagihan:</p>
 <ul>
-<li>Developer hanya perlu memodifikasi satu file model: <code>repay_home_model.dart</code>.</li>
-<li>Tidak ada file UI (<code>repay_home_page.dart</code>) atau file HTTP transport (<code>http_client.dart</code>) yang perlu dirombak, membuktikan rendahnya coupling antar layer.</li>
-</ul>
+<li>Developer hanya perlu memodifikasi satu file model: <code>repay_home_model.dart</code>.
+</li>
+<li>Tidak ada file UI (<code>repay_home_page.dart</code>) atau file HTTP transport (<code>http_client.dart</code>) yang perlu dirombak, membuktikan rendahnya coupling antar layer.
+</li></ul>
 </section>
 <section id="sec-mistakes" class="doc-section">
 <h3>⚠️ H. Common Mistakes & Debugging</h3>
 <ul>
-<li><strong>Mengakses <code>Global.mid</code> Tanpa Pengecekan Login</strong>:</li>
-<li><code>Global.mid</code> bernilai <code>null</code> jika pengguna berstatus guest / belum login. Kode bisnis wajib memeriksa <code>Global.isLogin</code> sebelum memanggil API yang memerlukan otorisasi.</li>
-<li><strong>Membuat Instansiasi Dio Baru di Dalam Service</strong>:</li>
-<li>Jangan pernah membuat <code>Dio()</code> baru di dalam class <code>Service</code>. Selalu gunakan instance singleton <code>httpClient</code> agar interceptor loading, log, proxy, dan SSL bypass tetap aktif seragam.</li>
-</ul>
+<li><strong>Mengakses <code>Global.mid</code> Tanpa Pengecekan Login</strong>:
+<ul>
+<li><code>Global.mid</code> bernilai <code>null</code> jika pengguna berstatus guest / belum login. Kode bisnis wajib memeriksa <code>Global.isLogin</code> sebelum memanggil API yang memerlukan otorisasi.
+</li></ul>
+</li>
+<li><strong>Membuat Instansiasi Dio Baru di Dalam Service</strong>:
+<ul>
+<li>Jangan pernah membuat <code>Dio()</code> baru di dalam class <code>Service</code>. Selalu gunakan instance singleton <code>httpClient</code> agar interceptor loading, log, proxy, dan SSL bypass tetap aktif seragam.
+</li></ul>
+</li></ul>
 </section>
 <section id="sec-check" class="doc-section">
 <h3>🧠 I. Knowledge Check</h3>
 <ol>
-<li>Sebutkan 5 layer utama pada arsitektur modul SAMIR Flutter!</li>
-<li>Apa 3 pilar pola desain yang diterapkan pada setiap folder fitur di bawah <code>pages/</code>?</li>
-<li>Mengapa persistensi sesi otentikasi disimpan di memori RAM (<code>Global</code>) dan bukan di storage lokal permanen Flutter?</li>
-</ol>
+<li>Sebutkan 5 layer utama pada arsitektur modul SAMIR Flutter!
+</li>
+<li>Apa 3 pilar pola desain yang diterapkan pada setiap folder fitur di bawah <code>pages/</code>?
+</li>
+<li>Mengapa persistensi sesi otentikasi disimpan di memori RAM (<code>Global</code>) dan bukan di storage lokal permanen Flutter?
+</li></ol>
 <p><strong>Latihan Observasi</strong>:</p>
 <p>Buka file <a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/learn/Flutter-Arch/flutter/lib/pages/repay/home/services/repay_home_service.dart" target="_blank" rel="noopener noreferrer">🦊 flutter/lib/pages/repay/home/services/repay_home_service.dart <span class="branch-tag">learn/Flutter-Arch</span> ↗</a>. Amati bagaimana class service ini menggunakan instance <code>httpClient</code> untuk mengambil data tagihan.</p>
 </section>

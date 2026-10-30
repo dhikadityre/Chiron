@@ -101,31 +101,42 @@
 <h3>🎯 A. Learning Objective</h3>
 <p>Setelah mempelajari dokumen ini, pembaca akan mampu:</p>
 <ol>
-<li>Memahami siklus pemrosesan URL dari string teks hingga transisi ViewController.</li>
-<li>Menjelaskan komponen URL: <code>scheme</code> (<code>samir</code>), <code>host</code> (nama domain modul), dan <code>path</code> (tujuan layar).</li>
-<li>Memahami peran <code>CZRouterTable</code>, filter route sebelum pencocokan (<code>routerFilters</code>), dan penanganan parameter URL.</li>
-<li>Mengetahui bahaya assertion fatal pada penambahan host router duplikat.</li>
-</ol>
+<li>Memahami siklus pemrosesan URL dari string teks hingga transisi ViewController.
+</li>
+<li>Menjelaskan komponen URL: <code>scheme</code> (<code>samir</code>), <code>host</code> (nama domain modul), dan <code>path</code> (tujuan layar).
+</li>
+<li>Memahami peran <code>CZRouterTable</code>, filter route sebelum pencocokan (<code>routerFilters</code>), dan penanganan parameter URL.
+</li>
+<li>Mengetahui bahaya assertion fatal pada penambahan host router duplikat.
+</li></ol>
 </section>
 <section id="sec-prereq" class="doc-section">
 <h3>📋 B. Prerequisites</h3>
 <ul>
-<li>Sudah membaca <a href="01-feature-inventory.html">01-feature-inventory.md</a>.</li>
-<li>Memahami konsep URL Scheme dan regular expression (regex) dasar.</li>
-</ul>
+<li>Sudah membaca <a href="01-feature-inventory.html">01-feature-inventory.md</a>.
+</li>
+<li>Memahami konsep URL Scheme dan regular expression (regex) dasar.
+</li></ul>
 </section>
 <section id="sec-simple" class="doc-section">
 <h3>💡 C. Simple Explanation (Analogi Kantor Pos & Alamat Surat)</h3>
 <p>Bayangkan sistem pengiriman surat pos internal:</p>
 <ul>
-<li><strong>Format Alamat (<code>samir://auth/identity?step=1</code>)</strong>:</li>
-<li><code>samir://</code>: Kode negara pengiriman (Scheme aplikasi).</li>
-<li><code>auth</code>: Nama kota tujuan (Host / Modul Autentikasi).</li>
-<li><code>/identity</code>: Nama jalan dan nomor rumah tujuan (Path / Halaman Foto KTP).</li>
-<li><code>?step=1</code>: Surat lampiran khusus (Parameter data).</li>
-<li><strong>Kantor Pos Pusat (<code>CZRouterCenter</code>)</strong>: Membaca alamat surat. Jika ada alamat khusus dari mitra luar negeri, kantor pos menerjemahkannya ke rute internal terlebih dahulu (<strong>Route Filter</strong>).</li>
-<li><strong>Kurir Wilayah (<code>IDSamirAuthModuleRouterHandler</code>)</strong>: Setelah surat tiba di kota <code>auth</code>, kurir wilayah membuka paket, menyiapkan mobil (<strong><code>IDNewOCRViewController</code></strong>), dan mengantar surat ke penerima (<strong><code>pushViewController</code></strong>).</li>
-</ul>
+<li><strong>Format Alamat (<code>samir://auth/identity?step=1</code>)</strong>:
+<ul>
+<li><code>samir://</code>: Kode negara pengiriman (Scheme aplikasi).
+</li>
+<li><code>auth</code>: Nama kota tujuan (Host / Modul Autentikasi).
+</li>
+<li><code>/identity</code>: Nama jalan dan nomor rumah tujuan (Path / Halaman Foto KTP).
+</li>
+<li><code>?step=1</code>: Surat lampiran khusus (Parameter data).
+</li></ul>
+</li>
+<li><strong>Kantor Pos Pusat (<code>CZRouterCenter</code>)</strong>: Membaca alamat surat. Jika ada alamat khusus dari mitra luar negeri, kantor pos menerjemahkannya ke rute internal terlebih dahulu (<strong>Route Filter</strong>).
+</li>
+<li><strong>Kurir Wilayah (<code>IDSamirAuthModuleRouterHandler</code>)</strong>: Setelah surat tiba di kota <code>auth</code>, kurir wilayah membuka paket, menyiapkan mobil (<strong><code>IDNewOCRViewController</code></strong>), dan mengantar surat ke penerima (<strong><code>pushViewController</code></strong>).
+</li></ul>
 </section>
 <section id="sec-actual" class="doc-section">
 <h3>💻 D. Actual Implementation (Arsitektur URL Router)</h3>
@@ -216,46 +227,50 @@ func routers() -&gt; [CZRouter] {
 </div>
 <p>Path: <a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/learn/iOS-Arch/ios/IDSamirLoan/Application/CZSwiftRouterLib/" target="_blank" rel="noopener noreferrer">🦊 ios/IDSamirLoan/Application/CZSwiftRouterLib/ <span class="branch-tag">learn/iOS-Arch</span> ↗</a></p>
 <p><code>CZSwiftRouterLib</code> adalah pustaka router in-house berbasis URL Scheme yang menjadi tulang punggung navigasi ter-decouple di SAMIR iOS.</p>
-<h5 id="item-a-untuk-apa-czrouter-digunakan">A. Untuk Apa <code>CZRouter</code> Digunakan?</h5>
+<div class="doc-subpoint-block" id="item-a-untuk-apa-czrouter-digunakan">
+<h5>A. Untuk Apa <code>CZRouter</code> Digunakan?</h5>
 <p><code>CZRouter</code> menyelesaikan masalah ketergantungan silang (<em>circular dependency</em>) antar modul:</p>
 <ol>
-<li><strong>Decoupling Antar Modul</strong>: Halaman Beranda (<code>SamirMainModule</code>) dapat membuka formulir OCR KTP (<code>SamirAuthModule</code>) atau halaman pengajuan pinjaman (<code>SamirLoanModule</code>) tanpa perlu meng-import class <code>IDNewOCRViewController</code> atau <code>IDLoanViewController</code>.</li>
-<li><strong>Deep Linking Universal</strong>: Format URL internal (<code>samir://auth/identity</code>) identik dengan URL skema dari push notification, SMS kampanye, maupun halaman web H5 hybrid, sehingga satu engine router melayani seluruh sumber navigasi.</li>
-<li>*<em>Penyaringan Rute Terpusat (</em>Route Filter<em>)</em><em>: Kemampuan memetakan alias URL atau mengalihkan (</em>redirect*) rute sebelum handler dijalankan.</li>
-</ol>
-<h5 id="item-b-komponen-utama-di-dalam-czswiftrouterlib">B. Komponen Utama di dalam <code>CZSwiftRouterLib</code>:</h5>
+<li><strong>Decoupling Antar Modul</strong>: Halaman Beranda (<code>SamirMainModule</code>) dapat membuka formulir OCR KTP (<code>SamirAuthModule</code>) atau halaman pengajuan pinjaman (<code>SamirLoanModule</code>) tanpa perlu meng-import class <code>IDNewOCRViewController</code> atau <code>IDLoanViewController</code>.
+</li>
+<li><strong>Deep Linking Universal</strong>: Format URL internal (<code>samir://auth/identity</code>) identik dengan URL skema dari push notification, SMS kampanye, maupun halaman web H5 hybrid, sehingga satu engine router melayani seluruh sumber navigasi.
+</li>
+<li>*<em>Penyaringan Rute Terpusat (</em>Route Filter<em>)</em><em>: Kemampuan memetakan alias URL atau mengalihkan (</em>redirect*) rute sebelum handler dijalankan.
+</li></ol>
+</div>
+<div class="doc-subpoint-block" id="item-b-komponen-utama-di-dalam-czswiftrouterlib">
+<h5>B. Komponen Utama di dalam <code>CZSwiftRouterLib</code>:</h5>
 <ol>
-<li><strong><code>CZRouter</code></strong>:</li>
-</ol>
+<li><strong><code>CZRouter</code></strong>:
 <ul>
-<li>Merepresentasikan konfigurasi rute untuk satu host tertentu (misal host: <code>&quot;auth&quot;</code>, schemes: <code>[&quot;samir&quot;]</code>).</li>
-<li>Menyimpan koleksi <code>tables: [CZRouterTable]</code>.</li>
-</ul>
-<ol>
-<li><strong><code>CZRouterTable</code></strong>:</li>
-</ol>
+<li>Merepresentasikan konfigurasi rute untuk satu host tertentu (misal host: <code>&quot;auth&quot;</code>, schemes: <code>[&quot;samir&quot;]</code>).
+</li>
+<li>Menyimpan koleksi <code>tables: [CZRouterTable]</code>.
+</li></ul>
+</li>
+<li><strong><code>CZRouterTable</code></strong>:
 <ul>
-<li>Tabel pencocokan rute. Memetakan pola string/regex path (misal: <code>&quot;/identity&quot;</code>) ke objek handler yang sesuai.</li>
-</ul>
-<ol>
-<li><strong><code>CZRouterCenter</code></strong>:</li>
-</ol>
+<li>Tabel pencocokan rute. Memetakan pola string/regex path (misal: <code>&quot;/identity&quot;</code>) ke objek handler yang sesuai.
+</li></ul>
+</li>
+<li><strong><code>CZRouterCenter</code></strong>:
 <ul>
-<li>Singleton pusat registrasi (<code>CZRouterCenter.shared</code>). Mengumpulkan semua instance <code>CZRouter</code> dari berbagai modul saat startup aplikasi via <code>CZModuleManager</code>.</li>
-<li>Mengekspos method <code>open(request: CZRouterRequest)</code> dan mengarahkan URL ke tabel yang cocok.</li>
-</ul>
-<ol>
-<li><strong><code>CZRouterRequest</code> & <code>CZRouterResponse</code></strong>:</li>
-</ol>
+<li>Singleton pusat registrasi (<code>CZRouterCenter.shared</code>). Mengumpulkan semua instance <code>CZRouter</code> dari berbagai modul saat startup aplikasi via <code>CZModuleManager</code>.
+</li>
+<li>Mengekspos method <code>open(request: CZRouterRequest)</code> dan mengarahkan URL ke tabel yang cocok.
+</li></ul>
+</li>
+<li><strong><code>CZRouterRequest</code> & <code>CZRouterResponse</code></strong>:
 <ul>
-<li>DTO pembungkus parameter URL query, userInfo dictionary, dan callback completion handler.</li>
-</ul>
-<ol>
-<li><strong><code>CZRouterSyncHandlerProtocol</code> & <code>CZRouterAsyncHandlerProtocol</code></strong>:</li>
-</ol>
+<li>DTO pembungkus parameter URL query, userInfo dictionary, dan callback completion handler.
+</li></ul>
+</li>
+<li><strong><code>CZRouterSyncHandlerProtocol</code> & <code>CZRouterAsyncHandlerProtocol</code></strong>:
 <ul>
-<li>Kontrak yang wajib diimplementasikan oleh setiap handler modul (seperti <code>IDSamirAuthModuleRouterHandler</code>) untuk mengeksekusi transisi UI (<code>pushViewController</code> atau <code>present</code>).</li>
-</ul>
+<li>Kontrak yang wajib diimplementasikan oleh setiap handler modul (seperti <code>IDSamirAuthModuleRouterHandler</code>) untuk mengeksekusi transisi UI (<code>pushViewController</code> atau <code>present</code>).
+</li></ul>
+</li></ol>
+</div>
 <div id="sub-4-fasad-pemanggilan-idroutermanager" class="doc-subsection">
 <h4>4. Fasad Pemanggilan (<code>IDRouterManager</code>)</h4>
 </div>
@@ -277,21 +292,23 @@ func routers() -&gt; [CZRouter] {
 <h3>🪜 E. Step-by-Step Walkthrough: Alur Navigasi Server-Driven</h3>
 <p>Salah satu keunggulan terbesar URL Router adalah <strong>Navigasi yang Digerakkan Server (Server-Driven Navigation)</strong>:</p>
 <ol>
-<li><strong>Server Mengirim Payload</strong>: Saat memuat data Beranda (<code>requstQueryJumpRouter</code>), backend mengirim payload tombol JSON:</li>
-</ol>
+<li><strong>Server Mengirim Payload</strong>: Saat memuat data Beranda (<code>requstQueryJumpRouter</code>), backend mengirim payload tombol JSON:
+</li></ol>
 <pre><code class="language-json">   {
        &quot;buttonText&quot;: &quot;Verifikasi Identitas Sekarang&quot;,
        &quot;jumpUrl&quot;: &quot;samir://auth/identity?step=1&quot;
    }</code></pre>
-<ol>
-<li><strong>Tombol Diklik</strong>: Pengguna mengklik tombol di Beranda.</li>
-<li><strong>Eksekusi Router</strong>: <code>IDHomeViewController</code> tidak perlu mengetahui logika if/else halaman apa yang harus dibuka; ia cukup meneruskan string tersebut:</li>
-</ol>
+<ol start="2">
+<li><strong>Tombol Diklik</strong>: Pengguna mengklik tombol di Beranda.
+</li>
+<li><strong>Eksekusi Router</strong>: <code>IDHomeViewController</code> tidak perlu mengetahui logika if/else halaman apa yang harus dibuka; ia cukup meneruskan string tersebut:
+</li></ol>
 <pre><code class="language-swift">   IDRouterManager.id_perfromWithURLString(jumpUrl)</code></pre>
-<ol>
-<li><strong>Pencocokan Otomatis</strong>: <code>CZRouterCenter</code> otomatis mencocokkan <code>jumpUrl</code> ke modul Auth dan membuka layar KTP.</li>
-<li><strong>Dampak Bisnis</strong>: Tim produk dan tim backend dapat mengubah alur perjalanan pengguna (misal: mengarahkan user lama langsung ke konfirmasi pinjaman dan user baru ke verifikasi identitas) murni dari response server tanpa perlu merilis pembaruan aplikasi ke App Store!</li>
-</ol>
+<ol start="4">
+<li><strong>Pencocokan Otomatis</strong>: <code>CZRouterCenter</code> otomatis mencocokkan <code>jumpUrl</code> ke modul Auth dan membuka layar KTP.
+</li>
+<li><strong>Dampak Bisnis</strong>: Tim produk dan tim backend dapat mengubah alur perjalanan pengguna (misal: mengarahkan user lama langsung ke konfirmasi pinjaman dan user baru ke verifikasi identitas) murni dari response server tanpa perlu merilis pembaruan aplikasi ke App Store!
+</li></ol>
 </section>
 <section id="sec-why" class="doc-section">
 <h3>⚖️ F. Why It Matters: Bahaya Assertion Fatal pada Host Duplikat</h3>
@@ -321,20 +338,28 @@ IDBusinessWebViewController.loadUrlWithAuth(
 <section id="sec-mistakes" class="doc-section">
 <h3>⚠️ H. Common Mistakes & Debugging</h3>
 <ul>
-<li><strong>Typo pada Skema atau Host</strong>:</li>
-<li>Memanggil <code>samir://atuh/identity</code> (typo <code>atuh</code> alih-alih <code>auth</code>).</li>
-<li><em>Efek</em>: <code>CZRouterCenter</code> tidak menemukan handler yang cocok dan mengembalikan response status <code>.NotFound</code>. Navigasi gagal secara diam-diam tanpa ada pesan error di layar.</li>
-<li><strong>Lupa Encoding Parameter String</strong>:</li>
-<li>Jika mengirimkan URL di dalam parameter query (misal: <code>samir://web/open?url=https://samir.co.id?a=1&amp;b=2</code>), karakter <code>&amp;</code> dan <code>?</code> akan merusak parser URL query. Selalu gunakan URL-encoding untuk nilai parameter.</li>
-</ul>
+<li><strong>Typo pada Skema atau Host</strong>:
+<ul>
+<li>Memanggil <code>samir://atuh/identity</code> (typo <code>atuh</code> alih-alih <code>auth</code>).
+</li>
+<li><em>Efek</em>: <code>CZRouterCenter</code> tidak menemukan handler yang cocok dan mengembalikan response status <code>.NotFound</code>. Navigasi gagal secara diam-diam tanpa ada pesan error di layar.
+</li></ul>
+</li>
+<li><strong>Lupa Encoding Parameter String</strong>:
+<ul>
+<li>Jika mengirimkan URL di dalam parameter query (misal: <code>samir://web/open?url=https://samir.co.id?a=1&amp;b=2</code>), karakter <code>&amp;</code> dan <code>?</code> akan merusak parser URL query. Selalu gunakan URL-encoding untuk nilai parameter.
+</li></ul>
+</li></ul>
 </section>
 <section id="sec-check" class="doc-section">
 <h3>🧠 I. Knowledge Check</h3>
 <ol>
-<li>Apa nama scheme default yang digunakan oleh URL router aplikasi SAMIR?</li>
-<li>Bagaimana <code>CZRouterCenter</code> memetakan path seperti <code>/identity</code> ke class ViewController konkret?</li>
-<li>Apa akibatnya jika seorang developer mendaftarkan dua router dengan host yang sama?</li>
-</ol>
+<li>Apa nama scheme default yang digunakan oleh URL router aplikasi SAMIR?
+</li>
+<li>Bagaimana <code>CZRouterCenter</code> memetakan path seperti <code>/identity</code> ke class ViewController konkret?
+</li>
+<li>Apa akibatnya jika seorang developer mendaftarkan dua router dengan host yang sama?
+</li></ol>
 <p><strong>Latihan Observasi</strong>:</p>
 <p>Buka file <code>ios/IDSamirLoan/Application/CZSwiftRouterLib/Classes/CZRouterCenter.swift</code>. Telusuri method <code>filterRouterUrl</code> (baris 113–125) untuk melihat bagaimana filter URL digunakan untuk mengubah URL sebelum dicocokkan ke router table.</p>
 </section>

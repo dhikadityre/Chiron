@@ -105,30 +105,40 @@
 <h3>🎯 A. Learning Objective</h3>
 <p>Setelah mempelajari dokumen ini, pembaca akan mampu:</p>
 <ol>
-<li>Memahami arsitektur integrasi Flutter <em>Add-to-App</em> melalui <code>podhelper.rb</code> di CocoaPods.</li>
-<li>Menjelaskan pola <strong>Single Prewarmed Engine</strong> (<code>FlutterEngineManager</code>) untuk menghemat konsumsi RAM dan menghilangkan jeda peluncuran Dart VM.</li>
-<li>Menjelaskan teknik <strong>Persistent Host Container</strong> pada <code>IDMainTabBarController</code> yang menampung tampilan Flutter di bawah tab bar native tanpa merusak tab count.</li>
-<li>Menelusuri seluruh metode komunikasi pada channel <code>samir_native_channel</code> dan <code>samir_tracking_channel</code>.</li>
-<li>Memahami bagaimana layout safe area (notch & tab bar) disinkronkan antara iOS UIKit dan Flutter RenderFlex.</li>
-</ol>
+<li>Memahami arsitektur integrasi Flutter <em>Add-to-App</em> melalui <code>podhelper.rb</code> di CocoaPods.
+</li>
+<li>Menjelaskan pola <strong>Single Prewarmed Engine</strong> (<code>FlutterEngineManager</code>) untuk menghemat konsumsi RAM dan menghilangkan jeda peluncuran Dart VM.
+</li>
+<li>Menjelaskan teknik <strong>Persistent Host Container</strong> pada <code>IDMainTabBarController</code> yang menampung tampilan Flutter di bawah tab bar native tanpa merusak tab count.
+</li>
+<li>Menelusuri seluruh metode komunikasi pada channel <code>samir_native_channel</code> dan <code>samir_tracking_channel</code>.
+</li>
+<li>Memahami bagaimana layout safe area (notch & tab bar) disinkronkan antara iOS UIKit dan Flutter RenderFlex.
+</li></ol>
 </section>
 <section id="sec-prereq" class="doc-section">
 <h3>📋 B. Prerequisites</h3>
 <ul>
-<li>Sudah membaca <a href="../01-project-foundation/03-technology-stack-and-build.html">01-technology-stack-and-build.md</a> dan <a href="../05-learning-business-flows/04-cross-feature-journeys.html">04-cross-feature-journeys.md</a>.</li>
-<li>Mengetahui konsep dasar Flutter Framework, Dart async, dan Platform Channels.</li>
-</ul>
+<li>Sudah membaca <a href="../01-project-foundation/03-technology-stack-and-build.html">01-technology-stack-and-build.md</a> dan <a href="../05-learning-business-flows/04-cross-feature-journeys.html">04-cross-feature-journeys.md</a>.
+</li>
+<li>Mengetahui konsep dasar Flutter Framework, Dart async, dan Platform Channels.
+</li></ul>
 </section>
 <section id="sec-simple" class="doc-section">
 <h3>💡 C. Simple Explanation (Analogi Layar Proyektor di Atas Panggung)</h3>
 <p>Bayangkan panggung teater mewah (Aplikasi Native UIKit):</p>
 <ul>
-<li><strong>Babak 1 (Beranda)</strong>: Diperankan oleh aktor langsung di atas panggung fisik (<strong>Native Swift <code>IDHomeViewController</code></strong>).</li>
-<li><strong>Babak 2 & 3 (Tagihan & Profil)</strong>: Alih-alih merombak panggung, teater menurunkan layar proyektor beresolusi tinggi yang ditenagai proyektor tunggal berkecepatan tinggi (<strong>Flutter Engine</strong>).</li>
-<li>Saat proyektor menampilkan pemandangan Tagihan (<strong><code>/repay</code></strong>), penonton melihat halaman tagihan modern.</li>
-<li>Saat penonton meminta pemandangan Profil (<strong><code>/mine</code></strong>), proyektor langsung mengganti slide dalam sekejap tanpa mematikan lampu proyektor (<strong><code>IndexedStack</code></strong>).</li>
-<li><strong>Kabel Komunikasi Panggung (<code>Platform Channels</code>)</strong>: Jika proyektor butuh data listrik atau informasi tiket penonton, ada kabel audio khusus yang menghubungkan proyektor ke operator panggung native (<strong>MethodChannel</strong>).</li>
-</ul>
+<li><strong>Babak 1 (Beranda)</strong>: Diperankan oleh aktor langsung di atas panggung fisik (<strong>Native Swift <code>IDHomeViewController</code></strong>).
+</li>
+<li><strong>Babak 2 & 3 (Tagihan & Profil)</strong>: Alih-alih merombak panggung, teater menurunkan layar proyektor beresolusi tinggi yang ditenagai proyektor tunggal berkecepatan tinggi (<strong>Flutter Engine</strong>).
+<ul>
+<li>Saat proyektor menampilkan pemandangan Tagihan (<strong><code>/repay</code></strong>), penonton melihat halaman tagihan modern.
+</li>
+<li>Saat penonton meminta pemandangan Profil (<strong><code>/mine</code></strong>), proyektor langsung mengganti slide dalam sekejap tanpa mematikan lampu proyektor (<strong><code>IndexedStack</code></strong>).
+</li></ul>
+</li>
+<li><strong>Kabel Komunikasi Panggung (<code>Platform Channels</code>)</strong>: Jika proyektor butuh data listrik atau informasi tiket penonton, ada kabel audio khusus yang menghubungkan proyektor ke operator panggung native (<strong>MethodChannel</strong>).
+</li></ul>
 </section>
 <section id="sec-actual" class="doc-section">
 <h3>💻 D. Actual Implementation: Arsitektur Hybrid Lengkap</h3>
@@ -204,16 +214,19 @@ graph TD
     }
 }</code></pre>
 <ul>
-<li><code>prewarm()</code> dipanggil saat startup native di <code>IDSamirMainModule</code>.</li>
-<li>Entry point Dart dijalankan dengan rute awal <code>&quot;/root&quot;</code>.</li>
-<li><code>GeneratedPluginRegistrant.register(with: engine)</code> mendaftarkan seluruh plugin Flutter (seperti path_provider, shared_preferences, dll).</li>
-</ul>
+<li><code>prewarm()</code> dipanggil saat startup native di <code>IDSamirMainModule</code>.
+</li>
+<li>Entry point Dart dijalankan dengan rute awal <code>&quot;/root&quot;</code>.
+</li>
+<li><code>GeneratedPluginRegistrant.register(with: engine)</code> mendaftarkan seluruh plugin Flutter (seperti path_provider, shared_preferences, dll).
+</li></ul>
 <div id="sub-2-teknik-persistent-host-container-idmaintabbarcontroller" class="doc-subsection">
 <h4>2. Teknik Persistent Host Container (<code>IDMainTabBarController</code>)</h4>
 </div>
 <p>Path: <a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/learn/iOS-Arch/ios/IDSamirLoan/Application/SamirMainModule/Classes/IDController/IDMainTabBarController.swift:L68-85" target="_blank" rel="noopener noreferrer">🦊 ios/IDSamirLoan/Application/SamirMainModule/Classes/IDController/IDMainTabBarController.swift <span class="branch-tag">learn/iOS-Arch</span> ↗</a></p>
 <p>Tantangan arsitektur terbesar: <code>UITabBarController</code> memperlakukan setiap child ViewController sebagai satu tab fisik. Jika kita menambahkan <code>FlutterViewController</code> langsung ke array <code>viewControllers</code>, akan muncul tab ke-4 yang tidak diinginkan di layar!</p>
-<h5 id="item-solusi-elegan-samir">Solusi Elegan SAMIR:</h5>
+<div class="doc-subpoint-block" id="item-solusi-elegan-samir">
+<h5>Solusi Elegan SAMIR:</h5>
 <pre><code class="language-swift">private func installPersistentFlutterHost() {
     flutterContainerView.backgroundColor = UIColor(red: 245/255, green: 245/255, blue: 245/255, alpha: 1)
     flutterContainerView.isHidden = true
@@ -231,6 +244,7 @@ graph TD
     FlutterEngineManager.shared.setPersistentRootVisible(false)
 }</code></pre>
 <p>Ketika user memilih Tab 1 (<code>IDRepayViewController</code>) atau Tab 2 (<code>IDMineViewController</code>), controller native tersebut hanyalah "shell kosong" 50 baris yang bertugas menyalakan visibilitas <code>flutterContainerView</code>!</p>
+</div>
 <div id="sub-3-struktur-routing-flutter-indexedstack" class="doc-subsection">
 <h4>3. Struktur Routing Flutter (<code>IndexedStack</code>)</h4>
 </div>
@@ -265,11 +279,14 @@ graph TD
 <p>Path: <a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/learn/iOS-Arch/ios/IDSamirLoan/Application/SamirCommonModule/Classes/FChannel/FlutterNativeChannel.swift" target="_blank" rel="noopener noreferrer">🦊 ios/IDSamirLoan/Application/SamirCommonModule/Classes/FChannel/FlutterNativeChannel.swift <span class="branch-tag">learn/iOS-Arch</span> ↗</a></p>
 <p>Tersedia dua channel komunikasi:</p>
 <ol>
-<li><strong><code>samir_native_channel</code></strong>: Penanganan rute, data environment, kontrol tab bar, dan dialog.</li>
-<li><strong><code>samir_tracking_channel</code></strong>: Pengiriman event analitik dari Flutter ke <code>IDCustomPointManager</code> native.</li>
-</ol>
-<h5 id="item-daftar-method-yang-dilayani-native">Daftar Method yang Dilayani Native:</h5>
+<li><strong><code>samir_native_channel</code></strong>: Penanganan rute, data environment, kontrol tab bar, dan dialog.
+</li>
+<li><strong><code>samir_tracking_channel</code></strong>: Pengiriman event analitik dari Flutter ke <code>IDCustomPointManager</code> native.
+</li></ol>
+<div class="doc-subpoint-block" id="item-daftar-method-yang-dilayani-native">
+<h5>Daftar Method yang Dilayani Native:</h5>
 <div class="table-container"><table class="data-table"><thead><tr><th>Nama Method</th><th>Parameter</th><th>Fungsi & Deskripsi</th></tr></thead><tbody><tr><td><code>getNativeAppEnv</code></td><td>—</td><td>Mengambil <code>environment</code>, <code>apiBaseUrl</code>, <code>webBaseUrl</code>, <code>clientId</code> dari <code>CZEnvironmentManager</code>.</td></tr><tr><td><code>getNativeRequestParams</code></td><td>—</td><td>Mengambil 18 parameter umum dari <code>ApiParamsHelper</code> plus <code>staticKey</code> agar request Dio Flutter memiliki format identik dengan request native.</td></tr><tr><td><code>getRootPageData</code></td><td>—</td><td>Mengambil status <code>isLogin</code>, <code>mobile</code>, dan <code>showSocialMedia</code>.</td></tr><tr><td><code>openNativeRoute</code></td><td><code>{ url: String, params: Map }</code></td><td>Memerintahkan native mengeksekusi URL Router (misal: <code>samir://auth/identity</code> atau link media sosial).</td></tr><tr><td><code>closeFlutterPage</code></td><td>—</td><td>Memerintahkan native melakukan <code>popViewController</code> atau <code>dismiss</code>.</td></tr><tr><td><code>setNativeTabBarHidden</code></td><td><code>{ hidden: Bool }</code></td><td>Menyembunyikan tab bar native saat Flutter membuka halaman sekunder (<code>/mine/personal</code>).</td></tr><tr><td><code>requestRepayBenefitPopup</code></td><td><code>{ scene: String }</code></td><td>Meminta koordinator popup native (<code>IDRepayBenefitPopupCoordinator</code>) menampilkan banner kupon.</td></tr><tr><td><code>goToSystemAppDetailSettings</code></td><td>—</td><td>Membuka layar pengaturan aplikasi di Settings iOS (<code>UIApplication.openSettingsURLString</code>).</td></tr></tbody></table></div>
+</div>
 <div id="sub-5-sinkronisasi-safe-area-dynamic-island" class="doc-subsection">
 <h4>5. Sinkronisasi Safe Area & Dynamic Island</h4>
 </div>
@@ -294,16 +311,16 @@ graph TD
 <h3>🪜 E. Step-by-Step Walkthrough: Menambahkan Method Channel Baru</h3>
 <p>Misalkan Anda ingin membuat fungsi baru di Flutter untuk meminta native memeriksa apakah biometrik Face ID aktif di perangkat:</p>
 <ol>
-<li><strong>Definisikan di Dart</strong>:</li>
-</ol>
+<li><strong>Definisikan di Dart</strong>:
+</li></ol>
 <pre><code class="language-dart">   // flutter/lib/common/platform/flutter_native_route_dispatcher.dart
    static Future&lt;Bool&gt; isBiometricEnabled() async {
      final bool result = await _methodChannel.invokeMethod(&#x27;isBiometricEnabled&#x27;);
      return result ?? false;
    }</code></pre>
-<ol>
-<li><strong>Tambahkan Handler di Swift</strong>:</li>
-</ol>
+<ol start="2">
+<li><strong>Tambahkan Handler di Swift</strong>:
+</li></ol>
 <p>Buka <code>ios/IDSamirLoan/Application/SamirCommonModule/Classes/FChannel/FlutterNativeChannel+method.swift</code>:</p>
 <pre><code class="language-swift">   extension FlutterNativeChannel {
        func isBiometricEnabled(result: @escaping FlutterResult) {
@@ -313,9 +330,9 @@ graph TD
            result(canEvaluate)
        }
    }</code></pre>
-<ol>
-<li><strong>Daftarkan di Switch Case</strong>:</li>
-</ol>
+<ol start="3">
+<li><strong>Daftarkan di Switch Case</strong>:
+</li></ol>
 <p>Buka <code>FlutterNativeChannel.swift</code> baris 110–135, tambahkan:</p>
 <pre><code class="language-swift">   case &quot;isBiometricEnabled&quot;:
        self.isBiometricEnabled(result: result)</code></pre>
@@ -328,29 +345,40 @@ graph TD
 <h3>🔬 G. Practical Example: Navigasi ke Halaman Sekunder Flutter (<code>/mine/personal</code>)</h3>
 <p>Ketika nasabah mengklik kartu identitas di halaman profil Flutter:</p>
 <ol>
-<li>Flutter memanggil <code>Routers.push(RoutePaths.minePersonal)</code>.</li>
-<li>Class <code>NativeRouteChrome.prepareForLocation</code> otomatis mengirim pesan <code>setNativeTabBarHidden(hidden: true)</code> ke native.</li>
-<li>Tab bar native menghilang dengan animasi mulus.</li>
-<li>Halaman <code>MinePersonalPage</code> didorong ke navigation stack Flutter.</li>
-<li>Saat pengguna menekan tombol kembali di Flutter, tab bar native otomatis dimunculkan kembali (<code>hidden: false</code>).</li>
-</ol>
+<li>Flutter memanggil <code>Routers.push(RoutePaths.minePersonal)</code>.
+</li>
+<li>Class <code>NativeRouteChrome.prepareForLocation</code> otomatis mengirim pesan <code>setNativeTabBarHidden(hidden: true)</code> ke native.
+</li>
+<li>Tab bar native menghilang dengan animasi mulus.
+</li>
+<li>Halaman <code>MinePersonalPage</code> didorong ke navigation stack Flutter.
+</li>
+<li>Saat pengguna menekan tombol kembali di Flutter, tab bar native otomatis dimunculkan kembali (<code>hidden: false</code>).
+</li></ol>
 </section>
 <section id="sec-mistakes" class="doc-section">
 <h3>⚠️ H. Common Mistakes & Debugging</h3>
 <ul>
-<li><strong>Lupa Menambahkan Plugin ke GeneratedPluginRegistrant</strong>:</li>
-<li>Jika Anda menambahkan package Flutter baru di <code>pubspec.yaml</code> yang membutuhkan native plugin (misal: image_picker), jalankan <code>pod install</code> di folder <code>ios/</code> agar hook CocoaPods mendaftarkan plugin tersebut ke proyek Xcode.</li>
-<li><strong>Assertion Failure pada Container View</strong>:</li>
-<li><code>FlutterEngineManager</code> memiliki guard <code>assertionFailure(&quot;The persistent Flutter view cannot change container&quot;)</code>. Sekali <code>installPersistentRoot</code> dipasang ke <code>IDMainTabBarController</code>, view tersebut tidak boleh dipindahkan ke window atau ViewController lain.</li>
-</ul>
+<li><strong>Lupa Menambahkan Plugin ke GeneratedPluginRegistrant</strong>:
+<ul>
+<li>Jika Anda menambahkan package Flutter baru di <code>pubspec.yaml</code> yang membutuhkan native plugin (misal: image_picker), jalankan <code>pod install</code> di folder <code>ios/</code> agar hook CocoaPods mendaftarkan plugin tersebut ke proyek Xcode.
+</li></ul>
+</li>
+<li><strong>Assertion Failure pada Container View</strong>:
+<ul>
+<li><code>FlutterEngineManager</code> memiliki guard <code>assertionFailure(&quot;The persistent Flutter view cannot change container&quot;)</code>. Sekali <code>installPersistentRoot</code> dipasang ke <code>IDMainTabBarController</code>, view tersebut tidak boleh dipindahkan ke window atau ViewController lain.
+</li></ul>
+</li></ul>
 </section>
 <section id="sec-check" class="doc-section">
 <h3>🧠 I. Knowledge Check</h3>
 <ol>
-<li>Apa nama instance FlutterEngine singleton yang digunakan di aplikasi SAMIR iOS?</li>
-<li>Mengapa layar <code>FlutterRootPage</code> di Dart menggunakan widget <code>IndexedStack</code>?</li>
-<li>Sebutkan nama dua channel komunikasi utama antara Native iOS dan Flutter!</li>
-</ol>
+<li>Apa nama instance FlutterEngine singleton yang digunakan di aplikasi SAMIR iOS?
+</li>
+<li>Mengapa layar <code>FlutterRootPage</code> di Dart menggunakan widget <code>IndexedStack</code>?
+</li>
+<li>Sebutkan nama dua channel komunikasi utama antara Native iOS dan Flutter!
+</li></ol>
 </section>
 <section id="sec-completion" class="doc-section">
 <h3>🏁 J. Completion Criteria</h3>

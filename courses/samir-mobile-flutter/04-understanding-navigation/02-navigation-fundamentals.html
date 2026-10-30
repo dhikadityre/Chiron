@@ -101,11 +101,14 @@
 <h3>🎯 A. Learning Objective</h3>
 <p>Setelah menyelesaikan dokumen ini, pembaca akan mampu:</p>
 <ol>
-<li>Memahami arsitektur konfigurasi <code>appRouter</code> (instance singleton GoRouter).</li>
-<li>Menjelaskan mengapa <code>Routers.go()</code> dan <code>Routers.push()</code> selalu mengeksekusi <code>NativeRouteChrome.prepareForLocation()</code> terlebih dahulu.</li>
-<li>Membedakan perilaku perpindahan stack antara <code>go()</code> (deklaratif/reset stack) dan <code>push()</code> (imperatif/tumpukan baru).</li>
-<li>Mengetahui cara kerja <code>Routers.pop()</code> yang aman terhadap dialog dan loading overlay.</li>
-</ol>
+<li>Memahami arsitektur konfigurasi <code>appRouter</code> (instance singleton GoRouter).
+</li>
+<li>Menjelaskan mengapa <code>Routers.go()</code> dan <code>Routers.push()</code> selalu mengeksekusi <code>NativeRouteChrome.prepareForLocation()</code> terlebih dahulu.
+</li>
+<li>Membedakan perilaku perpindahan stack antara <code>go()</code> (deklaratif/reset stack) dan <code>push()</code> (imperatif/tumpukan baru).
+</li>
+<li>Mengetahui cara kerja <code>Routers.pop()</code> yang aman terhadap dialog dan loading overlay.
+</li></ol>
 </section>
 <section id="sec-prereq" class="doc-section">
 <h3>📋 B. Prerequisites</h3>
@@ -115,10 +118,12 @@
 <h3>💡 C. Simple Explanation (Analogi & Konsep Sederhana)</h3>
 <p>Bayangkan sistem transportasi kereta cepat:</p>
 <ul>
-<li><strong><code>Routers.go(&#x27;/root&#x27;)</code></strong> seperti menaiki kereta ekspres yang langsung membawa Anda ke stasiun sentral: seluruh gerbong tambahan dilepas, dan Anda tiba di terminal utama yang luas.</li>
-<li><strong><code>Routers.push(&#x27;/mine/personal&#x27;)</code></strong> seperti memasuki gerbong khusus VIP: gerbong ini ditautkan di belakang rangkaian kereta saat ini, dan Anda dapat berjalan mundur kembali ke gerbong sebelumnya kapan saja (<strong><code>Routers.pop()</code></strong>).</li>
-<li><strong><code>NativeRouteChrome.prepareForLocation()</code></strong> adalah pengumuman stasiun sebelum pintu terbuka: memberi sinyal kepada petugas peron (host native) untuk menyiapkan tangga atau menutup pintu pembatas sebelum penumpang melangkah keluar.</li>
-</ul>
+<li><strong><code>Routers.go(&#x27;/root&#x27;)</code></strong> seperti menaiki kereta ekspres yang langsung membawa Anda ke stasiun sentral: seluruh gerbong tambahan dilepas, dan Anda tiba di terminal utama yang luas.
+</li>
+<li><strong><code>Routers.push(&#x27;/mine/personal&#x27;)</code></strong> seperti memasuki gerbong khusus VIP: gerbong ini ditautkan di belakang rangkaian kereta saat ini, dan Anda dapat berjalan mundur kembali ke gerbong sebelumnya kapan saja (<strong><code>Routers.pop()</code></strong>).
+</li>
+<li><strong><code>NativeRouteChrome.prepareForLocation()</code></strong> adalah pengumuman stasiun sebelum pintu terbuka: memberi sinyal kepada petugas peron (host native) untuk menyiapkan tangga atau menutup pintu pembatas sebelum penumpang melangkah keluar.
+</li></ul>
 </section>
 <section id="sec-actual" class="doc-section">
 <h3>💻 D. Actual Implementation (Bukti di Kode Sumber)</h3>
@@ -160,13 +165,15 @@ final GoRouter appRouter = GoRouter(
 );</code></pre>
 <p>Aspek-aspek kunci:</p>
 <ol>
-<li><strong><code>navigatorKey</code></strong>: Kunci global yang memungkinkan pemanggilan navigasi atau Toast tanpa memerlukan <code>BuildContext</code>.</li>
-<li><strong>Daftar Observers</strong>:</li>
-</ol>
+<li><strong><code>navigatorKey</code></strong>: Kunci global yang memungkinkan pemanggilan navigasi atau Toast tanpa memerlukan <code>BuildContext</code>.
+</li>
+<li><strong>Daftar Observers</strong>:
 <ul>
-<li><code>NativeRouteChrome.observer</code>: Menangkap setiap event <code>didPush</code>, <code>didPop</code>, dan <code>didReplace</code> untuk menyinkronkan visibilitas Tab Bar native secara otomatis.</li>
-<li><code>pageLifecycleRouteObserver</code>: Menyalurkan event lifecycle route ke <code>PageLifecycleMixin</code>.</li>
-</ul>
+<li><code>NativeRouteChrome.observer</code>: Menangkap setiap event <code>didPush</code>, <code>didPop</code>, dan <code>didReplace</code> untuk menyinkronkan visibilitas Tab Bar native secara otomatis.
+</li>
+<li><code>pageLifecycleRouteObserver</code>: Menyalurkan event lifecycle route ke <code>PageLifecycleMixin</code>.
+</li></ul>
+</li></ol>
 <div id="sub-2-kelas-pembantu-statis-routers" class="doc-subsection">
 <h4>2. Kelas Pembantu Statis <code>Routers</code></h4>
 </div>
@@ -214,12 +221,12 @@ final GoRouter appRouter = GoRouter(
 <section id="sec-why" class="doc-section">
 <h3>⚖️ F. Why It Matters (Trade-Offs & Implikasi Teknis)</h3>
 <ul>
-<li><strong>Mengapa Wajib <code>await NativeRouteChrome.prepareForLocation(location)</code> Sebelum Navigasi?</strong></li>
-</ul>
+<li><strong>Mengapa Wajib <code>await NativeRouteChrome.prepareForLocation(location)</code> Sebelum Navigasi?</strong>
+</li></ul>
 <p>Animasi transisi halaman Flutter membutuhkan waktu sekitar 300 ms. Jika Flutter baru menyembunyikan Tab Bar native <em>setelah</em> animasi selesai, Tab Bar native akan terlihat melayang di bawah layar selama 300 ms dan kemudian menghilang tiba-tiba (<strong>visual glitch / jarring jump</strong>). Dengan menjalankan <code>prepareForLocation</code> terlebih dahulu secara asynchronous, native host menyembunyikan tab bar sebelum frame pertama transisi digambar.</p>
 <ul>
-<li><strong>Isolasi <code>Routers.pop()</code> Terhadap Dialog</strong>:</li>
-</ul>
+<li><strong>Isolasi <code>Routers.pop()</code> Terhadap Dialog</strong>:
+</li></ul>
 <p>Pada Flutter standar, memanggil <code>Navigator.pop()</code> saat ada dialog terbuka akan menutup dialog tersebut alih-alih halaman. Karena dialog di SAMIR dikelola oleh <code>AppDialogHost</code> yang terpisah, <code>Routers.pop()</code> hanya menutup halaman bisnis, mencegah kesalahan penutupan modal yang tidak diinginkan.</p>
 </section>
 <section id="sec-example" class="doc-section">
@@ -230,27 +237,36 @@ final GoRouter appRouter = GoRouter(
 }</code></pre>
 <p>Urutan kejadian:</p>
 <ol>
-<li><code>prepareForLocation(&#x27;/mine/personal&#x27;)</code> mengirimkan <code>setNativeTabBarHidden(true)</code> ke iOS host.</li>
-<li>Tab bar native langsung disembunyikan.</li>
-<li>Halaman <code>MinePersonalPage</code> meluncur mulus ke layar dengan tombol kembali di kiri atas.</li>
-</ol>
+<li><code>prepareForLocation(&#x27;/mine/personal&#x27;)</code> mengirimkan <code>setNativeTabBarHidden(true)</code> ke iOS host.
+</li>
+<li>Tab bar native langsung disembunyikan.
+</li>
+<li>Halaman <code>MinePersonalPage</code> meluncur mulus ke layar dengan tombol kembali di kiri atas.
+</li></ol>
 </section>
 <section id="sec-mistakes" class="doc-section">
 <h3>⚠️ H. Common Mistakes & Debugging</h3>
 <ul>
-<li><strong>Menggunakan <code>Navigator.of(context).pushNamed(...)</code></strong>:</li>
-<li>Hindari menggunakan Navigator 1.0 langsung. Pemanggilan ini tidak akan memicu <code>NativeRouteChrome.prepareForLocation</code>, menyebabkan tab bar native tetap muncul menutupi bagian bawah layar.</li>
-<li><strong>Menggunakan <code>Routers.go()</code> Ketika Ingin Tombol Back Tampil</strong>:</li>
-<li><code>Routers.go()</code> membersihkan tumpukan halaman, sehingga <code>appRouter.canPop()</code> bernilai <code>false</code> dan tombol back di header tidak akan muncul. Gunakan <code>Routers.push()</code> jika halaman harus bisa di-pop kembali.</li>
-</ul>
+<li><strong>Menggunakan <code>Navigator.of(context).pushNamed(...)</code></strong>:
+<ul>
+<li>Hindari menggunakan Navigator 1.0 langsung. Pemanggilan ini tidak akan memicu <code>NativeRouteChrome.prepareForLocation</code>, menyebabkan tab bar native tetap muncul menutupi bagian bawah layar.
+</li></ul>
+</li>
+<li><strong>Menggunakan <code>Routers.go()</code> Ketika Ingin Tombol Back Tampil</strong>:
+<ul>
+<li><code>Routers.go()</code> membersihkan tumpukan halaman, sehingga <code>appRouter.canPop()</code> bernilai <code>false</code> dan tombol back di header tidak akan muncul. Gunakan <code>Routers.push()</code> jika halaman harus bisa di-pop kembali.
+</li></ul>
+</li></ul>
 </section>
 <section id="sec-check" class="doc-section">
 <h3>🧠 I. Knowledge Check</h3>
 <ol>
-<li>Apa fungsi dari instance <code>navigatorKey</code> global pada konfigurasi <code>GoRouter</code>?</li>
-<li>Mengapa method <code>Routers.go()</code> memeriksa <code>FlutterRootController.supports(location)</code> sebelum memanggil <code>appRouter.go</code>?</li>
-<li>Apa perbedaan visual antara memanggil <code>Routers.push()</code> dan <code>Routers.go()</code>?</li>
-</ol>
+<li>Apa fungsi dari instance <code>navigatorKey</code> global pada konfigurasi <code>GoRouter</code>?
+</li>
+<li>Mengapa method <code>Routers.go()</code> memeriksa <code>FlutterRootController.supports(location)</code> sebelum memanggil <code>appRouter.go</code>?
+</li>
+<li>Apa perbedaan visual antara memanggil <code>Routers.push()</code> dan <code>Routers.go()</code>?
+</li></ol>
 <p><strong>Latihan Observasi</strong>:</p>
 <p>Buka file <a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/learn/Flutter-Arch/flutter/lib/common/router/routers.dart" target="_blank" rel="noopener noreferrer">🦊 flutter/lib/common/router/routers.dart <span class="branch-tag">learn/Flutter-Arch</span> ↗</a>. Periksa implementasi fungsi <code>Routers.pop()</code> pada baris 111–115 dan catat pengecekan kondisi <code>canPop()</code>.</p>
 </section>

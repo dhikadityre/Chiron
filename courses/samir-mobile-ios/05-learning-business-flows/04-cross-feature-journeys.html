@@ -105,27 +105,33 @@
 <h3>🎯 A. Learning Objective</h3>
 <p>Setelah mempelajari dokumen ini, pembaca akan mampu:</p>
 <ol>
-<li>Menjelaskan bagaimana aplikasi menyelamatkan state pengguna saat token sesi kedaluwarsa (<code>10006</code>) di tengah transaksi pinjaman.</li>
-<li>Memahami bagaimana halaman web H5 memicu aksi native melalui URL Scheme <code>samir://</code> dan JSBridge.</li>
-<li>Memahami proses pergantian tab yang mulus antara Native Swift (Tab 0) dan Flutter (Tab 1 & 2) tanpa flicker layar.</li>
-</ol>
+<li>Menjelaskan bagaimana aplikasi menyelamatkan state pengguna saat token sesi kedaluwarsa (<code>10006</code>) di tengah transaksi pinjaman.
+</li>
+<li>Memahami bagaimana halaman web H5 memicu aksi native melalui URL Scheme <code>samir://</code> dan JSBridge.
+</li>
+<li>Memahami proses pergantian tab yang mulus antara Native Swift (Tab 0) dan Flutter (Tab 1 & 2) tanpa flicker layar.
+</li></ol>
 </section>
 <section id="sec-prereq" class="doc-section">
 <h3>📋 B. Prerequisites</h3>
 <ul>
-<li>Sudah membaca <a href="02-authentication-and-session-flow.html">02-authentication-and-session-flow.md</a> dan <a href="03-core-feature-flows.html">03-core-feature-flows.md</a>.</li>
-<li>Mengetahui konsep JavaScript Bridge (<code>WKScriptMessageHandler</code>) dan Flutter Platform View Container.</li>
-</ul>
+<li>Sudah membaca <a href="02-authentication-and-session-flow.html">02-authentication-and-session-flow.md</a> dan <a href="03-core-feature-flows.html">03-core-feature-flows.md</a>.
+</li>
+<li>Mengetahui konsep JavaScript Bridge (<code>WKScriptMessageHandler</code>) dan Flutter Platform View Container.
+</li></ul>
 </section>
 <section id="sec-simple" class="doc-section">
 <h3>💡 C. Simple Explanation (Analogi Perjalanan Antarpulau)</h3>
 <p>Bayangkan Anda melakukan perjalanan wisata antarpulau:</p>
 <ul>
-<li><strong>Pulau Native (Beranda & KYC)</strong>: Menggunakan mobil jalan raya (UIKit murni).</li>
-<li><strong>Pulau Web (Halaman Promo H5)</strong>: Menggunakan perahu (WKWebView). Di atas perahu ada radio komunikasi (<strong>JSBridge</strong>) untuk meminta bantuan ke pangkalan di darat.</li>
-<li><strong>Pulau Flutter (Tagihan & Profil)</strong>: Menggunakan kereta gantung canggih (Flutter Engine) yang terhubung ke stasiun utama mall.</li>
-<li><strong>Insiden Badai (Token Expired <code>10006</code>)</strong>: Jika di tengah jalan terjadi badai, tim penyelamat darurat otomatis memulangkan Anda ke posko awal (<strong>Tab 0 Beranda</strong>) dan meminta Anda memperbarui tanda pengenal (<strong>Modal Login</strong>).</li>
-</ul>
+<li><strong>Pulau Native (Beranda & KYC)</strong>: Menggunakan mobil jalan raya (UIKit murni).
+</li>
+<li><strong>Pulau Web (Halaman Promo H5)</strong>: Menggunakan perahu (WKWebView). Di atas perahu ada radio komunikasi (<strong>JSBridge</strong>) untuk meminta bantuan ke pangkalan di darat.
+</li>
+<li><strong>Pulau Flutter (Tagihan & Profil)</strong>: Menggunakan kereta gantung canggih (Flutter Engine) yang terhubung ke stasiun utama mall.
+</li>
+<li><strong>Insiden Badai (Token Expired <code>10006</code>)</strong>: Jika di tengah jalan terjadi badai, tim penyelamat darurat otomatis memulangkan Anda ke posko awal (<strong>Tab 0 Beranda</strong>) dan meminta Anda memperbarui tanda pengenal (<strong>Modal Login</strong>).
+</li></ul>
 </section>
 <section id="sec-actual" class="doc-section">
 <h3>💻 D. Actual Implementation: 4 Skenario Interaksi Lintas Fitur</h3>
@@ -165,14 +171,19 @@ sequenceDiagram
     </div>
   </div>
 </div>
-<h5 id="item-analisis-arsitektur">Analisis Arsitektur:</h5>
+<div class="doc-subpoint-block" id="item-analisis-arsitektur">
+<h5>Analisis Arsitektur:</h5>
 <p>Ketika error <code>10006</code> terjadi:</p>
 <ol>
-<li><code>IDNetworkRequest.p_handleReLoginError</code> mencegat response sebelum blok failure callback presenter dipanggil.</li>
-<li>Sesi dibersihkan untuk mencegah request lain menggunakan token yang sudah mati.</li>
-<li>Navigation stack di-pop/reset secara paksa ke Beranda (<code>Tab 0</code>) untuk mencegah pengguna terus mengisi data di layar yang tidak lagi memiliki otorisasi.</li>
-<li>Form login muncul secara modal.</li>
-</ol>
+<li><code>IDNetworkRequest.p_handleReLoginError</code> mencegat response sebelum blok failure callback presenter dipanggil.
+</li>
+<li>Sesi dibersihkan untuk mencegah request lain menggunakan token yang sudah mati.
+</li>
+<li>Navigation stack di-pop/reset secara paksa ke Beranda (<code>Tab 0</code>) untuk mencegah pengguna terus mengisi data di layar yang tidak lagi memiliki otorisasi.
+</li>
+<li>Form login muncul secara modal.
+</li></ol>
+</div>
 <div id="sub-skenario-2-jembatan-web-h5-melompat-ke-fitur-native-h5-to-native-jump" class="doc-subsection">
 <h4>SKENARIO 2: Jembatan Web H5 Melompat ke Fitur Native (H5 to Native Jump)</h4>
 </div>
@@ -206,30 +217,37 @@ sequenceDiagram
     </div>
   </div>
 </div>
-<h5 id="item-1-cara-a-intersepsi-skema-url">1. Cara A — Intersepsi Skema URL:</h5>
+<div class="doc-subpoint-block" id="item-1-cara-a-intersepsi-skema-url">
+<h5>1. Cara A — Intersepsi Skema URL:</h5>
 <p>Jika link web mengarah ke URL ber-scheme <code>samir://</code> (misal: tombol <em>"Ambil Foto KTP"</em> di halaman panduan web), delegat navigasi webview mencegat URL tersebut (<code>decidePolicyFor navigationAction</code>), membatalkan navigasi browser, dan meneruskannya ke <code>IDRouterManager.id_perfromWithURLString(url)</code>.</p>
-<h5 id="item-2-cara-b-javascript-bridge-handler-apphandlersplist">2. Cara B — JavaScript Bridge Handler (<code>AppHandlers.plist</code>):</h5>
+</div>
+<div class="doc-subpoint-block" id="item-2-cara-b-javascript-bridge-handler-apphandlersplist">
+<h5>2. Cara B — JavaScript Bridge Handler (<code>AppHandlers.plist</code>):</h5>
 <p>Pustaka menyuntikkan script bridge di <code>IDWebInjectJSBridge</code>:</p>
 <ul>
-<li><code>showToast</code>: Menampilkan toast native.</li>
-<li><code>setH5Title</code>: Mengubah judul navigation bar native sesuai judul halaman web.</li>
-<li><code>back</code>: Memanggil <code>currentVC.idn_goback()</code> untuk menutup browser.</li>
-</ul>
+<li><code>showToast</code>: Menampilkan toast native.
+</li>
+<li><code>setH5Title</code>: Mengubah judul navigation bar native sesuai judul halaman web.
+</li>
+<li><code>back</code>: Memanggil <code>currentVC.idn_goback()</code> untuk menutup browser.
+</li></ul>
+</div>
 <div id="sub-skenario-3-deep-link-eksternal-menuju-layar-tagihan-kupon" class="doc-subsection">
 <h4>SKENARIO 3: Deep Link Eksternal Menuju Layar Tagihan / Kupon</h4>
 </div>
 <p>Ketika pengguna mengklik link promosi dari pesan WhatsApp atau push notification:</p>
 <ol>
-<li><strong>Penerimaan Link</strong>: Link <code>samir://repay/historyOrder</code> atau <code>https://m.samir.co.id/samir/repay/detail?bizId=123</code> diterima oleh <code>IDSamirMainModule</code>.</li>
-<li><strong>Kondisi Autentikasi</strong>:</li>
-</ol>
+<li><strong>Penerimaan Link</strong>: Link <code>samir://repay/historyOrder</code> atau <code>https://m.samir.co.id/samir/repay/detail?bizId=123</code> diterima oleh <code>IDSamirMainModule</code>.
+</li>
+<li><strong>Kondisi Autentikasi</strong>:
 <ul>
-<li>Jika <code>isLogin() == true</code>: Navigasi langsung didispatch ke router atau webview terotentikasi.</li>
-<li>Jika <code>isLogin() == false</code>: Link disimpan di cache <code>Samir_DeepLink_Str</code>, form login dibuka, dan navigasi baru dieksekusi setelah event <code>LoginSuccess</code> diterima.</li>
-</ul>
-<ol>
-<li><strong>Pembersihan Cache</strong>: Begitu layar tujuan terbuka, <code>clearPushCache()</code> dipanggil untuk mencegah navigasi ganda.</li>
-</ol>
+<li>Jika <code>isLogin() == true</code>: Navigasi langsung didispatch ke router atau webview terotentikasi.
+</li>
+<li>Jika <code>isLogin() == false</code>: Link disimpan di cache <code>Samir_DeepLink_Str</code>, form login dibuka, dan navigasi baru dieksekusi setelah event <code>LoginSuccess</code> diterima.
+</li></ul>
+</li>
+<li><strong>Pembersihan Cache</strong>: Begitu layar tujuan terbuka, <code>clearPushCache()</code> dipanggil untuk mencegah navigasi ganda.
+</li></ol>
 <div id="sub-skenario-4-transisi-mulus-native-swift-ke-layar-hybrid-flutter" class="doc-subsection">
 <h4>SKENARIO 4: Transisi Mulus Native Swift ke Layar Hybrid Flutter</h4>
 </div>
@@ -264,20 +282,25 @@ sequenceDiagram
     </div>
   </div>
 </div>
-<h5 id="item-mekanisme-anti-flicker">Mekanisme Anti-Flicker:</h5>
+<div class="doc-subpoint-block" id="item-mekanisme-anti-flicker">
+<h5>Mekanisme Anti-Flicker:</h5>
 <ol>
-<li><strong>Persistent Container</strong>: View Flutter (<code>flutterContainerView</code>) tidak dibuat dan dihancurkan ulang setiap tab berpindah; ia disematkan secara permanen di bawah <code>tabBar</code>.</li>
-<li><strong>Frame Ready Guard</strong>: Saat berpindah dari tab native ke tab Flutter, <code>flutterContainerView</code> tetap disembunyikan (<code>isHidden = true</code>) sampai Flutter mengirim konfirmasi <code>frameReady == true</code>. Ini mencegah pengguna melihat layar putih atau rendering kosong sesaat!</li>
-<li><strong>Safe Area Sync</strong>: <code>updatePersistentSafeArea(top:bottom:)</code> secara presisi menghitung tinggi notch iPhone dan tinggi tab bar native agar layout Flutter tidak tertutup tombol fisik perangkat.</li>
-</ol>
+<li><strong>Persistent Container</strong>: View Flutter (<code>flutterContainerView</code>) tidak dibuat dan dihancurkan ulang setiap tab berpindah; ia disematkan secara permanen di bawah <code>tabBar</code>.
+</li>
+<li><strong>Frame Ready Guard</strong>: Saat berpindah dari tab native ke tab Flutter, <code>flutterContainerView</code> tetap disembunyikan (<code>isHidden = true</code>) sampai Flutter mengirim konfirmasi <code>frameReady == true</code>. Ini mencegah pengguna melihat layar putih atau rendering kosong sesaat!
+</li>
+<li><strong>Safe Area Sync</strong>: <code>updatePersistentSafeArea(top:bottom:)</code> secara presisi menghitung tinggi notch iPhone dan tinggi tab bar native agar layout Flutter tidak tertutup tombol fisik perangkat.
+</li></ol>
+</div>
 </section>
 <section id="sec-walkthrough" class="doc-section">
 <h3>🪜 E. Step-by-Step Walkthrough: Menutup Halaman Flutter dari Native Navigation</h3>
 <p>Ketika user berada di halaman detail Flutter <code>/mine/personal</code> dan menekan tombol kembali di navigation bar:</p>
 <ol>
-<li>Flutter memanggil method channel <code>closeFlutterPage</code>.</li>
-<li>Native menangkap panggilan di <a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/learn/iOS-Arch/ios/IDSamirLoan/Application/SamirCommonModule/Classes/FChannel/FlutterNativeChannel+route.swift:L93-108" target="_blank" rel="noopener noreferrer">🦊 FlutterNativeChannel+route.swift <span class="branch-tag">learn/iOS-Arch</span> ↗</a>:</li>
-</ol>
+<li>Flutter memanggil method channel <code>closeFlutterPage</code>.
+</li>
+<li>Native menangkap panggilan di <a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/learn/iOS-Arch/ios/IDSamirLoan/Application/SamirCommonModule/Classes/FChannel/FlutterNativeChannel+route.swift:L93-108" target="_blank" rel="noopener noreferrer">🦊 FlutterNativeChannel+route.swift <span class="branch-tag">learn/iOS-Arch</span> ↗</a>:
+</li></ol>
 <pre><code class="language-swift">   func closeFlutterPage(result: @escaping FlutterResult) {
        mainThread {
            guard let topVC = UIViewController.cz.topViewController() else { return }
@@ -289,46 +312,58 @@ sequenceDiagram
            result(nil)
        }
    }</code></pre>
-<ol>
-<li>Native secara otomatis memeriksa apakah halaman saat ini berada dalam tumpukan navigasi (<code>popViewController</code>) atau disajikan secara modal (<code>dismiss</code>).</li>
-</ol>
+<ol start="3">
+<li>Native secara otomatis memeriksa apakah halaman saat ini berada dalam tumpukan navigasi (<code>popViewController</code>) atau disajikan secara modal (<code>dismiss</code>).
+</li></ol>
 </section>
 <section id="sec-why" class="doc-section">
 <h3>⚖️ F. Why It Matters: Ketahanan Arsitektur Hybrid (Resilience)</h3>
 <p>Integrasi Native-Flutter yang tidak dirancang dengan baik sering kali mengalami masalah:</p>
 <ul>
-<li>Memori membengkak jika membuat engine Flutter baru di setiap tab.</li>
-<li>State UI hilang saat berpindah-pindah tab.</li>
-</ul>
+<li>Memori membengkak jika membuat engine Flutter baru di setiap tab.
+</li>
+<li>State UI hilang saat berpindah-pindah tab.
+</li></ul>
 <p>Dengan pola <strong>Single Prewarmed Engine</strong> + <strong>Persistent Container</strong> + <strong>IndexedStack</strong> yang diterapkan di SAMIR iOS, konsumsi memori tetap stabil dan performa antarmuka terasa seperti aplikasi native 100%.</p>
 </section>
 <section id="sec-example" class="doc-section">
 <h3>🔬 G. Practical Example: Penanganan Tombol Back Fisik & Dialog Disclaimer</h3>
 <p>Ketika user berada di halaman profil Flutter dan mengklik tombol "Disclaimer Hukum":</p>
 <ol>
-<li>Flutter mengirim pesan <code>jumpDisclaimerPopup</code> ke native channel.</li>
-<li>Native mengeksekusi <code>showMineDisclaimer(result:)</code> di main thread.</li>
-<li>Dialog modal native <code>IDNPopupController</code> muncul di atas layar Flutter.</li>
-<li>Ketika user menekan tombol "Setuju", dialog native tertutup dan Flutter menerima callback konfirmasi.</li>
-</ol>
+<li>Flutter mengirim pesan <code>jumpDisclaimerPopup</code> ke native channel.
+</li>
+<li>Native mengeksekusi <code>showMineDisclaimer(result:)</code> di main thread.
+</li>
+<li>Dialog modal native <code>IDNPopupController</code> muncul di atas layar Flutter.
+</li>
+<li>Ketika user menekan tombol "Setuju", dialog native tertutup dan Flutter menerima callback konfirmasi.
+</li></ol>
 </section>
 <section id="sec-mistakes" class="doc-section">
 <h3>⚠️ H. Common Mistakes & Debugging</h3>
 <ul>
-<li><strong>Crash Saat Transisi Flutter ke Native</strong>:</li>
-<li><em>Penyebab</em>: Memanggil UI update dari thread background di MethodChannel.</li>
-<li><em>Aturan</em>: Semua interaksi navigasi dan UI dari Flutter channel <strong>wajib</strong> dibungkus di dalam <code>mainThread { ... }</code> atau <code>DispatchQueue.main.async</code>.</li>
-<li><strong>Safe Area Inset Salah pada Layar Dynamic Island (iPhone 14 Pro+)</strong>:</li>
-<li>Jika konten Flutter tertutup oleh Dynamic Island, periksa fungsi <code>updatePersistentSafeArea</code> di <code>SamirFlutterViewController</code>.</li>
-</ul>
+<li><strong>Crash Saat Transisi Flutter ke Native</strong>:
+<ul>
+<li><em>Penyebab</em>: Memanggil UI update dari thread background di MethodChannel.
+</li>
+<li><em>Aturan</em>: Semua interaksi navigasi dan UI dari Flutter channel <strong>wajib</strong> dibungkus di dalam <code>mainThread { ... }</code> atau <code>DispatchQueue.main.async</code>.
+</li></ul>
+</li>
+<li><strong>Safe Area Inset Salah pada Layar Dynamic Island (iPhone 14 Pro+)</strong>:
+<ul>
+<li>Jika konten Flutter tertutup oleh Dynamic Island, periksa fungsi <code>updatePersistentSafeArea</code> di <code>SamirFlutterViewController</code>.
+</li></ul>
+</li></ul>
 </section>
 <section id="sec-check" class="doc-section">
 <h3>🧠 I. Knowledge Check</h3>
 <ol>
-<li>Apa yang dilakukan aplikasi secara otomatis jika sebuah request di tengah alur KYC mengembalikan kode <code>10006</code>?</li>
-<li>Bagaimana cara halaman web H5 menampilkan pesan toast native di layar?</li>
-<li>Mengapa tampilan kontainer Flutter disembunyikan sementara sampai sinyal <code>frameReady</code> diterima?</li>
-</ol>
+<li>Apa yang dilakukan aplikasi secara otomatis jika sebuah request di tengah alur KYC mengembalikan kode <code>10006</code>?
+</li>
+<li>Bagaimana cara halaman web H5 menampilkan pesan toast native di layar?
+</li>
+<li>Mengapa tampilan kontainer Flutter disembunyikan sementara sampai sinyal <code>frameReady</code> diterima?
+</li></ol>
 </section>
 <section id="sec-completion" class="doc-section">
 <h3>🏁 J. Completion Criteria</h3>
