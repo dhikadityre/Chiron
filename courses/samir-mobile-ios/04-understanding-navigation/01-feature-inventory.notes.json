@@ -14,7 +14,7 @@
       "created_at": "2026-10-30T09:24:18.283Z",
       "status": "resolved",
       "anchor": {
-        "exact": "Sebutkan 6 tahapan formulir verifikasi e-KYC secara berurutan!💬\nDi mana letak implementasi aktif dari Tab Tagihan (Repay) dan Tab Saya (Mine)?💬\nApa prasyarat utama sebelum pengguna diizinkan membuka layar IDQuatoAssessViewController?",
+        "exact": "Sebutkan 6 tahapan formulir verifikasi e-KYC secara berurutan!\nDi mana letak implementasi aktif dari Tab Tagihan (Repay) dan Tab Saya (Mine)?\nApa prasyarat utama sebelum pengguna diizinkan membuka layar IDQuatoAssessViewController?",
         "prefix": "",
         "suffix": "",
         "selector": "div.docs-layout > main.docs-content > section.doc-section > ol"

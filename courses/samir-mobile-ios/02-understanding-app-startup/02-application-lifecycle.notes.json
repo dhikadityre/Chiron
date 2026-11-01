@@ -16,7 +16,7 @@
       "anchor": {
         "exact": "melakukan perulangan",
         "prefix": "a menerima event dari CZAppDelegate, ia ",
-        "suffix": " (looping) ke semua modul:\n💬\n\npublic fu",
+        "suffix": " (looping) ke semua modul:\n\npublic fu",
         "selector": "div.docs-layout > main.docs-content > section.doc-section > p"
       },
       "isOrphaned": true,
@@ -44,7 +44,7 @@
       "created_at": "2026-10-26T09:14:20.866Z",
       "status": "resolved",
       "anchor": {
-        "exact": "Berapa baris kode kira-kira ukuran file CZAppDelegate.swift dan mengapa ukurannya bisa sangat ringkas?\n💬",
+        "exact": "Berapa baris kode kira-kira ukuran file CZAppDelegate.swift dan mengapa ukurannya bisa sangat ringkas?",
         "prefix": "",
         "suffix": "",
         "selector": "div.docs-layout > main.docs-content > section.doc-section > ol > li"

@@ -45,7 +45,7 @@
       "status": "resolved",
       "anchor": {
         "exact": "📱 H. Use Case Nyata: Navigasi Screen-to-Screen & Callback Patterns",
-        "prefix": "dUrl, \"navTitle\": \"Pusat Bantuan\"]\n)\n💬\n",
+        "prefix": "dUrl, \"navTitle\": \"Pusat Bantuan\"]\n)\n",
         "suffix": "\n\nDi arsitektur modular SAMIR iOS, route",
         "selector": "div.docs-layout > main.docs-content > section.doc-section > h3"
       },

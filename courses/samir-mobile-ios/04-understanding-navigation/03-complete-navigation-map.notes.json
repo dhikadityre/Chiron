@@ -14,7 +14,7 @@
       "created_at": "2026-10-30T10:19:35.529Z",
       "status": "resolved",
       "anchor": {
-        "exact": "Ke layar mana pengguna diarahkan setelah verifikasi liveness wajah (IDAuthLiveViewController) selesai dengan sukses?💬\nBagaimana cara layar web H5 memerintahkan aplikasi kembali langsung ke Beranda?💬\nSebutkan rute URL yang digunakan untuk membuka formulir pengikatan kartu bank!",
+        "exact": "Ke layar mana pengguna diarahkan setelah verifikasi liveness wajah (IDAuthLiveViewController) selesai dengan sukses?\nBagaimana cara layar web H5 memerintahkan aplikasi kembali langsung ke Beranda?\nSebutkan rute URL yang digunakan untuk membuka formulir pengikatan kartu bank!",
         "prefix": "",
         "suffix": "",
         "selector": "div.docs-layout > main.docs-content > section.doc-section > ol"

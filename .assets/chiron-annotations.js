@@ -395,7 +395,7 @@
         <div class="recap-empty-state">
           <span class="icon">🍃</span>
           <p>Belum ada ${currentDrawerTab === 'notes' ? 'catatan' : currentDrawerTab === 'ai' ? 'pertanyaan AI' : 'catatan atau pertanyaan AI'} pada modul ini.</p>
-          <small>Seleksi teks atau klik ikon 💬 di tepi baris untuk menandai.</small>
+          <small>Seleksi teks atau klik ikon komentar di tepi baris untuk menandai.</small>
         </div>
       `;
       return;
@@ -509,14 +509,17 @@
       const gutterBtn = document.createElement('button');
       gutterBtn.className = 'chiron-gutter-btn';
       gutterBtn.title = 'Tandai baris/blok ini (Catatan / Tanya AI)';
-      gutterBtn.innerHTML = '💬';
       gutterBtn.setAttribute('aria-label', 'Tandai blok teks ini');
+      gutterBtn.innerHTML = '<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>';
 
       gutterBtn.addEventListener('click', (e) => {
         e.stopPropagation();
         e.preventDefault();
 
-        const text = block.innerText.trim();
+        // Extract clean text excluding any injected gutter button or UI elements
+        const clone = block.cloneNode(true);
+        clone.querySelectorAll('.chiron-gutter-btn').forEach(btn => btn.remove());
+        const text = clone.innerText.trim();
         if (!text) return;
 
         pendingSelection = {

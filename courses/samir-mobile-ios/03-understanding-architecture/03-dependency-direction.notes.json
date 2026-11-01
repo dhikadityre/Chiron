@@ -15,7 +15,7 @@
       "status": "resolved",
       "anchor": {
         "exact": "💻 D. Actual Implementation (Piramida Arah Dependensi)",
-        "prefix": "p dapat beroperasi tanpa terganggu.\n💬\n\n",
+        "prefix": "p dapat beroperasi tanpa terganggu.\n\n",
         "suffix": "\n📊 Diagram Alur #1\n🔍 Perbesar Diagram\n",
         "selector": "div.docs-layout > main.docs-content > section.doc-section > h3"
       },
