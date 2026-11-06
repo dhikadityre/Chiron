@@ -1,0 +1,39 @@
+{
+  "version": "1.0",
+  "lesson": "courses/samir-mobile-ios/05-learning-business-flows/04-cross-feature-journeys.html",
+  "updated_at": "2026-11-02T07:26:01.350469+00:00",
+  "total_annotations": 0,
+  "notes_count": 0,
+  "ai_questions_count": 0,
+  "annotations": [],
+  "resolved_history": [
+    {
+      "id": "anno-1793602386298-pc0m6",
+      "type": "ai_question",
+      "content": "maksudnya apa? apakah saat load screen tab ia merender tab native dan tab flutter?",
+      "created_at": "2026-11-02T06:53:06.298Z",
+      "status": "resolved",
+      "anchor": {
+        "exact": "disematkan secara permanen di bawah tabBar",
+        "prefix": "ancurkan ulang setiap tab berpindah; ia ",
+        "suffix": ".\nFrame Ready Guard: Saat berpindah dari",
+        "selector": "div.docs-layout > main.docs-content > section.doc-section > div.doc-subpoint-block > ol > li"
+      },
+      "resolved_at": "2026-11-02T07:26:01.350469+00:00"
+    },
+    {
+      "id": "anno-1793602486359-gcqlx",
+      "type": "ai_question",
+      "content": "bantu saya jawab pertanyaan ini dan buat pertanyaan lain + jawabannya",
+      "created_at": "2026-11-02T06:54:46.359Z",
+      "status": "resolved",
+      "anchor": {
+        "exact": "Apa yang dilakukan aplikasi secara otomatis jika sebuah request di tengah alur KYC mengembalikan kode 10006?\nBagaimana cara halaman web H5 menampilkan pesan toast native di layar?\nMengapa tampilan kontainer Flutter disembunyikan sementara sampai sinyal frameReady diterima?",
+        "prefix": "erViewController.\n🧠 I. Knowledge Check\n",
+        "suffix": "\n🏁 J. Completion Criteria\n\nAnda telah m",
+        "selector": "div.docs-layout > main.docs-content > section.doc-section > ol"
+      },
+      "resolved_at": "2026-11-02T07:26:01.350469+00:00"
+    }
+  ]
+}

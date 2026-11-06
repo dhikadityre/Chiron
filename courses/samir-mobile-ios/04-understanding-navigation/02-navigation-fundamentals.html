@@ -47,6 +47,10 @@
         <span class="tab-icon">📄</span> 04-navigation-conditions-and-edge-cases.html
         <span class="tab-close" onclick="event.preventDefault(); this.parentElement.remove();">×</span>
       </a>
+      <a class="doc-tab" href="05-hybrid-tabbar-navigation.html" title="05-hybrid-tabbar-navigation.html">
+        <span class="tab-icon">📄</span> 05-hybrid-tabbar-navigation.html
+        <span class="tab-close" onclick="event.preventDefault(); this.parentElement.remove();">×</span>
+      </a>
     </div>
 
     <!-- Right Utilities -->
@@ -318,7 +322,10 @@ func routers() -&gt; [CZRouter] {
     assert(!self.isDuplicateRouter(router), &quot;Duplicate router: \(String(describing: router.hostParttern))&quot;)
     self.routers.append(router)
 }</code></pre>
-<div class="callout critique"><p>[!WARNING] <strong>Trap / Jebakan Kritis Developer Baru</strong>: <code>CZRouterCenter</code> menggunakan instruksi <code>assert</code> yang memeriksa apakah pola host sudah pernah didaftarkan sebelumnya. Jika dua modul mendaftarkan host yang sama (misal: Modul A dan Modul B sama-sama mendaftarkan <code>withHostParttern: &quot;repay&quot;</code>), aplikasi akan <strong>LANGSUNG CRASH DI DEBUG DENGAN PESAN FATAL: <code>Duplicate router: repay</code></strong>. Setiap modul bisnis <strong>wajib</strong> memiliki nama host yang unik!</p></div>
+<div class="callout critique"><p>[!WARNING]</p>
+<p><strong>Trap / Jebakan Kritis Developer Baru</strong>:</p>
+<p><code>CZRouterCenter</code> menggunakan instruksi <code>assert</code> yang memeriksa apakah pola host sudah pernah didaftarkan sebelumnya. Jika dua modul mendaftarkan host yang sama (misal: Modul A dan Modul B sama-sama mendaftarkan <code>withHostParttern: &quot;repay&quot;</code>), aplikasi akan <strong>LANGSUNG CRASH DI DEBUG DENGAN PESAN FATAL: <code>Duplicate router: repay</code></strong>.</p>
+<p>Setiap modul bisnis <strong>wajib</strong> memiliki nama host yang unik!</p></div>
 </section>
 <section id="sec-example" class="doc-section">
 <h3>🔬 G. Practical Example: Membuka Halaman Web H5 Melalui Router</h3>
@@ -807,6 +814,9 @@ public final class RepayFlowCoordinator: Coordinator {
       <a class="curriculum-item-link" href="../04-understanding-navigation/04-navigation-conditions-and-edge-cases.html">
         <span>📄</span> 04 — Navigation Conditions &amp; Edge Cases
       </a>
+      <a class="curriculum-item-link" href="05-hybrid-tabbar-navigation.html">
+        <span>📄</span> 05 — Hybrid TabBar &amp; Persistent Host
+      </a>
     </div>
     <div class="curriculum-level-group">
       <div class="curriculum-level-title">Level 5: Learning Business Flows</div>
@@ -1147,10 +1157,11 @@ public final class RepayFlowCoordinator: Coordinator {
   }
 </script>
 
-<!-- Chiron Annotations & Multi-IDE Launcher Engine -->
+<!-- Chiron Annotations, Page Markers & Multi-IDE Launcher Engine -->
 <script src="../../../.assets/chiron-client.js"></script>
 <script src="../../../.assets/chiron-ide-launcher.js"></script>
 <script src="../../../.assets/chiron-annotations.js"></script>
+<script src="../../../.assets/chiron-page-markers.js"></script>
 
 </body>
 </html>

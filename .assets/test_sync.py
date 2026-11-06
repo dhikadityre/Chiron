@@ -117,6 +117,47 @@ def run_tests():
             assert queue_data["count"] >= 1
             print(f"   -> GET /api/queue PASSED! Found {queue_data['count']} pending AI questions in queue.")
 
+        # Test 6: Verify POST /api/markers (Favourite, Important, Single Bookmark)
+        print("7. Testing POST /api/markers...")
+        test_course = "samir-mobile-ios"
+        test_bmk = "courses/samir-mobile-ios/03-understanding-architecture/03-dependency-direction.html"
+        test_favs = ["courses/samir-mobile-ios/01-project-foundation/01-application-overview.html", test_bmk]
+        test_imps = [test_bmk]
+
+        markers_payload = json.dumps({
+            "course": test_course,
+            "bookmark": test_bmk,
+            "favourites": test_favs,
+            "importants": test_imps
+        }).encode("utf-8")
+
+        post_markers_req = urllib.request.Request(
+            f"{SERVER_URL}/api/markers",
+            data=markers_payload,
+            headers={"Content-Type": "application/json"}
+        )
+        with urllib.request.urlopen(post_markers_req) as res:
+            assert res.status == 200
+            m_res = json.loads(res.read().decode())
+            assert m_res["success"] is True
+            assert m_res["bookmark"] == test_bmk
+            assert m_res["favourites_count"] == 2
+            assert m_res["importants_count"] == 1
+            print("   -> POST /api/markers PASSED!")
+
+        # Test 7: Verify GET /api/markers
+        print("8. Testing GET /api/markers?course=...")
+        get_markers_req = urllib.request.Request(f"{SERVER_URL}/api/markers?course={test_course}")
+        with urllib.request.urlopen(get_markers_req) as res:
+            assert res.status == 200
+            g_data = json.loads(res.read().decode())
+            assert g_data["course"] == test_course
+            assert g_data["bookmark"] == test_bmk
+            assert len(g_data["favourites"]) == 2
+            assert len(g_data["importants"]) == 1
+            assert g_data["file_exists"] is True
+            print("   -> GET /api/markers PASSED!")
+
         print("\n🎉 ALL TESTS PASSED SUCCESSFULLY!")
 
     finally:

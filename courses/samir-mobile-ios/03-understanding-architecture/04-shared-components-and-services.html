@@ -143,40 +143,41 @@ public class IDServiceManager: NSObject {
 <div class="doc-subpoint-block" id="item-rincian-fungsi-per-protokol">
 <h5>Rincian Fungsi Per Protokol:</h5>
 <div class="table-container"><table class="data-table"><thead><tr><th>Protokol</th><th>Class Handler Konkret</th><th>Method Kunci & Kemampuan</th></tr></thead><tbody><tr><td><strong><code>IDLoginModuleServiceProtocol</code></strong></td><td><code>IDLoginModuleServiceHandler</code></td><td>- <code>isLogin() -&gt; Bool</code>: Memeriksa status login.<br/>- <code>loginInfo() -&gt; IDLoginCodeModel?</code>: Data sesi user (mid, userNo, staticKey).<br/>- <code>loginAction()</code>: Memunculkan modal popup login.<br/>- <code>reloginWhenRequestError()</code>: Reset sesi saat token kedaluwarsa (error <code>10006</code>).<br/>- <code>postLoginOutRequest(...)</code>: Logout server & lokal.</td></tr><tr><td><strong><code>IDMainModuleServiceProtocol</code></strong></td><td><code>IDMainModuleServiceHandler</code></td><td>- <code>getAppConfig() -&gt; IDAppConfigModel?</code>: Konfigurasi global dari server.<br/>- <code>requstAppConfig()</code>: Mengambil konfigurasi server terbaru secara async.</td></tr><tr><td><strong><code>IDLoanModuleServiceProtocol</code></strong></td><td><code>IDLoanModuleServiceHandler</code></td><td>- <code>jumpLoanAssess(params)</code>: Memicu navigasi ke halaman penilaian limit kuota kredit.<br/>- <code>jumpLoanConfirm(params)</code>: Memicu navigasi ke halaman konfirmasi pencairan pinjaman.</td></tr><tr><td><strong><code>IDRepayModuleServiceProtocol</code></strong></td><td><code>IDRepayModuleServiceHandler</code></td><td>- <code>jumpRepay(params)</code>: Memicu navigasi ke halaman tagihan/pelunasan.</td></tr></tbody></table></div>
-<div class="callout best-practice"><p>[!NOTE] <strong>Typo Unik di Kode Sumber</strong>: Pada <code>IDServiceManager.swift</code> baris 33, method pengakses layanan tagihan bernama <code>reapyService()</code> (bukan <code>repayService</code>). Typo ini sudah menyebar di berbagai modul sehingga harus tetap digunakan sesuai aslinya untuk menjaga kompatibilitas kompilasi.</p></div>
-
-<div class="callout tip" style="margin-top: 1.25rem;">
-  <div class="callout-title">💡 Architectural Deep Dive: Mengapa <code>SamirLoginModule</code> Tidak Terdaftar di <code>IDModuleList.plist</code>?</div>
-  <p>Saat mengaudit konfigurasi modul, Anda mungkin menyadari bahwa <code>SamirLoginModule</code> tidak tercantum di <code>IDModuleList.plist</code>. Mengapa demikian, dan bagaimana navigasi serta pertukaran data tetap berjalan mulus?</p>
-  <ol style="margin: 0.5rem 0 0 1.2rem; font-size: 0.88rem; line-height: 1.6;">
-    <li><strong>Pemisahan <code>IDModuleList.plist</code> vs <code>IDServiceList.plist</code></strong>:
-      <ul>
-        <li><code>IDModuleList.plist</code> khusus untuk modul yang mengadopsi <code>CZModuleProtocol</code> (memerlukan delegasi AppDelegate, push notification, deep link init, dan registrasi URL string scheme <code>samir://...</code>).</li>
-        <li><code>SamirLoginModule</code> dirancang murni sebagai <strong>Headless / Modal Service Module</strong>, bukan modul tab independen. Karena itu, ia didaftarkan di <strong><code>IDServiceList.plist</code></strong> dan <strong><code>IDServiceHandlers.plist</code></strong> memetakan protokol <code>IDLoginModuleServiceProtocol</code> langsung ke implementor konkretnya <code>IDLoginModuleServiceHandler</code>.</li>
-      </ul>
-    </li>
-    <li><strong>Mekanisme Navigasi Berbasis Layanan (Service-Driven Navigation)</strong>:
-      <ul>
-        <li>Alih-alih melakukan URL routing atau push navigation di stack <code>UINavigationController</code>, modul lain cukup memanggil:
-          <pre style="margin: 0.4rem 0;"><code class="language-swift">IDServiceManager.loginService()?.loginAction()</code></pre>
-        </li>
-        <li>Di balik layar, <code>IDLoginManager.shared</code> mencari ViewController teratas yang sedang aktif via <code>UIViewController.cz.topViewController()</code>, membuat <code>IDContainerViewController</code> dan <code>LoginViewV2Controller</code>, lalu menampilkannya secara <strong>Modal Presentation (Custom Transition)</strong> di atas layar apa pun yang sedang dibuka nasabah (Home, Detail Pinjaman, Pengaturan, atau H5 WebView).</li>
-      </ul>
-    </li>
-    <li><strong>Mekanisme Passing Data & Sinkronisasi Event</strong>:
-      <ul>
-        <li><strong>Method Protocols</strong>: Data sesi diambil langsung melalui <code>IDServiceManager.loginService()?.loginInfo()</code> (mengembalikan <code>IDLoginCodeModel</code>) dan pengecekan sesi via <code>isLogin() -&gt; Bool</code>.</li>
-        <li><strong>Broadcast Notifications</strong>: Modul login memancarkan sinyal peristiwa via <code>NotificationCenter</code>:
-          <ul>
-            <li><code>IDN_SamirLoginModule_LoginSuccess_Notification</code>: Ditangkap modul lain (seperti <code>SamirLoanModule</code>) untuk me-refresh data limit kuota pinjaman.</li>
-            <li><code>IDN_SamirLoginModule_LoginOut_Notification</code>: Menandakan pengguna telah logout.</li>
-          </ul>
-        </li>
-        <li><strong>Secure Persistence</strong>: Kredensial disimpan terenkripsi di <code>IDLoginManager.shared.userModel</code> menggunakan CryptoKit AES-256 (<code>CZSwiftStorageLib</code> / Keychain).</li>
-      </ul>
-    </li>
-  </ol>
-</div>
+<div class="callout best-practice"><p>[!NOTE]</p>
+<p><strong>Typo Unik di Kode Sumber</strong>:</p>
+<p>Pada <code>IDServiceManager.swift</code> baris 33, method pengakses layanan tagihan bernama <code>reapyService()</code> (bukan <code>repayService</code>). Typo ini sudah menyebar di berbagai modul sehingga harus tetap digunakan sesuai aslinya untuk menjaga kompatibilitas kompilasi.</p></div>
+<div class="callout best-practice"><p>[!IMPORTANT]</p>
+<p><strong>Architectural Deep Dive: Mengapa <code>SamirLoginModule</code> Tidak Terdaftar di <code>IDModuleList.plist</code>?</strong></p>
+<p>Saat mengaudit konfigurasi modul, Anda mungkin menyadari bahwa <code>SamirLoginModule</code> tidak tercantum di <code>IDModuleList.plist</code>. Mengapa demikian, dan bagaimana navigasi serta pertukaran data tetap berjalan mulus?</p>
+<ol>
+<li><strong>Pemisahan <code>IDModuleList.plist</code> vs <code>IDServiceList.plist</code></strong>:</li>
+</ol>
+<ul>
+<li><code>IDModuleList.plist</code> khusus untuk modul yang mengadopsi <code>CZModuleProtocol</code> (memerlukan delegasi AppDelegate, push notification, deep link init, dan registrasi URL string scheme <code>samir://...</code>).</li>
+<li><code>SamirLoginModule</code> dirancang murni sebagai <strong>Headless / Modal Service Module</strong>, bukan modul tab independen. Karena itu, ia didaftarkan di <strong><code>IDServiceList.plist</code></strong> dan <strong><code>IDServiceHandlers.plist</code></strong> memetakan protokol <code>IDLoginModuleServiceProtocol</code> langsung ke implementor konkretnya <code>IDLoginModuleServiceHandler</code>.</li>
+</ul>
+<ol>
+<li><strong>Mekanisme Navigasi Berbasis Layanan (Service-Driven Navigation)</strong>:</li>
+</ol>
+<ul>
+<li>Alih-alih melakukan URL routing atau push navigation di stack UINavigationController, modul lain cukup memanggil:</li>
+</ul>
+<p>```swift</p>
+<p>IDServiceManager.loginService()?.loginAction()</p>
+<p>```</p>
+<ul>
+<li>Di balik layar, <code>IDLoginManager.shared</code> mencari ViewController teratas yang sedang aktif via <code>UIViewController.cz.topViewController()</code>, membuat <code>IDContainerViewController</code> dan <code>LoginViewV2Controller</code>, lalu menampilkannya secara <strong>Modal Presentation (Custom Transition)</strong> di atas layar apa pun yang sedang dibuka nasabah (Home, Detail Pinjaman, Pengaturan, atau H5 WebView).</li>
+</ul>
+<ol>
+<li><strong>Mekanisme Passing Data & Event Synchronization</strong>:</li>
+</ol>
+<ul>
+<li><strong>Method Protocols</strong>: Data sesi diambil langsung melalui <code>IDServiceManager.loginService()?.loginInfo()</code> (mengembalikan <code>IDLoginCodeModel</code>) dan pengecekan sesi via <code>isLogin() -&gt; Bool</code>.</li>
+<li><strong>Broadcast Notifications</strong>: Modul login memancarkan sinyal peristiwa via <code>NotificationCenter</code>:</li>
+<li><code>IDN_SamirLoginModule_LoginSuccess_Notification</code>: Ditangkap modul lain (seperti <code>SamirLoanModule</code>) untuk me-refresh data limit kuota pinjaman.</li>
+<li><code>IDN_SamirLoginModule_LoginOut_Notification</code>: Menandakan pengguna telah logout.</li>
+<li><strong>Secure Persistence</strong>: Kredensial disimpan terenkripsi di <code>IDLoginManager.shared.userModel</code> menggunakan CryptoKit AES-256 (<code>CZSwiftStorageLib</code> / Keychain).</li>
+</ul></div>
 </div>
 <div id="sub-2-pustaka-komponen-ui-bersama-czswiftuikit" class="doc-subsection">
 <h4>2. Pustaka Komponen UI Bersama (<code>CZSwiftUIKit</code>)</h4>
@@ -1212,10 +1213,11 @@ public final class AppSessionManager: SessionProvider {
   }
 </script>
 
-<!-- Chiron Annotations & Multi-IDE Launcher Engine -->
+<!-- Chiron Annotations, Page Markers & Multi-IDE Launcher Engine -->
 <script src="../../../.assets/chiron-client.js"></script>
 <script src="../../../.assets/chiron-ide-launcher.js"></script>
 <script src="../../../.assets/chiron-annotations.js"></script>
+<script src="../../../.assets/chiron-page-markers.js"></script>
 
 </body>
 </html>

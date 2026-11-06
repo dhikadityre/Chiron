@@ -1670,10 +1670,11 @@ def compile_lesson_to_html(lesson_item, catalog, flat_lessons, track_key):
   }}
 </script>
 
-<!-- Chiron Annotations & Multi-IDE Launcher Engine -->
+<!-- Chiron Annotations, Page Markers & Multi-IDE Launcher Engine -->
 <script src="{rel_to_assets}/chiron-client.js"></script>
 <script src="{rel_to_assets}/chiron-ide-launcher.js"></script>
 <script src="{rel_to_assets}/chiron-annotations.js"></script>
+<script src="{rel_to_assets}/chiron-page-markers.js"></script>
 
 </body>
 </html>

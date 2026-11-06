@@ -89,8 +89,17 @@
 
 <p>Selamat datang di repositori dokumentasi pembelajaran dan panduan teknis mendalam untuk modul <strong>SAMIR Flutter</strong> (<code>flutter_app_project</code>).</p>
 <p>Dokumentasi ini disusun khusus sebagai <strong>progressive learning path</strong> (kurikulum bertahap) bagi mobile engineer — baik Flutter engineer murni maupun native iOS/Android engineer — untuk memahami bagaimana modul Flutter bekerja di dalam arsitektur hybrid Add-to-App SAMIR. Modul ini menghosting dua tab utama aplikasi secara penuh: <strong>Tagihan (Repay)</strong> dan <strong>Saya (Mine)</strong>, serta mengelola komunikasi dua arah dengan host native melalui MethodChannel, GoRouter, dan Native Chrome Sync.</p>
-<div class="callout best-practice"><p>[!IMPORTANT] <strong>Prinsip Dokumentasi Ini:</strong> 1. <strong>Teach progressively</strong>: Dimulai dari konsep dasar Add-to-App hingga sinkronisasi engine, routing kompleks, dan penandatanganan request. 2. <strong>Trace everything to source code</strong>: Setiap penjelasan disertai lokasi file konkret, nama class/fungsi, dan nomor baris acuan di repositori aktif. 3. <strong>Explain like I'm a junior, analyze like a senior</strong>: Bahasa mudah dipahami tanpa mengorbankan ketajaman analisis teknis arsitektur. 4. <strong>Honest verification</strong>: Fakta dipisahkan secara tegas antara <code>[Verified]</code> (terbukti dari kode aktif), <code>[Inferred]</code> (kesimpulan logis dengan bukti pendukung), <code>[Unverified]</code> (belum ada bukti di repo), dan <code>[Historical]</code> (catatan peninggalan masa lalu).</p></div>
-<div class="callout best-practice"><p>[!NOTE] <strong>Git Reference Baseline / Anchor Branch:</strong> Seluruh analisis arsitektur, lokasi berkas, dan nomor baris acuan di dalam dokumentasi ini dijangkarkan ke branch git: <strong><code>learn/iOS-Arch</code></strong> pada repositori <a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile.git" target="_blank" rel="noopener noreferrer">🦊 samir-mobile <span class="branch-tag">learn/Flutter-Arch</span> ↗</a> (terletak pada path <code>Mobile/Develop/samir-mobile-develop/flutter</code>). Catatan pengayaan debugging (seperti Chucker dan pendeteksian System Proxy) turut diperbandingkan dengan branch <code>feature/testing</code> di <code>Mobile/Nexus/samir-mobile-nexus/flutter</code>.</p></div>
+<div class="callout best-practice"><p>[!IMPORTANT]</p>
+<p><strong>Prinsip Dokumentasi Ini:</strong></p>
+<ol>
+<li><strong>Teach progressively</strong>: Dimulai dari konsep dasar Add-to-App hingga sinkronisasi engine, routing kompleks, dan penandatanganan request.</li>
+<li><strong>Trace everything to source code</strong>: Setiap penjelasan disertai lokasi file konkret, nama class/fungsi, dan nomor baris acuan di repositori aktif.</li>
+<li><strong>Explain like I'm a junior, analyze like a senior</strong>: Bahasa mudah dipahami tanpa mengorbankan ketajaman analisis teknis arsitektur.</li>
+<li><strong>Honest verification</strong>: Fakta dipisahkan secara tegas antara <code>[Verified]</code> (terbukti dari kode aktif), <code>[Inferred]</code> (kesimpulan logis dengan bukti pendukung), <code>[Unverified]</code> (belum ada bukti di repo), dan <code>[Historical]</code> (catatan peninggalan masa lalu).</li>
+</ol></div>
+<div class="callout best-practice"><p>[!NOTE]</p>
+<p><strong>Git Reference Baseline / Anchor Branch:</strong></p>
+<p>Seluruh analisis arsitektur, lokasi berkas, dan nomor baris acuan di dalam dokumentasi ini dijangkarkan ke branch git: <strong><code>learn/iOS-Arch</code></strong> pada repositori <a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile.git" target="_blank" rel="noopener noreferrer">🦊 samir-mobile <span class="branch-tag">learn/Flutter-Arch</span> ↗</a> (terletak pada path <code>Mobile/Develop/samir-mobile-develop/flutter</code>). Catatan pengayaan debugging (seperti Chucker dan pendeteksian System Proxy) turut diperbandingkan dengan branch <code>feature/testing</code> di <code>Mobile/Nexus/samir-mobile-nexus/flutter</code>.</p></div>
 <section id="sec-struktur-kurikulum-dokumentasi" class="doc-section">
 <h3>📌 🗺️ Struktur & Kurikulum Dokumentasi</h3>
 <p>Kurikulum ini diurutkan berdasarkan <strong>urutan belajar optimal</strong> (Learning Order), bukan tingkat kepentingan fitur:</p>
@@ -845,10 +854,11 @@ class GlobalSessionManager implements SessionContract {
   }
 </script>
 
-<!-- Chiron Annotations & Multi-IDE Launcher Engine -->
+<!-- Chiron Annotations, Page Markers & Multi-IDE Launcher Engine -->
 <script src="../../.assets/chiron-client.js"></script>
 <script src="../../.assets/chiron-ide-launcher.js"></script>
 <script src="../../.assets/chiron-annotations.js"></script>
+<script src="../../.assets/chiron-page-markers.js"></script>
 
 </body>
 </html>

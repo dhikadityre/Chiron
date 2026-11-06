@@ -171,18 +171,26 @@ sequenceDiagram
     </div>
   </div>
 </div>
-<div class="doc-subpoint-block" id="item-analisis-arsitektur">
-<h5>Analisis Arsitektur:</h5>
+<div class="doc-subpoint-block" id="item-analisis-arsitektur-penanganan-navigasi">
+<h5>Analisis Arsitektur & Penanganan Navigasi:</h5>
 <p>Ketika error <code>10006</code> terjadi:</p>
 <ol>
 <li><code>IDNetworkRequest.p_handleReLoginError</code> mencegat response sebelum blok failure callback presenter dipanggil.
 </li>
-<li>Sesi dibersihkan untuk mencegah request lain menggunakan token yang sudah mati.
+<li>Sesi dibersihkan melalui <code>IDLoginManager.shared.removeUserInfoWhenLoginOut()</code> untuk mencegah request lain menggunakan token yang sudah mati.
 </li>
-<li>Navigation stack di-pop/reset secara paksa ke Beranda (<code>Tab 0</code>) untuk mencegah pengguna terus mengisi data di layar yang tidak lagi memiliki otorisasi.
+<li>Navigation stack di-pop/reset secara paksa ke Beranda (<code>Tab 0</code> via <code>selectTabbar(0)</code>) dengan menutup seluruh modal (<code>presentingViewController.dismiss</code>) dan memanggil <code>nav.popToRootViewController(animated: false)</code> agar pengguna tidak terjebak mengisi data di layar tanpa otorisasi.
 </li>
-<li>Form login muncul secara modal.
+<li>Form login muncul secara modal (<code>IDLoginManager.shared.loginAction()</code>).
 </li></ol>
+</div>
+<div class="doc-subpoint-block" id="item-apakah-setelah-login-diarahkan-ke-navigasi-terakhir-atau-mengulang-dari-awal">
+<h5>Apakah Setelah Login Diarahkan ke Navigasi Terakhir atau Mengulang dari Awal?</h5>
+<ul>
+<li><strong>Navigasi Layar (Client Stack):</strong> Pengguna <strong>TIDAK diarahkan kembali ke layar terakhir secara otomatis</strong>, karena stack navigasi telah di-reset ke root Tab 0 demi integritas state keamanan. Pengguna harus menavigasi kembali dari Beranda.
+</li>
+<li><strong>Progress Data Formulir (Server State):</strong> Meskipun tumpukan navigasi di-reset, pengguna <strong>TIDAK perlu mengetik ulang data KYC dari awal</strong>. Setiap tahapan (Step 1 s/d 5) langsung di-POST dan disimpan permanen di backend (<code>customer/renewMemInfo</code>). Ketika pengguna mengklik kembali pengajuan pinjaman/KYC di Beranda, sistem membaca status <code>queryAuthList</code> dan otomatis melompat ke tahapan yang belum selesai.
+</li></ul>
 </div>
 <div id="sub-skenario-2-jembatan-web-h5-melompat-ke-fitur-native-h5-to-native-jump" class="doc-subsection">
 <h4>SKENARIO 2: Jembatan Web H5 Melompat ke Fitur Native (H5 to Native Jump)</h4>
@@ -282,8 +290,26 @@ sequenceDiagram
     </div>
   </div>
 </div>
-<div class="doc-subpoint-block" id="item-mekanisme-anti-flicker">
-<h5>Mekanisme Anti-Flicker:</h5>
+<div class="doc-subpoint-block" id="item-mekanisme-tab-bar-anti-flicker">
+<h5>Mekanisme Tab Bar & Anti-Flicker:</h5>
+</div>
+<div class="doc-subpoint-block" id="item-apakah-flutter-memiliki-tab-bar-sendiri-seperti-native">
+<h5>Apakah Flutter Memiliki Tab Bar Sendiri Seperti Native?</h5>
+<ul>
+<li><strong>Jawab:</strong> <strong>TIDAK.</strong> Flutter sama sekali tidak merender atau memiliki widget <code>TabBar</code> sendiri di aplikasi ini.
+</li>
+<li><strong>Siapa yang Digunakan?</strong>
+<ul>
+<li>Tab Bar yang dilihat dan disentuh oleh pengguna adalah <strong>100% Native UIKit (<code>UITabBar</code>)</strong> yang dikontrol oleh <a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/learn/iOS-Arch/ios/IDSamirLoan/Application/SamirMainModule/Classes/IDController/IDMainTabBarController.swift#L68-L85" target="_blank" rel="noopener noreferrer">🦊 <code>IDMainTabBarController.swift</code> <span class="branch-tag">learn/iOS-Arch</span> ↗</a>.
+</li>
+<li>Flutter hanya bertindak sebagai <strong>Headless Persistent View Host</strong> (<code>flutterContainerView</code>) yang disisipkan di bawah tab bar native (<code>view.insertSubview(flutterContainerView, belowSubview: tabBar)</code>).
+</li>
+<li>Konten halaman di dalam Flutter ditukar secara dinamis oleh single Flutter Engine (<code>samir_single_flutter_engine</code>) melalui rute <code>/repay</code> (untuk Tab 1 Tagihan) dan <code>/mine</code> (untuk Tab 2 Akun Saya). Saat user memilih Tab 0 (Beranda), kontainer Flutter disembunyikan (<code>isHidden = true</code>).
+</li></ul>
+</li></ul>
+</div>
+<div class="doc-subpoint-block" id="item-3-pilar-anti-flicker">
+<h5>3 Pilar Anti-Flicker:</h5>
 <ol>
 <li><strong>Persistent Container</strong>: View Flutter (<code>flutterContainerView</code>) tidak dibuat dan dihancurkan ulang setiap tab berpindah; ia disematkan secara permanen di bawah <code>tabBar</code>.
 </li>
@@ -358,12 +384,40 @@ sequenceDiagram
 <section id="sec-check" class="doc-section">
 <h3>🧠 I. Knowledge Check</h3>
 <ol>
-<li>Apa yang dilakukan aplikasi secara otomatis jika sebuah request di tengah alur KYC mengembalikan kode <code>10006</code>?
+<li><strong>Apa yang dilakukan aplikasi secara otomatis jika sebuah request di tengah alur KYC mengembalikan kode <code>10006</code>?</strong>
+<ul>
+<li><em>Jawaban:</em> <code>IDNetworkRequest.p_handleReLoginError</code> memicu <code>reloginWhenRequestError()</code> yang menghapus model sesi lokal (<code>removeUserInfoWhenLoginOut()</code>), menyiarkan notifikasi logout, menutup seluruh modal yang aktif, me-reset tumpukan navigasi (<code>popToRootViewController</code>), memindahkan tab ke Tab 0 (Beranda), dan memunculkan modal login baru (<code>IDLoginManager.shared.loginAction()</code>). Data form KYC yang sudah ter-submit tetap aman tersimpan di server.
+</li></ul>
 </li>
-<li>Bagaimana cara halaman web H5 menampilkan pesan toast native di layar?
+<li><strong>Bagaimana cara halaman web H5 menampilkan pesan toast native di layar?</strong>
+<ul>
+<li><em>Jawaban:</em> H5 mengirim pesan via <code>WKScriptMessageHandler</code> bernama <code>callApp</code>: <code>window.webkit.messageHandlers.callApp.postMessage({ method: &quot;showToast&quot;, paramsData: &quot;Pesan&quot; })</code>. Native mendengarkannya di <code>IDWebViewJsHandler</code> dan mengeksekusi UI toast native (<code>showToast(withMessage:)</code>).
+</li></ul>
 </li>
-<li>Mengapa tampilan kontainer Flutter disembunyikan sementara sampai sinyal <code>frameReady</code> diterima?
+<li><strong>Mengapa tampilan kontainer Flutter disembunyikan sementara sampai sinyal <code>frameReady</code> diterima?</strong>
+<ul>
+<li><em>Jawaban:</em> Untuk mencegah efek layar berkedip putih (<em>white flash/flicker</em>) saat beralih dari Native ke Flutter. Kontainer disembunyikan (<code>isHidden = true</code>) saat proses booting/switching rute, dan baru dibuka ke layar setelah frame grafis pertama selesai digambar oleh GPU Flutter.
+</li></ul>
 </li></ol>
+<div class="doc-subpoint-block" id="item-bonus-soal-evaluasi-tambahan">
+<h5>💡 Bonus Soal Evaluasi Tambahan:</h5>
+<ol start="4">
+<li><strong>Bagaimana cara H5 melompat ke fitur native (seperti formulir identitas KYC) tanpa JavaScript bridge?</strong>
+<ul>
+<li><em>Jawaban:</em> Melalui URL Scheme <code>samir://auth/identity</code>. Webview mencegat URL di <code>decidePolicyFor navigationAction</code>, membatalkan navigasi browser, dan meneruskannya ke <code>IDRouterManager.id_perfromWithURLString()</code>.
+</li></ul>
+</li>
+<li><strong>Apa yang terjadi di native saat user menekan tombol Back pada sub-halaman detail Flutter?</strong>
+<ul>
+<li><em>Jawaban:</em> Flutter memanggil method channel <code>closeFlutterPage</code>. Native mendeteksi jika halaman berada dalam navigation controller maka melakukan <code>popViewController(animated: true)</code>, atau jika disajikan modal maka melakukan <code>dismiss(animated: true)</code>.
+</li></ul>
+</li>
+<li><strong>Apakah Flutter memiliki TabBar independen di aplikasi SAMIR?</strong>
+<ul>
+<li><em>Jawaban:</em> Tidak. Seluruh Tab Bar diatur oleh 100% Native UIKit (<code>UITabBar</code>), sedangkan Flutter hanya berperan sebagai single persistent content view di bawah TabBar native.
+</li></ul>
+</li></ol>
+</div>
 </section>
 <section id="sec-completion" class="doc-section">
 <h3>🏁 J. Completion Criteria</h3>
@@ -1136,10 +1190,11 @@ public final class DefaultCalculateRepaymentUseCase: CalculateRepaymentUseCase {
   }
 </script>
 
-<!-- Chiron Annotations & Multi-IDE Launcher Engine -->
+<!-- Chiron Annotations, Page Markers & Multi-IDE Launcher Engine -->
 <script src="../../../.assets/chiron-client.js"></script>
 <script src="../../../.assets/chiron-ide-launcher.js"></script>
 <script src="../../../.assets/chiron-annotations.js"></script>
+<script src="../../../.assets/chiron-page-markers.js"></script>
 
 </body>
 </html>

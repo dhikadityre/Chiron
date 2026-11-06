@@ -234,7 +234,7 @@ sequenceDiagram
 <div id="sub-4-penyimpanan-sesi-aman-cryptokitaesgcm" class="doc-subsection">
 <h4>4. Penyimpanan Sesi Aman (<code>CryptoKit.AES.GCM</code>)</h4>
 </div>
-<p>Path: <a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/learn/iOS-Arch/ios/IDSamirLoan/Application/SamirLoginModule/Classes/IDPresenter/IDLoginManager.swift:L81-97, L182-206" target="_blank" rel="noopener noreferrer">🦊 ios/IDSamirLoan/Application/SamirLoginModule/Classes/IDPresenter/IDLoginManager.swift <span class="branch-tag">learn/iOS-Arch</span> ↗</a></p>
+<p>Path: <a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/learn/iOS-Arch/ios/IDSamirLoan/Application/SamirLoginModule/Classes/IDPresenter/IDLoginManager.swift#L81-L97" target="_blank" rel="noopener noreferrer">🦊 ios/IDSamirLoan/Application/SamirLoginModule/Classes/IDPresenter/IDLoginManager.swift <span class="branch-tag">learn/iOS-Arch</span> ↗</a></p>
 <p>Alih-alih menyimpan token di <code>UserDefaults</code> (yang rentan diintip di perangkat yang ter-jailbreak), aplikasi mengenkripsi seluruh model data menggunakan <strong>AES-GCM 256-bit</strong>:</p>
 <pre><code class="language-swift">public func saveUserModel(_ model: IDLoginCodeModel) {
     do {
@@ -269,7 +269,27 @@ private func userModelEncryptionKey() -&gt; SymmetricKey {
     let digest = SHA256.hash(data: Data(keyMaterial.utf8))
     return SymmetricKey(data: Data(digest))
 }</code></pre>
+<div class="doc-subpoint-block" id="item-catatan-arsitektur-penting">
+<h5>Catatan Arsitektur Penting:</h5>
+<ol>
+<li><strong>Fungsi <code>NSKeyedArchiver</code>:</strong>
+<ul>
+<li>Bertugas melakukan serialisasi (<em>binary encoding</em>) objek graph <code>IDLoginCodeModel</code> yang mengadopsi protokol <code>NSCoding</code> ke format biner architecture-independent (<code>Data</code>).
+</li>
+<li>Deserialisasi sebaliknya dilakukan saat startup menggunakan <code>NSKeyedUnarchiver.unarchiveTopLevelObjectWithData</code> di method <code>__decodeUserModel()</code>.
+</li></ul>
+</li>
+<li><strong>Keberadaan File <code>idn_userFile.plist</code>:</strong>
+<ul>
+<li>File ini <strong>BUKAN file statis di repositori Xcode</strong> (seperti <code>Info.plist</code>), melainkan <strong>file runtime yang dibuat secara dinamis</strong> saat user berhasil login.
+</li>
+<li>Lokasinya berada di dalam direktori sandbox lokal perangkat: <code>FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask)</code> + <code>/idn_userFile.plist</code>.
+</li>
+<li>File ini dipastikan terisolasi di sandbox aplikasi dan otomatis terhapus saat pengguna melakukan Logout (<code>removeUserInfoWhenLoginOut()</code>).
+</li></ul>
+</li></ol>
 <p>File yang disimpan memiliki header penanda: <code>ID_LOGIN_USER_AES256_V1\n</code>. Saat aplikasi dibuka kembali, <code>__decodeUserModel()</code> membaca file ini dan mendekripsinya secara otomatis.</p>
+</div>
 <div id="sub-5-alur-logout-manual" class="doc-subsection">
 <h4>5. Alur Logout Manual</h4>
 </div>
@@ -358,18 +378,39 @@ func openBankcardPage(_ params: [String: Any]?) {
 </section>
 <section id="sec-walkthrough" class="doc-section">
 <h3>🪜 E. Step-by-Step Walkthrough: Alur Verifikasi Dua Langkah (2FA)</h3>
-<p>Jika sistem mendeteksi percobaan login dari perangkat baru atau lokasi yang tidak biasa, respon endpoint <code>customer/login</code> akan mengembalikan kode instruksi 2FA:</p>
+<p>Jika sistem backend mendeteksi risiko keamanan atau mengharuskan verifikasi ganda, alur login diperluas menjadi Two-Factor Authentication:</p>
+<pre><code class="language-swift">// CodeViewV2Controller.swift L958-971 &amp; L1065-1074
+func checkNeed2FA() -&gt; Bool {
+    guard let appPasswordAppOpen = IDServiceManager.mainService()?.getAppConfig()?.appPasswordAppOpen else {
+        return false
+    }
+    return appPasswordAppOpen == &quot;1&quot;
+}</code></pre>
+<div class="doc-subpoint-block" id="item-kondisi-pemanggilan-postverifycode2fa-di-production">
+<h5>Kondisi Pemanggilan <code>postVerifyCode2FA</code> di Production:</h5>
 <ol>
-<li>Presenter login mendeteksi flag 2FA pada response server.
+<li><strong>Kapan Terpanggil:</strong>
+<ul>
+<li>Pengguna login via jalur OTP SMS atau WhatsApp (<code>loginType == .mobileCode || .smsCode || .whatsAppCode</code>).
 </li>
-<li>Form login tidak ditutup, melainkan mendorong layar <code>IDCodeViewController</code>.
+<li>Konfigurasi backend mengaktifkan 2FA: <code>checkNeed2FA()</code> bernilai <code>true</code> (<code>appPasswordAppOpen == &quot;1&quot;</code>).
 </li>
-<li>Pengguna diminta memasukkan PIN keamanan atau kode otentikasi sekunder.
+<li>Alur: Saat kode OTP selesai diinput, aplikasi memanggil <code>postVerifyCode2FA</code> untuk memvalidasi OTP di backend terlebih dahulu. Jika status sukses, aplikasi me-route pengguna ke <code>IDCodeViewController(.passwordCode)</code> untuk memasukkan password, lalu sesi login baru diselesaikan via <code>postLoginByNewPwd2FA</code>.
+</li></ul>
 </li>
-<li>Method <code>postVerifyCode2FA</code> dipanggil ke endpoint <code>customer/verifyCode2FA</code>.
+<li><strong>Kapan TIDAK Terpanggil:</strong>
+<ul>
+<li>Jika flag remote backend nonaktif (<code>appPasswordAppOpen != &quot;1&quot;</code>). Aplikasi langsung mengeksekusi <code>postLoginRequest</code> (login 1 faktor cukup dengan OTP).
 </li>
-<li>Jika verifikasi 2FA sukses, baru <code>saveUserModel</code> dieksekusi dan pengguna dianggap sah memiliki sesi aktif.
+<li>Jika pengguna login langsung menggunakan formulir kata sandi tanpa jalur verifikasi OTP SMS/WA.
+</li></ul>
+</li>
+<li><strong>User Baru vs User Lama:</strong>
+<ul>
+<li>Baik pengguna baru maupun lama <strong>akan memicu <code>postVerifyCode2FA</code></strong> jika memilih alur OTP dan <code>checkNeed2FA()</code> aktif. Bagi pengguna baru yang belum memiliki kata sandi, setelah verifikasi OTP lolos sistem akan memandunya membuat kata sandi baru.
+</li></ul>
 </li></ol>
+</div>
 </section>
 <section id="sec-why" class="doc-section">
 <h3>⚖️ F. Why It Matters: Peran Sentral <code>staticKey</code></h3>
@@ -412,12 +453,40 @@ func openBankcardPage(_ params: [String: Any]?) {
 <section id="sec-check" class="doc-section">
 <h3>🧠 I. Knowledge Check</h3>
 <ol>
-<li>Apa fungsi dari <code>staticKey</code> yang diperoleh dari response login?
+<li><strong>Apa fungsi dari <code>staticKey</code> yang diperoleh dari response login?</strong>
+<ul>
+<li><em>Jawaban:</em> Kunci kriptografi rahasia sesi unik per user yang dijadikan seed untuk menandatangani signature HMAC request HTTP jaringan (<code>NetworkRequestSignWrapper.ns_encrypt</code>) guna mencegah manipulasi payload/tampering, serta diteruskan ke Flutter melalui <code>FlutterNativeChannel</code>.
+</li></ul>
 </li>
-<li>Algoritma kriptografi apa yang digunakan untuk mengenkripsi file sesi <code>idn_userFile.plist</code>?
+<li><strong>Algoritma kriptografi apa yang digunakan untuk mengenkripsi file sesi <code>idn_userFile.plist</code>?</strong>
+<ul>
+<li><em>Jawaban:</em> <strong>AES-256-GCM</strong> (Apple CryptoKit <code>AES.GCM</code>) dengan symmetric key yang diturunkan melalui hash <strong>SHA-256</strong> dari bundle identifier aplikasi (<code>&quot;IDSamirLoan.LoginUser.AES256.v1.\(Bundle.cz.appBundleIdentifier)&quot;</code>).
+</li></ul>
 </li>
-<li>Apa nama notifikasi broadcast yang disiarkan ke seluruh aplikasi saat login berhasil?
+<li><strong>Apa nama notifikasi broadcast yang disiarkan ke seluruh aplikasi saat login berhasil?</strong>
+<ul>
+<li><em>Jawaban:</em> <code>IDLoginNotification.IDN_SamirLoginModule_LoginSuccess_Notification</code> (string: <code>&quot;IDN_SamirLoginModule_LoginSuccess_Notification&quot;</code>).
+</li></ul>
 </li></ol>
+<div class="doc-subpoint-block" id="item-bonus-soal-evaluasi-tambahan">
+<h5>💡 Bonus Soal Evaluasi Tambahan:</h5>
+<ol start="4">
+<li><strong>Mengapa <code>idn_userFile.plist</code> disimpan di <code>.applicationSupportDirectory</code> dan bukan <code>.cachesDirectory</code>?</strong>
+<ul>
+<li><em>Jawaban:</em> Direktori Caches dapat dibersihkan otomatis oleh OS iOS saat storage perangkat penuh sehingga sesi user rentan ter-logout tiba-tiba, sedangkan Application Support bersifat persisten dan aman.
+</li></ul>
+</li>
+<li><strong>Apa perbedaan antara <code>kDismissLoginVCNotification</code> dan <code>IDN_SamirLoginModule_LoginSuccess_Notification</code>?</strong>
+<ul>
+<li><em>Jawaban:</em> <code>kDismissLoginVCNotification</code> bertugas menutup tampilan visual modal dialog login, sedangkan <code>LoginSuccess_Notification</code> memberi sinyal ke modul lain (Home, Mine, Repay) untuk merefresh data akun.
+</li></ul>
+</li>
+<li><strong>SDK analitik pihak ketiga apa saja yang diidentifikasi ulang pada <code>IDLoginManager.saveUserModel</code>?</strong>
+<ul>
+<li><em>Jawaban:</em> AppsFlyer (<code>IDAppsFlyerManager</code>), TikTok (<code>IDTiktokManager</code>), dan Tuya (<code>TYUtils</code>).
+</li></ul>
+</li></ol>
+</div>
 </section>
 <section id="sec-completion" class="doc-section">
 <h3>🏁 J. Completion Criteria</h3>
@@ -1206,10 +1275,11 @@ public final class DefaultCalculateRepaymentUseCase: CalculateRepaymentUseCase {
   }
 </script>
 
-<!-- Chiron Annotations & Multi-IDE Launcher Engine -->
+<!-- Chiron Annotations, Page Markers & Multi-IDE Launcher Engine -->
 <script src="../../../.assets/chiron-client.js"></script>
 <script src="../../../.assets/chiron-ide-launcher.js"></script>
 <script src="../../../.assets/chiron-annotations.js"></script>
+<script src="../../../.assets/chiron-page-markers.js"></script>
 
 </body>
 </html>

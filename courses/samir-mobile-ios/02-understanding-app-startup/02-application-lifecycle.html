@@ -161,7 +161,11 @@
     }
     // ... metode delegat lainnya
 }</code></pre>
-<div class="callout best-practice"><p>[!IMPORTANT] <strong>Mengapa Berukuran Sangat Ringkas?</strong> <code>CZAppDelegate</code> menerapkan pola <strong>Thin Proxy / Forwarding Delegator</strong>. File ini tidak menginisialisasi SDK, tidak membuat Root View Controller, dan tidak mengeksekusi logika pinjaman apa pun.  <strong>Catatan Kritis Arsitektur:</strong> Sering muncul kesalahpahaman bahwa delegat ini langsung memanggil <code>IDSamirMainModule</code>. Faktanya, <strong>seluruh fungsi delegat hanya meneruskan panggilan ke <code>CZModuleManager.shared</code></strong>, bukan ke <code>IDSamirMainModule</code>. <code>IDSamirMainModule</code> hanyalah salah satu penerima sinyal melalui perulangan yang dilakukan oleh <code>CZModuleManager</code>.</p></div>
+<div class="callout best-practice"><p>[!IMPORTANT]</p>
+<p><strong>Mengapa Berukuran Sangat Ringkas?</strong></p>
+<p><code>CZAppDelegate</code> menerapkan pola <strong>Thin Proxy / Forwarding Delegator</strong>. File ini tidak menginisialisasi SDK, tidak membuat Root View Controller, dan tidak mengeksekusi logika pinjaman apa pun.</p>
+<p><strong>Catatan Kritis Arsitektur:</strong></p>
+<p>Sering muncul kesalahpahaman bahwa delegat ini langsung memanggil <code>IDSamirMainModule</code>. Faktanya, <strong>seluruh fungsi delegat hanya meneruskan panggilan ke <code>CZModuleManager.shared</code></strong>, bukan ke <code>IDSamirMainModule</code>. <code>IDSamirMainModule</code> hanyalah salah satu penerima sinyal melalui perulangan yang dilakukan oleh <code>CZModuleManager</code>.</p></div>
 <div id="sub-2-czmodulemanager-distribusi-event-ke-modul" class="doc-subsection">
 <h4>2. <code>CZModuleManager</code>: Distribusi Event ke Modul</h4>
 </div>
@@ -236,7 +240,8 @@
 <li><strong>Dampak jika tidak didaftarkan di <code>IDModuleList.plist</code>:</strong> Tidak ada dampak negatif sama sekali karena arsitektur SAMIR memang memisahkan antara <em>Lifecycle Broadcaster</em> dan <em>Protocol-based Service Locator</em>.
 </li></ul>
 </li></ol>
-<div class="callout best-practice"><p>[!NOTE] Sama halnya dengan <code>SamirLoginModule</code>, <code>SamirPointsModule</code> juga <strong>bukan</strong> modul terdaftar di <code>IDModuleList.plist</code>, melainkan berfungsi sebagai <em>utility / tracking library</em>.</p></div>
+<div class="callout best-practice"><p>[!NOTE]</p>
+<p>Sama halnya dengan <code>SamirLoginModule</code>, <code>SamirPointsModule</code> juga <strong>bukan</strong> modul terdaftar di <code>IDModuleList.plist</code>, melainkan berfungsi sebagai <em>utility / tracking library</em>.</p></div>
 </section>
 <section id="sec-walkthrough" class="doc-section">
 <h3>🪜 E. Step-by-Step Walkthrough: Propagasi Event Masuk Background</h3>
@@ -1131,10 +1136,11 @@ public final class AppStartupCoordinator {
   }
 </script>
 
-<!-- Chiron Annotations & Multi-IDE Launcher Engine -->
+<!-- Chiron Annotations, Page Markers & Multi-IDE Launcher Engine -->
 <script src="../../../.assets/chiron-client.js"></script>
 <script src="../../../.assets/chiron-ide-launcher.js"></script>
 <script src="../../../.assets/chiron-annotations.js"></script>
+<script src="../../../.assets/chiron-page-markers.js"></script>
 
 </body>
 </html>

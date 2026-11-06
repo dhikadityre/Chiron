@@ -146,34 +146,34 @@
   <div class="mermaid-content-wrapper" id="diag-1">
     <div class="mermaid">
 graph TD
-    subgraph Layer 1: In-Memory State [RAM Cepat & Transient]
-        M1[IDLoginManager.userModel]
-        M2[IDNetworkManager.static_key]
-        M3[CZModuleManager.cachedServiceDict]
-        M4[CZMultiCache Memory LRU]
+    subgraph L1 ["Layer 1: In-Memory State (RAM Cepat & Transient)"]
+        M1["IDLoginManager.userModel"]
+        M2["IDNetworkManager.static_key"]
+        M3["CZModuleManager.cachedServiceDict"]
+        M4["CZMultiCache Memory LRU"]
     end
 
-    subgraph Layer 2: Encrypted Sandbox [Application Support]
-        D1[idn_userFile.plist<br/>AES-GCM 256-bit Sealed Box<br/>Prefix: ID_LOGIN_USER_AES256_V1]
+    subgraph L2 ["Layer 2: Encrypted Sandbox (Application Support)"]
+        D1["idn_userFile.plist<br/>AES-GCM 256-bit Sealed Box<br/>Prefix: ID_LOGIN_USER_AES256_V1"]
     end
 
-    subgraph Layer 3: iOS Keychain [Hardware Protected]
-        K1[Device UUID / IDFV]
-        K2[Installation ID Firebase]
-        K3[Liveness Token & License]
+    subgraph L3 ["Layer 3: iOS Keychain (Hardware Protected)"]
+        K1["Device UUID / IDFV"]
+        K2["Installation ID Firebase"]
+        K3["Liveness Token & License"]
     end
 
-    subgraph Layer 4: UserDefaults [Non-Sensitive Preferences]
-        U1[APP_Start_Hide: Skip Splash]
-        U2[Samir_DeepLink_Str: Pending Deep Link]
-        U3[Environment_Defaults_Key_EnvType: Env Override]
-        U4[BIZ_ID: Id Transaksi Aktif]
+    subgraph L4 ["Layer 4: UserDefaults (Non-Sensitive Preferences)"]
+        U1["APP_Start_Hide: Skip Splash"]
+        U2["Samir_DeepLink_Str: Pending Deep Link"]
+        U3["Environment_Defaults_Key_EnvType: Env Override"]
+        U4["BIZ_ID: Id Transaksi Aktif"]
     end
 
-    App[Aplikasi SAMIR] --> Layer 1
-    App --> Layer 2
-    App --> Layer 3
-    App --> Layer 4
+    App["Aplikasi SAMIR"] --> L1
+    App --> L2
+    App --> L3
+    App --> L4
     </div>
   </div>
 </div>
@@ -225,7 +225,9 @@ graph TD
 </div>
 <p>Digunakan <strong>hanya untuk penanda status UI dan transisi navigasi</strong>:</p>
 <div class="table-container"><table class="data-table"><thead><tr><th>Kunci UserDefaults</th><th>Tipe Data</th><th>Tujuan Teknis</th></tr></thead><tbody><tr><td><code>APP_Start_Hide</code></td><td>String (<code>&quot;1&quot;</code> / <code>&quot;0&quot;</code>)</td><td>Menentukan apakah splash screen countdown dilewati saat boot berikutnya.</td></tr><tr><td><code>Samir_DeepLink_Str</code></td><td>String</td><td>Menyimpan URL deep link yang tiba saat cold start sebelum UI siap.</td></tr><tr><td><code>Samir_DeepLink_Type</code></td><td>String (<code>&quot;1&quot;</code> / <code>&quot;2&quot;</code>)</td><td>Tipe deep link yang sedang menunggu eksekusi.</td></tr><tr><td><code>Environment_Defaults_Key_EnvType</code></td><td>Int</td><td>Menyimpan override environment saat aplikasi dijalankan tanpa debugger Xcode.</td></tr><tr><td><code>BIZ_ID</code></td><td>String</td><td>Nomor transaksi pesanan pinjaman yang sedang diproses.</td></tr></tbody></table></div>
-<div class="callout best-practice"><p>[!CAUTION] <strong>Audit Keamanan Penting</strong>: Pada versi-versi awal aplikasi, <code>idn_mid</code> dan <code>idn_mobile</code> disimpan dalam bentuk plaintext di UserDefaults. Pada implementasi modern saat ini, kedua kunci tersebut secara eksplisit dihapus (<code>UserDefaults.cz.remove(IDStorageKey.idn_mid)</code>) dan dipindahkan ke brankas terenkripsi <code>saveUserModel</code>. Jangan pernah menyimpan data PII (Personally Identifiable Information) di UserDefaults!</p></div>
+<div class="callout best-practice"><p>[!CAUTION]</p>
+<p><strong>Audit Keamanan Penting</strong>:</p>
+<p>Pada versi-versi awal aplikasi, <code>idn_mid</code> dan <code>idn_mobile</code> disimpan dalam bentuk plaintext di UserDefaults. Pada implementasi modern saat ini, kedua kunci tersebut secara eksplisit dihapus (<code>UserDefaults.cz.remove(IDStorageKey.idn_mid)</code>) dan dipindahkan ke brankas terenkripsi <code>saveUserModel</code>. Jangan pernah menyimpan data PII (Personally Identifiable Information) di UserDefaults!</p></div>
 <div id="sub-4-lapisan-4-pengelolaan-state-di-memori-in-memory-ram" class="doc-subsection">
 <h4>4. Lapisan 4: Pengelolaan State di Memori (In-Memory RAM)</h4>
 </div>
@@ -1191,10 +1193,11 @@ public final class AppSessionManager: SessionProvider {
   }
 </script>
 
-<!-- Chiron Annotations & Multi-IDE Launcher Engine -->
+<!-- Chiron Annotations, Page Markers & Multi-IDE Launcher Engine -->
 <script src="../../../.assets/chiron-client.js"></script>
 <script src="../../../.assets/chiron-ide-launcher.js"></script>
 <script src="../../../.assets/chiron-annotations.js"></script>
+<script src="../../../.assets/chiron-page-markers.js"></script>
 
 </body>
 </html>

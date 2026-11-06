@@ -221,6 +221,20 @@ def get_sidecar_path(lesson_rel_path: str) -> Path:
     return full_path
 
 
+def get_course_markers_path(course_id: str) -> Path:
+    """Computes the canonical course_markers.json file path for a course."""
+    clean_course = course_id.strip().strip("/")
+    if clean_course.startswith("courses/"):
+        clean_course = clean_course[len("courses/"):].strip("/")
+    if ".." in clean_course or "\\" in clean_course:
+        raise ValueError(f"Invalid course ID: {course_id}")
+    course_dir = (CHIRON_ROOT / "courses" / clean_course).resolve()
+    full_path = (course_dir / "course_markers.json").resolve()
+    if not str(full_path).startswith(str(CHIRON_ROOT)):
+        raise ValueError("Access outside Chiron root is forbidden")
+    return full_path
+
+
 class ChironSyncHandler(SimpleHTTPRequestHandler):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, directory=str(CHIRON_ROOT), **kwargs)
@@ -334,6 +348,38 @@ class ChironSyncHandler(SimpleHTTPRequestHandler):
             })
             return
 
+        elif path == "/api/markers":
+            query = parse_qs(parsed.query)
+            course_param = query.get("course", [""])[0]
+            if not course_param:
+                self._send_json(400, {"status": "error", "error": "Missing 'course' parameter"})
+                return
+
+            try:
+                markers_path = get_course_markers_path(course_param)
+                if markers_path.is_file():
+                    with open(markers_path, "r", encoding="utf-8") as f:
+                        data = json.load(f)
+                    self._send_json(200, {
+                        "status": "ok",
+                        **data,
+                        "file_exists": True
+                    })
+                else:
+                    self._send_json(200, {
+                        "status": "ok",
+                        "version": "1.0",
+                        "course": course_param,
+                        "updated_at": None,
+                        "bookmark": None,
+                        "favourites": [],
+                        "importants": [],
+                        "file_exists": False
+                    })
+            except Exception as e:
+                self._send_json(400, {"status": "error", "error": str(e)})
+            return
+
         # Default static file handling
         return super().do_GET()
 
@@ -391,6 +437,71 @@ class ChironSyncHandler(SimpleHTTPRequestHandler):
                 })
             except Exception as e:
                 self._send_json(500, {"error": f"Failed to save annotations: {e}"})
+            return
+
+        elif path == "/api/markers":
+            content_length = int(self.headers.get("Content-Length", 0))
+            if content_length <= 0:
+                self._send_json(400, {"error": "Empty payload"})
+                return
+
+            body = self.rfile.read(content_length)
+            try:
+                payload = json.loads(body.decode("utf-8"))
+            except Exception as e:
+                self._send_json(400, {"error": f"Invalid JSON payload: {e}"})
+                return
+
+            course_param = payload.get("course", "")
+            if not course_param:
+                self._send_json(400, {"error": "Missing 'course' field in payload"})
+                return
+
+            bookmark = payload.get("bookmark", None)
+            raw_favs = payload.get("favourites", [])
+            raw_imps = payload.get("importants", [])
+
+            fav_unique = []
+            for f in (raw_favs if isinstance(raw_favs, list) else []):
+                if isinstance(f, str) and f.strip() and f.strip() not in fav_unique:
+                    fav_unique.append(f.strip())
+
+            imp_unique = []
+            for imp in (raw_imps if isinstance(raw_imps, list) else []):
+                if isinstance(imp, str) and imp.strip() and imp.strip() not in imp_unique:
+                    imp_unique.append(imp.strip())
+
+            clean_bookmark = bookmark.strip() if isinstance(bookmark, str) and bookmark.strip() else None
+
+            try:
+                markers_path = get_course_markers_path(course_param)
+                markers_path.parent.mkdir(parents=True, exist_ok=True)
+
+                record = {
+                    "version": "1.0",
+                    "course": course_param,
+                    "updated_at": datetime.now(timezone.utc).isoformat(),
+                    "bookmark": clean_bookmark,
+                    "favourites": fav_unique,
+                    "importants": imp_unique
+                }
+
+                temp_path = markers_path.with_suffix(".tmp")
+                with open(temp_path, "w", encoding="utf-8") as f:
+                    json.dump(record, f, indent=2, ensure_ascii=False)
+                os.replace(temp_path, markers_path)
+
+                self._send_json(200, {
+                    "success": True,
+                    "course": course_param,
+                    "bookmark": record["bookmark"],
+                    "favourites_count": len(fav_unique),
+                    "importants_count": len(imp_unique),
+                    "path": str(markers_path.relative_to(CHIRON_ROOT)),
+                    "updated_at": record["updated_at"]
+                })
+            except Exception as e:
+                self._send_json(500, {"error": f"Failed to save course markers: {e}"})
             return
 
         elif path == "/api/open":

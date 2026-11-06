@@ -160,7 +160,14 @@
 </li>
 <li><code>View/DataCollectDraggableButton.swift</code>: Tombol melayang oranye bebas digeser (pan gesture) di atas key window.
 </li></ul>
-<div class="callout best-practice"><p>[!NOTE] <strong>Modul <code>Debug</code> Digunakan untuk Apa?</strong> Modul <code>Debug</code> adalah <em>in-app developer & QA cockpit</em> portabel. Tujuannya adalah mengeliminasi kebutuhan menyambungkan kabel USB ke Xcode atau memasang software proxy (Charles/Proxyman) saat testing di lapangan. Modul ini memungkinkan QA dan developer memeriksa secara instan di layar HP: 1. Apakah request HTTP berhasil dikirim beserta seluruh parameter dan kalkulasi <code>sign</code>. 2. Apakah response backend sesuai format yang diharapkan (<code>200</code> vs <code>10006</code>). 3. Apakah event analitik pihak ketiga (AppsFlyer, Facebook, TikTok) dan telemetri risiko SAMIR (<code>burying points</code>) terpicu dengan benar saat suatu tombol diklik.</p></div>
+<div class="callout best-practice"><p>[!NOTE]</p>
+<p><strong>Modul <code>Debug</code> Digunakan untuk Apa?</strong></p>
+<p>Modul <code>Debug</code> adalah <em>in-app developer & QA cockpit</em> portabel. Tujuannya adalah mengeliminasi kebutuhan menyambungkan kabel USB ke Xcode atau memasang software proxy (Charles/Proxyman) saat testing di lapangan. Modul ini memungkinkan QA dan developer memeriksa secara instan di layar HP:</p>
+<ol>
+<li>Apakah request HTTP berhasil dikirim beserta seluruh parameter dan kalkulasi <code>sign</code>.</li>
+<li>Apakah response backend sesuai format yang diharapkan (<code>200</code> vs <code>10006</code>).</li>
+<li>Apakah event analitik pihak ketiga (AppsFlyer, Facebook, TikTok) dan telemetri risiko SAMIR (<code>burying points</code>) terpicu dengan benar saat suatu tombol diklik.</li>
+</ol></div>
 <div class="doc-subpoint-block" id="item-aktivasi-bersyarat-scheme-guard">
 <h5>Aktivasi Bersyarat (Scheme Guard)</h5>
 <p>Floating debug console <strong>tidak pernah</strong> tampil di skema <code>PROD</code> demi keamanan data pengguna. Inisialisasi dilakukan pada tab bar root:</p>
@@ -1191,10 +1198,11 @@ public final class AppSessionManager: SessionProvider {
   }
 </script>
 
-<!-- Chiron Annotations & Multi-IDE Launcher Engine -->
+<!-- Chiron Annotations, Page Markers & Multi-IDE Launcher Engine -->
 <script src="../../../.assets/chiron-client.js"></script>
 <script src="../../../.assets/chiron-ide-launcher.js"></script>
 <script src="../../../.assets/chiron-annotations.js"></script>
+<script src="../../../.assets/chiron-page-markers.js"></script>
 
 </body>
 </html>

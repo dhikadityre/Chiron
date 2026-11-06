@@ -185,7 +185,8 @@
      codesign -d --entitlements :- Payload/IDSamirLoan.app
      # atau cek embedded provisioning profile:
      security cms -D -i Payload/IDSamirLoan.app/embedded.mobileprovision | grep -A 2 aps-environment</code></pre>
-<div class="callout best-practice"><p>[!IMPORTANT] <strong>Implikasi Backend:</strong> Device token yang di-generate dari mode <code>development</code> (Sandbox) memiliki format enkripsi berbeda dengan mode <code>production</code>. Backend server SAMIR wajib memisahkan gateway pengiriman notifikasi agar tidak menerima error <code>BadDeviceToken</code> (HTTP 400).</p></div>
+<div class="callout best-practice"><p>[!IMPORTANT]</p>
+<p><strong>Implikasi Backend:</strong> Device token yang di-generate dari mode <code>development</code> (Sandbox) memiliki format enkripsi berbeda dengan mode <code>production</code>. Backend server SAMIR wajib memisahkan gateway pengiriman notifikasi agar tidak menerima error <code>BadDeviceToken</code> (HTTP 400).</p></div>
 </div>
 <div id="sub-4-arsitektur-lingkungan-analisis-tiga-serangkai-gcc-preprocessor-swift-conditions-id-environment" class="doc-subsection">
 <h4>4. Arsitektur Lingkungan: Analisis "Tiga Serangkai" (GCC Preprocessor, Swift Conditions, & ID_ENVIRONMENT)</h4>
@@ -335,7 +336,12 @@ graph TD
 </div>
 <div class="doc-subpoint-block" id="item-f-5-risiko-kritis-gotchas-yang-wajib-diwaspadai">
 <h5>F. 5 Risiko Kritis & Gotchas yang Wajib Diwaspadai</h5>
-<div class="callout best-practice"><p>[!CAUTION] <strong>1. Kebocoran Kode SMS OTP:</strong> Jika <code>TEST=1</code> aktif di build rilis, seluruh user dapat login tanpa verifikasi SMS sungguhan karena OTP tercetak di layar.  <strong>2. Split-Brain Network Mismatch:</strong> Jika Swift disetel <code>TEST</code> (Base URL staging) namun Preprocessor disetel <code>PROD=1</code> (<code>validatesDomainName = true</code>), seluruh request API gagal akibat penolakan sertifikat SSL staging.  <strong>3. Jebakan Clang <code>#if (defined FOO)</code>:</strong> Menyetel <code>TEST=0</code> di Preprocessor Macros tetap dianggap bernilai <strong>TRUE</strong> karena Clang memeriksa eksistensi definisi kata, bukan angkanya. Untuk mematikan, hapus simbol seutuhnya.  <strong>4. Nama Aplikasi di Homescreen:</strong> Jika lupa menyelaraskan <code>ID_ENVIRONMENT = PROD</code>, aplikasi akan dirilis ke nasabah dengan nama <code>Samir &lt;tanggal&gt;</code> (misal <code>Samir 26</code>).  <strong>5. Bersihkan Cache Setelah Edit:</strong> Selalu jalankan <code>Clean Build Folder (Cmd + Shift + K)</code> setelah mengedit setting preprocessor agar artefak lama di <code>environment_preprocess.h</code> tidak tersisa.</p></div>
+<div class="callout best-practice"><p>[!CAUTION]</p>
+<p><strong>1. Kebocoran Kode SMS OTP:</strong> Jika <code>TEST=1</code> aktif di build rilis, seluruh user dapat login tanpa verifikasi SMS sungguhan karena OTP tercetak di layar.</p>
+<p><strong>2. Split-Brain Network Mismatch:</strong> Jika Swift disetel <code>TEST</code> (Base URL staging) namun Preprocessor disetel <code>PROD=1</code> (<code>validatesDomainName = true</code>), seluruh request API gagal akibat penolakan sertifikat SSL staging.</p>
+<p><strong>3. Jebakan Clang <code>#if (defined FOO)</code>:</strong> Menyetel <code>TEST=0</code> di Preprocessor Macros tetap dianggap bernilai <strong>TRUE</strong> karena Clang memeriksa eksistensi definisi kata, bukan angkanya. Untuk mematikan, hapus simbol seutuhnya.</p>
+<p><strong>4. Nama Aplikasi di Homescreen:</strong> Jika lupa menyelaraskan <code>ID_ENVIRONMENT = PROD</code>, aplikasi akan dirilis ke nasabah dengan nama <code>Samir &lt;tanggal&gt;</code> (misal <code>Samir 26</code>).</p>
+<p><strong>5. Bersihkan Cache Setelah Edit:</strong> Selalu jalankan <code>Clean Build Folder (Cmd + Shift + K)</code> setelah mengedit setting preprocessor agar artefak lama di <code>environment_preprocess.h</code> tidak tersisa.</p></div>
 </div>
 </section>
 <section id="sec-walkthrough" class="doc-section">
@@ -1295,10 +1301,11 @@ public final class AppSessionManager: SessionProvider {
   }
 </script>
 
-<!-- Chiron Annotations & Multi-IDE Launcher Engine -->
+<!-- Chiron Annotations, Page Markers & Multi-IDE Launcher Engine -->
 <script src="../../../.assets/chiron-client.js"></script>
 <script src="../../../.assets/chiron-ide-launcher.js"></script>
 <script src="../../../.assets/chiron-annotations.js"></script>
+<script src="../../../.assets/chiron-page-markers.js"></script>
 
 </body>
 </html>

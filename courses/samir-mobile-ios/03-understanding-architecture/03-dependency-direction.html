@@ -14,22 +14,6 @@
   <!-- Mermaid.js for Dynamic Flow Diagrams -->
   <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
   <script>mermaid.initialize({ startOnLoad: true, theme: 'dark' });</script>
-  <style>
-    .mermaid .edgePath path.path {
-      stroke-width: 2.5px !important;
-    }
-    .mermaid .marker {
-      fill-opacity: 1 !important;
-    }
-    .mermaid .edgeLabel {
-      background-color: var(--card-bg, #1a1e29) !important;
-      padding: 3px 8px !important;
-      border-radius: 4px !important;
-      font-size: 0.75rem !important;
-      color: #38bdf8 !important;
-      border: 1px solid rgba(56, 189, 248, 0.25) !important;
-    }
-  </style>
 </head>
 <body>
 
@@ -149,7 +133,7 @@
 
 <div class="mermaid-interactive-card">
   <div class="mermaid-card-toolbar">
-    <span class="title">📊 Diagram Alur #1: Piramida Arah Dependensi (Downward Dependency Flow)</span>
+    <span class="title">📊 Diagram Alur #1</span>
     <button class="mermaid-zoom-trigger" onclick="openDiagramZoom('diag-1', 'Diagram Alur #1')">🔍 Perbesar Diagram</button>
   </div>
   <div class="mermaid-content-wrapper" id="diag-1">
@@ -168,15 +152,15 @@ flowchart TD
 
     subgraph L3 ["🤝 Layer 3: Contracts & Service Abstraction (Biro Penghubung)"]
         direction LR
-        SRV["SamirServiceModule<br/><code>Service Protocols</code>"]
-        RTM["SamirRouterModule<br/><code>Router Constants</code>"]
+        SRV["SamirServiceModule<br/>Service Protocols"]
+        RTM["SamirRouterModule<br/>Router Constants"]
     end
 
     subgraph L2 ["⚙️ Layer 2: Core Infrastructure (Infrastruktur Bersama)"]
         direction LR
-        NET["SamirNetworkModule<br/><code>Alamofire + Signature</code>"]
-        PTS["SamirPointsModule<br/><code>Tracking & Analytics</code>"]
-        COM["SamirCommonModule<br/><code>Base VC & Flutter Bridge</code>"]
+        NET["SamirNetworkModule<br/>Alamofire + Signature"]
+        PTS["SamirPointsModule<br/>Tracking & Analytics"]
+        COM["SamirCommonModule<br/>Base VC & Flutter Bridge"]
     end
 
     subgraph L1 ["🧱 Layer 1: Core Foundation & Tooling (Pustaka Mandiri)"]
@@ -219,17 +203,15 @@ flowchart TD
     </div>
   </div>
 </div>
-
-<div class="callout tip" style="margin-top: 1.25rem;">
-  <div class="callout-title">🎨 Panduan Alur Panah Dependensi (Top-Down Flow)</div>
-  <p>Untuk menghindari kebingungan arah ketergantungan, diagram di atas disusun secara vertikal <strong>Top-to-Bottom</strong> (puncak piramida di atas, fondasi di bawah):</p>
-  <ul style="margin: 0.5rem 0 0 1.2rem; font-size: 0.88rem; line-height: 1.6;">
-    <li><strong style="color: #38bdf8;">Layer 4 ➔ Layer 3 (══► Tebal Biru Cyan)</strong>: Seluruh Modul Fitur terisolasi dan hanya berkomunikasi via kontrak protokol (<code>SamirServiceModule</code>) atau konstanta route (<code>SamirRouterModule</code>).</li>
-    <li><strong style="color: #c084fc;">Layer 4 ➔ Layer 2 (──► Ungu)</strong>: Mengakses controller dasar (<code>SamirCommonModule</code>) serta utilitas jaringan & analitik bersama.</li>
-    <li><strong style="color: #34d399;">Layer 3 ➔ Layer 1 (══► Hijau)</strong>: Protokol layanan mengadopsi <code>CZSwiftModuleLib</code> dan router engine <code>CZSwiftRouterLib</code>.</li>
-    <li><strong style="color: #f59e0b;">Layer 2 ➔ Layer 1 (──► Oranye)</strong>: Komponen infrastruktur bergantung pada utilitas dasar mandiri (UI Kit, Storage, Environment, AntiFraud).</li>
-  </ul>
-</div>
+<div class="callout best-practice"><p>[!TIP]</p>
+<p><strong>Panduan Alur Panah Dependensi (Top-Down Flow)</strong>:</p>
+<p>Diagram di atas disusun secara vertikal <strong>Top-to-Bottom</strong> (puncak piramida di atas, fondasi di bawah):</p>
+<ul>
+<li><strong>Layer 4 ➔ Layer 3 (══► Tebal Biru Cyan)</strong>: Seluruh Modul Fitur terisolasi dan hanya berkomunikasi via kontrak protokol (<code>SamirServiceModule</code>) atau konstanta route (<code>SamirRouterModule</code>).</li>
+<li><strong>Layer 4 ➔ Layer 2 (──► Ungu)</strong>: Mengakses controller dasar (<code>SamirCommonModule</code>) serta utilitas jaringan & analitik bersama.</li>
+<li><strong>Layer 3 ➔ Layer 1 (══► Hijau)</strong>: Protokol layanan mengadopsi <code>CZSwiftModuleLib</code> dan router engine <code>CZSwiftRouterLib</code>.</li>
+<li><strong>Layer 2 ➔ Layer 1 (──► Oranye)</strong>: Komponen infrastruktur bergantung pada utilitas dasar mandiri (UI Kit, Storage, Environment, AntiFraud).</li>
+</ul></div>
 <div id="sub-1-tiga-aturan-mutlak-ketergantungan-dependency-rules" class="doc-subsection">
 <h4>1. Tiga Aturan Mutlak Ketergantungan (Dependency Rules)</h4>
 </div>
@@ -794,6 +776,9 @@ public final class AppSessionManager: SessionProvider {
       <a class="curriculum-item-link" href="../04-understanding-navigation/04-navigation-conditions-and-edge-cases.html">
         <span>📄</span> 04 — Navigation Conditions &amp; Edge Cases
       </a>
+      <a class="curriculum-item-link" href="../04-understanding-navigation/05-hybrid-tabbar-navigation.html">
+        <span>📄</span> 05 — Hybrid TabBar &amp; Persistent Host
+      </a>
     </div>
     <div class="curriculum-level-group">
       <div class="curriculum-level-title">Level 5: Learning Business Flows</div>
@@ -1134,10 +1119,11 @@ public final class AppSessionManager: SessionProvider {
   }
 </script>
 
-<!-- Chiron Annotations & Multi-IDE Launcher Engine -->
+<!-- Chiron Annotations, Page Markers & Multi-IDE Launcher Engine -->
 <script src="../../../.assets/chiron-client.js"></script>
 <script src="../../../.assets/chiron-ide-launcher.js"></script>
 <script src="../../../.assets/chiron-annotations.js"></script>
+<script src="../../../.assets/chiron-page-markers.js"></script>
 
 </body>
 </html>

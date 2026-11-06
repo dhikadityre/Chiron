@@ -203,7 +203,7 @@ if let array = responseDict[&quot;result&quot;] as? [[String: Any]] {
     
     public required init() {}
     
-    // 1. Encode properti ke NSCoder saat di-archive
+    // 1. Encode properti ke NSCoder saat di-archive ke disk lokal
     public func encode(with coder: NSCoder) {
         coder.encode(mid, forKey: &quot;mid&quot;)
         coder.encode(userNo, forKey: &quot;userNo&quot;)
@@ -212,7 +212,7 @@ if let array = responseDict[&quot;result&quot;] as? [[String: Any]] {
         coder.encode(token, forKey: &quot;token&quot;)
     }
     
-    // 2. Decode properti dari NSCoder saat di-unarchive
+    // 2. Decode properti dari NSCoder saat di-unarchive dari disk lokal
     public required init?(coder: NSCoder) {
         self.mid = coder.decodeObject(forKey: &quot;mid&quot;) as? NSNumber
         self.userNo = coder.decodeObject(forKey: &quot;userNo&quot;) as? String
@@ -221,6 +221,11 @@ if let array = responseDict[&quot;result&quot;] as? [[String: Any]] {
         self.token = coder.decodeObject(forKey: &quot;token&quot;) as? String
     }
 }</code></pre>
+<div class="doc-subpoint-block" id="item-perbandingan-arsitektur-kj-modelkey-vs-coderdecodeobject">
+<h5>Perbandingan Arsitektur: <code>kj_modelKey</code> vs <code>coder.decodeObject</code></h5>
+<p>Apakah keduanya sama-sama mentranslasikan data Backend agar bisa dikonsumsi Mobile?</p>
+<div class="table-container"><table class="data-table"><thead><tr><th>Aspek</th><th><code>kj_modelKey</code> (<code>KakaJSON</code>)</th><th><code>coder.decodeObject</code> (<code>NSCoding</code>)</th></tr></thead><tbody><tr><td><strong>Layer Operasi</strong></td><td><strong>Network Ingestion Layer</strong> (Jaringan)</td><td><strong>Local Persistence Layer</strong> (Disk Offline)</td></tr><tr><td><strong>Sumber Data</strong></td><td><strong>JSON Dictionary dari Backend API</strong> (via HTTP Response)</td><td><strong>Binary Data dari Sandbox Lokal</strong> (<code>idn_userFile.plist</code>)</td></tr><tr><td><strong>Tujuan Utama</strong></td><td>Memetakan kunci JSON snake_case (misal <code>order_no</code>) ke properti Swift camelCase (<code>orderId</code>).</td><td>Membaca kembali objek yang sebelumnya sudah di-cache/diarsip ke disk lokal tanpa koneksi internet.</td></tr><tr><td><strong>Keterlibatan Backend</strong></td><td><strong>Ya, 100% berurusan dengan Backend.</strong> Mengikuti kontrak format API.</td><td><strong>Tidak.</strong> Sepenuhnya mekanisme internal iOS untuk <em>offline state recovery</em> saat cold-boot.</td></tr><tr><td><strong>Kapan Digunakan</strong></td><td>Saat API login atau produk merespons: <code>responseDict.kj.model(IDProductModel.self)</code>.</td><td>Saat aplikasi baru dibuka kembali saat startup: <code>__decodeUserModel()</code> membaca file lokal.</td></tr></tbody></table></div>
+</div>
 <div id="sub-4-transformasi-data-dari-schema-server-ke-model-sel-beranda" class="doc-subsection">
 <h4>4. Transformasi Data: Dari Schema Server ke Model Sel Beranda</h4>
 </div>
@@ -1093,10 +1098,11 @@ public final class AppSessionManager: SessionProvider {
   }
 </script>
 
-<!-- Chiron Annotations & Multi-IDE Launcher Engine -->
+<!-- Chiron Annotations, Page Markers & Multi-IDE Launcher Engine -->
 <script src="../../../.assets/chiron-client.js"></script>
 <script src="../../../.assets/chiron-ide-launcher.js"></script>
 <script src="../../../.assets/chiron-annotations.js"></script>
+<script src="../../../.assets/chiron-page-markers.js"></script>
 
 </body>
 </html>

@@ -89,8 +89,17 @@
 
 <p>Selamat datang di repositori dokumentasi pembelajaran dan panduan teknis mendalam untuk aplikasi <strong>SAMIR iOS</strong> (<code>IDSamirLoan</code>).</p>
 <p>Dokumentasi ini disusun khusus sebagai <strong>progressive learning path</strong> (kurikulum bertahap) bagi mobile engineer — mulai dari junior hingga senior developer yang baru bergabung — untuk memahami arsitektur sistem, navigasi antarfitur, alur bisnis end-to-end, integrasi hybrid Native-Flutter, mekanisme jaringan bertanda tangan, hingga analisis technical debt dan strategi debugging.</p>
-<div class="callout best-practice"><p>[!IMPORTANT] <strong>Prinsip Dokumentasi Ini:</strong> 1. <strong>Teach progressively</strong>: Dimulai dari konsep dasar hingga internal arsitektur yang kompleks. 2. <strong>Trace everything to source code</strong>: Setiap penjelasan disertai lokasi file konkret, nama class/fungsi, dan nomor baris acuan. 3. <strong>Explain like I'm a junior, analyze like a senior</strong>: Bahasa mudah dipahami tanpa mengorbankan ketajaman analisis teknis. 4. <strong>Honest verification</strong>: Fakta dipisahkan secara tegas antara <code>[Verified]</code> (terbukti dari kode aktif), <code>[Inferred]</code> (kesimpulan logis dengan bukti pendukung), <code>[Unverified]</code> (belum ada bukti di repo), dan <code>[Historical]</code> (catatan peninggalan masa lalu).</p></div>
-<div class="callout best-practice"><p>[!NOTE] <strong>Git Reference Baseline / Anchor Branch:</strong> Seluruh analisis arsitektur, lokasi berkas, dan nomor baris acuan di dalam dokumentasi ini dijangkarkan ke branch git: <strong><code>learn/iOS-Arch</code></strong> pada repositori <a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile.git" target="_blank" rel="noopener noreferrer">🦊 samir-mobile <span class="branch-tag">learn/iOS-Arch</span> ↗</a>. Jika branch utama (<code>main</code> / <code>develop</code>) mengalami pembaruan atau refactoring besar di kemudian hari, Anda dapat beralih (<em>checkout</em>) ke branch <code>learn/iOS-Arch</code> agar dokumentasi ini tetap 100% presisi dan relevan.</p></div>
+<div class="callout best-practice"><p>[!IMPORTANT]</p>
+<p><strong>Prinsip Dokumentasi Ini:</strong></p>
+<ol>
+<li><strong>Teach progressively</strong>: Dimulai dari konsep dasar hingga internal arsitektur yang kompleks.</li>
+<li><strong>Trace everything to source code</strong>: Setiap penjelasan disertai lokasi file konkret, nama class/fungsi, dan nomor baris acuan.</li>
+<li><strong>Explain like I'm a junior, analyze like a senior</strong>: Bahasa mudah dipahami tanpa mengorbankan ketajaman analisis teknis.</li>
+<li><strong>Honest verification</strong>: Fakta dipisahkan secara tegas antara <code>[Verified]</code> (terbukti dari kode aktif), <code>[Inferred]</code> (kesimpulan logis dengan bukti pendukung), <code>[Unverified]</code> (belum ada bukti di repo), dan <code>[Historical]</code> (catatan peninggalan masa lalu).</li>
+</ol></div>
+<div class="callout best-practice"><p>[!NOTE]</p>
+<p><strong>Git Reference Baseline / Anchor Branch:</strong></p>
+<p>Seluruh analisis arsitektur, lokasi berkas, dan nomor baris acuan di dalam dokumentasi ini dijangkarkan ke branch git: <strong><code>learn/iOS-Arch</code></strong> pada repositori <a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile.git" target="_blank" rel="noopener noreferrer">🦊 samir-mobile <span class="branch-tag">learn/iOS-Arch</span> ↗</a>. Jika branch utama (<code>main</code> / <code>develop</code>) mengalami pembaruan atau refactoring besar di kemudian hari, Anda dapat beralih (<em>checkout</em>) ke branch <code>learn/iOS-Arch</code> agar dokumentasi ini tetap 100% presisi dan relevan.</p></div>
 <section id="sec-struktur-kurikulum-dokumentasi" class="doc-section">
 <h3>📌 🗺️ Struktur & Kurikulum Dokumentasi</h3>
 <p>Kurikulum ini diurutkan berdasarkan <strong>urutan belajar optimal</strong> (Learning Order), bukan tingkat kepentingan fitur:</p>
@@ -119,7 +128,8 @@
 │   ├── 01-feature-inventory.md                        # Daftar lengkap seluruh fitur, screen, dan entry point
 │   ├── 02-navigation-fundamentals.md                  # CZSwiftRouterLib, URL scheme samir://, &amp; filter regex
 │   ├── 03-complete-navigation-map.md                  # Peta navigasi komprehensif seluruh layar dan dialog
-│   └── 04-navigation-conditions-and-edge-cases.md     # Guard login, token expiry, &amp; penanganan deep link
+│   ├── 04-navigation-conditions-and-edge-cases.md     # Guard login, token expiry, &amp; penanganan deep link
+│   └── 05-hybrid-tabbar-navigation.md                 # Single-engine persistent host, showRoot vs showPage, &amp; chrome sync
 │
 ├── 05-learning-business-flows/                        # Level 5: Alur Bisnis End-to-End
 │   ├── 01-user-journey-overview.md                    # Gambaran makro customer journey pinjaman P2P
@@ -504,6 +514,9 @@ public final class AppSessionManager: SessionProvider {
       <a class="curriculum-item-link" href="04-understanding-navigation/04-navigation-conditions-and-edge-cases.html">
         <span>📄</span> 04 — Navigation Conditions &amp; Edge Cases
       </a>
+      <a class="curriculum-item-link" href="04-understanding-navigation/05-hybrid-tabbar-navigation.html">
+        <span>📄</span> 05 — Hybrid TabBar &amp; Persistent Host
+      </a>
     </div>
     <div class="curriculum-level-group">
       <div class="curriculum-level-title">Level 5: Learning Business Flows</div>
@@ -844,10 +857,11 @@ public final class AppSessionManager: SessionProvider {
   }
 </script>
 
-<!-- Chiron Annotations & Multi-IDE Launcher Engine -->
+<!-- Chiron Annotations, Page Markers & Multi-IDE Launcher Engine -->
 <script src="../../.assets/chiron-client.js"></script>
 <script src="../../.assets/chiron-ide-launcher.js"></script>
 <script src="../../.assets/chiron-annotations.js"></script>
+<script src="../../.assets/chiron-page-markers.js"></script>
 
 </body>
 </html>

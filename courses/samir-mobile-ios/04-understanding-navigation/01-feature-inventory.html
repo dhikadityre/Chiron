@@ -47,6 +47,10 @@
         <span class="tab-icon">📄</span> 04-navigation-conditions-and-edge-cases.html
         <span class="tab-close" onclick="event.preventDefault(); this.parentElement.remove();">×</span>
       </a>
+      <a class="doc-tab" href="05-hybrid-tabbar-navigation.html" title="05-hybrid-tabbar-navigation.html">
+        <span class="tab-icon">📄</span> 05-hybrid-tabbar-navigation.html
+        <span class="tab-close" onclick="event.preventDefault(); this.parentElement.remove();">×</span>
+      </a>
     </div>
 
     <!-- Right Utilities -->
@@ -210,74 +214,71 @@ private func handleNativeSchemeRoute(url: String, result: @escaping FlutterResul
 </li></ul>
 </section>
 <section id="sec-check" class="doc-section">
-<h3>🧠 I. Knowledge Check & Kunci Jawaban</h3>
+<h3>🧠 I. Knowledge Check & Jawaban</h3>
 <ol>
 <li><strong>Sebutkan 6 tahapan formulir verifikasi e-KYC secara berurutan!</strong>
-  <div class="callout best-practice" style="margin: 0.5rem 0 1rem 0;">
-    <ul style="margin: 0.25rem 0 0 1.2rem; line-height: 1.6; font-size: 0.88rem;">
-      <li><strong>Tahap 1 (F10)</strong>: Foto KTP & OCR (<code>samir://auth/identity</code> ➔ <code>IDNewOCRViewController</code>) — Memindai e-KTP dan konfirmasi NIK serta nama lengkap.</li>
-      <li><strong>Tahap 2 (F11)</strong>: Informasi Pribadi (<code>samir://auth/personinfo</code> ➔ <code>IDNewAuthBasicViewController</code>) — Agama, pendidikan, status perkawinan, alamat domisili.</li>
-      <li><strong>Tahap 3 (F12)</strong>: Informasi Pekerjaan (<code>samir://auth/careerInfo</code> ➔ <code>IDNewAuthJobViewController</code>) — Jenis industri, nama perusahaan, rentang penghasilan.</li>
-      <li><strong>Tahap 4 (F13)</strong>: Kontak Darurat (<code>samir://auth/contacts</code> ➔ <code>IDNewAuthContactViewController</code>) — Input 2 kontak referensi keluarga/kerabat.</li>
-      <li><strong>Tahap 5 (F14)</strong>: Pengikatan Rekening Bank (<code>samir://auth/bankcard</code> ➔ <code>IDNewBankViewController</code>) — Pilih bank dan input no rekening pencairan atas nama peminjam sendiri.</li>
-      <li><strong>Tahap 6 (F16)</strong>: Verifikasi Wajah / Liveness Detection (<code>samir://auth/face</code> ➔ <code>IDAuthLiveViewController</code>) — Deteksi keaslian wajah via AAILiveness / TrustDecision SDK. <em>(Catatan: F15 Ganti Rekening Bank adalah alur revisi kondisional, bukan sekuens pendaftaran awal).</em></li>
-    </ul>
-  </div>
+<ul>
+<li><strong>Tahap 1 (F10)</strong>: Foto KTP & OCR (<code>samir://auth/identity</code> -> <code>IDNewOCRViewController</code>) — Memindai e-KTP dan konfirmasi NIK serta nama.
+</li>
+<li><strong>Tahap 2 (F11)</strong>: Informasi Pribadi (<code>samir://auth/personinfo</code> -> <code>IDNewAuthBasicViewController</code>) — Agama, pendidikan, status perkawinan, alamat domisili.
+</li>
+<li><strong>Tahap 3 (F12)</strong>: Informasi Pekerjaan (<code>samir://auth/careerInfo</code> -> <code>IDNewAuthJobViewController</code>) — Jenis industri, nama perusahaan, rentang penghasilan.
+</li>
+<li><strong>Tahap 4 (F13)</strong>: Kontak Darurat (<code>samir://auth/contacts</code> -> <code>IDNewAuthContactViewController</code>) — Input 2 kontak referensi keluarga/kerabat.
+</li>
+<li><strong>Tahap 5 (F14)</strong>: Pengikatan Rekening Bank (<code>samir://auth/bankcard</code> -> <code>IDNewBankViewController</code>) — Pilih nama bank dan input nomor rekening atas nama sendiri.
+</li>
+<li><strong>Tahap 6 (F16)</strong>: Verifikasi Wajah / Liveness Detection (<code>samir://auth/face</code> -> <code>IDAuthLiveViewController</code>) — Deteksi keaslian wajah via AAILiveness / TrustDecision SDK. <em>(Catatan: F15 Ganti Rekening Bank adalah alur revisi, bukan bagian dari sekuens registrasi baru).</em>
+</li></ul>
 </li>
 <li><strong>Di mana letak implementasi aktif dari Tab Tagihan (Repay) dan Tab Saya (Mine)?</strong>
-  <div class="callout best-practice" style="margin: 0.5rem 0 1rem 0;">
-    <ul style="margin: 0.25rem 0 0 1.2rem; line-height: 1.6; font-size: 0.88rem;">
-      <li><strong>Tab Tagihan (Repay / Tab 1)</strong>: Ditampung oleh controller native <code>IDRepayViewController</code>, namun <strong>implementasi UI & logikanya 100% aktif berada di modul Flutter</strong> (<code>repay_home_page.dart</code>). Handler native lama (<code>SamirRepayRouterHandler.swift</code>) telah didepresiasi (berisi method stub kosong).</li>
-      <li><strong>Tab Saya (Mine / Tab 2)</strong>: Ditampung oleh controller native <code>IDMineViewController</code>, yang menghosting halaman Flutter <code>mine_home_page.dart</code> dan <code>mine_personal_page.dart</code>. Bagian native hanya digunakan untuk Pengaturan (<code>IDMineSettingController</code>) dan H5 WebView untuk FAQ (<code>IDBusinessWebViewController</code>).</li>
-    </ul>
-  </div>
+<ul>
+<li><strong>Tab Tagihan (Repay / Tab 1)</strong>: Ditampung oleh controller native <code>IDRepayViewController</code>, namun <strong>implementasi UI & logikanya 100% aktif berada di modul Flutter</strong> (<code>repay_home_page.dart</code>). Handler native lama (<code>SamirRepayRouterHandler.swift</code>) telah didepresiasi (berisi method stub kosong).
+</li>
+<li><strong>Tab Saya (Mine / Tab 2)</strong>: Ditampung oleh controller native <code>IDMineViewController</code>, yang menghosting halaman Flutter <code>mine_home_page.dart</code> dan <code>mine_personal_page.dart</code>. Bagian native hanya digunakan untuk Pengaturan (<code>IDMineSettingController</code>) dan H5 WebView untuk FAQ (<code>IDBusinessWebViewController</code>).
+</li></ul>
 </li>
 <li><strong>Apa prasyarat utama sebelum pengguna diizinkan membuka layar <code>IDQuatoAssessViewController</code>?</strong>
-  <div class="callout best-practice" style="margin: 0.5rem 0 1rem 0;">
-    <ul style="margin: 0.25rem 0 0 1.2rem; line-height: 1.6; font-size: 0.88rem;">
-      <li><strong>Prasyarat 1</strong>: Pengguna <strong>Wajib Sudah Login</strong> (<code>IDServiceManager.loginService()?.isLogin() == true</code>). Jika tamu, presenter otomatis memunculkan modal login terlebih dahulu.</li>
-      <li><strong>Prasyarat 2</strong>: Pengguna <strong>Wajib Telah Menyelesaikan Seluruh 6 Formulir e-KYC</strong>. Jika ada data KYC yang belum lengkap, alur akan diarahkan ke form yang belum terisi karena credit scoring engine backend memerlukan seluruh atribut data tersebut untuk mengkalkulasi limit kuota kredit.</li>
-    </ul>
-  </div>
+<ul>
+<li><strong>Prasyarat 1</strong>: Pengguna <strong>Wajib Sudah Login</strong> (<code>Global.isLogin == true</code> / <code>IDServiceManager.loginService()?.isLogin() == true</code>).
 </li>
-</ol>
+<li><strong>Prasyarat 2</strong>: Pengguna <strong>Wajib Telah Menyelesaikan Seluruh 6 Formulir e-KYC</strong>. Jika ada salah satu formulir yang belum tuntas, alur akan dialihkan ke formulir yang belum diisi karena credit assessment engine backend memerlukan seluruh atribut data tersebut untuk menganalisis risiko dan menghitung limit kuota kredit.
+</li></ul>
+</li></ol>
 </section>
-
-<section id="sec-business-essentials" class="doc-section">
-<h3>💼 J. Business Domain Essentials (Logika Bisnis FinTech SAMIR)</h3>
-<p>Berikut adalah 5 pemahaman domain bisnis pinjaman daring (P2P Lending) yang wajib dikuasai oleh engineer iOS SAMIR:</p>
-
-<div class="callout tip" style="margin-bottom: 1.25rem;">
-  <div class="callout-title">1. Mengapa nomor rekening pencairan pinjaman (F14) wajib atas nama peminjam yang sama dengan e-KTP?</div>
-  <p><strong>Aturan FinTech & Regulasi OJK:</strong> Regulasi Anti-Pencucian Uang (<em>Anti-Money Laundering</em> / AML) dan pencegahan <em>Identity Theft</em> mewajibkan pencairan dana pinjaman hanya boleh dikirim ke rekening milik nasabah yang terverifikasi. Nama pemilik rekening divalidasi silang secara otomatis ke nama hasil OCR e-KTP. Jika nama tidak cocok, transaksi pencairan akan ditolak (<em>rejected</em>) oleh Disbursement Gateway.</p>
-</div>
-
-<div class="callout tip" style="margin-bottom: 1.25rem;">
-  <div class="callout-title">2. Bagaimana alur penanganan saat pengguna gagal di tahap Liveness Detection (Verifikasi Wajah)? Apakah harus mengulang dari awal KTP?</div>
-  <p><strong>Incremental Persistence:</strong> Tidak perlu mengulang dari KTP. Data Formulir Tahap 1 sampai 5 (KTP, Data Diri, Pekerjaan, Kontak, Bank) sudah tersimpan di server melalui API <code>customer/renewMemInfo</code> dan <code>bankCard/bindCard</code>. Nasabah hanya diminta mengulang tahap Liveness (<code>IDAuthLiveViewController</code>) atau dialihkan ke verifikasi manual jika limit percobaan harian SDK habis.</p>
-</div>
-
-<div class="callout tip" style="margin-bottom: 1.25rem;">
-  <div class="callout-title">3. Apa perbedaan mendasar alur navigasi First-Time Borrower (Pengguna Baru) vs Repeat Borrower (Peminjam Ulang)?</div>
-  <p><strong>Dua Jalur Pengguna Berbeda:</strong></p>
-  <ul style="margin: 0.25rem 0 0 1.2rem; font-size: 0.88rem; line-height: 1.6;">
-    <li><strong>Pengguna Baru:</strong> Wajib melewati 6 tahap e-KYC lengkap ➔ Penilaian Kuota Kredit (<code>IDQuatoAssessViewController</code>) ➔ Polling kuota ➔ Konfirmasi Pinjaman (<code>LoanConfirmViewController_Rx</code>).</li>
-    <li><strong>Peminjam Ulang (Repeat Borrower):</strong> Selama data KYC belum kedaluwarsa, pengguna langsung melihat limit pinjaman aktif di Beranda (<code>IDHomeViewController</code>), memilih nominal/tenor, memilih voucher diskon (<code>IDVoucherSelectViewController</code>), dan langsung masuk ke Konfirmasi Pinjaman.</li>
-  </ul>
-</div>
-
-<div class="callout tip" style="margin-bottom: 1.25rem;">
-  <div class="callout-title">4. Mengapa saat pengguna Logout di halaman Pengaturan, aplikasi menghapus seluruh session dan beralih ke Tab 0 (Beranda)?</div>
-  <p><strong>Keamanan Data Pribadi (PII Protection):</strong> Tab Tagihan (Tab 1) dan Tab Profil (Tab 2) memuat informasi sensitif pinjaman dan identitas nasabah. Saat logout, <code>IDServiceManager.mainService()?.selectTabbar(0)</code> dipanggil untuk memindahkan fokus ke Beranda sebagai Guest, sekaligus membersihkan token dan kredensial terenkripsi di local storage.</p>
-</div>
-
-<div class="callout tip" style="margin-bottom: 1.25rem;">
-  <div class="callout-title">5. Apa peran Voucher Diskon (<code>IDVoucherSelectViewController</code>) dalam perhitungan biaya pinjaman?</div>
-  <p><strong>Kalkulasi Biaya Real-time:</strong> Voucher diskon digunakan untuk memotong biaya administrasi atau suku bunga pinjaman. Saat voucher dipilih, <code>SamirLoanModule</code> mengirimkan kode voucher ke <code>LoanConfirmService</code>, yang memicu pembaruan state reaktif via RxSwift untuk merevisi rincian pencairan dan jadwal angsuran sebelum penandatanganan kontrak digital (<em>Digisign</em>).</p>
-</div>
-</section>
-
 <section id="sec-completion" class="doc-section">
+<h3>📌 J. Business Domain Essentials (Logika Bisnis FinTech SAMIR)</h3>
+<p>Berikut adalah 5 pemahaman domain bisnis pinjaman daring (P2P Lending) yang wajib dikuasai oleh engineer iOS SAMIR:</p>
+<ol>
+<li><strong>Mengapa nomor rekening pencairan pinjaman (F14) wajib atas nama peminjam yang sama dengan e-KTP?</strong>
+<ul>
+<li><strong>Aturan FinTech & Regulasi OJK</strong>: Regulasi Anti-Pencucian Uang (<em>Anti-Money Laundering</em> / AML) dan pencegahan <em>Identity Theft</em> mewajibkan pencairan dana pinjaman hanya boleh dikirim ke rekening milik nasabah yang terverifikasi. Nama pemilik rekening divalidasi silang secara otomatis ke nama hasil OCR e-KTP. Jika nama tidak cocok, transaksi pencairan akan ditolak (<em>rejected</em>) oleh Disbursement Gateway.
+</li></ul>
+</li>
+<li><strong>Bagaimana penanganan saat pengguna gagal di tahap Liveness Detection (Verifikasi Wajah)? Apakah harus mengulang dari awal KTP?</strong>
+<ul>
+<li><strong>Incremental Persistence</strong>: Tidak perlu mengulang dari KTP. Data Formulir Tahap 1 sampai 5 (KTP, Data Diri, Pekerjaan, Kontak, Bank) sudah tersimpan di server melalui API <code>customer/renewMemInfo</code> dan <code>bankCard/bindCard</code>. Nasabah hanya diminta mengulang tahap Liveness (<code>IDAuthLiveViewController</code>) atau dialihkan ke verifikasi manual jika limit percobaan harian habis.
+</li></ul>
+</li>
+<li><strong>Apa perbedaan alur navigasi First-Time Borrower (Pengguna Baru) vs Repeat Borrower (Peminjam Ulang)?</strong>
+<ul>
+<li><strong>Pengguna Baru</strong>: Wajib melewati 6 tahap e-KYC lengkap ➔ Penilaian Kuota Kredit (<code>IDQuatoAssessViewController</code>) ➔ Polling kuota ➔ Konfirmasi Pinjaman (<code>LoanConfirmViewController_Rx</code>).
+</li>
+<li><strong>Peminjam Ulang (Repeat Borrower)</strong>: Selama data KYC belum kedaluwarsa, pengguna langsung melihat limit pinjaman aktif di Beranda (<code>IDHomeViewController</code>), memilih nominal/tenor, memilih voucher diskon (<code>IDVoucherSelectViewController</code>), dan langsung masuk ke Konfirmasi Pinjaman.
+</li></ul>
+</li>
+<li><strong>Mengapa saat pengguna Logout di halaman Pengaturan, aplikasi menghapus seluruh session dan beralih ke Tab 0 (Beranda)?</strong>
+<ul>
+<li><strong>Keamanan Data Pribadi (PII Protection)</strong>: Tab Tagihan (Tab 1) dan Tab Profil (Tab 2) memuat informasi sensitif pinjaman dan identitas nasabah. Saat logout, <code>IDServiceManager.mainService()?.selectTabbar(0)</code> dipanggil untuk memindahkan fokus ke Beranda sebagai Guest, sekaligus membersihkan token dan kredensial terenkripsi di local storage.
+</li></ul>
+</li>
+<li><strong>Apa peran Voucher Diskon (<code>IDVoucherSelectViewController</code>) dalam perhitungan biaya pinjaman?</strong>
+<ul>
+<li><strong>Kalkulasi Biaya Real-time</strong>: Voucher diskon digunakan untuk memotong biaya administrasi atau suku bunga pinjaman. Saat voucher dipilih, <code>SamirLoanModule</code> mengirimkan kode voucher ke <code>LoanConfirmService</code>, yang memicu pembaruan state reaktif via RxSwift untuk merevisi rincian pencairan dan jadwal angsuran sebelum penandatanganan kontrak digital (<em>Digisign</em>).
+</li></ul>
+</li></ol>
+</section>
+<section id="sec-k-completion-criteria" class="doc-section">
 <h3>🏁 K. Completion Criteria</h3>
 <p>Anda telah menguasai dokumen ini jika Anda dapat mengenali seluruh 24 fitur aplikasi SAMIR iOS, URL route-nya, dan batasan aksesnya.</p>
 <p>Dokumen berikutnya: <a href="02-navigation-fundamentals.html">02-navigation-fundamentals.md</a>.</p>
@@ -509,15 +510,15 @@ public final class RepayFlowCoordinator: Coordinator {
           </div>
           <div class="toc-node-row">
             <span class="toc-leaf-dot"></span>
-            <a class="toc-tree-link" href="#sec-check">I. Knowledge Check & Kunci Jawaban</a>
+            <a class="toc-tree-link" href="#sec-check">I. Knowledge Check &amp; Jawaban</a>
           </div>
           <div class="toc-node-row">
             <span class="toc-leaf-dot"></span>
-            <a class="toc-tree-link" href="#sec-business-essentials">J. Business Domain Essentials</a>
+            <a class="toc-tree-link" href="#sec-completion">J. Business Domain Essentials (Logika Bisnis FinTech SAMIR)</a>
           </div>
           <div class="toc-node-row">
             <span class="toc-leaf-dot"></span>
-            <a class="toc-tree-link" href="#sec-completion">K. Completion Criteria</a>
+            <a class="toc-tree-link" href="#sec-k-completion-criteria">K. Completion Criteria</a>
           </div>
           <!-- Architecture Lab Branches -->
           <div class="toc-tree-node" id="toc-node-lab" style="margin-top: 0.45rem;">
@@ -633,15 +634,15 @@ public final class RepayFlowCoordinator: Coordinator {
         </div>
         <div class="toc-node-row">
           <span class="toc-leaf-dot"></span>
-          <a class="toc-tree-link" href="#sec-check" onclick="toggleMobileToc()">I. Knowledge Check & Kunci Jawaban</a>
+          <a class="toc-tree-link" href="#sec-check" onclick="toggleMobileToc()">I. Knowledge Check &amp; Jawaban</a>
         </div>
         <div class="toc-node-row">
           <span class="toc-leaf-dot"></span>
-          <a class="toc-tree-link" href="#sec-business-essentials" onclick="toggleMobileToc()">J. Business Domain Essentials</a>
+          <a class="toc-tree-link" href="#sec-completion" onclick="toggleMobileToc()">J. Business Domain Essentials (Logika Bisnis FinTech SAMIR)</a>
         </div>
         <div class="toc-node-row">
           <span class="toc-leaf-dot"></span>
-          <a class="toc-tree-link" href="#sec-completion" onclick="toggleMobileToc()">K. Completion Criteria</a>
+          <a class="toc-tree-link" href="#sec-k-completion-criteria" onclick="toggleMobileToc()">K. Completion Criteria</a>
         </div>
         <div class="toc-tree-node" id="mob-toc-node-lab" style="margin-top: 0.45rem;">
           <div class="toc-node-row">
@@ -744,6 +745,9 @@ public final class RepayFlowCoordinator: Coordinator {
       </a>
       <a class="curriculum-item-link" href="../04-understanding-navigation/04-navigation-conditions-and-edge-cases.html">
         <span>📄</span> 04 — Navigation Conditions &amp; Edge Cases
+      </a>
+      <a class="curriculum-item-link" href="05-hybrid-tabbar-navigation.html">
+        <span>📄</span> 05 — Hybrid TabBar &amp; Persistent Host
       </a>
     </div>
     <div class="curriculum-level-group">
@@ -964,7 +968,7 @@ public final class RepayFlowCoordinator: Coordinator {
       }
     } catch (e) {}
 
-    const sectionIds = ['sec-title', 'sec-obj', 'sec-prereq', 'sec-simple', 'sec-actual', 'sub-1-domain-onboarding-peluncuran', 'sub-2-domain-autentikasi-akun', 'sub-3-domain-beranda-pengajuan-pinjaman', 'sub-4-domain-verifikasi-identitas-e-kyc', 'sub-5-domain-tagihan-pelunasan', 'sub-6-domain-profil-pusat-bantuan-mine', 'sub-7-domain-utility-debugging', 'sec-walkthrough', 'sec-why', 'sec-example', 'sec-mistakes', 'sec-check', 'sec-business-essentials', 'sec-completion', 'sub-solid', 'sub-blueprint', 'sub-quiz'];
+    const sectionIds = ['sec-title', 'sec-obj', 'sec-prereq', 'sec-simple', 'sec-actual', 'sub-1-domain-onboarding-peluncuran', 'sub-2-domain-autentikasi-akun', 'sub-3-domain-beranda-pengajuan-pinjaman', 'sub-4-domain-verifikasi-identitas-e-kyc', 'sub-5-domain-tagihan-pelunasan', 'sub-6-domain-profil-pusat-bantuan-mine', 'sub-7-domain-utility-debugging', 'sec-walkthrough', 'sec-why', 'sec-example', 'sec-mistakes', 'sec-check', 'sec-completion', 'sec-k-completion-criteria', 'sub-solid', 'sub-blueprint', 'sub-quiz'];
     const tocLinks = document.querySelectorAll('.toc-tree-link');
 
     window.addEventListener('scroll', () => {
@@ -1085,10 +1089,11 @@ public final class RepayFlowCoordinator: Coordinator {
   }
 </script>
 
-<!-- Chiron Annotations & Multi-IDE Launcher Engine -->
+<!-- Chiron Annotations, Page Markers & Multi-IDE Launcher Engine -->
 <script src="../../../.assets/chiron-client.js"></script>
 <script src="../../../.assets/chiron-ide-launcher.js"></script>
 <script src="../../../.assets/chiron-annotations.js"></script>
+<script src="../../../.assets/chiron-page-markers.js"></script>
 
 </body>
 </html>

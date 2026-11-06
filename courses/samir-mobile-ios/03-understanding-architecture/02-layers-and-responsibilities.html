@@ -274,56 +274,47 @@ lazy var bankPresenter: IDAuthBankPresenter = { [unowned self] in
 <div class="doc-subpoint-block" id="item-a-kontrak-input-output-loanconfirmviewmodeltype">
 <h5>A. Kontrak Input-Output (<code>LoanConfirmViewModelType</code>)</h5>
 <p>Arsitektur ViewModel memisahkan secara tegas antara aksi pengguna (<em>Input</em>) dan state UI (<em>Output</em>):</p>
-<ul class="viewmodel-contract-list">
-<li>
-  <strong><code>LoanConfirmViewModelInput</code></strong>:
-  <p>Menggunakan <code>PublishSubject</code> untuk menerima event UI: <code>confirmTap</code>, <code>selectCoupon</code>, <code>selectProduct</code>, <code>toggleTermsAgreement</code>, <code>refreshTrial</code>, <code>submitCycleLoanOrder</code>.</p>
-  <div class="callout best-practice">
-    <div class="callout-title">💡 Mengapa Menggunakan <code>PublishSubject</code> untuk Input?</div>
-    <ol>
-      <li><strong>Karakteristik Zero-Buffer</strong>: <code>PublishSubject</code> hanya memancarkan event baru ke subscriber yang sedang aktif saat event terjadi, tanpa menyimpan riwayat (<em>no initial/replay cache</em>).</li>
-      <li><strong>Aksi Pengguna adalah Transient Event</strong>: Interaksi seperti ketukan tombol (<code>confirmTap</code>) atau toggle persetujuan adalah kejadian sesaat, bukan status permanen.</li>
-      <li><strong>Pencegahan Pemicuan Hantu (<em>Ghost Triggers</em>)</strong>: Berbeda dari <code>BehaviorSubject</code> / <code>BehaviorRelay</code> yang selalu mengingat 1 nilai terakhir. Jika <code>confirmTap</code> menggunakan <code>BehaviorSubject</code>, maka setiap kali ada observer baru yang binding (misal layar dibuka kembali atau orientasi layar berubah), event ketukan terakhir akan langsung dipancarkan ulang secara otomatis—yang bisa memicu pengajuan pinjaman ganda tanpa sentuhan pengguna!</li>
-    </ol>
-    <div class="callout-subheading" style="margin-top: 1rem; padding-top: 0.75rem; border-top: 1px dashed rgba(255,255,255,0.15);">
-      <p><strong>🔬 Cara Kerja Teknikal di Balik Layar (Under-the-Hood Mechanics):</strong></p>
-      <ul>
-        <li><strong>Struktur Data Internal</strong>: Di dalam source code RxSwift, <code>PublishSubject</code> menyimpan subscriber dalam sebuah koleksi thread-safe <code>_observers = Bag&lt;AnyObserver&lt;Element&gt;&gt;()</code>. Yang terpenting: class ini <strong>sama sekali tidak memiliki variabel penyimpan nilai</strong> (tidak ada <code>_value</code> seperti pada <code>BehaviorSubject</code>, dan tidak ada antrean array seperti pada <code>ReplaySubject</code>).</li>
-        <li><strong>Saat <code>subscribe()</code></strong>: Observer baru hanya didaftarkan ke dalam <code>Bag</code>. Tidak ada event yang dipancarkan sama sekali saat inisialisasi langganan.</li>
-        <li><strong>Saat <code>confirmTap.onNext(())</code> Dipanggil</strong>:
-          <ol style="margin-top: 0.35rem;">
-            <li>Memperoleh kunci thread via <code>RecursiveLock()</code>.</li>
-            <li>Mengambil snapshot dari subscriber yang aktif di dalam <code>Bag</code>.</li>
-            <li>Melepas kunci lock dan mengeksekusi perulangan sinkron: <code>for observer in observers { observer.on(.next(value)) }</code>.</li>
-            <li>Begitu seluruh subscriber menerima event, objek event langsung <strong>dilepas dan dibersihkan dari memori</strong> tanpa meninggalkan residu buffer apa pun.</li>
-          </ol>
-        </li>
-        <li><strong>Jembatan Imperatif ke Reaktif</strong>: <code>PublishSubject</code> bertindak sebagai adaptor yang mengubah pemanggilan fungsi imperatif UIKit (misal <code>@objc func confirmButtonTapped()</code>) menjadi aliran reaktif deklaratif (<code>confirmTap.withLatestFrom(...)</code>) dengan isolasi memori yang steril.</li>
-      </ul>
-    </div>
-  </div>
-</li>
-<li>
-  <strong><code>LoanConfirmViewModelOutput</code></strong>:
-  <p>Menggunakan <strong><code>Driver&lt;T&gt;</code></strong> untuk aliran data yang diobservasi oleh View: <code>isLoading</code>, <code>error</code>, <code>loanData</code>, <code>selectedCoupon</code>, <code>trialResult</code>, <code>canSubmit</code>, <code>showIncomeUpdate</code>.</p>
-  <div class="callout best-practice">
-    <div class="callout-title">💡 Mengapa Menggunakan <code>Driver&lt;T&gt;</code> untuk Output?</div>
-    <ol>
-      <li><strong>Jaminan Main Thread</strong>: Dipastikan berjalan di <code>MainScheduler.instance</code>. Developer tidak perlu khawatir terjadi UI glitch atau crash UIKit akibat pembaruan dari thread latar belakang.</li>
-      <li><strong>Tidak Pernah Mengirim Error (<code>Never Errors</code>)</strong>: Stream <code>Observable</code> standar akan mati permanen jika terjadi error uncaught (misal parsing gagal). <code>Driver</code> mewajibkan penanganan error saat konversi (<code>asDriver(onErrorJustReturn: ...)</code>), sehingga stream tidak akan putus dan UI tidak akan membeku (<em>freeze</em>).</li>
-      <li><strong>Sharing Replay Otomatis</strong>: Memiliki sifat <code>share(replay: 1, scope: .whileConnected)</code> bawaan. Multiple subscription tidak memicu duplikasi network call.</li>
-    </ol>
-    <div class="callout-subheading" style="margin-top: 1rem; padding-top: 0.75rem; border-top: 1px dashed rgba(255,255,255,0.15);">
-      <p><strong>Alternatif Selain <code>Driver&lt;T&gt;</code>:</strong></p>
-      <ul>
-        <li><strong><code>Signal&lt;T&gt;</code> (RxCocoa)</strong>: Serupa dengan <code>Driver</code> (Main Thread & Never Error), namun <code>Signal</code> <strong>tidak mereplay</strong> nilai terakhir. Sangat ideal untuk <em>one-off UI actions</em> seperti menampilkan Alert/Toast atau memicu transisi layar.</li>
-        <li><strong><code>Observable&lt;T&gt;</code> Manual</strong>: Bisa menggunakan <code>Observable</code> biasa, tetapi wajib menulis boilerplate manual: <code>.observe(on: MainScheduler.instance).catchAndReturn(...).share(replay: 1)</code>. Ini rawan <em>human error</em> jika ada tim yang lupa.</li>
-        <li><strong>Modern Swift Concurrency</strong>: Di iOS modern (iOS 15+), alternatif first-party tanpa library eksternal adalah kombinasi <code>@MainActor</code> class dengan <code>AsyncStream&lt;T&gt;</code> atau Combine <code>@Published</code>.</li>
-      </ul>
-    </div>
-  </div>
-</li>
+<ul>
+<li><strong><code>LoanConfirmViewModelInput</code></strong>:
+</li></ul>
+<p>Menggunakan <code>PublishSubject</code> untuk menerima event UI: <code>confirmTap</code>, <code>selectCoupon</code>, <code>selectProduct</code>, <code>toggleTermsAgreement</code>, <code>refreshTrial</code>, <code>submitCycleLoanOrder</code>.</p>
+<div class="callout best-practice"><p><strong>Mengapa Menggunakan <code>PublishSubject</code> untuk Input?</strong></p>
+<ol>
+<li><strong>Karakteristik Zero-Buffer</strong>: <code>PublishSubject</code> hanya memancarkan event baru ke subscriber yang sedang aktif saat event terjadi, tanpa menyimpan riwayat (<em>no initial/replay cache</em>).</li>
+<li><strong>Aksi Pengguna adalah Transient Event</strong>: Interaksi seperti ketukan tombol (<code>confirmTap</code>) atau toggle persetujuan adalah kejadian sesaat, bukan status permanen.</li>
+<li>*<em>Pencegahan Pemicuan Hantu (</em>Ghost Triggers<em>)</em>*: Berbeda dari <code>BehaviorSubject</code> / <code>BehaviorRelay</code> yang selalu mengingat 1 nilai terakhir. Jika <code>confirmTap</code> menggunakan <code>BehaviorSubject</code>, maka setiap kali ada observer baru yang binding (misal layar dibuka kembali atau orientasi layar berubah), event ketukan terakhir akan langsung dipancarkan ulang secara otomatis—yang bisa memicu pengajuan pinjaman ganda tanpa sentuhan pengguna!</li>
+</ol>
+<p><strong>🔬 Cara Kerja Teknikal di Balik Layar (Under-the-Hood Mechanics):</strong></p>
+<ul>
+<li><strong>Struktur Data Internal</strong>: Di dalam source code RxSwift, <code>PublishSubject</code> menyimpan subscriber dalam sebuah koleksi thread-safe <code>_observers = Bag&lt;AnyObserver&lt;Element&gt;&gt;()</code>. Yang terpenting: class ini <strong>sama sekali tidak memiliki variabel penyimpan nilai</strong> (tidak ada <code>_value</code> seperti pada <code>BehaviorSubject</code>, dan tidak ada antrean array seperti pada <code>ReplaySubject</code>).</li>
+<li><strong>Saat <code>subscribe()</code></strong>: Observer baru hanya didaftarkan ke dalam <code>Bag</code>. Tidak ada event yang dipancarkan sama sekali saat inisialisasi langganan.</li>
+<li><strong>Saat <code>confirmTap.onNext(())</code> Dipanggil</strong>:</li>
 </ul>
+<ol>
+<li>Memperoleh kunci thread via <code>RecursiveLock()</code>.</li>
+<li>Mengambil snapshot dari subscriber yang aktif di dalam <code>Bag</code>.</li>
+<li>Melepas kunci lock dan mengeksekusi perulangan sinkron: <code>for observer in observers { observer.on(.next(value)) }</code>.</li>
+<li>Begitu seluruh subscriber menerima event, objek event langsung <strong>dilepas dan dibersihkan dari memori</strong> tanpa meninggalkan residu buffer apa pun.</li>
+</ol>
+<ul>
+<li><strong>Jembatan Imperatif ke Reaktif</strong>: <code>PublishSubject</code> bertindak sebagai adaptor yang mengubah pemanggilan fungsi imperatif UIKit (misal <code>@objc func confirmButtonTapped()</code>) menjadi aliran reaktif deklaratif (<code>confirmTap.withLatestFrom(...)</code>) dengan isolasi memori yang steril.</li>
+</ul></div>
+<ul>
+<li><strong><code>LoanConfirmViewModelOutput</code></strong>:
+</li></ul>
+<p>Menggunakan <strong><code>Driver&lt;T&gt;</code></strong> untuk aliran data yang diobservasi oleh View: <code>isLoading</code>, <code>error</code>, <code>loanData</code>, <code>selectedCoupon</code>, <code>trialResult</code>, <code>canSubmit</code>, <code>showIncomeUpdate</code>.</p>
+<div class="callout best-practice"><p><strong>Mengapa Menggunakan <code>Driver&lt;T&gt;</code> untuk Output?</strong></p>
+<ol>
+<li><strong>Jaminan Main Thread</strong>: Dipastikan berjalan di <code>MainScheduler.instance</code>. Developer tidak perlu khawatir terjadi UI glitch atau crash UIKit akibat pembaruan dari thread latar belakang.</li>
+<li><strong>Tidak Pernah Mengirim Error (<code>Never Errors</code>)</strong>: Stream <code>Observable</code> standar akan mati permanen jika terjadi error uncaught (misal parsing gagal). <code>Driver</code> mewajibkan penanganan error saat konversi (<code>asDriver(onErrorJustReturn: ...)</code>), sehingga stream tidak akan putus dan UI tidak akan membeku (<em>freeze</em>).</li>
+<li><strong>Sharing Replay Otomatis</strong>: Memiliki sifat <code>share(replay: 1, scope: .whileConnected)</code> bawaan.</li>
+</ol>
+<p><strong>Alternatif Selain <code>Driver&lt;T&gt;</code></strong>:</p>
+<ul>
+<li><strong><code>Signal&lt;T&gt;</code> (RxCocoa)</strong>: Serupa dengan <code>Driver</code> (Main Thread & Never Error), namun <code>Signal</code> <strong>tidak mereplay</strong> nilai terakhir. Sangat ideal untuk <em>one-off UI actions</em> seperti menampilkan Alert/Toast atau memicu transisi layar.</li>
+<li><strong><code>Observable&lt;T&gt;</code> Manual</strong>: Bisa menggunakan <code>Observable</code> biasa, tetapi wajib menulis boilerplate manual: <code>.observe(on: MainScheduler.instance).catchAndReturn(...).share(replay: 1)</code>. Ini rawan <em>human error</em> jika ada tim yang lupa.</li>
+<li><strong>Modern Swift Concurrency</strong>: Di iOS modern (iOS 15+), alternatif first-party tanpa library eksternal adalah kombinasi <code>@MainActor</code> class dengan <code>AsyncStream&lt;T&gt;</code> atau Combine <code>@Published</code>.</li>
+</ul></div>
 </div>
 <div class="doc-subpoint-block" id="item-b-kapan-memakai-subscribe-dan-kapan-memakai-drive">
 <h5>B. Kapan Memakai <code>subscribe</code> dan Kapan Memakai <code>drive</code>?</h5>
@@ -1304,10 +1295,11 @@ public final class AppSessionManager: SessionProvider {
   }
 </script>
 
-<!-- Chiron Annotations & Multi-IDE Launcher Engine -->
+<!-- Chiron Annotations, Page Markers & Multi-IDE Launcher Engine -->
 <script src="../../../.assets/chiron-client.js"></script>
 <script src="../../../.assets/chiron-ide-launcher.js"></script>
 <script src="../../../.assets/chiron-annotations.js"></script>
+<script src="../../../.assets/chiron-page-markers.js"></script>
 
 </body>
 </html>

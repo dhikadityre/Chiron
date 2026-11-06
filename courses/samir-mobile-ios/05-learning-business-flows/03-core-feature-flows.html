@@ -185,12 +185,15 @@ sequenceDiagram
     </div>
   </div>
 </div>
-<div class="doc-subpoint-block" id="item-rincian-teknis-per-step">
-<h5>Rincian Teknis Per Step:</h5>
+<div class="doc-subpoint-block" id="item-rincian-teknis-url-navigasi-per-step">
+<h5>Rincian Teknis & URL Navigasi Per Step:</h5>
+<p>Setiap tahapan KYC dipicu secara modular melalui <code>IDRouterManager</code> menggunakan URL Scheme resmi dari <a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/learn/iOS-Arch/ios/IDSamirLoan/Application/SamirRouterModule/Classes/IDRouterConstants.swift" target="_blank" rel="noopener noreferrer">🦊 <code>IDRouterConstants.swift</code> <span class="branch-tag">learn/iOS-Arch</span> ↗</a>:</p>
 <ol>
 <li><strong>Step 1 — OCR KTP (<code>IDNewOCRViewController</code>)</strong>:
 <ul>
-<li><em>Tindakan</em>: Membuka kamera dengan overlay panduan kartu KTP.
+<li><em>Router URL</em>: <code>samir://auth/identity</code> (<code>IDRouterSchemeConstants.Auth.identity.rawValue</code>)
+</li>
+<li><em>Tindakan</em>: Membuka kamera dengan overlay panduan kartu KTP fisik.
 </li>
 <li><em>Validasi</em>: Pemeriksaan blur dan pantulan cahaya (<code>CZCheckData</code>).
 </li>
@@ -201,6 +204,8 @@ sequenceDiagram
 </li>
 <li><strong>Step 2 — Data Pribadi (<code>IDNewAuthBasicViewController</code>)</strong>:
 <ul>
+<li><em>Router URL</em>: <code>samir://auth/personinfo</code> (<code>IDRouterSchemeConstants.Auth.personInfo.rawValue</code>)
+</li>
 <li><em>Tindakan</em>: Mengisi form picker tingkat pendidikan, agama, dan provinsi/kota/kecamatan.
 </li>
 <li><em>Validasi</em>: Usia legal peminjam wajib berada dalam rentang 18–60 tahun (<code>wetherAgeInLegalRange</code>).
@@ -210,6 +215,8 @@ sequenceDiagram
 </li>
 <li><strong>Step 3 — Pekerjaan (<code>IDNewAuthJobViewController</code>)</strong>:
 <ul>
+<li><em>Router URL</em>: <code>samir://auth/careerInfo</code> (<code>IDRouterSchemeConstants.Auth.careerInfo.rawValue</code>)
+</li>
 <li><em>Tindakan</em>: Memilih jenis pekerjaan (Karyawan Swasta, PNS, Wiraswasta), lama bekerja, dan rentang pendapatan.
 </li>
 <li><em>Endpoint</em>: <code>customer/renewMemInfo</code>.
@@ -217,6 +224,8 @@ sequenceDiagram
 </li>
 <li><strong>Step 4 — Kontak Darurat (<code>IDNewAuthContactViewController</code>)</strong>:
 <ul>
+<li><em>Router URL</em>: <code>samir://auth/contacts</code> (<code>IDRouterSchemeConstants.Auth.contacts.rawValue</code>)
+</li>
 <li><em>Tindakan</em>: Memasukkan 2 nomor telepon darurat keluarga/pasangan.
 </li>
 <li><em>Validasi</em>: Nomor tidak boleh sama dengan nomor login pengguna dan kedua kontak tidak boleh identik.
@@ -224,6 +233,8 @@ sequenceDiagram
 </li>
 <li><strong>Step 5 — Ikat Rekening Bank (<code>IDNewBankViewController</code>)</strong>:
 <ul>
+<li><em>Router URL</em>: <code>samir://auth/bankcard</code> (<code>IDRouterSchemeConstants.Auth.bankCard.rawValue</code>) <em>(atau <code>samir://auth/changeCard</code> untuk pergantian)</em>
+</li>
 <li><em>Tindakan</em>: Mengambil daftar bank mitra via <code>bankCard/ynBankList</code>.
 </li>
 <li><em>Validasi Kritis</em>: Backend memvalidasi apakah nama pemilik rekening bank sesuai dengan nama pada e-KTP. Jika berbeda, proses ditolak (<em>Anti-Fraud / Anti-Money Laundering Rule</em>).
@@ -233,11 +244,14 @@ sequenceDiagram
 </li>
 <li><strong>Step 6 — Verifikasi Wajah Liveness (<code>IDAuthLiveViewController</code>)</strong>:
 <ul>
+<li><em>Router URL</em>: <code>samir://auth/face</code> (<code>IDRouterSchemeConstants.Auth.face.rawValue</code>)
+</li>
 <li><em>Tindakan</em>: Mengambil token lisensi via <code>auth/ticket/v1/generate-token</code>, lalu mengaktifkan modul kamera deteksi gerakan wajah vendor (AAILiveness).
 </li>
 <li><em>Endpoint</em>: <code>comment/upload/living</code> dan <code>comment/liveness/decision</code>.
 </li></ul>
 </li></ol>
+<div class="table-container"><table class="data-table"><thead><tr><th>Step</th><th>Tahap KYC</th><th>Skema Router URL</th><th>Target Controller</th></tr></thead><tbody><tr><td><strong>1</strong></td><td>OCR e-KTP</td><td><code>samir://auth/identity</code></td><td><code>IDNewOCRViewController</code></td></tr><tr><td><strong>2</strong></td><td>Data Pribadi</td><td><code>samir://auth/personinfo</code></td><td><code>IDNewAuthBasicViewController</code></td></tr><tr><td><strong>3</strong></td><td>Data Pekerjaan</td><td><code>samir://auth/careerInfo</code></td><td><code>IDNewAuthJobViewController</code></td></tr><tr><td><strong>4</strong></td><td>Kontak Darurat</td><td><code>samir://auth/contacts</code></td><td><code>IDNewAuthContactViewController</code></td></tr><tr><td><strong>5</strong></td><td>Rekening Bank</td><td><code>samir://auth/bankcard</code></td><td><code>IDNewBankViewController</code></td></tr><tr><td><strong>Alt</strong></td><td>Ganti Rekening</td><td><code>samir://auth/changeCard</code></td><td><code>IDNewBankViewController</code></td></tr><tr><td><strong>6</strong></td><td>Liveness Face</td><td><code>samir://auth/face</code></td><td><code>IDAuthLiveViewController</code></td></tr><tr><td><strong>Pasca</strong></td><td>Nilai Kredit</td><td><code>samir://loan/creditAssess</code></td><td><code>IDQuatoAssessViewController</code></td></tr><tr><td><strong>Pasca</strong></td><td>Kontrak Pinjaman</td><td><code>samir://loan/confirm</code></td><td><code>LoanConfirmViewController_Rx</code></td></tr></tbody></table></div>
 </div>
 <div id="sub-fitur-inti-2-penilaian-kuota-kredit-polling-status-credit-assess" class="doc-subsection">
 <h4>FITUR INTI 2: Penilaian Kuota Kredit & Polling Status (Credit Assess)</h4>
@@ -1244,10 +1258,11 @@ public final class DefaultCalculateRepaymentUseCase: CalculateRepaymentUseCase {
   }
 </script>
 
-<!-- Chiron Annotations & Multi-IDE Launcher Engine -->
+<!-- Chiron Annotations, Page Markers & Multi-IDE Launcher Engine -->
 <script src="../../../.assets/chiron-client.js"></script>
 <script src="../../../.assets/chiron-ide-launcher.js"></script>
 <script src="../../../.assets/chiron-annotations.js"></script>
+<script src="../../../.assets/chiron-page-markers.js"></script>
 
 </body>
 </html>
