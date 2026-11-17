@@ -1,0 +1,52 @@
+{
+  "course": "samir-mobile-ios",
+  "last_synced_at": "2026-11-09T14:15:00+07:00",
+  "sync_title": "Sinkronisasi branch chore/iOS-Docs-DA dengan main (v1.3.8-iOS & iOS 15.0)",
+  "sync_commit": "e5b7352",
+  "updated_pages": {
+    "00-learning-roadmap.html": {
+      "tag": "Silabus Diperbarui",
+      "summary": "Penambahan modul navigasi 05 — Arsitektur Hybrid TabBar & Flutter Persistent Host ke peta belajar Level 4."
+    },
+    "01-project-foundation/01-application-overview.html": {
+      "tag": "Target iOS 15 & PRODTEST",
+      "summary": "Pembaruan deployment target ke iOS 15.0+, penambahan kondisi kompilasi PRODTEST di arsitektur Tiga Serangkai, dan penyesuaian walkthrough."
+    },
+    "01-project-foundation/03-technology-stack-and-build.html": {
+      "tag": "Upgrade SDK & Pods",
+      "summary": "Upgrade AppsFlyerFramework 7.0.2, Tingyun 2.17.9, pencopotan CocoaPods TrustDecision, dan skema build PRODTEST."
+    },
+    "02-understanding-app-startup/03-startup-sequence-and-initial-routing.html": {
+      "tag": "Urutan 11 Bootstrapping",
+      "summary": "Penyelarasan urutan eksekusi aktual didFinishLaunchingWithOptions (AppsFlyer DeepLink & Points Report dijalankan lebih awal) dan integrasi IDScreenCaptureWarningManager."
+    },
+    "02-understanding-app-startup/04-czmodulemanager-deep-dive.html": {
+      "tag": "Sinkronisasi Baris Kode",
+      "summary": "Pembaruan nomor baris acuan pada LoanConfirmService (#L964), IDCodeViewController (#L451), dan penanganan pending deeplink pada splash countdown."
+    },
+    "04-understanding-navigation/05-hybrid-tabbar-navigation.html": {
+      "tag": "Modul Baru",
+      "summary": "Arsitektur Single Persistent Flutter Host di bawah UITabBar, pembagian tab Native vs Flutter, dan sinkronisasi route chrome."
+    },
+    "05-learning-business-flows/03-core-feature-flows.html": {
+      "tag": "Dual Benefit Style B",
+      "summary": "Pola A/B test paket keuntungan VIP (Style B) di konfirmasi pinjaman, komponen LoanBenefitCouponReminderView, dan sel repaid Beranda baru."
+    },
+    "05-learning-business-flows/04-cross-feature-journeys.html": {
+      "tag": "Web Caching & JSBridge",
+      "summary": "JSBridge clearAccountCache untuk logout via Web H5, dan pembaruan arsitektur caching useProtocolCachePolicy dengan validasi ETag & Last-Modified."
+    },
+    "06-understanding-data-and-dependencies/01-dependency-catalog.html": {
+      "tag": "Katalog Dependensi",
+      "summary": "Dokumentasi breaking change AppsFlyer 7.0.2 (AppsFlyerDeepLinkDelegate & sessionReadyListener), Tingyun 2.17.9, dan removal TrustDecision."
+    },
+    "06-understanding-data-and-dependencies/05-native-flutter-integration.html": {
+      "tag": "FChannel Baru",
+      "summary": "Penambahan method platform channel logout dan handleLoginError pada samir_native_channel."
+    },
+    "README.html": {
+      "tag": "Indeks Silabus",
+      "summary": "Penyelarasan struktur kurikulum Level 4 dengan 5 modul navigasi lengkap."
+    }
+  }
+}

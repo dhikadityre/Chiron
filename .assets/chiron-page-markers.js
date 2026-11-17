@@ -34,7 +34,8 @@
     importants: []
   };
 
-  let activeDrawerMarkerFilter = 'all'; // 'all' | 'fav' | 'imp' | 'bmk'
+  let courseUpdates = (typeof window !== 'undefined' && window.CHIRON_COURSE_UPDATES) ? window.CHIRON_COURSE_UPDATES : null;
+  let activeDrawerMarkerFilter = 'all'; // 'all' | 'updated' | 'fav' | 'imp' | 'bmk'
   const broadcastChan = (typeof BroadcastChannel !== 'undefined') ? new BroadcastChannel('chiron_course_markers') : null;
 
   /* ============================================================================
@@ -56,6 +57,22 @@
       currentCourseId = 'default';
     }
     activeMarkers.course = currentCourseId;
+
+    if (!courseUpdates && typeof window !== 'undefined' && window.CHIRON_COURSE_UPDATES) {
+      courseUpdates = window.CHIRON_COURSE_UPDATES;
+    }
+  }
+
+  function isPageUpdated(targetPath) {
+    if (!courseUpdates || !courseUpdates.updated_pages) return false;
+    const clean = targetPath.replace(/^\/?courses\/[^\/]+\//, '').replace(/^\//, '');
+    return Boolean(courseUpdates.updated_pages[clean] || courseUpdates.updated_pages[targetPath]);
+  }
+
+  function getPageUpdateInfo(targetPath) {
+    if (!courseUpdates || !courseUpdates.updated_pages) return null;
+    const clean = targetPath.replace(/^\/?courses\/[^\/]+\//, '').replace(/^\//, '');
+    return courseUpdates.updated_pages[clean] || courseUpdates.updated_pages[targetPath] || null;
   }
 
   function normalizeLessonPath(hrefOrPath) {
@@ -136,6 +153,7 @@
       filterBar.className = 'curriculum-marker-filters';
       filterBar.innerHTML = `
         <button class="marker-filter-pill active" data-filter="all">Semua</button>
+        <button class="marker-filter-pill pill-updated" data-filter="updated">✨ Diperbarui (<span id="curriculumUpdatedCount">0</span>)</button>
         <button class="marker-filter-pill pill-fav" data-filter="fav">❤️ Favorit (<span id="curriculumFavCount">0</span>)</button>
         <button class="marker-filter-pill pill-imp" data-filter="imp">📌 Penting (<span id="curriculumImpCount">0</span>)</button>
         <button class="marker-filter-pill pill-bmk" data-filter="bmk">🏷️ Bookmark (<span id="curriculumBmkCount">0</span>)</button>
@@ -195,6 +213,19 @@
      ============================================================================ */
 
   async function loadAndRenderMarkers() {
+    if (!courseUpdates) {
+      if (typeof window !== 'undefined' && window.CHIRON_COURSE_UPDATES) {
+        courseUpdates = window.CHIRON_COURSE_UPDATES;
+      } else if (typeof fetch === 'function') {
+        try {
+          const res = await fetch(`courses/${currentCourseId}/course_updates.json`);
+          if (res.ok) {
+            courseUpdates = await res.json();
+          }
+        } catch (e) {}
+      }
+    }
+
     if (window.ChironSync && typeof window.ChironSync.loadCourseMarkers === 'function') {
       try {
         const loaded = await window.ChironSync.loadCourseMarkers(currentCourseId);
@@ -364,6 +395,7 @@
       const isFav = activeMarkers.favourites.includes(targetPath);
       const isImp = activeMarkers.importants.includes(targetPath);
       const isBmk = activeMarkers.bookmark === targetPath;
+      const isUpdated = isPageUpdated(targetPath);
 
       let badgeContainer = tab.querySelector('.chiron-tab-marker-badges');
       if (!badgeContainer) {
@@ -377,7 +409,7 @@
         }
       }
 
-      badgeContainer.innerHTML = buildBadgesHTML(isBmk, isFav, isImp);
+      badgeContainer.innerHTML = buildBadgesHTML(isBmk, isFav, isImp, isUpdated, true);
     });
   }
 
@@ -387,6 +419,7 @@
     const isFav = activeMarkers.favourites.includes(currentRelLessonPath);
     const isImp = activeMarkers.importants.includes(currentRelLessonPath);
     const isBmk = activeMarkers.bookmark === currentRelLessonPath;
+    const isUpdated = isPageUpdated(currentRelLessonPath);
 
     rootNodes.forEach(node => {
       const row = node.querySelector('.toc-node-row');
@@ -398,7 +431,7 @@
         badgeContainer.className = 'chiron-toc-marker-badges';
         row.appendChild(badgeContainer);
       }
-      badgeContainer.innerHTML = buildBadgesHTML(isBmk, isFav, isImp);
+      badgeContainer.innerHTML = buildBadgesHTML(isBmk, isFav, isImp, isUpdated, true);
     });
   }
 
@@ -411,11 +444,13 @@
       const isFav = activeMarkers.favourites.includes(targetPath);
       const isImp = activeMarkers.importants.includes(targetPath);
       const isBmk = activeMarkers.bookmark === targetPath;
+      const isUpdated = isPageUpdated(targetPath);
 
       // Mark metadata on element for filtering
       link.dataset.chironFav = isFav ? 'true' : 'false';
       link.dataset.chironImp = isImp ? 'true' : 'false';
       link.dataset.chironBmk = isBmk ? 'true' : 'false';
+      link.dataset.chironUpdated = isUpdated ? 'true' : 'false';
 
       let badgeContainer = link.querySelector('.chiron-drawer-marker-badges');
       if (!badgeContainer) {
@@ -423,13 +458,18 @@
         badgeContainer.className = 'chiron-drawer-marker-badges';
         link.appendChild(badgeContainer);
       }
-      badgeContainer.innerHTML = buildBadgesHTML(isBmk, isFav, isImp);
+      badgeContainer.innerHTML = buildBadgesHTML(isBmk, isFav, isImp, isUpdated, false);
     });
   }
 
-  function buildBadgesHTML(isBmk, isFav, isImp) {
+  function buildBadgesHTML(isBmk, isFav, isImp, isUpdated = false, isCompact = false) {
     let html = '';
-    // Single bookmark is the most primary reader landmark: display first
+    // Display updated badge first as a prominent highlight
+    if (isUpdated) {
+      const text = isCompact ? '✨' : '✨ UPDATED';
+      html += `<span class="marker-pill pill-updated" title="Halaman ini baru saja diperbarui">${text}</span>`;
+    }
+    // Single bookmark is the most primary reader landmark: display next
     if (isBmk) {
       html += `<span class="marker-pill pill-bmk" title="Bookmark Terakhir Dibaca">🏷️</span>`;
     }
@@ -446,22 +486,32 @@
     const favCountEl = document.getElementById('curriculumFavCount');
     const impCountEl = document.getElementById('curriculumImpCount');
     const bmkCountEl = document.getElementById('curriculumBmkCount');
+    const updatedCountEl = document.getElementById('curriculumUpdatedCount');
 
     if (favCountEl) favCountEl.textContent = activeMarkers.favourites.length;
     if (impCountEl) impCountEl.textContent = activeMarkers.importants.length;
     if (bmkCountEl) bmkCountEl.textContent = activeMarkers.bookmark ? 1 : 0;
+    if (updatedCountEl) {
+      const totalUpdated = (courseUpdates && courseUpdates.updated_pages)
+        ? Object.keys(courseUpdates.updated_pages).length
+        : 0;
+      updatedCountEl.textContent = totalUpdated;
+    }
   }
 
   function applyCurriculumFilters() {
     const searchInput = document.getElementById('moduleSearchInput');
-    const query = searchInput ? searchInput.value.toLowerCase().trim() : '';
+    const query = searchInput ? (searchInput.value || '').toLowerCase().trim() : '';
     const links = document.querySelectorAll('.curriculum-drawer .curriculum-item-link');
 
     links.forEach(link => {
-      const textMatch = !query || link.innerText.toLowerCase().includes(query);
+      const text = (link.innerText || link.textContent || '').toLowerCase();
+      const textMatch = !query || text.includes(query);
       let filterMatch = true;
 
-      if (activeDrawerMarkerFilter === 'fav') {
+      if (activeDrawerMarkerFilter === 'updated') {
+        filterMatch = link.dataset.chironUpdated === 'true';
+      } else if (activeDrawerMarkerFilter === 'fav') {
         filterMatch = link.dataset.chironFav === 'true';
       } else if (activeDrawerMarkerFilter === 'imp') {
         filterMatch = link.dataset.chironImp === 'true';
@@ -512,6 +562,11 @@
     toggleBookmark,
     handleJumpToBookmark,
     getMarkers: () => activeMarkers,
+    getCourseUpdates: () => courseUpdates,
+    setCourseUpdates: (updates) => {
+      courseUpdates = updates;
+      renderAllIndicators();
+    },
     refresh: renderAllIndicators
   };
 

@@ -1,7 +1,7 @@
 # SAMIR Mobile SAMIR Mobile iOS Resources
 
 ## Codebase Sources & Branches
-- **Anchor Branch**: `learn/iOS-Arch`
+- **Anchor Branch**: `chore/iOS-Docs-DA`
 - **GitLab Repository**: `http://gitlab.samir.co.id/samir_it/samir-mobile`
 - **Local Path**: `/Users/samir/Documents/Workspace/SAMIR/Mobile/Nexus/samir-mobile-nexus`
 

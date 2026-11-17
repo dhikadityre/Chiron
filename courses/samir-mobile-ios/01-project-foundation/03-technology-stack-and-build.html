@@ -32,7 +32,7 @@
     <!-- Document Tabs Strip (Crossnote Style) -->
     <div class="topbar-tabs-scroll" id="docTabsStrip">
       <a class="doc-tab" href="01-application-overview.html" title="01-application-overview.html">
-        <span class="tab-icon">📄</span> 01-application-overview.html
+        <span class="tab-icon">📄</span> 01-application-overview.html <span class="chiron-tab-marker-badges"><span class="marker-pill pill-updated" title="Halaman ini baru saja diperbarui">✨</span></span>
         <span class="tab-close" onclick="event.preventDefault(); this.parentElement.remove();">×</span>
       </a>
       <a class="doc-tab" href="02-repository-structure.html" title="02-repository-structure.html">
@@ -40,7 +40,7 @@
         <span class="tab-close" onclick="event.preventDefault(); this.parentElement.remove();">×</span>
       </a>
       <a class="doc-tab active" href="#" title="03-technology-stack-and-build.html">
-        <span class="tab-icon">🟢</span> 03-technology-stack-and-build.html
+        <span class="tab-icon">🟢</span> 03-technology-stack-and-build.html <span class="chiron-tab-marker-badges"><span class="marker-pill pill-updated" title="Halaman ini baru saja diperbarui">✨</span></span>
         <span class="tab-close" onclick="event.preventDefault();">×</span>
       </a>
     </div>
@@ -81,7 +81,14 @@
         <span>📚 Modul: <strong>03-technology-stack-and-build</strong></span>
         <span>🎯 Scope: <strong>SAMIR Mobile (iOS Native UIKit & FChannel)</strong></span>
         <span>⏱️ Estimasi: <strong>20 Menit</strong></span>
-        <span>🏷️ Git Branch: <strong>learn/iOS-Arch</strong></span>
+        <span>🏷️ Git Branch: <strong>chore/iOS-Docs-DA</strong></span>
+      </div>
+      <div class="chiron-update-banner">
+        <span class="chiron-update-tag">✨ TERAKHIR DIPERBARUI</span>
+        <div class="chiron-update-desc">
+          <strong>Upgrade SDK &amp; Pods:</strong> Upgrade AppsFlyerFramework 7.0.2, Tingyun 2.17.9, pencopotan CocoaPods TrustDecision, dan skema build PRODTEST.
+          <span class="update-meta">Sinkronisasi branch <code>chore/iOS-Docs-DA</code> (Sinkronisasi branch chore/iOS-Docs-DA dengan main (v1.3.8-iOS &amp; iOS 15.0))</span>
+        </div>
       </div>
     </header>
 
@@ -133,7 +140,7 @@
 <div id="sub-1-technology-stack-dependency-catalog" class="doc-subsection">
 <h4>1. Technology Stack & Dependency Catalog</h4>
 </div>
-<p>Berdasarkan file <a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/learn/iOS-Arch/ios/Podfile" target="_blank" rel="noopener noreferrer">🦊 ios/Podfile <span class="branch-tag">learn/iOS-Arch</span> ↗</a>:</p>
+<p>Berdasarkan file <a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/chore/iOS-Docs-DA/ios/Podfile" target="_blank" rel="noopener noreferrer">🦊 ios/Podfile <span class="branch-tag">chore/iOS-Docs-DA</span> ↗</a>:</p>
 <div class="doc-subpoint-block" id="item-a-foundation-ui-engineering-open-source">
 <h5>A. Foundation & UI Engineering (Open-Source)</h5>
 <div class="table-container"><table class="data-table"><thead><tr><th>Pustaka</th><th>Versi</th><th>Peran Teknis di Proyek</th></tr></thead><tbody><tr><td><strong>SnapKit</strong></td><td><code>5.6.0</code></td><td>DSL Auto Layout deklaratif programatik di seluruh ViewController native.</td></tr><tr><td><strong>Kingfisher</strong></td><td><code>8.6.2</code></td><td>Pemuatan dan caching gambar web asynchronous.</td></tr><tr><td><strong>KakaJSON</strong></td><td><code>~&gt; 1.1.2</code></td><td>Serialisasi dan deserialisasi JSON ke struct/model (<code>kj.model</code>).</td></tr><tr><td><strong>IQKeyboardManagerSwift</strong></td><td><code>7.0.2</code></td><td>Pengelolaan otomatis scroll view agar form input tidak tertutup keyboard.</td></tr><tr><td><strong>R.swift</strong></td><td>Latest</td><td>Kode otomatis strongly-typed untuk aset gambar (<code>R.image.*</code>) dan string.</td></tr><tr><td><strong>MJRefresh</strong></td><td>Latest</td><td>Komponen pull-to-refresh pada tabel dan scroll view.</td></tr><tr><td><strong>lottie-ios</strong></td><td>Latest</td><td>Rendering animasi vektor JSON untuk loading indicator (<code>IDAnimationJson</code>).</td></tr><tr><td><strong>MarqueeLabel</strong></td><td>Latest</td><td>Label teks berjalan untuk pengumuman atau ticker running text.</td></tr><tr><td><strong>FSPagerView</strong></td><td>Latest</td><td>Komponen banner berputar (carousel paging) di halaman Beranda.</td></tr><tr><td><strong>MBProgressHUD</strong></td><td><code>1.2.0</code></td><td>Dialog popup loading (HUD) dan toast pesan singkat.</td></tr><tr><td><strong>Then</strong></td><td><code>2.7.0</code></td><td>Syntactic sugar untuk inisialisasi properti objek secara clean.</td></tr><tr><td><strong>CryptoSwift</strong></td><td><code>1.4.2</code></td><td>Utilitas hashing & kriptografi legacy di beberapa modul pendukung.</td></tr><tr><td><strong>RxSwift & RxCocoa</strong></td><td><code>6.9.0</code></td><td>Pemrograman reaktif fungsional (<strong>khusus digunakan di <code>LoanConfirmModule</code></strong>).</td></tr></tbody></table></div>
@@ -144,12 +151,12 @@
 </div>
 <div class="doc-subpoint-block" id="item-c-vendor-sdks-anti-fraud-closed-source-binary">
 <h5>C. Vendor SDKs & Anti-Fraud (Closed-Source / Binary)</h5>
-<div class="table-container"><table class="data-table"><thead><tr><th>SDK / Framework</th><th>Versi / Sumber</th><th>Peran Kritis</th></tr></thead><tbody><tr><td><strong>LibNetSignGenerator</strong></td><td>Binary <code>.framework</code> lokal di <code>SamirNetworkModule/Frameworks/</code></td><td><strong>Kritis Keamanan</strong>: Menghasilkan tanda tangan request HTTP (<code>sign</code>) menggunakan <code>staticKey</code>.</td></tr><tr><td><strong>TrustDecisionPro</strong></td><td><code>4.3.1.3</code></td><td>Risk profiling & fraud scoring (<code>blackBox</code>).</td></tr><tr><td><strong>TrustDecisionLiveness-Lite</strong></td><td><code>2.5.1</code></td><td>SDK verifikasi gerakan wajah liveness.</td></tr><tr><td><strong>AAILiveness & AAINetwork</strong></td><td>Remote tarball Aliyun OSS (V3.0.7)</td><td>Deteksi liveness & perbandingan wajah Advance AI KYC.</td></tr><tr><td><strong>AppsFlyerFramework</strong></td><td><code>6.17.7</code></td><td>Atribusi pemasaran, instalasi, dan resolusi deep link.</td></tr><tr><td><strong>FirebaseAnalytics & Messaging</strong></td><td><code>11.14.0</code></td><td>Analitik perilaku user dan push notification token (FCM).</td></tr><tr><td><strong>FBSDKCoreKit</strong></td><td><code>18.0.0</code></td><td>SDK Facebook untuk atribusi event & iklan.</td></tr><tr><td><strong>TikTokBusinessSDK</strong></td><td>Latest</td><td>SDK atribusi event instalasi dari iklan TikTok.</td></tr><tr><td><strong>tingyunApp</strong></td><td><code>2.17.7</code></td><td>Application Performance Monitoring (APM) & crash reporting.</td></tr></tbody></table></div>
+<div class="table-container"><table class="data-table"><thead><tr><th>SDK / Framework</th><th>Versi / Sumber</th><th>Peran Kritis</th></tr></thead><tbody><tr><td><strong>LibNetSignGenerator</strong></td><td>Binary <code>.framework</code> lokal di <code>SamirNetworkModule/Frameworks/</code></td><td><strong>Kritis Keamanan</strong>: Menghasilkan tanda tangan request HTTP (<code>sign</code>) menggunakan <code>staticKey</code>.</td></tr><tr><td><strong>AAILiveness & AAINetwork</strong></td><td>Remote tarball Aliyun OSS (V3.0.7)</td><td>Deteksi liveness & perbandingan wajah Advance AI KYC.</td></tr><tr><td><strong>AppsFlyerFramework</strong></td><td><code>7.0.2</code></td><td>Atribusi pemasaran, instalasi, dan resolusi deep link (<code>initialize(devKey:appId:)</code>).</td></tr><tr><td><strong>FirebaseAnalytics & Messaging</strong></td><td><code>11.14.0</code></td><td>Analitik perilaku user dan push notification token (FCM).</td></tr><tr><td><strong>FBSDKCoreKit</strong></td><td><code>18.0.0</code></td><td>SDK Facebook untuk atribusi event & iklan.</td></tr><tr><td><strong>TikTokBusinessSDK</strong></td><td>Latest</td><td>SDK atribusi event instalasi dari iklan TikTok.</td></tr><tr><td><strong>tingyunApp</strong></td><td><code>2.17.9</code></td><td>Application Performance Monitoring (APM) & crash reporting (diperbarui untuk <code>tingyun_flutter_plugin</code>).</td></tr><tr><td><strong>TrustDecision</strong> <em>(Catatan)</em></td><td>Dihapus dari Podfile di v1.3.8</td><td>Sebelumnya menggunakan pod <code>TrustDecisionPro</code> 4.3.1.3 & <code>TrustDecisionLiveness-Lite</code> 2.5.1; kini ditangani via internal manager.</td></tr></tbody></table></div>
 </div>
 <div id="sub-2-xcode-schemes-build-configurations" class="doc-subsection">
 <h4>2. Xcode Schemes & Build Configurations</h4>
 </div>
-<p>Tersedia 4 scheme bersama (shared schemes) di dalam <a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/learn/iOS-Arch/ios/IDSamirLoan.xcodeproj/xcshareddata/xcschemes" target="_blank" rel="noopener noreferrer">🦊 ios/IDSamirLoan.xcodeproj/xcshareddata/xcschemes/ <span class="branch-tag">learn/iOS-Arch</span> ↗</a>:</p>
+<p>Tersedia 4 scheme bersama (shared schemes) di dalam <a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/chore/iOS-Docs-DA/ios/IDSamirLoan.xcodeproj/xcshareddata/xcschemes" target="_blank" rel="noopener noreferrer">🦊 ios/IDSamirLoan.xcodeproj/xcshareddata/xcschemes/ <span class="branch-tag">chore/iOS-Docs-DA</span> ↗</a>:</p>
 
 <div class="mermaid-interactive-card">
   <div class="mermaid-card-toolbar">
@@ -234,9 +241,9 @@ graph TD
 <div class="doc-subpoint-block" id="item-fase-1-pra-proses-environment-app-environmentsh">
 <h5>Fase 1: Pra-proses Environment (<code>app_environment.sh</code>)</h5>
 <ul>
-<li><strong>Lokasi file</strong>: <a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/learn/iOS-Arch/ios/IDSamirLoan/Application/Configuration/Environment/app_environment.sh" target="_blank" rel="noopener noreferrer">🦊 ios/IDSamirLoan/Application/Configuration/Environment/app_environment.sh <span class="branch-tag">learn/iOS-Arch</span> ↗</a>
+<li><strong>Lokasi file</strong>: <a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/chore/iOS-Docs-DA/ios/IDSamirLoan/Application/Configuration/Environment/app_environment.sh" target="_blank" rel="noopener noreferrer">🦊 ios/IDSamirLoan/Application/Configuration/Environment/app_environment.sh <span class="branch-tag">chore/iOS-Docs-DA</span> ↗</a>
 </li>
-<li><strong>Fungsi</strong>: Menghitung jumlah commit git (<code>git rev-list HEAD | wc -l</code>), mengambil tanggal saat ini, dan menghasilkan file header <a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/learn/iOS-Arch/ios/IDSamirLoan/Application/environment_preprocess.h" target="_blank" rel="noopener noreferrer">🦊 ios/IDSamirLoan/Application/environment_preprocess.h <span class="branch-tag">learn/iOS-Arch</span> ↗</a>.
+<li><strong>Fungsi</strong>: Menghitung jumlah commit git (<code>git rev-list HEAD | wc -l</code>), mengambil tanggal saat ini, dan menghasilkan file header <a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/chore/iOS-Docs-DA/ios/IDSamirLoan/Application/environment_preprocess.h" target="_blank" rel="noopener noreferrer">🦊 ios/IDSamirLoan/Application/environment_preprocess.h <span class="branch-tag">chore/iOS-Docs-DA</span> ↗</a>.
 </li>
 <li><strong>Hasil</strong>: Jika mode <code>TEST</code>, nama aplikasi diubah dinamis menjadi <code>Samir &lt;tanggal_hari_ini&gt;</code> sehingga tester dapat membedakan build hari ini dengan build kemarin.
 </li></ul>
@@ -343,7 +350,7 @@ graph TD
 </div>
 <div class="doc-subpoint-block" id="item-a-mengapa-kingfisher-disetel-build-library-for-distribution-no">
 <h5>A. Mengapa Kingfisher Disetel <code>BUILD_LIBRARY_FOR_DISTRIBUTION = &#x27;NO&#x27;</code>?</h5>
-<p>Di baris 91-95 <a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/learn/iOS-Arch/ios/Podfile" target="_blank" rel="noopener noreferrer">🦊 ios/Podfile <span class="branch-tag">learn/iOS-Arch</span> ↗</a>:</p>
+<p>Di baris 91-95 <a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/chore/iOS-Docs-DA/ios/Podfile" target="_blank" rel="noopener noreferrer">🦊 ios/Podfile <span class="branch-tag">chore/iOS-Docs-DA</span> ↗</a>:</p>
 <pre><code class="language-ruby">if target.name == &#x27;Kingfisher&#x27;
   target.build_configurations.each do |config|
     config.build_settings[&#x27;BUILD_LIBRARY_FOR_DISTRIBUTION&#x27;] = &#x27;NO&#x27;
@@ -414,7 +421,7 @@ end</code></pre>
 <ul>
 <li>Di toolbar atas Xcode, pilih scheme <strong><code>TEST</code></strong>.
 </li>
-<li>Pilih destination perangkat: Simulator iPhone 15 / 16 (iOS 14.0+).
+<li>Pilih destination perangkat: Simulator iPhone 15 / 16 (iOS 15.0+).
 </li></ul>
 </li>
 <li><strong>Jalankan Build (Cmd + R)</strong>:
@@ -437,7 +444,7 @@ end</code></pre>
 </section>
 <section id="sec-example" class="doc-section">
 <h3>🔬 G. Practical Example (Studi Kasus Konfigurasi)</h3>
-<p>Perhatikan baris 26–55 di <a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/learn/iOS-Arch/ios/IDSamirLoan/Application/CZSwiftEnviromentLib/Classes/Base/AppEnv.swift" target="_blank" rel="noopener noreferrer">🦊 ios/IDSamirLoan/Application/CZSwiftEnviromentLib/Classes/Base/AppEnv.swift <span class="branch-tag">learn/iOS-Arch</span> ↗</a>:</p>
+<p>Perhatikan baris 26–55 di <a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/chore/iOS-Docs-DA/ios/IDSamirLoan/Application/CZSwiftEnviromentLib/Classes/Base/AppEnv.swift" target="_blank" rel="noopener noreferrer">🦊 ios/IDSamirLoan/Application/CZSwiftEnviromentLib/Classes/Base/AppEnv.swift <span class="branch-tag">chore/iOS-Docs-DA</span> ↗</a>:</p>
 <pre><code class="language-swift">extension AppEnv: AppEnvServiceProtocol {
     var environment: AppEnvironment {
         #if TEST
@@ -626,7 +633,7 @@ public final class AppSessionManager: SessionProvider {
     <!-- Footer -->
     <footer>
       <div>Chiron Codebase Mastery Academy • SAMIR Mobile iOS</div>
-      <div>Anchor Branch: <strong>learn/iOS-Arch</strong></div>
+      <div>Anchor Branch: <strong>chore/iOS-Docs-DA</strong></div>
     </footer>
 
   </main>
@@ -651,7 +658,7 @@ public final class AppSessionManager: SessionProvider {
           <span class="toc-caret" onclick="toggleTocBranch(this)">▾</span>
           <a class="toc-tree-link root-link" href="#sec-title" title="03 — Technology Stack &amp; Build Configuration">
             03 — Technology Stack &amp; Build Configuration
-          </a>
+          </a> <span class="chiron-toc-marker-badges"><span class="marker-pill pill-updated" title="Halaman diperbarui">✨</span></span>
         </div>
         <div class="toc-branch">
           <div class="toc-node-row">
@@ -763,7 +770,7 @@ public final class AppSessionManager: SessionProvider {
         <span class="toc-caret" onclick="toggleTocBranch(this)">▾</span>
         <a class="toc-tree-link root-link" href="#sec-title" onclick="toggleMobileToc()">
           03 — Technology Stack &amp; Build Configuration
-        </a>
+        </a> <span class="chiron-toc-marker-badges"><span class="marker-pill pill-updated" title="Halaman diperbarui">✨</span></span>
       </div>
       <div class="toc-branch">
         <div class="toc-node-row">
@@ -872,155 +879,158 @@ public final class AppSessionManager: SessionProvider {
   <div class="drawer-body" id="curriculumListBody">
     <div class="curriculum-level-group">
       <div class="curriculum-level-title">Level 0: Learning Roadmap</div>
-      <a class="curriculum-item-link" href="../00-learning-roadmap.html">
-        <span>📄</span> Kurikulum &amp; Roadmap Pembelajaran SAMIR iOS
+      <a class="curriculum-item-link" href="../00-learning-roadmap.html" data-chiron-updated="true">
+        <span>📄</span> Kurikulum &amp; Roadmap Pembelajaran SAMIR iOS <span class="chiron-drawer-marker-badges"><span class="marker-pill pill-updated" title="Halaman ini baru saja diperbarui">✨ UPDATED</span></span>
       </a>
     </div>
     <div class="curriculum-level-group">
       <div class="curriculum-level-title">Level 1: Project Foundation</div>
-      <a class="curriculum-item-link" href="../01-project-foundation/01-application-overview.html">
-        <span>📄</span> 01 — Application Overview
+      <a class="curriculum-item-link" href="../01-project-foundation/01-application-overview.html" data-chiron-updated="true">
+        <span>📄</span> 01 — Application Overview <span class="chiron-drawer-marker-badges"><span class="marker-pill pill-updated" title="Halaman ini baru saja diperbarui">✨ UPDATED</span></span>
       </a>
-      <a class="curriculum-item-link" href="../01-project-foundation/02-repository-structure.html">
+      <a class="curriculum-item-link" href="../01-project-foundation/02-repository-structure.html" data-chiron-updated="false">
         <span>📄</span> 02 — Repository Structure
       </a>
-      <a class="curriculum-item-link active" href="#">
-        <span>🟢</span> 03 — Technology Stack &amp; Build Configuration (Sedang Dibaca)
+      <a class="curriculum-item-link active" href="#" data-chiron-updated="true">
+        <span>🟢</span> 03 — Technology Stack &amp; Build Configuration (Sedang Dibaca) <span class="chiron-drawer-marker-badges"><span class="marker-pill pill-updated" title="Halaman ini baru saja diperbarui">✨ UPDATED</span></span>
       </a>
     </div>
     <div class="curriculum-level-group">
       <div class="curriculum-level-title">Level 2: Understanding App Startup</div>
-      <a class="curriculum-item-link" href="../02-understanding-app-startup/01-ios-entry-point.html">
+      <a class="curriculum-item-link" href="../02-understanding-app-startup/01-ios-entry-point.html" data-chiron-updated="false">
         <span>📄</span> 01 — iOS Entry Point
       </a>
-      <a class="curriculum-item-link" href="../02-understanding-app-startup/02-application-lifecycle.html">
+      <a class="curriculum-item-link" href="../02-understanding-app-startup/02-application-lifecycle.html" data-chiron-updated="false">
         <span>📄</span> 02 — Application Lifecycle
       </a>
-      <a class="curriculum-item-link" href="../02-understanding-app-startup/03-startup-sequence-and-initial-routing.html">
-        <span>📄</span> 03 — Startup Sequence &amp; Initial Routing
+      <a class="curriculum-item-link" href="../02-understanding-app-startup/03-startup-sequence-and-initial-routing.html" data-chiron-updated="true">
+        <span>📄</span> 03 — Startup Sequence &amp; Initial Routing <span class="chiron-drawer-marker-badges"><span class="marker-pill pill-updated" title="Halaman ini baru saja diperbarui">✨ UPDATED</span></span>
       </a>
-      <a class="curriculum-item-link" href="../02-understanding-app-startup/04-czmodulemanager-deep-dive.html">
-        <span>📄</span> 04 — CZModuleManager Deep Dive
+      <a class="curriculum-item-link" href="../02-understanding-app-startup/04-czmodulemanager-deep-dive.html" data-chiron-updated="true">
+        <span>📄</span> 04 — CZModuleManager Deep Dive <span class="chiron-drawer-marker-badges"><span class="marker-pill pill-updated" title="Halaman ini baru saja diperbarui">✨ UPDATED</span></span>
       </a>
     </div>
     <div class="curriculum-level-group">
       <div class="curriculum-level-title">Level 3: Understanding Architecture</div>
-      <a class="curriculum-item-link" href="../03-understanding-architecture/01-architecture-overview.html">
+      <a class="curriculum-item-link" href="../03-understanding-architecture/01-architecture-overview.html" data-chiron-updated="false">
         <span>📄</span> 01 — Architecture Overview
       </a>
-      <a class="curriculum-item-link" href="../03-understanding-architecture/02-layers-and-responsibilities.html">
+      <a class="curriculum-item-link" href="../03-understanding-architecture/02-layers-and-responsibilities.html" data-chiron-updated="false">
         <span>📄</span> 02 — Layers &amp; Responsibilities
       </a>
-      <a class="curriculum-item-link" href="../03-understanding-architecture/03-dependency-direction.html">
+      <a class="curriculum-item-link" href="../03-understanding-architecture/03-dependency-direction.html" data-chiron-updated="false">
         <span>📄</span> 03 — Dependency Direction
       </a>
-      <a class="curriculum-item-link" href="../03-understanding-architecture/04-shared-components-and-services.html">
+      <a class="curriculum-item-link" href="../03-understanding-architecture/04-shared-components-and-services.html" data-chiron-updated="false">
         <span>📄</span> 04 — Shared Components &amp; Services
       </a>
     </div>
     <div class="curriculum-level-group">
       <div class="curriculum-level-title">Level 4: Understanding Navigation</div>
-      <a class="curriculum-item-link" href="../04-understanding-navigation/01-feature-inventory.html">
+      <a class="curriculum-item-link" href="../04-understanding-navigation/01-feature-inventory.html" data-chiron-updated="false">
         <span>📄</span> 01 — Feature Inventory
       </a>
-      <a class="curriculum-item-link" href="../04-understanding-navigation/02-navigation-fundamentals.html">
+      <a class="curriculum-item-link" href="../04-understanding-navigation/02-navigation-fundamentals.html" data-chiron-updated="false">
         <span>📄</span> 02 — Navigation Fundamentals
       </a>
-      <a class="curriculum-item-link" href="../04-understanding-navigation/03-complete-navigation-map.html">
+      <a class="curriculum-item-link" href="../04-understanding-navigation/03-complete-navigation-map.html" data-chiron-updated="false">
         <span>📄</span> 03 — Complete Navigation Map
       </a>
-      <a class="curriculum-item-link" href="../04-understanding-navigation/04-navigation-conditions-and-edge-cases.html">
+      <a class="curriculum-item-link" href="../04-understanding-navigation/04-navigation-conditions-and-edge-cases.html" data-chiron-updated="false">
         <span>📄</span> 04 — Navigation Conditions &amp; Edge Cases
+      </a>
+      <a class="curriculum-item-link" href="../04-understanding-navigation/05-hybrid-tabbar-navigation.html" data-chiron-updated="true">
+        <span>📄</span> 05 — Arsitektur Navigasi Hybrid TabBar &amp; Flutter Persistent Host <span class="chiron-drawer-marker-badges"><span class="marker-pill pill-updated" title="Halaman ini baru saja diperbarui">✨ UPDATED</span></span>
       </a>
     </div>
     <div class="curriculum-level-group">
       <div class="curriculum-level-title">Level 5: Learning Business Flows</div>
-      <a class="curriculum-item-link" href="../05-learning-business-flows/01-user-journey-overview.html">
+      <a class="curriculum-item-link" href="../05-learning-business-flows/01-user-journey-overview.html" data-chiron-updated="false">
         <span>📄</span> 01 — User Journey Overview
       </a>
-      <a class="curriculum-item-link" href="../05-learning-business-flows/02-authentication-and-session-flow.html">
+      <a class="curriculum-item-link" href="../05-learning-business-flows/02-authentication-and-session-flow.html" data-chiron-updated="false">
         <span>📄</span> 02 — Authentication &amp; Session Flow
       </a>
-      <a class="curriculum-item-link" href="../05-learning-business-flows/03-core-feature-flows.html">
-        <span>📄</span> 03 — Core Feature Flows
+      <a class="curriculum-item-link" href="../05-learning-business-flows/03-core-feature-flows.html" data-chiron-updated="true">
+        <span>📄</span> 03 — Core Feature Flows <span class="chiron-drawer-marker-badges"><span class="marker-pill pill-updated" title="Halaman ini baru saja diperbarui">✨ UPDATED</span></span>
       </a>
-      <a class="curriculum-item-link" href="../05-learning-business-flows/04-cross-feature-journeys.html">
-        <span>📄</span> 04 — Cross-Feature Journeys
+      <a class="curriculum-item-link" href="../05-learning-business-flows/04-cross-feature-journeys.html" data-chiron-updated="true">
+        <span>📄</span> 04 — Cross-Feature Journeys <span class="chiron-drawer-marker-badges"><span class="marker-pill pill-updated" title="Halaman ini baru saja diperbarui">✨ UPDATED</span></span>
       </a>
-      <a class="curriculum-item-link" href="../05-learning-business-flows/05-production-low-level-flows.html">
+      <a class="curriculum-item-link" href="../05-learning-business-flows/05-production-low-level-flows.html" data-chiron-updated="false">
         <span>📄</span> 05 — Production Low-Level Execution Flows
       </a>
     </div>
     <div class="curriculum-level-group">
       <div class="curriculum-level-title">Level 6: Data &amp; Dependencies</div>
-      <a class="curriculum-item-link" href="../06-understanding-data-and-dependencies/01-dependency-catalog.html">
-        <span>📄</span> 01 — Dependency Catalog
+      <a class="curriculum-item-link" href="../06-understanding-data-and-dependencies/01-dependency-catalog.html" data-chiron-updated="true">
+        <span>📄</span> 01 — Dependency Catalog <span class="chiron-drawer-marker-badges"><span class="marker-pill pill-updated" title="Halaman ini baru saja diperbarui">✨ UPDATED</span></span>
       </a>
-      <a class="curriculum-item-link" href="../06-understanding-data-and-dependencies/02-networking-and-api-flow.html">
+      <a class="curriculum-item-link" href="../06-understanding-data-and-dependencies/02-networking-and-api-flow.html" data-chiron-updated="false">
         <span>📄</span> 02 — Networking &amp; API Flow
       </a>
-      <a class="curriculum-item-link" href="../06-understanding-data-and-dependencies/03-models-and-data-transformation.html">
+      <a class="curriculum-item-link" href="../06-understanding-data-and-dependencies/03-models-and-data-transformation.html" data-chiron-updated="false">
         <span>📄</span> 03 — Models &amp; Data Transformation
       </a>
-      <a class="curriculum-item-link" href="../06-understanding-data-and-dependencies/04-state-management-and-persistence.html">
+      <a class="curriculum-item-link" href="../06-understanding-data-and-dependencies/04-state-management-and-persistence.html" data-chiron-updated="false">
         <span>📄</span> 04 — State Management &amp; Persistence
       </a>
-      <a class="curriculum-item-link" href="../06-understanding-data-and-dependencies/05-native-flutter-integration.html">
-        <span>📄</span> 05 — Native-Flutter Integration
+      <a class="curriculum-item-link" href="../06-understanding-data-and-dependencies/05-native-flutter-integration.html" data-chiron-updated="true">
+        <span>📄</span> 05 — Native-Flutter Integration <span class="chiron-drawer-marker-badges"><span class="marker-pill pill-updated" title="Halaman ini baru saja diperbarui">✨ UPDATED</span></span>
       </a>
     </div>
     <div class="curriculum-level-group">
       <div class="curriculum-level-title">Level 7: Debugging &amp; Maintenance</div>
-      <a class="curriculum-item-link" href="../07-learning-to-debug-and-maintain/01-error-handling.html">
+      <a class="curriculum-item-link" href="../07-learning-to-debug-and-maintain/01-error-handling.html" data-chiron-updated="false">
         <span>📄</span> 01 — Error Handling
       </a>
-      <a class="curriculum-item-link" href="../07-learning-to-debug-and-maintain/02-testing-and-debugging.html">
+      <a class="curriculum-item-link" href="../07-learning-to-debug-and-maintain/02-testing-and-debugging.html" data-chiron-updated="false">
         <span>📄</span> Level 7
       </a>
-      <a class="curriculum-item-link" href="../07-learning-to-debug-and-maintain/03-coupling-and-technical-debt.html">
+      <a class="curriculum-item-link" href="../07-learning-to-debug-and-maintain/03-coupling-and-technical-debt.html" data-chiron-updated="false">
         <span>📄</span> Level 7
       </a>
-      <a class="curriculum-item-link" href="../07-learning-to-debug-and-maintain/04-change-impact-analysis.html">
+      <a class="curriculum-item-link" href="../07-learning-to-debug-and-maintain/04-change-impact-analysis.html" data-chiron-updated="false">
         <span>📄</span> Level 7
       </a>
     </div>
     <div class="curriculum-level-group">
       <div class="curriculum-level-title">Level 8: Reference &amp; Codebase Audit</div>
-      <a class="curriculum-item-link" href="../08-reference/01-codebase-glossary.html">
+      <a class="curriculum-item-link" href="../08-reference/01-codebase-glossary.html" data-chiron-updated="false">
         <span>📄</span> Level 8
       </a>
-      <a class="curriculum-item-link" href="../08-reference/02-source-code-index.html">
+      <a class="curriculum-item-link" href="../08-reference/02-source-code-index.html" data-chiron-updated="false">
         <span>📄</span> Level 8
       </a>
-      <a class="curriculum-item-link" href="../08-reference/03-existing-documentation-audit.html">
+      <a class="curriculum-item-link" href="../08-reference/03-existing-documentation-audit.html" data-chiron-updated="false">
         <span>📄</span> Level 8
       </a>
-      <a class="curriculum-item-link" href="../08-reference/04-open-questions-and-unverified-findings.html">
+      <a class="curriculum-item-link" href="../08-reference/04-open-questions-and-unverified-findings.html" data-chiron-updated="false">
         <span>📄</span> Level 8
       </a>
     </div>
     <div class="curriculum-level-group">
       <div class="curriculum-level-title">Visual Diagrams &amp; Sequence Maps</div>
-      <a class="curriculum-item-link" href="../diagrams/application-startup.html">
+      <a class="curriculum-item-link" href="../diagrams/application-startup.html" data-chiron-updated="false">
         <span>📄</span> Diagram — Alur Peluncuran Aplikasi (Application Startup Sequence)
       </a>
-      <a class="curriculum-item-link" href="../diagrams/architecture-overview.html">
+      <a class="curriculum-item-link" href="../diagrams/architecture-overview.html" data-chiron-updated="false">
         <span>📄</span> Diagram — Ikhtisar Arsitektur (Architecture Overview)
       </a>
-      <a class="curriculum-item-link" href="../diagrams/core-user-journeys.html">
+      <a class="curriculum-item-link" href="../diagrams/core-user-journeys.html" data-chiron-updated="false">
         <span>📄</span> Diagram — Alur Pengguna Utama (Core User Journeys)
       </a>
-      <a class="curriculum-item-link" href="../diagrams/feature-dependencies.html">
+      <a class="curriculum-item-link" href="../diagrams/feature-dependencies.html" data-chiron-updated="false">
         <span>📄</span> Diagram — Dependensi Fitur &amp; Modul (Feature Dependencies)
       </a>
-      <a class="curriculum-item-link" href="../diagrams/navigation-overview.html">
+      <a class="curriculum-item-link" href="../diagrams/navigation-overview.html" data-chiron-updated="false">
         <span>📄</span> Diagram — Peta Navigasi Lengkap (Navigation Overview)
       </a>
     </div>
     <div class="curriculum-level-group">
       <div class="curriculum-level-title">Course Index &amp; Syllabus</div>
-      <a class="curriculum-item-link" href="../README.html">
-        <span>📄</span> SAMIR iOS — Learning Curve &amp; Engineering Guide
+      <a class="curriculum-item-link" href="../README.html" data-chiron-updated="true">
+        <span>📄</span> SAMIR iOS — Learning Curve &amp; Engineering Guide <span class="chiron-drawer-marker-badges"><span class="marker-pill pill-updated" title="Halaman ini baru saja diperbarui">✨ UPDATED</span></span>
       </a>
     </div>
   </div>
@@ -1270,6 +1280,11 @@ public final class AppSessionManager: SessionProvider {
     feedback.innerHTML = '<strong>' + (isCorrect ? '🎉 Jawaban Tepat!' : '❌ Jawaban Salah!') + '</strong> ' + 
       (isCorrect ? explanations[quizId].success : explanations[quizId].danger);
   }
+</script>
+
+<!-- Embed Course Updates Manifest -->
+<script>
+  window.CHIRON_COURSE_UPDATES = {"course": "samir-mobile-ios", "last_synced_at": "2026-11-09T14:15:00+07:00", "sync_title": "Sinkronisasi branch chore/iOS-Docs-DA dengan main (v1.3.8-iOS & iOS 15.0)", "sync_commit": "e5b7352", "updated_pages": {"00-learning-roadmap.html": {"tag": "Silabus Diperbarui", "summary": "Penambahan modul navigasi 05 — Arsitektur Hybrid TabBar & Flutter Persistent Host ke peta belajar Level 4."}, "01-project-foundation/01-application-overview.html": {"tag": "Target iOS 15 & PRODTEST", "summary": "Pembaruan deployment target ke iOS 15.0+, penambahan kondisi kompilasi PRODTEST di arsitektur Tiga Serangkai, dan penyesuaian walkthrough."}, "01-project-foundation/03-technology-stack-and-build.html": {"tag": "Upgrade SDK & Pods", "summary": "Upgrade AppsFlyerFramework 7.0.2, Tingyun 2.17.9, pencopotan CocoaPods TrustDecision, dan skema build PRODTEST."}, "02-understanding-app-startup/03-startup-sequence-and-initial-routing.html": {"tag": "Urutan 11 Bootstrapping", "summary": "Penyelarasan urutan eksekusi aktual didFinishLaunchingWithOptions (AppsFlyer DeepLink & Points Report dijalankan lebih awal) dan integrasi IDScreenCaptureWarningManager."}, "02-understanding-app-startup/04-czmodulemanager-deep-dive.html": {"tag": "Sinkronisasi Baris Kode", "summary": "Pembaruan nomor baris acuan pada LoanConfirmService (#L964), IDCodeViewController (#L451), dan penanganan pending deeplink pada splash countdown."}, "04-understanding-navigation/05-hybrid-tabbar-navigation.html": {"tag": "Modul Baru", "summary": "Arsitektur Single Persistent Flutter Host di bawah UITabBar, pembagian tab Native vs Flutter, dan sinkronisasi route chrome."}, "05-learning-business-flows/03-core-feature-flows.html": {"tag": "Dual Benefit Style B", "summary": "Pola A/B test paket keuntungan VIP (Style B) di konfirmasi pinjaman, komponen LoanBenefitCouponReminderView, dan sel repaid Beranda baru."}, "05-learning-business-flows/04-cross-feature-journeys.html": {"tag": "Web Caching & JSBridge", "summary": "JSBridge clearAccountCache untuk logout via Web H5, dan pembaruan arsitektur caching useProtocolCachePolicy dengan validasi ETag & Last-Modified."}, "06-understanding-data-and-dependencies/01-dependency-catalog.html": {"tag": "Katalog Dependensi", "summary": "Dokumentasi breaking change AppsFlyer 7.0.2 (AppsFlyerDeepLinkDelegate & sessionReadyListener), Tingyun 2.17.9, dan removal TrustDecision."}, "06-understanding-data-and-dependencies/05-native-flutter-integration.html": {"tag": "FChannel Baru", "summary": "Penambahan method platform channel logout dan handleLoginError pada samir_native_channel."}, "README.html": {"tag": "Indeks Silabus", "summary": "Penyelarasan struktur kurikulum Level 4 dengan 5 modul navigasi lengkap."}}};
 </script>
 
 <!-- Chiron Annotations, Page Markers & Multi-IDE Launcher Engine -->

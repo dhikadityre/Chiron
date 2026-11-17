@@ -3,10 +3,12 @@
   "repositories": {
     "samir-mobile": {
       "gitlab_project": "samir_it/samir-mobile",
-      "local_path": "/Users/samir/Documents/Workspace/SAMIR/Mobile/Nexus/samir-mobile-nexus",
-      "default_branch": "learn/iOS-Arch",
+      "local_path": "/Users/samir/Documents/Workspace/SAMIR/Mobile/Develop/samir-mobile-develop",
+      "default_branch": "chore/iOS-Docs-DA",
       "xcode_project_path": "ios/IDSamirLoan.xcworkspace",
       "branch_mappings": {
+        "chore/iOS-Docs-DA": "/Users/samir/Documents/Workspace/SAMIR/Mobile/Develop/samir-mobile-develop",
+        "iOS-Develop": "/Users/samir/Documents/Workspace/SAMIR/Mobile/Develop/samir-mobile-develop",
         "learn/iOS-Arch": "/Users/samir/Documents/Workspace/SAMIR/Mobile/Nexus/samir-mobile-nexus",
         "learn/Flutter-Arch": "/Users/samir/Documents/Workspace/SAMIR/Mobile/Nexus/samir-mobile-nexus",
         "develop": "/Users/samir/Documents/Workspace/SAMIR/Mobile/Develop/samir-mobile-develop",

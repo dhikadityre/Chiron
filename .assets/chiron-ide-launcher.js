@@ -106,7 +106,7 @@
     } else {
       // Fallback heuristics: if afterBlob starts with "learn/...", consider 2 segments as branch
       const parts = afterBlob.split('/');
-      if (parts.length >= 2 && (parts[0] === 'learn' || parts[0] === 'feature' || parts[0] === 'bugfix')) {
+      if (parts.length >= 2 && (parts[0] === 'learn' || parts[0] === 'feature' || parts[0] === 'bugfix' || parts[0] === 'chore')) {
         branch = parts[0] + '/' + parts[1];
         filePath = parts.slice(2).join('/');
       } else if (parts.length >= 1) {
@@ -288,9 +288,11 @@
       repositories: {
         'samir-mobile': {
           gitlab_project: 'samir_it/samir-mobile',
-          local_path: '/Users/samir/Documents/Workspace/SAMIR/Mobile/Nexus/samir-mobile-nexus',
-          default_branch: 'learn/iOS-Arch',
+          local_path: '/Users/samir/Documents/Workspace/SAMIR/Mobile/Develop/samir-mobile-develop',
+          default_branch: 'chore/iOS-Docs-DA',
           branch_mappings: {
+            'chore/iOS-Docs-DA': '/Users/samir/Documents/Workspace/SAMIR/Mobile/Develop/samir-mobile-develop',
+            'iOS-Develop': '/Users/samir/Documents/Workspace/SAMIR/Mobile/Develop/samir-mobile-develop',
             'learn/iOS-Arch': '/Users/samir/Documents/Workspace/SAMIR/Mobile/Nexus/samir-mobile-nexus',
             'develop': '/Users/samir/Documents/Workspace/SAMIR/Mobile/Develop/samir-mobile-develop'
           }

@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>05 — Hybrid TabBar &amp; Flutter Persistent Host | Chiron Academy</title>
+  <title>05 — Arsitektur Navigasi Hybrid TabBar &amp; Flutter Persistent Host | Chiron Academy</title>
   
   <!-- Chiron Base Stylesheet -->
   <link rel="stylesheet" href="../../../.assets/style.css">
@@ -48,7 +48,7 @@
         <span class="tab-close" onclick="event.preventDefault(); this.parentElement.remove();">×</span>
       </a>
       <a class="doc-tab active" href="#" title="05-hybrid-tabbar-navigation.html">
-        <span class="tab-icon">🟢</span> 05-hybrid-tabbar-navigation.html
+        <span class="tab-icon">🟢</span> 05-hybrid-tabbar-navigation.html <span class="chiron-tab-marker-badges"><span class="marker-pill pill-updated" title="Halaman ini baru saja diperbarui">✨</span></span>
         <span class="tab-close" onclick="event.preventDefault();">×</span>
       </a>
     </div>
@@ -81,477 +81,662 @@
     <!-- Header Section -->
     <header id="sec-title">
       <div class="badge">CHIRON CLASSROOM • SAMIR MOBILE iOS</div>
-      <h1>05 — Hybrid TabBar &amp; Flutter Persistent Host</h1>
+      <h1>05 — Arsitektur Navigasi Hybrid TabBar &amp; Flutter Persistent Host</h1>
       <p style="color: var(--text-muted); font-size: 1.05rem; margin-top: 0.25rem;">
-        Arsitektur Single Flutter Engine, Dynamic Chrome Sync &amp; Anti-Race Tab Switching
+        &gt; **Dokumen Modul:** [`05-hybrid-tabbar-navigation.html`](file:///Users/samir/Documents/Workspace/Chiron/courses/samir-m...
       </p>
       <div class="metadata" style="margin-top: 1rem;">
         <span>📚 Modul: <strong>05-hybrid-tabbar-navigation</strong></span>
-        <span>🎯 Scope: <strong>SAMIR Mobile (iOS Native UIKit &amp; Flutter Channel)</strong></span>
-        <span>⏱️ Estimasi: <strong>25 Menit</strong></span>
-        <span>🏷️ Git Branch: <strong>learn/iOS-Arch</strong></span>
+        <span>🎯 Scope: <strong>SAMIR Mobile (iOS Native UIKit & FChannel)</strong></span>
+        <span>⏱️ Estimasi: <strong>20 Menit</strong></span>
+        <span>🏷️ Git Branch: <strong>chore/iOS-Docs-DA</strong></span>
+      </div>
+      <div class="chiron-update-banner">
+        <span class="chiron-update-tag">✨ TERAKHIR DIPERBARUI</span>
+        <div class="chiron-update-desc">
+          <strong>Modul Diperbarui:</strong> Arsitektur Single Persistent Flutter Host di bawah UITabBar, pembagian tab Native vs Flutter, sinkronisasi route chrome, serta deep dive konfigurasi FlutterEngineManager &amp; pubspec invariants.
+          <span class="update-meta">Sinkronisasi branch <code>chore/iOS-Docs-DA</code> (Sinkronisasi branch chore/iOS-Docs-DA dengan main (v1.3.8-iOS &amp; iOS 15.0))</span>
+        </div>
       </div>
     </header>
 
     <!-- BAGIAN 1: DOKUMEN PEMBELAJARAN LENGKAP -->
     <div class="section-banner">
-      <h2>📖 Bagian 1: Dokumen Pembelajaran Lengkap &amp; Alur Nyata</h2>
+      <h2>📖 Bagian 1: Dokumen Pembelajaran Lengkap & Alur Nyata</h2>
       <span class="pill">Core Knowledge</span>
     </div>
 
-    <p>Dokumen ini mengupas secara tuntas arsitektur navigasi hybrid pada SAMIR iOS: bagaimana satu buah <code>FlutterEngine</code> digunakan bersama oleh beberapa tab native (Tagihan dan Saya), bagaimana sinkronisasi visibilitas <code>UITabBar</code> dilakukan secara dinamis, serta perbedaan mendasar antara <code>showRoot</code> dan <code>showPage</code> dalam mencegah layar berkedip (<em>flicker</em>) dan <em>race condition</em>.</p>
-    <p>Status Verifikasi: <code>[Verified]</code> (diverifikasi langsung dari <code>IDMainTabBarController.swift</code>, <code>FlutterEngineManager.swift</code>, <code>FlutterNativeChannel+route.swift</code>, dan <code>flutter_native_route_dispatcher.dart</code>).</p>
+<div class="callout best-practice"><p><strong>Dokumen Modul:</strong> <a class="gitlab-code-link" href="file:///Users/samir/Documents/Workspace/Chiron/courses/samir-mobile-ios/04-understanding-navigation/05-hybrid-tabbar-navigation.html" target="_blank" rel="noopener noreferrer">🦊 <code>05-hybrid-tabbar-navigation.html</code> <span class="branch-tag">chore/iOS-Docs-DA</span> ↗</a></p>
+<p><strong>Modul Kurikulum:</strong> Level 4 — Understanding Navigation</p>
+<p><strong>Target Audiens:</strong> Middle to Senior iOS / Mobile Engineer</p>
+<p><strong>Cakupan Kode:</strong> <code>IDMainTabBarController.swift</code>, <code>FlutterEngineManager.swift</code>, <code>FlutterNativeChannel.swift</code>, <code>FlutterNativeChannel+route.swift</code>, <code>flutter_native_route_dispatcher.dart</code>, <code>native_route_chrome.dart</code>, <code>flutter_root_page.dart</code></p></div>
+<section id="sec-1-ikhtisar-koreksi-konseptual" class="doc-section">
+<h3>📌 1. Ikhtisar & Koreksi Konseptual</h3>
+<p>Di aplikasi SAMIR Mobile iOS, sekilas terlihat seolah-olah Native dan Flutter sama-sama memiliki bottom navigation bar (TabBar). Namun pada implementasi sebenarnya:</p>
+<div class="callout best-practice"><p><strong>Fakta Arsitektur:</strong> <strong>Hanya ada 1 TabBar fisik di layar, yaitu Native <code>UITabBar</code></strong>.</p></div>
+<p>Aplikasi menggunakan pola arsitektur <strong>Single Persistent Flutter Host (Overlay Pattern)</strong>:</p>
+<ul>
+<li><strong><code>UITabBarController</code> Native</strong> bertindak sebagai master container utama dengan 3 tab item:
+<ul>
+<li>Tab 0: <code>IDHomeViewController</code> (<strong>Native UIKit murni</strong>)
+</li>
+<li>Tab 1: <code>IDRepayViewController</code> (<strong>Native Sentinel / Placeholder VC</strong>)
+</li>
+<li>Tab 2: <code>IDMineViewController</code> (<strong>Native Sentinel / Placeholder VC</strong>)
+</li></ul>
+</li>
+<li><strong>Instance Tunggal <code>FlutterEngine</code> & <code>SamirFlutterViewController</code></strong> dijalankan sejak awal aplikasi (<em>prewarmed</em>).
+</li>
+<li>View Flutter tersebut diletakkan di dalam <code>flutterContainerView</code> dan disisipkan di atas view native tetapi <strong>tepat di bawah <code>tabBar</code></strong>:
+</li></ul>
+<pre><code class="language-swift">  view.insertSubview(flutterContainerView, belowSubview: tabBar)
+  view.bringSubviewToFront(tabBar)</code></pre>
+<ul>
+<li>Di sisi Flutter, halamannya tidak merender bottom navigation bar tersendiri, melainkan menampilkan kontainer <code>IndexedStack</code> yang memuat <code>MineHomePage</code> (<code>/mine</code>) dan <code>RepayHomePage</code> (<code>/repay</code>).
+</li></ul>
+</section>
+<section id="sec-2-mengapa-arsitektur-ini-dipilih-tradeoff-analysis" class="doc-section">
+<h3>📌 2. Mengapa Arsitektur Ini Dipilih? (Tradeoff Analysis)</h3>
+<div class="table-container"><table class="data-table"><thead><tr><th>Dimensi</th><th>Pendekatan Multi-Engine (Tab Terpisah)</th><th>Pendekatan Single Persistent Host (SAMIR iOS)</th></tr></thead><tbody><tr><td><strong>Konsumsi Memori (RAM)</strong></td><td>❌ <strong>Boros.</strong> Butuh 2–3 <code>FlutterEngine</code> aktif (~35–45 MB per engine = total > 100 MB).</td><td>✅ <strong>Hemat.</strong> Hanya 1 <code>FlutterEngine</code> dipakai bersama (~35 MB overhead tetap).</td></tr><tr><td><strong>Kecepatan Switch Tab</strong></td><td>⚠️ Lambat jika engine dibuat <em>on-demand</em>, atau boros baterai jika semua standby.</td><td>✅ <strong>Instan.</strong> Flutter hanya mengganti index di <code>IndexedStack</code>.</td></tr><tr><td><strong>Native Look & Feel</strong></td><td>⚠️ Sulit menyelaraskan haptic feedback, safe-area layout, dan animasi tab bar iOS jika dirender di Flutter.</td><td>✅ <strong>100% Native iOS <code>UITabBar</code></strong> dengan transisi native Apple standar.</td></tr><tr><td><strong>Kompleksitas Sinkronisasi</strong></td><td>⚠️ Tiap engine punya isolate Dart terpisah; sinkronisasi state antar-tab sangat rumit.</td><td>⚠️ Butuh koordinasi view geometry (<code>updatePersistentFlutterHostLayout</code>) & bridging router manual.</td></tr></tbody></table></div>
+</section>
+<section id="sec-3-pembedahan-showroot-vs-showpage" class="doc-section">
+<h3>📌 3. Pembedahan <code>showRoot</code> vs <code>showPage</code></h3>
+<p>Dua method ini memiliki tanggung jawab arsitektural yang berbeda secara mendasar:</p>
+<pre><code class="language-swift">                          ┌───────────────────────────┐
+                          │   FlutterEngineManager    │
+                          └─────────────┬─────────────┘
+                                        │
+                 ┌──────────────────────┴──────────────────────┐
+                 ▼                                             ▼
+       showRoot(route, reqId)                      showPage(route, &quot;push&quot;)
+       ──────────────────────                      ───────────────────────
+       • Ganti Tab Root Flutter                    • Buka Sub-Halaman Baru
+       • Target: IndexedStack                      • Target: Navigator Stack
+       • Sinkron (tunggu frameReady)               • Asinkron (Fire &amp; Forget)
+       • requestID anti race-condition             • TabBar native disembunyikan
+       • TabBar native tetap tampil                • Contoh: /mine/personal
+       • Contoh: /mine atau /repay</code></pre>
+<div id="sub-a-flutterenginemanagersharedshowroot" class="doc-subsection">
+<h4>A. <code>FlutterEngineManager.shared.showRoot</code></h4>
+</div>
+<p>Digunakan ketika user menekan tab bar native (Tagihan atau Saya).</p>
+<ol>
+<li><strong>Tidak Menumpuk History:</strong> Mengubah <code>FlutterRootController.selectedPath</code> di Flutter yang memicu render pada <code>IndexedStack</code>.
+</li>
+<li><strong>Anti-Flicker (<code>frameReady</code>):</strong> Native tidak langsung menampilkan view Flutter. Flutter merender frame terlebih dahulu:
+</li></ol>
+<pre><code class="language-dart">   WidgetsBinding.instance.ensureVisualUpdate();
+   await WidgetsBinding.instance.endOfFrame;</code></pre>
+<p>Setelah frame selesai digambar GPU, Flutter membalas <code>{ frameReady: true, requestId: id }</code>. Baru saat itulah <code>flutterContainerView.isHidden = false</code> dipasang di native.</p>
+<ol start="3">
+<li><strong>Anti-Race Condition (<code>requestID</code>):</strong> Menggunakan monotonic integer counter statis <code>nextFlutterRootRequestID</code>. Jika user menekan Tagihan &rarr; Saya &rarr; Tagihan dalam tempo kilat, respons render dari tab "Saya" yang datang terlambat akan ditolak karena ID-nya tidak cocok dengan <code>flutterRootRequestID</code> aktif.
+</li></ol>
+<div id="sub-b-flutterenginemanagersharedshowpage" class="doc-subsection">
+<h4>B. <code>FlutterEngineManager.shared.showPage</code></h4>
+</div>
+<p>Digunakan saat native ingin membuka sub-halaman formulir/detail di Flutter:</p>
+<pre><code class="language-swift">host.showFlutterPage(&quot;/mine/personal&quot;, presentation: &quot;push&quot;)</code></pre>
+<ol>
+<li><strong>Navigasi Stack:</strong> Memanggil <code>Routers.push(route)</code> di Flutter.
+</li>
+<li><strong>Otomatis Sembunyikan TabBar:</strong> <code>NativeRouteChrome</code> di Flutter mendeteksi perpindahan ke rute non-root, lalu mengirim channel event <code>setNativeTabBarHidden(true)</code>. Native mengubah <code>tabBar.isHidden = true</code> dan memperluas frame Flutter menjadi layar penuh (<code>view.bounds</code>).
+</li>
+<li><strong>Nilai <code>presentation</code>:</strong>
+<ul>
+<li><code>&quot;push&quot;</code> (default): Animasi slide horizontal standar ke stack navigator.
+</li>
+<li><code>&quot;replace&quot;</code>: Menggantikan halaman saat ini (<code>Routers.go</code>) tanpa menumpuk tombol Back.
+</li></ul>
+</li></ol>
+<div id="sub-c-mental-model-kunci-analogi-hidesbottombarwhenpushed-ios-native" class="doc-subsection">
+<h4>C. 💡 Mental Model Kunci: Analogi <code>hidesBottomBarWhenPushed</code> iOS Native</h4>
+</div>
+<p>Cara paling sederhana dan intuitif memahami perbedaan ini dari sudut pandang iOS Engineer:</p>
+<div class="callout best-practice"><p><strong>Ringkasan Mental Model:</strong></p>
+<ul>
+<li><strong><code>showRoot</code> (Mode Tab):</strong> Karena pengguna masih berada di level tab utama, mereka <strong>masih membutuhkan TabBar native</strong> untuk berpindah tab &rarr; TabBar <strong>TIDAK di-hide</strong>, dan tinggi layar Flutter dibatasi tepat di atas TabBar.</li>
+<li><strong><code>showPage</code> (Mode Halaman Anak / Full-Screen):</strong> Pengguna masuk ke halaman detail/formulir, sehingga ekspektasi UX adalah <strong>tampilan layar penuh</strong> &rarr; TabBar native <strong>WAJIB di-hide</strong>, dan frame Flutter diperluas 100% memenuhi layar (<code>view.bounds</code>). Navigasi kembali diserahkan ke tombol Back di AppBar.</li>
+</ul></div>
+<p>Pada aplikasi iOS UIKit konvensional, perilaku <code>showPage</code> ini setara persis dengan menyetel:</p>
+<pre><code class="language-swift">childViewController.hidesBottomBarWhenPushed = true</code></pre>
+<p>Namun karena Flutter berjalan di atas satu View Controller persisten yang sama (<em>Single Persistent Flutter Host</em>), efek tersebut disimulasikan secara dinamis melalui sinyal Platform Channel <code>setNativeTabBarHidden = true</code>.</p>
+</section>
+<section id="sec-4-mekanisme-dynamic-chrome-tabbar-visibility" class="doc-section">
+<h3>📌 4. Mekanisme Dynamic Chrome & TabBar Visibility</h3>
+<p>Perhatikan alur visibilitas tab bar di file <code>IDMainTabBarController.swift</code> dan <code>FlutterNativeChannel+route.swift</code>:</p>
 
-    <section id="sec-obj" class="doc-section">
-      <h3>🎯 A. Learning Objective</h3>
-      <p>Setelah mempelajari modul ini, Anda akan mampu:</p>
-      <ol>
-        <li>Menjelaskan konsep <strong>Single Persistent Flutter Host (Overlay Pattern)</strong> dan membongkar mitos bahwa Flutter memiliki TabBar tersendiri.</li>
-        <li>Membedakan penggunaan <strong><code>showRoot</code> vs <code>showPage</code></strong> serta implikasinya terhadap <code>IndexedStack</code> dan <code>Navigator</code> stack Flutter.</li>
-        <li>Memahami mekanisme <strong><code>setNativeTabBarHidden</code></strong> dalam menyembunyikan TabBar native saat membuka sub-halaman Flutter secara <em>full-screen</em>.</li>
-        <li>Menjelaskan peran <strong>Monotonic Request ID</strong> dalam menangkal <em>race condition</em> saat pengguna berpindah tab secara cepat.</li>
-        <li>Mengidentifikasi titik rawan kebocoran memori, <em>stale state</em> pada singleton, dan desinkronisasi <em>safe area layout</em>.</li>
-      </ol>
-    </section>
-
-    <section id="sec-prereq" class="doc-section">
-      <h3>📋 B. Prerequisites</h3>
-      <ul>
-        <li>Sudah membaca <a href="02-navigation-fundamentals.html">02-navigation-fundamentals.html</a> (URL Router).</li>
-        <li>Memahami konsep dasar <code>UITabBarController</code> di UIKit iOS.</li>
-        <li>Memahami konsep dasar Flutter Platform Channel (<code>MethodChannel</code>).</li>
-      </ul>
-    </section>
-
-    <section id="sec-simple" class="doc-section">
-      <h3>💡 C. Simple Explanation (Analogi Mall Modern dengan Bioskop IMAX Terintegrasi)</h3>
-      <p>Bayangkan Anda mengunjungi sebuah Mall Perbelanjaan:</p>
-      <ul>
-        <li><strong>Lantai Dasar Mall (Native UITabBar):</strong> Mall memiliki papan navigasi dan lift utama yang membawa Anda ke 3 zona: Zona 1 (Toko Retail Native), Zona 2 (Bioskop IMAX Hall A - Tagihan), dan Zona 3 (Bioskop IMAX Hall B - Saya).</li>
-        <li><strong>Satu Proyektor IMAX Raksasa (Single Flutter Engine):</strong> Pihak mall tidak membeli dua proyektor terpisah untuk Hall A dan Hall B karena sangat mahal dan boros listrik (boros RAM). Mereka menggunakan <strong>satu proyektor pusat yang sama</strong>.</li>
-        <li><strong>Tirai Proyektor (Overlay Container):</strong> Ketika Anda pindah ke Toko Retail Native, tirai proyektor ditutup (<code>container.isHidden = true</code>) dan lampu proyektor diredupkan (<code>engine.inactive</code>). Ketika Anda pindah ke bioskop, tirai baru dibuka setelah gambar film berikutnya siap tayang (<code>frameReady</code>).</li>
-        <li><strong>Menonton Film Full-Screen (Sub-Halaman Flutter):</strong> Ketika Anda memilih untuk menonton film dokumenter khusus di dalam bioskop (masuk ke <code>/mine/personal</code>), petugas bioskop memadamkan lampu koridor mall dan menutup akses lift (<code>setNativeTabBarHidden = true</code>) agar Anda fokus menonton dalam mode layar penuh tanpa gangguan visual.</li>
-      </ul>
-    </section>
-
-    <section id="sec-actual" class="doc-section">
-      <h3>💻 D. Actual Implementation: Analisis Arsitektur Terpadu</h3>
-
-      <div id="sub-1-koreksi-tabbar" class="doc-subsection">
-        <h4>1. Koreksi Arsitektural: Mitos Dua TabBar</h4>
-      </div>
-      <p>Banyak developer mengira Flutter merender bottom navigation bar-nya sendiri. Faktanya: <strong>Hanya ada 1 TabBar fisik di layar, yaitu Native <code>UITabBar</code></strong>.</p>
-      <p>Di <a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/learn/iOS-Arch/ios/IDSamirLoan/Application/SamirMainModule/Classes/IDController/IDMainTabBarController.swift" target="_blank" rel="noopener noreferrer">🦊 IDMainTabBarController.swift <span class="branch-tag">learn/iOS-Arch</span> ↗</a>, <code>UITabBarController</code> mendaftarkan 3 child controller:</p>
-      <div class="table-container">
-        <table class="data-table">
-          <thead>
-            <tr>
-              <th>Index Tab</th>
-              <th>Judul Tab</th>
-              <th>ViewController Terdaftar</th>
-              <th>Sifat Layar</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td><strong>Tab 0</strong></td>
-              <td>Beranda</td>
-              <td><code>IDHomeViewController</code></td>
-              <td><strong>Native UIKit Murni</strong></td>
-            </tr>
-            <tr>
-              <td><strong>Tab 1</strong></td>
-              <td>Tagihan</td>
-              <td><code>IDRepayViewController</code></td>
-              <td><strong>Placeholder / Sentinel VC</strong></td>
-            </tr>
-            <tr>
-              <td><strong>Tab 2</strong></td>
-              <td>Saya</td>
-              <td><code>IDMineViewController</code></td>
-              <td><strong>Placeholder / Sentinel VC</strong></td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-
-      <p>View Flutter disisipkan sebagai <strong>Overlay Tunggal</strong> tepat di bawah native <code>tabBar</code>:</p>
-      <pre><code class="language-swift">// IDMainTabBarController.swift - installPersistentFlutterHost()
-flutterContainerView.isHidden = true
-view.insertSubview(flutterContainerView, belowSubview: tabBar)
-view.bringSubviewToFront(tabBar)</code></pre>
-
-      <div id="sub-2-showroot-vs-showpage" class="doc-subsection">
-        <h4>2. Mengapa Ada Dua Tipe: <code>showRoot</code> vs <code>showPage</code>?</h4>
-      </div>
-      <p>Pemisahan ini adalah kunci kebersihan arsitektur hybrid SAMIR:</p>
-      <div class="table-container">
-        <table class="data-table">
-          <thead>
-            <tr>
-              <th>Dimensi</th>
-              <th><code>showRoot(route, requestID)</code></th>
-              <th><code>showPage(route, presentation)</code></th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td><strong>Tujuan</strong></td>
-              <td>Beralih antar tab root (<code>/mine</code> atau <code>/repay</code>)</td>
-              <td>Membuka halaman formulir/detail anak (misal <code>/mine/personal</code>)</td>
-            </tr>
-            <tr>
-              <td><strong>Struktur di Flutter</strong></td>
-              <td>Mengubah <code>IndexedStack</code> di <code>FlutterRootPage.dart</code></td>
-              <td>Menumpuk ke dalam <code>Navigator Stack</code> (<code>Routers.push</code>)</td>
-            </tr>
-            <tr>
-              <td><strong>Riwayat Back (Stack)</strong></td>
-              <td><strong>Tidak menambah history back</strong></td>
-              <td><strong>Menambah history</strong> (muncul tombol Back di AppBar)</td>
-            </tr>
-            <tr>
-              <td><strong>Sinkronisasi Frame</strong></td>
-              <td><strong>Wajib Sinkron</strong> (menunggu <code>frameReady</code> dari GPU)</td>
-              <td>Asinkron (mengikuti transisi slide push standar)</td>
-            </tr>
-            <tr>
-              <td><strong>Native TabBar</strong></td>
-              <td><strong>Tetap Ditampilkan</strong> (di bagian bawah)</td>
-              <td><strong>Disembunyikan Otomatis</strong> (tampil layar penuh)</td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-
-      <div class="doc-subpoint-block" id="sub-mental-model-hidesbottombar" style="background: rgba(33, 150, 243, 0.08); border-left: 4px solid var(--accent-info, #2196f3); padding: 1.25rem; border-radius: 8px; margin: 1.5rem 0;">
-        <h5 style="color: var(--accent-info, #2196f3); font-size: 1.05rem; margin-top: 0; display: flex; align-items: center; gap: 0.5rem;">
-          💡 Mental Model Kunci: Analogi <code>hidesBottomBarWhenPushed</code> iOS Native
-        </h5>
-        <p>Cara paling sederhana dan intuitif memahami perbedaan ini dari sudut pandang iOS Engineer:</p>
-        <ul style="margin-bottom: 0.75rem;">
-          <li><strong><code>showRoot</code> (Mode Tab):</strong> Karena pengguna masih berada di level menu utama, mereka <strong>masih membutuhkan TabBar native</strong> untuk berpindah tab &rarr; TabBar <strong>TIDAK di-hide</strong>, dan tinggi layar Flutter dibatasi tepat di atas TabBar (<code>frame.height = tabBarTop - bounds.minY</code>).</li>
-          <li><strong><code>showPage</code> (Mode Halaman Anak / Full-Screen):</strong> Pengguna masuk ke halaman detail/formulir, sehingga ekspektasi UX adalah <strong>tampilan layar penuh</strong> &rarr; TabBar native <strong>WAJIB di-hide</strong>, dan frame Flutter diperluas 100% memenuhi layar (<code>view.bounds</code>). Navigasi kembali diserahkan ke tombol Back di AppBar.</li>
-        </ul>
-        <p style="margin-bottom: 0;">Pada UIKit konvensional, perilaku <code>showPage</code> ini setara persis dengan menyetel: <code>childVC.hidesBottomBarWhenPushed = true</code>. Namun karena Flutter berjalan di atas satu View Controller persisten yang sama (<em>Single Persistent Host</em>), efek tersebut disimulasikan secara dinamis melalui sinyal Platform Channel <code>setNativeTabBarHidden = true</code>.</p>
-      </div>
-
-      <div id="sub-3-anti-flicker-race" class="doc-subsection">
-        <h4>3. Mekanisme Anti-Flicker &amp; Monotonic Request ID</h4>
-      </div>
-      <p>Ketika berpindah ke tab Flutter, native tidak langsung menampilkan view. Flutter diinstruksikan menggambar frame visual terlebih dahulu:</p>
-      <pre><code class="language-dart">// flutter_native_route_dispatcher.dart - _showRootTab()
-WidgetsBinding.instance.ensureVisualUpdate();
-await WidgetsBinding.instance.endOfFrame; // Tunggu GPU menyelesaikan frame visual
-return &lt;String, Object?&gt;{
-  'requestId': requestId,
-  'frameReady': isLatest &amp;&amp; isSelected,
-};</code></pre>
-      <p>Di sisi iOS, respons divalidasi terhadap ID permintaan terbaru untuk mencegah <em>race condition</em> saat pengguna mengetuk tab secara agresif:</p>
-      <pre><code class="language-swift">// IDMainTabBarController.swift - switchFlutterRoot()
-guard responseID == self.flutterRootRequestID,
-      route == self.currentFlutterRoot else {
-    return // Abaikan respons lama yang terlambat datang
-}
-self.flutterContainerView.isHidden = false
-FlutterEngineManager.shared.setPersistentRootVisible(true)</code></pre>
-
-      <div id="sub-4-dynamic-chrome" class="doc-subsection">
-        <h4>4. Dynamic Chrome Sync: Sembunyi-Muncul TabBar Otomatis</h4>
-      </div>
-      <p>Di Flutter, class <a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/learn/iOS-Arch/flutter/lib/common/router/native_route_chrome.dart" target="_blank" rel="noopener noreferrer">🦊 native_route_chrome.dart <span class="branch-tag">learn/iOS-Arch</span> ↗</a> bertindak sebagai <code>NavigatorObserver</code>:</p>
-      <ul>
-        <li>Saat halaman non-root di-push (misal <code>/mine/personal</code>): Observer mendeteksi rute keluar dari boundary root, lalu mengirim event <code>setNativeTabBarHidden(true)</code>.</li>
-        <li>Native mengeksekusi: <code>tabBar.isHidden = true</code> dan mengubah ukuran frame <code>flutterContainerView</code> menjadi <code>view.bounds</code> (layar penuh hingga dasar).</li>
-        <li>Saat pengguna menekan tombol Back dan kembali ke <code>/mine</code>: Observer mendeteksi rute kembali ke root, lalu memanggil <code>setNativeTabBarHidden(false)</code>. TabBar native muncul kembali secara instan.</li>
-      </ul>
-    </section>
-
-    <section id="sec-walkthrough" class="doc-section">
-      <h3>🪜 E. Step-by-Step Walkthrough: Alur Navigasi Lengkap</h3>
-      <p>Berikut adalah peta interaksi komponen saat pengguna membuka aplikasi, berpindah tab, hingga membuka sub-halaman Flutter:</p>
-
-      <div class="mermaid-interactive-card">
-        <div class="mermaid-card-toolbar">
-          <span class="title">📊 Diagram Alur: Siklus Navigasi Hybrid TabBar</span>
-          <button class="mermaid-zoom-trigger" onclick="openDiagramZoom('diag-tab-flow', 'Siklus Navigasi Hybrid TabBar')">🔍 Perbesar Diagram</button>
-        </div>
-        <div class="mermaid-content-wrapper" id="diag-tab-flow">
-          <div class="mermaid">
+<div class="mermaid-interactive-card">
+  <div class="mermaid-card-toolbar">
+    <span class="title">📊 Diagram Alur #1</span>
+    <button class="mermaid-zoom-trigger" onclick="openDiagramZoom('diag-1', 'Diagram Alur #1')">🔍 Perbesar Diagram</button>
+  </div>
+  <div class="mermaid-content-wrapper" id="diag-1">
+    <div class="mermaid">
 sequenceDiagram
     autonumber
     actor User
-    participant TabBar as Native UITabBar
-    participant MainVC as IDMainTabBarController
-    participant Manager as FlutterEngineManager.shared
-    participant Channel as FlutterNativeChannel.shared
-    participant Dispatcher as FlutterNativeRouteDispatcher (Dart)
-    participant Stack as IndexedStack (FlutterRootPage)
+    participant NativeBar as UITabBar (Native)
+    participant Host as IDMainTabBarController
+    participant Channel as FlutterNativeChannel
+    participant Chrome as NativeRouteChrome (Flutter)
+    participant Engine as Flutter Router
 
-    Note over User,Stack: FASE 1: Pengguna Memilih Tab "Saya" (Index 2)
-    User->>TabBar: Tap Item Tab "Saya"
-    TabBar->>MainVC: didSelect(IDMineViewController)
-    MainVC->>MainVC: prepareNativeChromeForTabSelection()
-    MainVC->>MainVC: route = "/mine", reqId = invalidateFlutterRootRequest()
-    MainVC->>Manager: showRoot("/mine", requestID: reqId)
-    Manager->>Channel: invoke "showFlutterRoute" { route: "/mine", presentation: "root", requestId: reqId }
-    Channel->>Dispatcher: _handleNativeCall("showFlutterRoute")
-    Dispatcher->>Stack: FlutterRootController.select("/mine") -> Ganti Index 0
-    Dispatcher->>Dispatcher: await WidgetsBinding.instance.endOfFrame
-    Dispatcher-->>Channel: Return { frameReady: true, requestId: reqId }
-    Channel-->>MainVC: Completion Handler (Main Thread)
-    MainVC->>MainVC: Validasi reqId == flutterRootRequestID
-    MainVC->>MainVC: flutterContainerView.isHidden = false
-    MainVC->>Manager: setPersistentRootVisible(true)
+    Note over User,Engine: Skenario 1: Masuk ke Sub-Halaman Flutter
+    Host->>Channel: host.showFlutterPage("/mine/personal")
+    Channel->>NativeBar: tabBar.isHidden = true, alpha = 0
+    Host->>Host: updatePersistentFlutterHostLayout() -> Frame: view.bounds (Full Screen)
+    Channel->>Engine: showFlutterRoute("/mine/personal", presentation: "push")
+    Engine-->>Chrome: Observer didPush -> non-root route
+    
+    Note over User,Engine: Skenario 2: User Tekan Back di Flutter App Bar
+    User->>Engine: Tap tombol Back
+    Engine-->>Chrome: Observer didPop -> kembali ke /mine (isRoot == true)
+    Chrome->>Channel: setNativeTabBarHidden(hidden: false)
+    Channel->>NativeBar: tabBar.isHidden = false, alpha = 1
+    Channel->>Host: updatePersistentFlutterHostLayout() -> Frame dipotong di atas TabBar
+    </div>
+  </div>
+</div>
+</section>
+<section id="sec-5-mengapa-showflutterpage-di-tabbar-hanya-menerima-mine" class="doc-section">
+<h3>📌 5. Mengapa <code>showFlutterPage</code> di TabBar Hanya Menerima <code>/mine</code>?</h3>
+<p>Pada <code>IDMainTabBarController.swift:L169-L183</code>:</p>
+<pre><code class="language-swift">public func showFlutterPage(_ route: String, presentation: String = &quot;push&quot;) {
+    guard let tabViewControllers = viewControllers,
+          tabViewControllers.indices.contains(2) else { return }
+    let mineTab = tabViewControllers[2]
+    selectedViewController = mineTab
+    FlutterNativeChannel.shared.nativeTabBarHidden = true
+    currentFlutterRoot = &quot;/mine&quot;
+    ...
+    FlutterEngineManager.shared.showPage(route, presentation: presentation)
+}</code></pre>
+<p>Alasan desain bisnis:</p>
+<ol>
+<li><strong>Satu-satunya sub-halaman Flutter dari luar adalah milik Tab "Saya":</strong> Halaman seperti <code>/mine/personal</code> (Info Pribadi & Auth) adalah modul di bawah Tab Saya. Jika user membuka halaman ini lalu menekan tombol Back sampai habis, konteks yang harus tampil adalah Tab "Saya".
+</li>
+<li><strong>Tab "Tagihan" (<code>/repay</code>) adalah Single Page Tab:</strong> Halaman tagihan di Flutter tidak memiliki sub-alur Flutter anak. Transaksi pinjaman, pelunasan, pembayaran VA, dan rincian bunga di-<em>delegate</em> kembali ke modul Native (<code>IDRouterManager</code>) atau WebView H5 (<code>IDBusinessWebViewController</code>).
+</li></ol>
+</section>
+<section id="sec-6-peta-komunikasi-lengkap-navigasi-dua-arah" class="doc-section">
+<h3>📌 6. Peta Komunikasi Lengkap (Navigasi Dua Arah)</h3>
+<div id="sub-a-native-rarr-flutter" class="doc-subsection">
+<h4>A. Native &rarr; Flutter</h4>
+</div>
+<ol>
+<li><strong>Tab Switch:</strong> <code>IDMainTabBarController.switchFlutterRoot(to:)</code> &rarr; <code>FlutterEngineManager.showRoot</code> &rarr; MethodChannel <code>&quot;showFlutterRoute&quot;</code> (<code>presentation: &quot;root&quot;</code>).
+</li>
+<li><strong>Sub-Page Navigation:</strong> <code>IDSamirMineRouterHandler</code> &rarr; <code>IDMainTabBarController.showFlutterPage</code> &rarr; MethodChannel <code>&quot;showFlutterRoute&quot;</code> (<code>presentation: &quot;push&quot;</code>).
+</li>
+<li><strong>Data Refresh Signals:</strong> <code>FlutterEngineManager.refreshMineHome()</code> & <code>refreshRepayHome()</code>.
+</li></ol>
+<div id="sub-b-flutter-rarr-native" class="doc-subsection">
+<h4>B. Flutter &rarr; Native</h4>
+</div>
+<ol>
+<li><strong>Buka Rute Native / Scheme / External:</strong> <code>FlutterNativeChannelRoute.openNativeRoute(url, params)</code> &rarr; <code>FlutterNativeChannel+route.swift</code> mengevaluasi:
+<ul>
+<li>External URL / Medsos: <code>UIApplication.shared.open</code>
+</li>
+<li>Layanan H5 Web: <code>IDBusinessWebViewController.loadUrlWithAuth</code>
+</li>
+<li>Aksi Native: <code>customerAction</code>, <code>repayLoginAction</code>, <code>jumpDisclaimerPopup</code>
+</li>
+<li>Native Router Scheme: <code>IDRouterManager.id_perfromWithURLString</code>
+</li></ul>
+</li>
+<li><strong>Tutup Halaman Flutter:</strong> <code>FlutterNativeChannelRoute.closeFlutterPage()</code> &rarr; Native memanggil <code>topViewController?.navigationController?.popViewController()</code> atau <code>dismiss()</code>.
+</li>
+<li><strong>Kontrol TabBar:</strong> <code>FlutterNativeChannelRoute.setNativeTabBarHidden(hidden)</code>.
+</li></ol>
+</section>
+<section id="sec-7-gotchas-debugging-checklist" class="doc-section">
+<h3>📌 7. Gotchas & Debugging Checklist</h3>
+<ol>
+<li><strong>TabBar Hilang Setelah Kembali dari Flutter:</strong>
+<ul>
+<li><em>Penyebab:</em> Callback observer di Flutter tidak terpanggil atau route name tidak terdaftar di <code>RootRoutes.tabPaths</code>.
+</li>
+<li><em>Mitigasi:</em> Pastikan rute root terdaftar di <code>RootRoutes.paths</code> dan panggil <code>prepareNativeChromeForTabSelection()</code> setiap kali tab native dipilih.
+</li></ul>
+</li>
+<li><strong>Layar Flutter Kosong (Blank/Stuck):</strong>
+<ul>
+<li><em>Penyebab:</em> Lifecycle engine masih dalam status <code>inactive</code> atau request ID tidak sinkron dengan response completion.
+</li>
+<li><em>Mitigasi:</em> Periksa apakah <code>FlutterEngineManager.shared.resume()</code> dipanggil sebelum <code>showFlutterRoute</code>.
+</li></ul>
+</li>
+<li><strong>Safe Area Inset Terpotong:</strong>
+<ul>
+<li><em>Penyebab:</em> Perhitungan safe area guide native tidak dikirim ke Flutter saat tinggi tab bar berubah.
+</li>
+<li><em>Mitigasi:</em> Verifikasi fungsi <code>updatePersistentSafeArea(top:bottom:)</code> di <code>SamirFlutterViewController</code>.
+</li></ul>
+</li></ol>
+</section>
 
-    Note over User,Stack: FASE 2: Buka Sub-Halaman Profil (/mine/personal)
-    User->>Dispatcher: Tap "Informasi Pribadi"
-    Dispatcher->>Channel: openNativeRoute("samir://mine/infoAuthList")
-    Channel->>MainVC: host.showFlutterPage("/mine/personal", presentation: "push")
-    MainVC->>Channel: nativeTabBarHidden = true
-    MainVC->>TabBar: tabBar.isHidden = true, alpha = 0
-    MainVC->>MainVC: flutterContainerView.frame = view.bounds (Full Screen)
-    MainVC->>Manager: showPage("/mine/personal")
-    Manager->>Dispatcher: invoke "showFlutterRoute" (presentation: "push")
-    Dispatcher->>Dispatcher: Routers.push("/mine/personal")
+<section id="sec-8-pembedahan-teknis-engine-invariants" class="doc-section">
+<h3>📌 8. Pembedahan Teknis Engine &amp; Host Invariants (Deep Dive Inisialisasi)</h3>
+<p>Bagian ini merangkum pembedahan teknis mendalam terhadap detail konfigurasi dan runtime yang sering menjadi pertanyaan arsitektur pada <code>FlutterEngineManager.swift</code> dan <code>pubspec.yaml</code>:</p>
 
-    Note over User,Stack: FASE 3: Pengguna Tekan Back di Sub-Halaman
-    User->>Dispatcher: Tap Tombol Back AppBar
-    Dispatcher->>Dispatcher: Routers.pop() -> Kembali ke /mine
-    Dispatcher->>Channel: setNativeTabBarHidden(hidden: false)
-    Channel->>TabBar: tabBar.isHidden = false, alpha = 1
-    Channel->>MainVC: updatePersistentFlutterHostLayout() -> Frame di atas TabBar
-          </div>
-        </div>
+<div id="sub-8-1-mengapa-bundle-identifier-flutter-berbeda" class="doc-subsection">
+<h4>A. Mengapa Bundle Identifier Flutter Berbeda? (<code>iosBundleIdentifier</code> di <code>pubspec.yaml</code>)</h4>
+<p>Pada file <a class="gitlab-code-link" href="file:///Users/samir/Documents/Workspace/SAMIR/Mobile/Develop/samir-mobile-develop/flutter/pubspec.yaml#L80-L84"><code>flutter/pubspec.yaml</code></a>:</p>
+<pre><code class="language-yaml">  module:
+    androidX: true
+    androidPackage: com.sahabatmikro.flutter_module
+    iosBundleIdentifier: com.sahabatmikro.flutterModule</code></pre>
+<ul>
+  <li><strong>Identitas Modul Add-to-App:</strong> Properti <code>module:</code> menegaskan bahwa proyek Flutter ini adalah <em>embedded module</em>, bukan aplikasi mandiri (standalone).</li>
+  <li><strong>Kompilasi Wrapper iOS (<code>.ios/</code>):</strong> Saat Flutter toolchain membangun wrapper CocoaPods di direktori ephemeral <code>.ios/</code>, nilai <code>com.sahabatmikro.flutterModule</code> disematkan sebagai <code>CFBundleIdentifier</code> resmi untuk modul framework Flutter tersebut.</li>
+  <li><strong>Mencegah Tabrakan Bundle ID:</strong> Identifier ini sengaja dibedakan dari Bundle ID aplikasi native utama (<code>IDSamirLoan</code>) agar tidak terjadi konflik identitas (<em>bundle collision</em>) di sistem build Apple/Xcode saat framework diintegrasikan melalui <code>podhelper.rb</code> di <a class="gitlab-code-link" href="file:///Users/samir/Documents/Workspace/SAMIR/Mobile/Develop/samir-mobile-develop/ios/Podfile#L14-L18"><code>ios/Podfile</code></a>.</li>
+</ul>
+</div>
+
+<div id="sub-8-2-misteri-samir-single-flutter-engine" class="doc-subsection">
+<h4>B. Misteri <code>"samir_single_flutter_engine"</code>: Mengapa Tidak Ditemukan di Flutter?</h4>
+<p>Pada file <a class="gitlab-code-link" href="file:///Users/samir/Documents/Workspace/SAMIR/Mobile/Develop/samir-mobile-develop/ios/IDSamirLoan/Application/SamirCommonModule/Classes/FChannel/FlutterEngineManager.swift#L30"><code>FlutterEngineManager.swift</code></a>:</p>
+<pre><code class="language-swift">private let engine = FlutterEngine(name: "samir_single_flutter_engine")</code></pre>
+<ul>
+  <li><strong>Host-Side Identifier (Native Runtime):</strong> String ini merupakan parameter konstruktor bawaan <code>FlutterEngine(name: String)</code> dari framework resmi iOS (<code>FlutterEngine.h</code>).</li>
+  <li><strong>Hanya Berlaku di Sisi Native iOS:</strong> String ini <strong>tidak pernah dikirim atau diekspos ke isolate Dart / proyek Flutter</strong>.</li>
+  <li><strong>Tujuan Utama:</strong>
+    <ul>
+      <li><strong>Thread Profiling &amp; Tracing:</strong> Engine C++ Flutter menggunakannya untuk menamai thread internal (seperti <code>io.flutter.1.ui</code>) saat diinspeksi pada Xcode Debugger, Instruments, dan pelaporan crash log.</li>
+      <li><strong>Identitas di Cache:</strong> Menjadi identifier pembeda jika aplikasi menggunakan <code>FlutterEngineCache</code> atau multi-engine. Di SAMIR, penamaan ini menegaskan pola arsitektur <em>Single Shared Engine</em>.</li>
+    </ul>
+  </li>
+</ul>
+</div>
+
+<div id="sub-8-3-anatomi-samirflutterviewcontroller" class="doc-subsection">
+<h4>C. Anatomi <code>SamirFlutterViewController</code>: Mengapa Terlihat "Empty View"?</h4>
+<p>Pada file <a class="gitlab-code-link" href="file:///Users/samir/Documents/Workspace/SAMIR/Mobile/Develop/samir-mobile-develop/ios/IDSamirLoan/Application/SamirCommonModule/Classes/FChannel/FlutterEngineManager.swift#L161-L207"><code>FlutterEngineManager.swift</code></a>:</p>
+<pre><code class="language-swift">public final class SamirFlutterViewController: FlutterViewController</code></pre>
+<ul>
+  <li><strong>Bukan Empty View:</strong> Terlihat kosong pada kode Swift karena ia tidak menambahkan komponen UIKit standar (<code>UILabel</code>, <code>UIButton</code>, dll). Seluruh konten visual digambar langsung oleh Flutter Engine di atas canvas grafis GPU via <strong><code>CAMetalLayer</code></strong> (Metal surface).</li>
+  <li><strong>Tanggung Jawab Khusus Subclass:</strong>
+    <ul>
+      <li><strong>Anti-Flicker (<code>backgroundColor</code>):</strong> Menyetel latar belakang ke warna abu-abu muda (<code>#F5F5F5</code>) guna mencegah kedipan (flicker) hitam/putih sebelum frame pertama Flutter selesai dirender.</li>
+      <li><strong>Bypass Layout Insets UIKit:</strong> Menyetel <code>edgesForExtendedLayout = [.top, .bottom]</code> dan <code>extendedLayoutIncludesOpaqueBars = true</code> agar viewport Flutter memenuhi area container secara presisi.</li>
+      <li><strong>Safe Area Dinamis (<code>updatePersistentSafeArea</code>):</strong> Menghitung dan meneruskan penyesuaian safe area ke Flutter saat header atau status bar native berubah.</li>
+      <li><strong>Visibilitas Status Bar Native (<code>setNativeStatusBarOverlayHidden</code>):</strong> Mengatur overlay status bar native (tag 100) saat rute Flutter aktif.</li>
+    </ul>
+  </li>
+  <li><strong>Siapa Saja Konsumennya?</strong>
+    <ol>
+      <li><code>FlutterEngineManager</code>: Menginisialisasi dan menyimpannya sebagai singleton privat.</li>
+      <li><code>IDMainTabBarController</code>: Mengambil view controller ini via <code>installPersistentRoot</code> untuk disisipkan ke dalam <code>flutterContainerView</code>.</li>
+      <li><code>FlutterNativeChannel+route.swift</code>: Memeriksa <code>persistentRootViewController</code> untuk menentukan target controller saat melakukan push/pop/modal navigasi.</li>
+    </ol>
+  </li>
+</ul>
+</div>
+
+<div id="sub-8-4-inisialisasi-initialroute-root" class="doc-subsection">
+<h4>D. Inisialisasi <code>initialRoute: "/root"</code> (Cold-Start Prewarm)</h4>
+<p>Pada baris 151 <a class="gitlab-code-link" href="file:///Users/samir/Documents/Workspace/SAMIR/Mobile/Develop/samir-mobile-develop/ios/IDSamirLoan/Application/SamirCommonModule/Classes/FChannel/FlutterEngineManager.swift#L151"><code>FlutterEngineManager.swift</code></a>:</p>
+<pre><code class="language-swift">hasRun = engine.run(withEntrypoint: nil, initialRoute: "/root")</code></pre>
+<ul>
+  <li><strong>Target Rute Flutter:</strong> Di sisi Flutter (<a class="gitlab-code-link" href="file:///Users/samir/Documents/Workspace/SAMIR/Mobile/Develop/samir-mobile-develop/flutter/lib/common/router/route_paths.dart#L4-L6"><code>route_paths.dart</code></a> dan <a class="gitlab-code-link" href="file:///Users/samir/Documents/Workspace/SAMIR/Mobile/Develop/samir-mobile-develop/flutter/lib/common/router/routers.dart#L37-L46"><code>routers.dart</code></a>), rute <code>"/root"</code> mengarah ke <a class="gitlab-code-link" href="file:///Users/samir/Documents/Workspace/SAMIR/Mobile/Develop/samir-mobile-develop/flutter/lib/pages/root/flutter_root_page.dart#L10-L60"><code>FlutterRootPage</code></a>.</li>
+  <li><strong>Wadah Bersama (<code>IndexedStack</code>):</strong> <code>FlutterRootPage</code> membungkus <code>MineHomePage</code> (<code>/mine</code>) dan <code>RepayHomePage</code> (<code>/repay</code>) dalam satu stack widget permanen.</li>
+  <li><strong>Tujuan Hardcoded di Startup:</strong> Saat native melakukan <code>prewarm()</code> di <code>IDSamirMainModule</code>, engine langsung memuat tree <code>/root</code> ke memori. Sehingga saat pengguna berpindah ke Tab Tagihan atau Tab Saya di <code>IDMainTabBarController</code>, tampilan <strong>langsung muncul seketika tanpa jeda cold-start (zero delay)</strong>.</li>
+</ul>
+</div>
+
+<div id="sub-8-5-protokol-lifecyclechannel" class="doc-subsection">
+<h4>E. Protokol <code>lifecycleChannel</code> &amp; State Baku (<code>AppLifecycleState.resumed</code> / <code>.inactive</code>)</h4>
+<pre><code class="language-swift">engine.lifecycleChannel.sendMessage("AppLifecycleState.resumed")
+engine.lifecycleChannel.sendMessage("AppLifecycleState.inactive")</code></pre>
+<ul>
+  <li><strong>Channel Resmi Bawaan:</strong> <code>engine.lifecycleChannel</code> adalah <code>FlutterBasicMessageChannel&lt;String&gt;</code> bawaan engine (<code>"flutter/lifecycle"</code>).</li>
+  <li><strong>Bukan String Bebas:</strong> String <code>"AppLifecycleState.resumed"</code> dan <code>"AppLifecycleState.inactive"</code> adalah <strong>protokol baku Flutter framework</strong> yang dipetakan langsung ke enum Dart <code>AppLifecycleState</code>. String custom di luar konvensi ini tidak akan diproses oleh binding Flutter.</li>
+  <li><strong>Tujuan Penghematan Baterai &amp; CPU:</strong>
+    <ul>
+      <li>Dalam arsitektur persistent host, view Flutter tidak dihancurkan (tidak pernah di-dealloc) saat pengguna membuka Tab Beranda (Native).</li>
+      <li>Memanggil <code>inactive()</code> mengirimkan <code>"AppLifecycleState.inactive"</code> untuk <strong>menghentikan render loop, timer animasi, dan ticker Flutter</strong> sehingga baterai dan CPU tidak terkuras di latar belakang.</li>
+      <li>Saat pengguna kembali ke Tab Flutter, pemanggilan <code>resume()</code> mengirimkan <code>"AppLifecycleState.resumed"</code> untuk mengaktifkan kembali rendering.</li>
+    </ul>
+  </li>
+</ul>
+</div>
+
+<div id="sub-8-6-filosofi-precondition-vs-clean-architecture" class="doc-subsection">
+<h4>F. Filosofi <code>precondition</code> vs Clean Architecture: Fail-Fast &amp; Invariant Enforcement</h4>
+<p>Pada baris 130–133 <a class="gitlab-code-link" href="file:///Users/samir/Documents/Workspace/SAMIR/Mobile/Develop/samir-mobile-develop/ios/IDSamirLoan/Application/SamirCommonModule/Classes/FChannel/FlutterEngineManager.swift#L130-L133"><code>FlutterEngineManager.swift</code></a>:</p>
+<pre><code class="language-swift">precondition(
+    hasRun,
+    "FlutterEngineManager.prewarm() must run before installing the Flutter host"
+)</code></pre>
+<ul>
+  <li><strong>Cara Kerja <code>precondition</code>:</strong> Mengevaluasi kondisi runtime. Jika bernilai <code>false</code>, aplikasi akan <strong>langsung fatal error/crash seketika</strong> pada mode <strong>Debug maupun Release</strong>. Berbeda dengan <code>assert</code> yang diabaikan pada Release build, <code>precondition</code> bertindak sebagai penjaga batas invariant mutlak.</li>
+  <li><strong>Hubungan dengan Clean Architecture &amp; Fail-Fast:</strong>
+    <ul>
+      <li><strong>Design by Contract (DbC):</strong> Clean Architecture menuntut batasan antarkomponen yang tegas. Sebuah View Controller host tidak boleh diinisialisasi jika dependensi intinya (Engine runtime) belum siap. Membiarkan aplikasi melanjutkan dalam status korup/cacat justru menciptakan <em>undefined behavior</em>.</li>
+      <li><strong>Membedakan Programmer Invariant vs Recoverable Error:</strong>
+        <ul>
+          <li><em>Programmer Error / Invariant Violation</em> (salah urutan pemanggilan method oleh developer): Tepat menggunakan <code>precondition</code> agar bug langsung tertangkap pada fase pengembangan.</li>
+          <li><em>Recoverable Error</em> (jaringan putus, format JSON salah, pembatalan aksi): Wajib menggunakan mekanisme <code>Error</code>, <code>Result</code>, atau <code>do-catch</code>, bukan <code>precondition</code>.</li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+  <li><strong>Contoh Penggunaan Nyata:</strong>
+<pre><code class="language-swift">// Memastikan dependensi kredensial atau batas buffer wajib terpenuhi saat startup
+final class SecureNetworkPipeline {
+    private let sessionToken: String
+    
+    init(token: String) {
+        precondition(!token.isEmpty, "SecureNetworkPipeline requires an active token before construction.")
+        self.sessionToken = token
+    }
+}</code></pre>
+  </li>
+</ul>
+</div>
+</section>
+
+<section id="sec-9-pembedahan-lifecycle-urutan-proses" class="doc-section">
+<h3>📌 9. Pembedahan Siklus Hidup &amp; Urutan Proses di Balik Layar (Under-the-Hood Sequence)</h3>
+<p>Bagian ini menguraikan secara komprehensif bagaimana Flutter Engine berinteraksi dengan runtime iOS, apa saja yang dilakukan <code>prewarm()</code> pada tingkat thread &amp; memori, serta alur milidetik di balik layar saat layar Flutter dimuat atau dibuka oleh pengguna.</p>
+
+<div id="sub-9-1-konsep-siklus-hidup-flutter-di-native" class="doc-subsection">
+<h4>A. Konsep Siklus Hidup (Lifecycle) Flutter di Host Native</h4>
+<p>Flutter pada dasarnya bukanlah kumpulan View UIKit standar, melainkan sebuah <strong>mesin rendering grafis mandiri</strong> yang menggambar seluruh pikselnya secara otonom di atas permukaan <strong><code>CAMetalLayer</code></strong> (Metal GPU pada iOS).</p>
+
+<div class="callout best-practice">
+<p><strong>Mengapa Native Harus Mengatur Lifecycle Secara Eksplisit?</strong></p>
+<p>Dalam arsitektur <em>Single Persistent Host</em> SAMIR, <code>SamirFlutterViewController</code> <strong>tidak pernah di-destroy atau di-dealloc</strong> saat pengguna membuka Tab Beranda (Native). View-nya hanya disembunyikan (<code>isHidden = true</code>).</p>
+<ul>
+  <li>Tanpa intervensi sinyal native, Flutter Engine tidak mengetahui bahwa tampilannya sedang tidak terlihat di layar, sehingga engine akan terus mendengarkan VSync, mengeksekusi ticker animasi, dan mengonsumsi daya CPU.</li>
+  <li><strong><code>AppLifecycleState.inactive</code></strong>: Dikirim saat tab Flutter tertutup. Engine mematikan ticker &amp; frame rendering loop (<code>scheduleFrame</code>), menurunkan penggunaan CPU ke 0%.</li>
+  <li><strong><code>AppLifecycleState.resumed</code></strong>: Dikirim sesaat sebelum kontainer Flutter ditampilkan kembali. Engine menghidupkan kembali VSync frame scheduling dan memicu <code>onResume()</code> pada <code>PageLifecycleMixin</code>.</li>
+</ul>
+</div>
+</div>
+
+<div id="sub-9-2-anatomi-proses-prewarm-di-balik-layar" class="doc-subsection">
+<h4>B. Anatomi Proses <code>prewarm()</code> di Balik Layar (Cold-Start Execution)</h4>
+<p>Pemanggilan <code>FlutterEngineManager.shared.prewarm()</code> pada <a class="gitlab-code-link" href="file:///Users/samir/Documents/Workspace/SAMIR/Mobile/Develop/samir-mobile-develop/ios/IDSamirLoan/Application/SamirMainModule/Classes/IDModule/IDSamirMainModule.swift#L61"><code>IDSamirMainModule.swift:L61</code></a> menjalankan serangkaian inisialisasi berat di startup aplikasi:</p>
+
+<div class="mermaid-interactive-card">
+  <div class="mermaid-card-toolbar">
+    <span class="title">📊 Diagram Alur #2: Prewarm &amp; Inisialisasi Engine di Belakang Layar</span>
+  </div>
+  <div class="mermaid-content-wrapper" id="diag-prewarm-seq">
+    <div class="mermaid">
+sequenceDiagram
+    autonumber
+    participant Main as iOS Main Thread
+    participant Engine as Flutter C++ Engine
+    participant DartVM as Dart VM &amp; Isolate
+    participant Tree as Flutter Widget Tree
+
+    Main->>Engine: engine.run(entrypoint: nil, initialRoute: "/root")
+    activate Engine
+    Note over Engine: 1. Alokasi 3 Background Threads:<br/>UI Thread, Raster (GPU) Thread, IO Thread
+    Engine->>DartVM: 2. Booting Dart Virtual Machine (Dart VM)
+    activate DartVM
+    Note over DartVM: 3. Load snapshot kode biner (App.framework)<br/>Jalankan main() di lib/main.dart
+    DartVM->>Tree: 4. Jalankan _bootstrap() &amp; runApp(MyApp)
+    activate Tree
+    Note over Tree: Inisialisasi Tingyun, Global, Dio,<br/>dan bangun FlutterRootPage (/root)
+    Tree->>Engine: 5. Render first frame ke GPU buffer (offscreen)
+    deactivate Tree
+    deactivate DartVM
+    Engine-->>Main: hasRun = true
+    deactivate Engine
+    Main->>Engine: engine.lifecycleChannel.sendMessage("AppLifecycleState.inactive")
+    Note over Engine: 6. Engine tertidur di RAM (~35 MB).<br/>Render loop stop, siap pakai seketika.
+    </div>
+  </div>
+</div>
+
+<ol>
+  <li><strong>Alokasi 3 Worker Thread C++ Flutter:</strong>
+    <ul>
+      <li><strong>UI Task Runner:</strong> Thread yang mengeksekusi isolate Dart dan membangun Widget/Element/RenderObject tree.</li>
+      <li><strong>Raster Task Runner (GPU):</strong> Thread yang menerjemahkan display list menjadi perintah instruksi grafis Metal.</li>
+      <li><strong>IO Task Runner:</strong> Thread latar belakang untuk memuat font, gambar terkompresi, dan shader compilation.</li>
+    </ul>
+  </li>
+  <li><strong>Booting Dart Virtual Machine (Dart VM):</strong> Heap memori Dart diinisialisasi. Waktu <em>cold start</em> VM (~200–400ms) dihabiskan pada fase splash startup, bukan saat interaksi pengguna.</li>
+  <li><strong>Pemuatan AOT Snapshot (<code>App.framework</code>):</strong> Biner kompilasi Ahead-Of-Time dimuat ke memori dan mengeksekusi fungsi <code>main()</code> di <code>lib/main.dart</code>.</li>
+  <li><strong>Eksekusi <code>_bootstrap()</code>:</strong> Menginisialisasi plugin monitoring APM Tingyun, membaca konfigurasi persistent di <code>Global.init()</code>, dan mengonfigurasi HTTP client <code>Dio</code>. Mendaftarkan handler platform channel via <code>FlutterNativeRouteDispatcher.setup()</code>.</li>
+  <li><strong>Konstruksi Awal Rute <code>"/root"</code>:</strong> Memanggil <code>runApp(const MyApp())</code> dengan rute awal <code>"/root"</code>. <code>FlutterRootPage</code> dimount bersama <code>IndexedStack</code> yang menampung instance awal <code>MineHomePage</code> dan <code>RepayHomePage</code>. Menunggu <code>WidgetsBinding.instance.endOfFrame</code> agar frame pertama selesai digambar ke offscreen buffer.</li>
+  <li><strong>Transisi Cepat ke Status <code>inactive()</code>:</strong> Begitu frame offscreen selesai, native langsung mengirim <code>"AppLifecycleState.inactive"</code>. Engine standby di memori (~35 MB) tanpa membebani CPU.</li>
+</ol>
+</div>
+
+<div id="sub-9-3-urutan-saat-screen-flutter-dibuka" class="doc-subsection">
+<h4>C. Urutan Langkah Demi Langkah Saat Screen Flutter Dibuka (Tab Switching Timeline)</h4>
+<p>Ketika pengguna berada di <strong>Tab Beranda (Native)</strong> lalu mengetuk <strong>Tab Tagihan (<code>/repay</code>)</strong> atau <strong>Tab Saya (<code>/mine</code>)</strong>:</p>
+
+<div class="mermaid-interactive-card">
+  <div class="mermaid-card-toolbar">
+    <span class="title">📊 Diagram Alur #3: Timeline Eksekusi Tab Switching Flutter</span>
+  </div>
+  <div class="mermaid-content-wrapper" id="diag-switch-seq">
+    <div class="mermaid">
+sequenceDiagram
+    autonumber
+    actor User
+    participant NativeBar as UITabBar / IDMainTabBarController
+    participant Manager as FlutterEngineManager
+    participant Channel as BinaryMessenger / MethodChannel
+    participant Dart as Dart Runtime (GoRouter &amp; IndexedStack)
+    participant GPU as Metal GPU (CAMetalLayer)
+
+    User->>NativeBar: Tap Tab "Tagihan" (/repay)
+    NativeBar->>Manager: 1. resume()
+    Manager->>Channel: Kirim "AppLifecycleState.resumed"
+    Note over Dart: Engine terbangun, VSync loop aktif kembali
+
+    NativeBar->>Manager: 2. showRoot(route: "/repay", requestID: 101)
+    Manager->>Channel: invokeMethod("showFlutterRoute", {"route": "/repay", ...})
+    
+    Channel->>Dart: 3. Diterima oleh FlutterNativeRouteDispatcher
+    Dart->>Dart: 4. Routers.go("/repay") -> FlutterRootController.select("/repay")
+    Note over Dart: 5. IndexedStack berganti index (0 -> 1)<br/>Widget Repay sudah ada di RAM (tanpa re-create)
+
+    Dart->>GPU: 6. ensureVisualUpdate() -> Render frame baru
+    GPU-->>Dart: await WidgetsBinding.instance.endOfFrame (Frame Ready!)
+    
+    Dart->>Dart: 7. Trigger FlutterNativePageSignal.refreshRepayHome() (Fetch API)
+    Dart-->>Channel: 8. Return response: { requestId: 101, frameReady: true }
+    
+    Channel-->>Manager: 9. Callback diterima Native
+    Manager->>NativeBar: 10. Validasi requestId == activeID
+    NativeBar->>NativeBar: 11. flutterContainerView.isHidden = false
+    NativeBar->>NativeBar: 12. updatePersistentFlutterHostLayout() &amp; Safe Area
+    Note over User,GPU: 13. UI Flutter tampil instan tanpa kedip (Zero Delay)
+    </div>
+  </div>
+</div>
+
+<ol>
+  <li><strong>Pemicu Native (<code>UITabBar</code>):</strong> Tab selection memanggil <code>updatePersistentFlutterHost(for:)</code> di <code>IDMainTabBarController</code>.</li>
+  <li><strong>Pembangkitan Engine (<code>resume</code>):</strong> Native mengirim <code>"AppLifecycleState.resumed"</code> melalui <code>engine.lifecycleChannel</code>. <code>SchedulerBinding</code> di Flutter mengaktifkan kembali ticker VSync.</li>
+  <li><strong>Pengiriman Intent Rute (<code>showRoot</code>):</strong> Native menetapkan integer monotonic <code>requestID</code> (misal 101) dan memanggil MethodChannel <code>"showFlutterRoute"</code>.</li>
+  <li><strong>Peralihan Indeks <code>IndexedStack</code>:</strong> Di sisi Flutter, <code>FlutterRootController.select(route)</code> mengubah indeks target. Karena anak widget sudah ada di RAM, tidak ada siklus <em>re-inflation</em> widget dari nol.</li>
+  <li><strong>Sinkronisasi Frame GPU (<code>endOfFrame</code>):</strong> Flutter memanggil <code>WidgetsBinding.instance.ensureVisualUpdate()</code> dan menahan eksekusi (<code>await endOfFrame</code>) sampai GPU Metal selesai menggambar frame rute baru.</li>
+  <li><strong>Pengambilan Data Asinkron:</strong> Sinyal <code>refreshRepayHome()</code> ditembakkan untuk memicu request HTTP API di background tanpa menahan transisi visual.</li>
+  <li><strong>Penyajian Mulus ke Layar Native:</strong> Flutter mengembalikan payload <code>{ requestId: 101, frameReady: true }</code>. Native memvalidasi <code>requestId</code>, lalu menyetel <code>flutterContainerView.isHidden = false</code> dan menyesuaikan frame Safe Area.</li>
+</ol>
+</div>
+
+<div id="sub-9-4-tiga-pilar-arsitektur" class="doc-subsection">
+<h4>D. Tiga Pilar Arsitektur: Zero-Delay, Anti-Flicker, dan Anti-Race Condition</h4>
+<div class="table-container">
+<table class="data-table">
+  <thead>
+    <tr>
+      <th>Pilar Arsitektural</th>
+      <th>Mekanisme Implementasi</th>
+      <th>Masalah yang Dicegah</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><strong>1. Zero Cold-Start Delay</strong></td>
+      <td><code>prewarm()</code> di startup + <code>IndexedStack</code> di <code>FlutterRootPage</code>.</td>
+      <td>Mencegah jeda hitam/loading 300–500ms saat pengguna pertama kali membuka tab Flutter.</td>
+    </tr>
+    <tr>
+      <td><strong>2. Garansi Zero-Flicker</strong></td>
+      <td>Native menahan <code>flutterContainerView.isHidden = true</code> hingga Flutter mengonfirmasi <code>await endOfFrame</code>.</td>
+      <td>Mencegah layar putih sesaat atau kedipan layout yang belum selesai digambar oleh GPU.</td>
+    </tr>
+    <tr>
+      <td><strong>3. Anti Race-Condition</strong></td>
+      <td>Validasi monotonic integer <code>requestID</code> pada callback completion native.</td>
+      <td>Mencegah salah tampilan halaman jika pengguna mengetuk tab berulang kali dalam tempo sangat cepat.</td>
+    </tr>
+    <tr>
+      <td><strong>4. Asynchronous Data Fetch</strong></td>
+      <td>Pemisahan render layout awal dari fetching HTTP API (Dio).</td>
+      <td>Mencegah UI tersendat (stutter/freeze) karena menunggu respons jaringan internet.</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+</div>
+</section>
+
+    <!-- BAGIAN 2 & 3: ARCHITECTURAL CRITIQUE & BLUEPRINT -->
+    <div class="section-banner lab" style="margin-top: 4rem;">
+      <h2>🏛️ Bagian 2: Architecture Lab, SOLID Audit & Retention Quizzes</h2>
+      <span class="pill" style="background-color: var(--accent-warning);">Architecture Lab</span>
+    </div>
+
+
+    <!-- SEGMEN 2: ARCHITECTURAL CRITIQUE -->
+    <section class="lesson-segment" id="sub-solid">
+      <h2>🏛️ Audit SOLID & Clean Architecture: Menemukan Titik Lemah pada Implementasi Existing</h2>
+
+      <div class="callout critique">
+        <div class="callout-title">⚠️ Smells 1: Tight Coupling pada Antarmuka Routing & Hardcoded String Paths</div>
+        <p>Navigasi antar layar dan pembukaan modal masih mengandalkan string URL scheme atau navigasi langsung controller-ke-controller, menyulitkan pelacakan dependensi dan memicu runtime crash jika parameter route tidak valid.</p>
+      </div>
+
+      <div class="callout critique">
+        <div class="callout-title">⚠️ Smells 2: Pencampuran Presentasi UI dengan Koordinasi Rute (Melanggar SRP)</div>
+        <p>ViewController atau Widget UI mengetahui secara langsung hierarki layar berikutnya dan cara menyajikannya (push vs present modal), mengurangi reusabilitas tampilan pada modul lain.</p>
       </div>
     </section>
 
-    <section id="sec-why" class="doc-section">
-      <h3>⚖️ F. Why It Matters: Analisis Tradeoff Arsitektur</h3>
-      <div class="table-container">
-        <table class="data-table">
-          <thead>
-            <tr>
-              <th>Aspek Arsitektur</th>
-              <th>Keunggulan (Pros)</th>
-              <th>Konsekuensi &amp; Beban (Cons)</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td><strong>Single Shared Engine</strong></td>
-              <td>Hemat RAM drastis (~35 MB konstan), warm-up engine hanya 1 kali saat startup.</td>
-              <td>Engine tetap memakan memori di background saat user di tab Beranda (Native).</td>
-            </tr>
-            <tr>
-              <td><strong>Native TabBar Shell</strong></td>
-              <td>UI terasa 100% native Apple, mendukung dynamic font, safe area insets, dan haptic feedback standar.</td>
-              <td>Perlu sinkronisasi layout manual (<code>updatePersistentFlutterHostLayout</code>) dan safe area bridge.</td>
-            </tr>
-            <tr>
-              <td><strong>Monotonic Request ID</strong></td>
-              <td>Mencegah layar tertukar atau salah konten akibat race condition tab switching yang sangat cepat.</td>
-              <td>Menambah kompleksitas callback completion dan tracking state integer di Swift &amp; Dart.</td>
-            </tr>
-          </tbody>
-        </table>
+    <!-- SEGMEN 3: REFACTORING BLUEPRINT -->
+    <section class="lesson-segment" id="sub-blueprint">
+      <h2>🚀 Blueprint Refactoring Standar Industri: Pola Navigation Coordinator & Typed Route Handlers</h2>
+      <p>Mengabstraksikan seluruh orkestrasi layar ke dalam modul Coordinator independen. UI hanya memancarkan event intent navigasi tanpa mengetahui implementasi rute konkret.</p>
+
+      <div class="callout best-practice">
+        <div class="callout-title">✅ Rekomendasi Solusi Arsitektur Bersih</div>
+        <pre><code class="language-swift">public protocol Coordinator: AnyObject {
+    var navigationController: UINavigationController { get set }
+    func start()
+}
+
+public final class RepayFlowCoordinator: Coordinator {
+    public var navigationController: UINavigationController
+    public init(navigationController: UINavigationController) {
+        self.navigationController = navigationController
+    }
+    public func start() {
+        let vc = IDRepayViewController()
+        navigationController.pushViewController(vc, animated: true)
+    }
+}</code></pre>
       </div>
+
+      <h3>Keunggulan Arsitektur Refactoring Ini:</h3>
+      <ul>
+        <li><strong>100% Mockable & Testable:</strong> Memungkinkan pengujian terisolasi tanpa memicu efek samping runtime produksi.</li>
+        <li><strong>Open/Closed Principle (OCP):</strong> Penambahan fitur baru dapat dilakukan tanpa memodifikasi class yang sudah stabil.</li>
+        <li><strong>Decoupled Subsystems:</strong> Membatasi dampak regresi saat terjadi perubahan dependensi eksternal.</li>
+      </ul>
     </section>
 
-    <section id="sec-example" class="doc-section">
-      <h3>🔍 G. Practical Inspection Guide: Navigasi Dua Arah</h3>
-      <div class="table-container">
-        <table class="data-table">
-          <thead>
-            <tr>
-              <th>Arah Navigasi</th>
-              <th>Pemicu &amp; File Asal</th>
-              <th>Jalur Channel &amp; Handler</th>
-              <th>Target Akhir</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td><strong>Native &rarr; Flutter (Tab)</strong></td>
-              <td><code>IDMainTabBarController.swift</code> (didSelect)</td>
-              <td><code>showRoot</code> &rarr; <code>"showFlutterRoute"</code> (presentation: "root")</td>
-              <td><code>flutter_root_page.dart</code> (IndexedStack)</td>
-            </tr>
-            <tr>
-              <td><strong>Native &rarr; Flutter (Sub-Page)</strong></td>
-              <td><code>IDSamirMineRouterHandler.swift</code> (openInfoAuthListPage)</td>
-              <td><code>showFlutterPage</code> &rarr; <code>"showFlutterRoute"</code> (presentation: "push")</td>
-              <td><code>mine_personal_page.dart</code> (Pushed Route)</td>
-            </tr>
-            <tr>
-              <td><strong>Flutter &rarr; Native (Action)</strong></td>
-              <td><code>repay_home_page.dart</code> (openNativeRoute)</td>
-              <td><code>"openNativeRoute"</code> &rarr; <code>FlutterNativeChannel+route.swift</code></td>
-              <td><code>IDRouterManager</code> / <code>IDBusinessWebViewController</code></td>
-            </tr>
-            <tr>
-              <td><strong>Flutter &rarr; Native (Close)</strong></td>
-              <td>AppBar Back Button / Dismiss</td>
-              <td><code>"closeFlutterPage"</code> &rarr; <code>closeFlutterPage()</code></td>
-              <td><code>navigationController?.popViewController()</code></td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-    </section>
 
-    <section id="sec-mistakes" class="doc-section">
-      <h3>⚠️ H. Common Mistakes &amp; Debugging Gotchas</h3>
-      <ol>
-        <li>
-          <strong>TabBar Menghilang Permanen Setelah Navigasi:</strong><br>
-          <em>Penyebab:</em> User menavigasi ke halaman Flutter yang rutenya tidak terdaftar di <code>RootRoutes.tabPaths</code>, sehingga saat kembali ke root, event <code>setNativeTabBarHidden(false)</code> tidak pernah dikirim.<br>
-          <em>Solusi:</em> Pastikan setiap rute root baru didaftarkan di <code>RootRoutes.dart</code>, dan selalu panggil <code>prepareNativeChromeForTabSelection()</code> setiap kali tab native dipilih.
-        </li>
-        <li>
-          <strong>Layar Blank Putih Saat Pindah ke Tab Flutter:</strong><br>
-          <em>Penyebab:</em> <code>FlutterEngineManager.shared.resume()</code> lupa dipanggil, menyebabkan Flutter Engine tertidur dalam status <code>AppLifecycleState.inactive</code>.<br>
-          <em>Solusi:</em> Pastikan method <code>resume()</code> selalu dijalankan sebelum mengirim event <code>showRoot</code> atau <code>showPage</code>.
-        </li>
-        <li>
-          <strong>Konten Terpotong di Bagian Bawah Layar:</strong><br>
-          <em>Penyebab:</em> <code>updatePersistentSafeArea</code> tidak dipanggil setelah perubahan visibilitas TabBar.<br>
-          <em>Solusi:</em> Selalu sinkronkan bottom insets di <code>updatePersistentFlutterHostLayout()</code> dengan menghitung selisih antara <code>frame.maxY</code> dan <code>safeAreaLayoutGuide.layoutFrame.maxY</code>.
-        </li>
-      </ol>
-    </section>
+    <!-- SEGMEN 4: INTERACTIVE RETENTION QUIZ -->
+    <section class="lesson-segment" id="sub-quiz">
+      <h2>🧠 Interactive Retention & Architectural Quiz</h2>
+      <p>Uji pemahaman alur kode nyata dan keputusan arsitektur Anda:</p>
 
-    <section id="sec-check" class="doc-section">
-      <h3>📝 I. Knowledge Check</h3>
-      
-      <!-- Quiz 1 -->
+      <!-- KUIS 1 -->
       <div class="quiz-card" id="quiz-1">
-        <div class="quiz-question">1. Mengapa perpindahan tab Tagihan dan Saya tidak menggunakan `Routers.push` di Flutter?</div>
+        <h4>Kuis 1 (Memory Recall): Apa bahaya utama dari menggunakan hardcoded URL scheme string di seluruh navigasi layar?</h4>
         <div class="quiz-options">
-          <button class="quiz-btn" onclick="submitQuiz('1', this, false)">Karena push membutuhkan parameter animasi yang tidak didukung iOS</button>
-          <button class="quiz-btn" onclick="submitQuiz('1', this, true)">Karena push akan menumpuk history back stack di Navigator, merusak alur tab</button>
-          <button class="quiz-btn" onclick="submitQuiz('1', this, false)">Karena push akan mematikan engine Flutter secara mendadak</button>
+          <button class="quiz-btn" onclick="submitQuiz(1, 'A', true)">
+            A. Kesalahan ketik (typo) baru terdeteksi saat runtime alih-alih pada waktu kompilasi
+          </button>
+          <button class="quiz-btn" onclick="submitQuiz(1, 'B', false)">
+            B. Penggunaan memori GPU akan melonjak drastis saat membuka halaman tujuan baru
+          </button>
+          <button class="quiz-btn" onclick="submitQuiz(1, 'C', false)">
+            C. Antarmuka layar tujuan akan otomatis ditampilkan dalam mode hitam-putih
+          </button>
+          <button class="quiz-btn" onclick="submitQuiz(1, 'D', false)">
+            D. Server API akan menolak seluruh request data yang dikirim dari layar tersebut
+          </button>
         </div>
         <div class="quiz-feedback" id="feedback-1"></div>
       </div>
-
-      <!-- Quiz 2 -->
+      <!-- KUIS 2 -->
       <div class="quiz-card" id="quiz-2">
-        <div class="quiz-question">2. Apa fungsi dari parameter `requestId` dalam pemanggilan `showRoot`?</div>
+        <h4>Kuis 2 (Architectural Decision): Bagaimana pola Coordinator membantu memisahkan tanggung jawab (SRP) pada ViewController atau Widget?</h4>
         <div class="quiz-options">
-          <button class="quiz-btn" onclick="submitQuiz('2', this, true)">Mencegah race condition ketika pengguna mengetuk tab bar secara cepat</button>
-          <button class="quiz-btn" onclick="submitQuiz('2', this, false)">Sebagai token otentikasi login pengguna ke backend</button>
-          <button class="quiz-btn" onclick="submitQuiz('2', this, false)">Menentukan urutan z-index subview di UIWindow</button>
+          <button class="quiz-btn" onclick="submitQuiz(2, 'A', false)">
+            A. Memindahkan seluruh kalkulasi matematika database SQLite ke dalam shader grafis
+          </button>
+          <button class="quiz-btn" onclick="submitQuiz(2, 'B', true)">
+            B. Melepaskan tanggung jawab navigasi rute dari UI sehingga UI murni fokus pada display
+          </button>
+          <button class="quiz-btn" onclick="submitQuiz(2, 'C', false)">
+            C. Menghilangkan kebutuhan penulisan berkas antarmuka pengguna pada modul aplikasi
+          </button>
+          <button class="quiz-btn" onclick="submitQuiz(2, 'D', false)">
+            D. Mengizinkan sebuah layar dibuka tanpa memerlukan inisialisasi memori perangkat
+          </button>
         </div>
         <div class="quiz-feedback" id="feedback-2"></div>
       </div>
-
-      <!-- Quiz 3 -->
+      <!-- KUIS 3 -->
       <div class="quiz-card" id="quiz-3">
-        <div class="quiz-question">3. Apa yang terjadi pada native TabBar ketika fungsi `showFlutterPage("/mine/personal")` dipanggil?</div>
+        <h4>Kuis 3 (Debugging & Maintenance): Apa yang harus dilakukan saat deep link masuk saat otentikasi pengguna belum selesai diverifikasi?</h4>
         <div class="quiz-options">
-          <button class="quiz-btn" onclick="submitQuiz('3', this, false)">TabBar native dihapus permanen dari memori</button>
-          <button class="quiz-btn" onclick="submitQuiz('3', this, true)">TabBar native di-hide dan frame Flutter diperluas full-screen ke view.bounds</button>
-          <button class="quiz-btn" onclick="submitQuiz('3', this, false)">TabBar native tetap tampil dan menutupi form input</button>
+          <button class="quiz-btn" onclick="submitQuiz(3, 'A', true)">
+            A. Simpan rute ke antrian pending deep link dan selesaikan otentikasi terlebih dahulu
+          </button>
+          <button class="quiz-btn" onclick="submitQuiz(3, 'B', false)">
+            B. Abaikan tautan tersebut selamanya dan minta pengguna mengetik URL secara manual
+          </button>
+          <button class="quiz-btn" onclick="submitQuiz(3, 'C', false)">
+            C. Paksa layar tujuan terbuka tanpa memeriksa status keamanan akun pengguna sama sekali
+          </button>
+          <button class="quiz-btn" onclick="submitQuiz(3, 'D', false)">
+            D. Hapus seluruh data aplikasi dari memori dan matikan proses background sistem
+          </button>
         </div>
         <div class="quiz-feedback" id="feedback-3"></div>
       </div>
     </section>
 
-    <section id="sec-completion" class="doc-section">
-      <h3>🏁 J. Completion Criteria</h3>
-      <p>Modul ini dianggap tuntas jika Anda dapat:</p>
-      <ul>
-        <li>✅ Menjelaskan hierarki subview antara <code>flutterContainerView</code> dan <code>tabBar</code> di <code>IDMainTabBarController</code>.</li>
-        <li>✅ Menguraikan alur kerja <code>WidgetsBinding.instance.endOfFrame</code> dalam mencegah flicker layar.</li>
-        <li>✅ Menjelaskan peran <code>NativeRouteChrome</code> sebagai <code>NavigatorObserver</code> penyinkron chrome.</li>
-      </ul>
-    </section>
-
-    <!-- BAGIAN 2: ARCHITECTURE LAB & AUDIT -->
-    <div class="section-banner" id="sub-solid" style="margin-top: 3rem;">
-      <h2>🏛️ Bagian 2: Architecture Lab &amp; Audit</h2>
-      <span class="pill" style="background: var(--accent-warning); color: #000;">Engineering Evaluation</span>
-    </div>
-
-    <section class="doc-section">
-      <h3>1. Audit SOLID &amp; Clean Architecture</h3>
-      <div class="table-container">
-        <table class="data-table">
-          <thead>
-            <tr>
-              <th>Prinsip</th>
-              <th>Status</th>
-              <th>Catatan Temuan Implementasi</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td><strong>SRP (Single Responsibility)</strong></td>
-              <td>⚠️ Perlu Perhatian</td>
-              <td><code>IDMainTabBarController</code> merangkap tugas layouting, hosting Flutter, observer lifecycle app, dan routing sub-halaman. Idealnya logika persistent host dipisahkan ke <code>FlutterHostCoordinator</code>.</td>
-            </tr>
-            <tr>
-              <td><strong>OCP (Open/Closed)</strong></td>
-              <td>⚠️ Perlu Perhatian</td>
-              <td>Penambahan tab Flutter baru masih membutuhkan modifikasi hardcoded pada <code>flutterRootRoute(for:)</code> dan pengecekan tipe class (<code>is IDMineViewController</code>).</td>
-            </tr>
-            <tr>
-              <td><strong>LSP (Liskov Substitution)</strong></td>
-              <td>✅ Bagus</td>
-              <td><code>SamirFlutterViewController</code> mewarisi <code>FlutterViewController</code> secara tepat tanpa melanggar kontrak superclass.</td>
-            </tr>
-            <tr>
-              <td><strong>ISP (Interface Segregation)</strong></td>
-              <td>✅ Bagus</td>
-              <td>Protokol <code>FlutterPersistentHostControlling</code> membatasi API yang diekspos ke engine manager hanya pada fungsi-fungsi yang benar-benar dibutuhkan.</td>
-            </tr>
-            <tr>
-              <td><strong>DIP (Dependency Inversion)</strong></td>
-              <td>⚠️ Perlu Perhatian</td>
-              <td>Penggunaan singleton konkret <code>FlutterEngineManager.shared</code> dan <code>FlutterNativeChannel.shared</code> di banyak tempat menyulitkan pembuatan unit test terisolasi.</td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-
-      <div id="sub-blueprint" class="doc-subsection">
-        <h4>2. Refactoring Blueprint: Menuju Clean Architecture</h4>
-      </div>
-      <p>Untuk meningkatkan modularitas, alur navigasi hybrid dapat disempurnakan dengan mendaftarkan route tab melalui protokol dinamis:</p>
-      <pre><code class="language-swift">// Konsep Abstraksi Rute Tab Dinamis (OCP Compliant)
-public protocol FlutterRoutableTab {
-    var flutterRootRoute: String { get }
-}
-
-extension IDMineViewController: FlutterRoutableTab {
-    public var flutterRootRoute: String { "/mine" }
-}
-
-extension IDRepayViewController: FlutterRoutableTab {
-    public var flutterRootRoute: String { "/repay" }
-}
-
-// Controller utama cukup mengevaluasi protokol:
-private func flutterRootRoute(for vc: UIViewController?) -> String? {
-    (vc as? FlutterRoutableTab)?.flutterRootRoute
-}</code></pre>
-    </section>
-
     <!-- Lesson Navigation Footer -->
     <div class="lesson-nav-footer">
-      <a class="lesson-nav-btn prev" href="04-navigation-conditions-and-edge-cases.html">
-        ◀ Modul Sebelumnya: 04 — Navigation Conditions &amp; Edge Cases
-      </a>
+      <a class="lesson-nav-btn prev" href="../04-understanding-navigation/04-navigation-conditions-and-edge-cases.html">
+  ◀ Modul Sebelumnya: 04 — Navigation Conditions &amp; Edge Cases
+</a>
       <a class="lesson-nav-btn next" href="../05-learning-business-flows/01-user-journey-overview.html">
-        Modul Selanjutnya: 01 — User Journey Overview ▶
-      </a>
+  Modul Selanjutnya: 01 — User Journey Overview ▶
+</a>
     </div>
 
     <!-- Footer -->
     <footer>
       <div>Chiron Codebase Mastery Academy • SAMIR Mobile iOS</div>
-      <div>Anchor Branch: <strong>learn/iOS-Arch</strong></div>
+      <div>Anchor Branch: <strong>chore/iOS-Docs-DA</strong></div>
     </footer>
 
   </main>
@@ -574,90 +759,143 @@ private func flutterRootRoute(for vc: UIViewController?) -> String? {
       <div class="toc-tree-node root-node" id="toc-node-root">
         <div class="toc-node-row">
           <span class="toc-caret" onclick="toggleTocBranch(this)">▾</span>
-          <a class="toc-tree-link root-link" href="#sec-title" title="05 — Hybrid TabBar &amp; Flutter Persistent Host">
-            05 — Hybrid TabBar &amp; Persistent Host
-          </a>
+          <a class="toc-tree-link root-link" href="#sec-title" title="05 — Arsitektur Navigasi Hybrid TabBar &amp; Flutter Persistent Host">
+            05 — Arsitektur Navigasi Hybrid TabBar &amp; Flutter Persistent Host
+          </a> <span class="chiron-toc-marker-badges"><span class="marker-pill pill-updated" title="Halaman diperbarui">✨</span></span>
         </div>
         <div class="toc-branch">
           <div class="toc-node-row">
             <span class="toc-leaf-dot"></span>
-            <a class="toc-tree-link" href="#sec-obj">A. Learning Objective</a>
+            <a class="toc-tree-link" href="#sec-1-ikhtisar-koreksi-konseptual">1. Ikhtisar &amp; Koreksi Konseptual</a>
           </div>
           <div class="toc-node-row">
             <span class="toc-leaf-dot"></span>
-            <a class="toc-tree-link" href="#sec-prereq">B. Prerequisites</a>
+            <a class="toc-tree-link" href="#sec-2-mengapa-arsitektur-ini-dipilih-tradeoff-analysis">2. Mengapa Arsitektur Ini Dipilih? (Tradeoff Analysis)</a>
           </div>
-          <div class="toc-node-row">
-            <span class="toc-leaf-dot"></span>
-            <a class="toc-tree-link" href="#sec-simple">C. Simple Explanation (Analogi Mall &amp; IMAX)</a>
-          </div>
-          <div class="toc-tree-node" id="toc-node-sec-actual">
+          <div class="toc-tree-node" id="toc-node-sec-3-pembedahan-showroot-vs-showpage">
             <div class="toc-node-row">
               <span class="toc-caret" onclick="toggleTocBranch(this)">▾</span>
-              <a class="toc-tree-link" href="#sec-actual">D. Actual Implementation</a>
+              <a class="toc-tree-link" href="#sec-3-pembedahan-showroot-vs-showpage">3. Pembedahan <span class="toc-code">showRoot</span> vs <span class="toc-code">showPage</span></a>
             </div>
             <div class="toc-branch">
               <div class="toc-node-row">
                 <span class="toc-leaf-dot"></span>
-                <a class="toc-tree-link" href="#sub-1-koreksi-tabbar">1. Koreksi Arsitektural: Mitos Dua TabBar</a>
+                <a class="toc-tree-link" href="#sub-a-flutterenginemanagersharedshowroot">A. <span class="toc-code">FlutterEngineManager.shared.showRoot</span></a>
               </div>
               <div class="toc-node-row">
                 <span class="toc-leaf-dot"></span>
-                <a class="toc-tree-link" href="#sub-2-showroot-vs-showpage">2. Mengapa Dua Tipe: showRoot vs showPage</a>
+                <a class="toc-tree-link" href="#sub-b-flutterenginemanagersharedshowpage">B. <span class="toc-code">FlutterEngineManager.shared.showPage</span></a>
               </div>
               <div class="toc-node-row">
                 <span class="toc-leaf-dot"></span>
-                <a class="toc-tree-link" href="#sub-mental-model-hidesbottombar">💡 Analogi hidesBottomBarWhenPushed</a>
-              </div>
-              <div class="toc-node-row">
-                <span class="toc-leaf-dot"></span>
-                <a class="toc-tree-link" href="#sub-3-anti-flicker-race">3. Anti-Flicker &amp; Monotonic Request ID</a>
-              </div>
-              <div class="toc-node-row">
-                <span class="toc-leaf-dot"></span>
-                <a class="toc-tree-link" href="#sub-4-dynamic-chrome">4. Dynamic Chrome Sync</a>
+                <a class="toc-tree-link" href="#sub-c-mental-model-kunci-analogi-hidesbottombarwhenpushed-ios-native">C. 💡 Mental Model Kunci: Analogi <span class="toc-code">hidesBottomBarWhenPushed</span> iOS Native</a>
               </div>
             </div>
           </div>
           <div class="toc-node-row">
             <span class="toc-leaf-dot"></span>
-            <a class="toc-tree-link" href="#sec-walkthrough">E. Step-by-Step Walkthrough</a>
+            <a class="toc-tree-link" href="#sec-4-mekanisme-dynamic-chrome-tabbar-visibility">4. Mekanisme Dynamic Chrome &amp; TabBar Visibility</a>
           </div>
           <div class="toc-node-row">
             <span class="toc-leaf-dot"></span>
-            <a class="toc-tree-link" href="#sec-why">F. Why It Matters: Analisis Tradeoff</a>
+            <a class="toc-tree-link" href="#sec-5-mengapa-showflutterpage-di-tabbar-hanya-menerima-mine">5. Mengapa <span class="toc-code">showFlutterPage</span> di TabBar Hanya Menerima <span class="toc-code">/mine</span>?</a>
+          </div>
+          <div class="toc-tree-node" id="toc-node-sec-6-peta-komunikasi-lengkap-navigasi-dua-arah">
+            <div class="toc-node-row">
+              <span class="toc-caret" onclick="toggleTocBranch(this)">▾</span>
+              <a class="toc-tree-link" href="#sec-6-peta-komunikasi-lengkap-navigasi-dua-arah">6. Peta Komunikasi Lengkap (Navigasi Dua Arah)</a>
+            </div>
+            <div class="toc-branch">
+              <div class="toc-node-row">
+                <span class="toc-leaf-dot"></span>
+                <a class="toc-tree-link" href="#sub-a-native-rarr-flutter">A. Native &amp;rarr; Flutter</a>
+              </div>
+              <div class="toc-node-row">
+                <span class="toc-leaf-dot"></span>
+                <a class="toc-tree-link" href="#sub-b-flutter-rarr-native">B. Flutter &amp;rarr; Native</a>
+              </div>
+            </div>
           </div>
           <div class="toc-node-row">
             <span class="toc-leaf-dot"></span>
-            <a class="toc-tree-link" href="#sec-example">G. Practical Inspection Guide</a>
+            <a class="toc-tree-link" href="#sec-7-gotchas-debugging-checklist">7. Gotchas &amp; Debugging Checklist</a>
           </div>
-          <div class="toc-node-row">
-            <span class="toc-leaf-dot"></span>
-            <a class="toc-tree-link" href="#sec-mistakes">H. Common Mistakes &amp; Debugging</a>
+          <div class="toc-tree-node" id="toc-node-sec-8-pembedahan-teknis-engine-invariants">
+            <div class="toc-node-row">
+              <span class="toc-caret" onclick="toggleTocBranch(this)">▾</span>
+              <a class="toc-tree-link" href="#sec-8-pembedahan-teknis-engine-invariants">8. Pembedahan Teknis Engine &amp; Invariants</a>
+            </div>
+            <div class="toc-branch">
+              <div class="toc-node-row">
+                <span class="toc-leaf-dot"></span>
+                <a class="toc-tree-link" href="#sub-8-1-mengapa-bundle-identifier-flutter-berbeda">A. Bundle ID <span class="toc-code">iosBundleIdentifier</span></a>
+              </div>
+              <div class="toc-node-row">
+                <span class="toc-leaf-dot"></span>
+                <a class="toc-tree-link" href="#sub-8-2-misteri-samir-single-flutter-engine">B. Identifier <span class="toc-code">samir_single_flutter_engine</span></a>
+              </div>
+              <div class="toc-node-row">
+                <span class="toc-leaf-dot"></span>
+                <a class="toc-tree-link" href="#sub-8-3-anatomi-samirflutterviewcontroller">C. Anatomi <span class="toc-code">SamirFlutterViewController</span></a>
+              </div>
+              <div class="toc-node-row">
+                <span class="toc-leaf-dot"></span>
+                <a class="toc-tree-link" href="#sub-8-4-inisialisasi-initialroute-root">D. Inisialisasi <span class="toc-code">initialRoute: "/root"</span></a>
+              </div>
+              <div class="toc-node-row">
+                <span class="toc-leaf-dot"></span>
+                <a class="toc-tree-link" href="#sub-8-5-protokol-lifecyclechannel">E. Protokol <span class="toc-code">lifecycleChannel</span></a>
+              </div>
+              <div class="toc-node-row">
+                <span class="toc-leaf-dot"></span>
+                <a class="toc-tree-link" href="#sub-8-6-filosofi-precondition-vs-clean-architecture">F. Filosofi <span class="toc-code">precondition</span> &amp; Clean Arch</a>
+              </div>
+            </div>
           </div>
-          <div class="toc-node-row">
-            <span class="toc-leaf-dot"></span>
-            <a class="toc-tree-link" href="#sec-check">I. Knowledge Check</a>
+          <div class="toc-tree-node" id="toc-node-sec-9-pembedahan-lifecycle-urutan-proses">
+            <div class="toc-node-row">
+              <span class="toc-caret" onclick="toggleTocBranch(this)">▾</span>
+              <a class="toc-tree-link" href="#sec-9-pembedahan-lifecycle-urutan-proses">9. Lifecycle &amp; Urutan di Balik Layar</a>
+            </div>
+            <div class="toc-branch">
+              <div class="toc-node-row">
+                <span class="toc-leaf-dot"></span>
+                <a class="toc-tree-link" href="#sub-9-1-konsep-siklus-hidup-flutter-di-native">A. Lifecycle Flutter di Native</a>
+              </div>
+              <div class="toc-node-row">
+                <span class="toc-leaf-dot"></span>
+                <a class="toc-tree-link" href="#sub-9-2-anatomi-proses-prewarm-di-balik-layar">B. Anatomi <span class="toc-code">prewarm()</span></a>
+              </div>
+              <div class="toc-node-row">
+                <span class="toc-leaf-dot"></span>
+                <a class="toc-tree-link" href="#sub-9-3-urutan-saat-screen-flutter-dibuka">C. Timeline Tab Switching</a>
+              </div>
+              <div class="toc-node-row">
+                <span class="toc-leaf-dot"></span>
+                <a class="toc-tree-link" href="#sub-9-4-tiga-pilar-arsitektur">D. Tiga Pilar Arsitektur</a>
+              </div>
+            </div>
           </div>
-          <div class="toc-node-row">
-            <span class="toc-leaf-dot"></span>
-            <a class="toc-tree-link" href="#sec-completion">J. Completion Criteria</a>
-          </div>
+          <!-- Architecture Lab Branches -->
           <div class="toc-tree-node" id="toc-node-lab" style="margin-top: 0.45rem;">
             <div class="toc-node-row">
               <span class="toc-caret" onclick="toggleTocBranch(this)">▾</span>
               <a class="toc-tree-link" href="#sub-solid" style="font-weight: 700; color: var(--accent-warning);">
-                🏛️ Architecture Lab &amp; Audit
+                🏛️ Architecture Lab & Audit
               </a>
             </div>
             <div class="toc-branch">
               <div class="toc-node-row">
                 <span class="toc-leaf-dot"></span>
-                <a class="toc-tree-link" href="#sub-solid">1. Audit SOLID &amp; Clean Arch</a>
+                <a class="toc-tree-link" href="#sub-solid">1. Audit SOLID & Clean Arch</a>
               </div>
               <div class="toc-node-row">
                 <span class="toc-leaf-dot"></span>
                 <a class="toc-tree-link" href="#sub-blueprint">2. Refactoring Blueprint</a>
+              </div>
+              <div class="toc-node-row">
+                <span class="toc-leaf-dot"></span>
+                <a class="toc-tree-link" href="#sub-quiz">3. Interactive Retention Quiz</a>
               </div>
             </div>
           </div>
@@ -682,53 +920,143 @@ private func flutterRootRoute(for vc: UIViewController?) -> String? {
       <div class="toc-node-row">
         <span class="toc-caret" onclick="toggleTocBranch(this)">▾</span>
         <a class="toc-tree-link root-link" href="#sec-title" onclick="toggleMobileToc()">
-          05 — Hybrid TabBar &amp; Persistent Host
-        </a>
+          05 — Arsitektur Navigasi Hybrid TabBar &amp; Flutter Persistent Host
+        </a> <span class="chiron-toc-marker-badges"><span class="marker-pill pill-updated" title="Halaman diperbarui">✨</span></span>
       </div>
       <div class="toc-branch">
         <div class="toc-node-row">
           <span class="toc-leaf-dot"></span>
-          <a class="toc-tree-link" href="#sec-obj" onclick="toggleMobileToc()">A. Learning Objective</a>
+          <a class="toc-tree-link" href="#sec-1-ikhtisar-koreksi-konseptual" onclick="toggleMobileToc()">1. Ikhtisar &amp; Koreksi Konseptual</a>
         </div>
         <div class="toc-node-row">
           <span class="toc-leaf-dot"></span>
-          <a class="toc-tree-link" href="#sec-prereq" onclick="toggleMobileToc()">B. Prerequisites</a>
+          <a class="toc-tree-link" href="#sec-2-mengapa-arsitektur-ini-dipilih-tradeoff-analysis" onclick="toggleMobileToc()">2. Mengapa Arsitektur Ini Dipilih? (Tradeoff Analysis)</a>
+        </div>
+        <div class="toc-tree-node" id="mob-toc-node-sec-3-pembedahan-showroot-vs-showpage">
+          <div class="toc-node-row">
+            <span class="toc-caret" onclick="toggleTocBranch(this)">▾</span>
+            <a class="toc-tree-link" href="#sec-3-pembedahan-showroot-vs-showpage" onclick="toggleMobileToc()">3. Pembedahan <span class="toc-code">showRoot</span> vs <span class="toc-code">showPage</span></a>
+          </div>
+          <div class="toc-branch">
+            <div class="toc-node-row">
+              <span class="toc-leaf-dot"></span>
+              <a class="toc-tree-link" href="#sub-a-flutterenginemanagersharedshowroot" onclick="toggleMobileToc()">A. <span class="toc-code">FlutterEngineManager.shared.showRoot</span></a>
+            </div>
+            <div class="toc-node-row">
+              <span class="toc-leaf-dot"></span>
+              <a class="toc-tree-link" href="#sub-b-flutterenginemanagersharedshowpage" onclick="toggleMobileToc()">B. <span class="toc-code">FlutterEngineManager.shared.showPage</span></a>
+            </div>
+            <div class="toc-node-row">
+              <span class="toc-leaf-dot"></span>
+              <a class="toc-tree-link" href="#sub-c-mental-model-kunci-analogi-hidesbottombarwhenpushed-ios-native" onclick="toggleMobileToc()">C. 💡 Mental Model Kunci: Analogi <span class="toc-code">hidesBottomBarWhenPushed</span> iOS Native</a>
+            </div>
+          </div>
         </div>
         <div class="toc-node-row">
           <span class="toc-leaf-dot"></span>
-          <a class="toc-tree-link" href="#sec-simple" onclick="toggleMobileToc()">C. Simple Explanation</a>
+          <a class="toc-tree-link" href="#sec-4-mekanisme-dynamic-chrome-tabbar-visibility" onclick="toggleMobileToc()">4. Mekanisme Dynamic Chrome &amp; TabBar Visibility</a>
         </div>
         <div class="toc-node-row">
           <span class="toc-leaf-dot"></span>
-          <a class="toc-tree-link" href="#sec-actual" onclick="toggleMobileToc()">D. Actual Implementation</a>
+          <a class="toc-tree-link" href="#sec-5-mengapa-showflutterpage-di-tabbar-hanya-menerima-mine" onclick="toggleMobileToc()">5. Mengapa <span class="toc-code">showFlutterPage</span> di TabBar Hanya Menerima <span class="toc-code">/mine</span>?</a>
+        </div>
+        <div class="toc-tree-node" id="mob-toc-node-sec-6-peta-komunikasi-lengkap-navigasi-dua-arah">
+          <div class="toc-node-row">
+            <span class="toc-caret" onclick="toggleTocBranch(this)">▾</span>
+            <a class="toc-tree-link" href="#sec-6-peta-komunikasi-lengkap-navigasi-dua-arah" onclick="toggleMobileToc()">6. Peta Komunikasi Lengkap (Navigasi Dua Arah)</a>
+          </div>
+          <div class="toc-branch">
+            <div class="toc-node-row">
+              <span class="toc-leaf-dot"></span>
+              <a class="toc-tree-link" href="#sub-a-native-rarr-flutter" onclick="toggleMobileToc()">A. Native &amp;rarr; Flutter</a>
+            </div>
+            <div class="toc-node-row">
+              <span class="toc-leaf-dot"></span>
+              <a class="toc-tree-link" href="#sub-b-flutter-rarr-native" onclick="toggleMobileToc()">B. Flutter &amp;rarr; Native</a>
+            </div>
+          </div>
         </div>
         <div class="toc-node-row">
           <span class="toc-leaf-dot"></span>
-          <a class="toc-tree-link" href="#sec-walkthrough" onclick="toggleMobileToc()">E. Step-by-Step Walkthrough</a>
+          <a class="toc-tree-link" href="#sec-7-gotchas-debugging-checklist" onclick="toggleMobileToc()">7. Gotchas &amp; Debugging Checklist</a>
         </div>
-        <div class="toc-node-row">
-          <span class="toc-leaf-dot"></span>
-          <a class="toc-tree-link" href="#sec-why" onclick="toggleMobileToc()">F. Why It Matters</a>
+        <div class="toc-tree-node" id="mob-toc-node-sec-8-pembedahan-teknis-engine-invariants">
+          <div class="toc-node-row">
+            <span class="toc-caret" onclick="toggleTocBranch(this)">▾</span>
+            <a class="toc-tree-link" href="#sec-8-pembedahan-teknis-engine-invariants" onclick="toggleMobileToc()">8. Pembedahan Teknis Engine &amp; Invariants</a>
+          </div>
+          <div class="toc-branch">
+            <div class="toc-node-row">
+              <span class="toc-leaf-dot"></span>
+              <a class="toc-tree-link" href="#sub-8-1-mengapa-bundle-identifier-flutter-berbeda" onclick="toggleMobileToc()">A. Bundle ID <span class="toc-code">iosBundleIdentifier</span></a>
+            </div>
+            <div class="toc-node-row">
+              <span class="toc-leaf-dot"></span>
+              <a class="toc-tree-link" href="#sub-8-2-misteri-samir-single-flutter-engine" onclick="toggleMobileToc()">B. Identifier <span class="toc-code">samir_single_flutter_engine</span></a>
+            </div>
+            <div class="toc-node-row">
+              <span class="toc-leaf-dot"></span>
+              <a class="toc-tree-link" href="#sub-8-3-anatomi-samirflutterviewcontroller" onclick="toggleMobileToc()">C. Anatomi <span class="toc-code">SamirFlutterViewController</span></a>
+            </div>
+            <div class="toc-node-row">
+              <span class="toc-leaf-dot"></span>
+              <a class="toc-tree-link" href="#sub-8-4-inisialisasi-initialroute-root" onclick="toggleMobileToc()">D. Inisialisasi <span class="toc-code">initialRoute: "/root"</span></a>
+            </div>
+            <div class="toc-node-row">
+              <span class="toc-leaf-dot"></span>
+              <a class="toc-tree-link" href="#sub-8-5-protokol-lifecyclechannel" onclick="toggleMobileToc()">E. Protokol <span class="toc-code">lifecycleChannel</span></a>
+            </div>
+            <div class="toc-node-row">
+              <span class="toc-leaf-dot"></span>
+              <a class="toc-tree-link" href="#sub-8-6-filosofi-precondition-vs-clean-architecture" onclick="toggleMobileToc()">F. Filosofi <span class="toc-code">precondition</span> &amp; Clean Arch</a>
+            </div>
+          </div>
         </div>
-        <div class="toc-node-row">
-          <span class="toc-leaf-dot"></span>
-          <a class="toc-tree-link" href="#sec-example" onclick="toggleMobileToc()">G. Practical Inspection Guide</a>
+        <div class="toc-tree-node" id="mob-toc-node-sec-9-pembedahan-lifecycle-urutan-proses">
+          <div class="toc-node-row">
+            <span class="toc-caret" onclick="toggleTocBranch(this)">▾</span>
+            <a class="toc-tree-link" href="#sec-9-pembedahan-lifecycle-urutan-proses" onclick="toggleMobileToc()">9. Lifecycle &amp; Urutan di Balik Layar</a>
+          </div>
+          <div class="toc-branch">
+            <div class="toc-node-row">
+              <span class="toc-leaf-dot"></span>
+              <a class="toc-tree-link" href="#sub-9-1-konsep-siklus-hidup-flutter-di-native" onclick="toggleMobileToc()">A. Lifecycle Flutter di Native</a>
+            </div>
+            <div class="toc-node-row">
+              <span class="toc-leaf-dot"></span>
+              <a class="toc-tree-link" href="#sub-9-2-anatomi-proses-prewarm-di-balik-layar" onclick="toggleMobileToc()">B. Anatomi <span class="toc-code">prewarm()</span></a>
+            </div>
+            <div class="toc-node-row">
+              <span class="toc-leaf-dot"></span>
+              <a class="toc-tree-link" href="#sub-9-3-urutan-saat-screen-flutter-dibuka" onclick="toggleMobileToc()">C. Timeline Tab Switching</a>
+            </div>
+            <div class="toc-node-row">
+              <span class="toc-leaf-dot"></span>
+              <a class="toc-tree-link" href="#sub-9-4-tiga-pilar-arsitektur" onclick="toggleMobileToc()">D. Tiga Pilar Arsitektur</a>
+            </div>
+          </div>
         </div>
-        <div class="toc-node-row">
-          <span class="toc-leaf-dot"></span>
-          <a class="toc-tree-link" href="#sec-mistakes" onclick="toggleMobileToc()">H. Common Mistakes</a>
-        </div>
-        <div class="toc-node-row">
-          <span class="toc-leaf-dot"></span>
-          <a class="toc-tree-link" href="#sec-check" onclick="toggleMobileToc()">I. Knowledge Check</a>
-        </div>
-        <div class="toc-node-row">
-          <span class="toc-leaf-dot"></span>
-          <a class="toc-tree-link" href="#sec-completion" onclick="toggleMobileToc()">J. Completion Criteria</a>
-        </div>
-        <div class="toc-node-row">
-          <span class="toc-leaf-dot"></span>
-          <a class="toc-tree-link" href="#sub-solid" onclick="toggleMobileToc()">🏛️ Architecture Lab</a>
+        <div class="toc-tree-node" id="mob-toc-node-lab" style="margin-top: 0.45rem;">
+          <div class="toc-node-row">
+            <span class="toc-caret" onclick="toggleTocBranch(this)">▾</span>
+            <a class="toc-tree-link" href="#sub-solid" onclick="toggleMobileToc()" style="font-weight: 700; color: var(--accent-warning);">
+              🏛️ Architecture Lab & Audit
+            </a>
+          </div>
+          <div class="toc-branch">
+            <div class="toc-node-row">
+              <span class="toc-leaf-dot"></span>
+              <a class="toc-tree-link" href="#sub-solid" onclick="toggleMobileToc()">1. Audit SOLID & Clean Arch</a>
+            </div>
+            <div class="toc-node-row">
+              <span class="toc-leaf-dot"></span>
+              <a class="toc-tree-link" href="#sub-blueprint" onclick="toggleMobileToc()">2. Refactoring Blueprint</a>
+            </div>
+            <div class="toc-node-row">
+              <span class="toc-leaf-dot"></span>
+              <a class="toc-tree-link" href="#sub-quiz" onclick="toggleMobileToc()">3. Interactive Retention Quiz</a>
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -736,40 +1064,172 @@ private func flutterRootRoute(for vc: UIViewController?) -> String? {
 </div>
 
 <!-- ========================================================================= -->
-<!-- CURRICULUM DRAWER OVERLAY & PANEL                                          -->
+<!-- FULL CURRICULUM DRAWER (CATALOG OF ALL MODULES)                           -->
 <!-- ========================================================================= -->
-<div class="curriculum-overlay" id="curriculumOverlay" onclick="toggleCurriculumDrawer()"></div>
+<div class="curriculum-drawer-overlay" id="curriculumOverlay" onclick="toggleCurriculumDrawer()"></div>
 <div class="curriculum-drawer" id="curriculumDrawer">
-  <div class="curriculum-drawer-header">
-    <h3>📚 Modul Kurikulum SAMIR iOS</h3>
+  <div class="drawer-header">
+    <div class="drawer-title">📚 Kurikulum Lengkap SAMIR Mobile iOS</div>
     <button class="drawer-close-btn" onclick="toggleCurriculumDrawer()">✕</button>
   </div>
-  <div class="curriculum-search-box">
-    <input type="text" id="moduleSearchInput" placeholder="Cari modul..." oninput="filterCurriculum()">
+  <div class="drawer-search">
+    <input type="text" id="moduleSearchInput" placeholder="🔍 Cari modul (contoh: startup, router, auth)..." oninput="filterCurriculum()">
   </div>
-  <div class="curriculum-drawer-content">
+  <div class="drawer-body" id="curriculumListBody">
     <div class="curriculum-level-group">
-      <div class="curriculum-level-title">Level 4 — Understanding Navigation</div>
-      <a class="curriculum-item-link" href="01-feature-inventory.html">
-        <span>📄</span> 01 — Feature Inventory
-      </a>
-      <a class="curriculum-item-link" href="02-navigation-fundamentals.html">
-        <span>📄</span> 02 — Navigation Fundamentals
-      </a>
-      <a class="curriculum-item-link" href="03-complete-navigation-map.html">
-        <span>📄</span> 03 — Complete Navigation Map
-      </a>
-      <a class="curriculum-item-link" href="04-navigation-conditions-and-edge-cases.html">
-        <span>📄</span> 04 — Navigation Conditions &amp; Edge Cases
-      </a>
-      <a class="curriculum-item-link active" href="05-hybrid-tabbar-navigation.html">
-        <span>🟢</span> 05 — Hybrid TabBar &amp; Persistent Host
+      <div class="curriculum-level-title">Level 0: Learning Roadmap</div>
+      <a class="curriculum-item-link" href="../00-learning-roadmap.html" data-chiron-updated="true">
+        <span>📄</span> Kurikulum &amp; Roadmap Pembelajaran SAMIR iOS <span class="chiron-drawer-marker-badges"><span class="marker-pill pill-updated" title="Halaman ini baru saja diperbarui">✨ UPDATED</span></span>
       </a>
     </div>
     <div class="curriculum-level-group">
-      <div class="curriculum-level-title">Visual Diagrams &amp; Roadmap</div>
-      <a class="curriculum-item-link" href="../00-learning-roadmap.html">
-        <span>🗺️</span> Learning Roadmap &amp; Index
+      <div class="curriculum-level-title">Level 1: Project Foundation</div>
+      <a class="curriculum-item-link" href="../01-project-foundation/01-application-overview.html" data-chiron-updated="true">
+        <span>📄</span> 01 — Application Overview <span class="chiron-drawer-marker-badges"><span class="marker-pill pill-updated" title="Halaman ini baru saja diperbarui">✨ UPDATED</span></span>
+      </a>
+      <a class="curriculum-item-link" href="../01-project-foundation/02-repository-structure.html" data-chiron-updated="false">
+        <span>📄</span> 02 — Repository Structure
+      </a>
+      <a class="curriculum-item-link" href="../01-project-foundation/03-technology-stack-and-build.html" data-chiron-updated="true">
+        <span>📄</span> 03 — Technology Stack &amp; Build Configuration <span class="chiron-drawer-marker-badges"><span class="marker-pill pill-updated" title="Halaman ini baru saja diperbarui">✨ UPDATED</span></span>
+      </a>
+    </div>
+    <div class="curriculum-level-group">
+      <div class="curriculum-level-title">Level 2: Understanding App Startup</div>
+      <a class="curriculum-item-link" href="../02-understanding-app-startup/01-ios-entry-point.html" data-chiron-updated="false">
+        <span>📄</span> 01 — iOS Entry Point
+      </a>
+      <a class="curriculum-item-link" href="../02-understanding-app-startup/02-application-lifecycle.html" data-chiron-updated="false">
+        <span>📄</span> 02 — Application Lifecycle
+      </a>
+      <a class="curriculum-item-link" href="../02-understanding-app-startup/03-startup-sequence-and-initial-routing.html" data-chiron-updated="true">
+        <span>📄</span> 03 — Startup Sequence &amp; Initial Routing <span class="chiron-drawer-marker-badges"><span class="marker-pill pill-updated" title="Halaman ini baru saja diperbarui">✨ UPDATED</span></span>
+      </a>
+      <a class="curriculum-item-link" href="../02-understanding-app-startup/04-czmodulemanager-deep-dive.html" data-chiron-updated="true">
+        <span>📄</span> 04 — CZModuleManager Deep Dive <span class="chiron-drawer-marker-badges"><span class="marker-pill pill-updated" title="Halaman ini baru saja diperbarui">✨ UPDATED</span></span>
+      </a>
+    </div>
+    <div class="curriculum-level-group">
+      <div class="curriculum-level-title">Level 3: Understanding Architecture</div>
+      <a class="curriculum-item-link" href="../03-understanding-architecture/01-architecture-overview.html" data-chiron-updated="false">
+        <span>📄</span> 01 — Architecture Overview
+      </a>
+      <a class="curriculum-item-link" href="../03-understanding-architecture/02-layers-and-responsibilities.html" data-chiron-updated="false">
+        <span>📄</span> 02 — Layers &amp; Responsibilities
+      </a>
+      <a class="curriculum-item-link" href="../03-understanding-architecture/03-dependency-direction.html" data-chiron-updated="false">
+        <span>📄</span> 03 — Dependency Direction
+      </a>
+      <a class="curriculum-item-link" href="../03-understanding-architecture/04-shared-components-and-services.html" data-chiron-updated="false">
+        <span>📄</span> 04 — Shared Components &amp; Services
+      </a>
+    </div>
+    <div class="curriculum-level-group">
+      <div class="curriculum-level-title">Level 4: Understanding Navigation</div>
+      <a class="curriculum-item-link" href="../04-understanding-navigation/01-feature-inventory.html" data-chiron-updated="false">
+        <span>📄</span> 01 — Feature Inventory
+      </a>
+      <a class="curriculum-item-link" href="../04-understanding-navigation/02-navigation-fundamentals.html" data-chiron-updated="false">
+        <span>📄</span> 02 — Navigation Fundamentals
+      </a>
+      <a class="curriculum-item-link" href="../04-understanding-navigation/03-complete-navigation-map.html" data-chiron-updated="false">
+        <span>📄</span> 03 — Complete Navigation Map
+      </a>
+      <a class="curriculum-item-link" href="../04-understanding-navigation/04-navigation-conditions-and-edge-cases.html" data-chiron-updated="false">
+        <span>📄</span> 04 — Navigation Conditions &amp; Edge Cases
+      </a>
+      <a class="curriculum-item-link active" href="#" data-chiron-updated="true">
+        <span>🟢</span> 05 — Arsitektur Navigasi Hybrid TabBar &amp; Flutter Persistent Host (Sedang Dibaca) <span class="chiron-drawer-marker-badges"><span class="marker-pill pill-updated" title="Halaman ini baru saja diperbarui">✨ UPDATED</span></span>
+      </a>
+    </div>
+    <div class="curriculum-level-group">
+      <div class="curriculum-level-title">Level 5: Learning Business Flows</div>
+      <a class="curriculum-item-link" href="../05-learning-business-flows/01-user-journey-overview.html" data-chiron-updated="false">
+        <span>📄</span> 01 — User Journey Overview
+      </a>
+      <a class="curriculum-item-link" href="../05-learning-business-flows/02-authentication-and-session-flow.html" data-chiron-updated="false">
+        <span>📄</span> 02 — Authentication &amp; Session Flow
+      </a>
+      <a class="curriculum-item-link" href="../05-learning-business-flows/03-core-feature-flows.html" data-chiron-updated="true">
+        <span>📄</span> 03 — Core Feature Flows <span class="chiron-drawer-marker-badges"><span class="marker-pill pill-updated" title="Halaman ini baru saja diperbarui">✨ UPDATED</span></span>
+      </a>
+      <a class="curriculum-item-link" href="../05-learning-business-flows/04-cross-feature-journeys.html" data-chiron-updated="true">
+        <span>📄</span> 04 — Cross-Feature Journeys <span class="chiron-drawer-marker-badges"><span class="marker-pill pill-updated" title="Halaman ini baru saja diperbarui">✨ UPDATED</span></span>
+      </a>
+      <a class="curriculum-item-link" href="../05-learning-business-flows/05-production-low-level-flows.html" data-chiron-updated="false">
+        <span>📄</span> 05 — Production Low-Level Execution Flows
+      </a>
+    </div>
+    <div class="curriculum-level-group">
+      <div class="curriculum-level-title">Level 6: Data &amp; Dependencies</div>
+      <a class="curriculum-item-link" href="../06-understanding-data-and-dependencies/01-dependency-catalog.html" data-chiron-updated="true">
+        <span>📄</span> 01 — Dependency Catalog <span class="chiron-drawer-marker-badges"><span class="marker-pill pill-updated" title="Halaman ini baru saja diperbarui">✨ UPDATED</span></span>
+      </a>
+      <a class="curriculum-item-link" href="../06-understanding-data-and-dependencies/02-networking-and-api-flow.html" data-chiron-updated="false">
+        <span>📄</span> 02 — Networking &amp; API Flow
+      </a>
+      <a class="curriculum-item-link" href="../06-understanding-data-and-dependencies/03-models-and-data-transformation.html" data-chiron-updated="false">
+        <span>📄</span> 03 — Models &amp; Data Transformation
+      </a>
+      <a class="curriculum-item-link" href="../06-understanding-data-and-dependencies/04-state-management-and-persistence.html" data-chiron-updated="false">
+        <span>📄</span> 04 — State Management &amp; Persistence
+      </a>
+      <a class="curriculum-item-link" href="../06-understanding-data-and-dependencies/05-native-flutter-integration.html" data-chiron-updated="true">
+        <span>📄</span> 05 — Native-Flutter Integration <span class="chiron-drawer-marker-badges"><span class="marker-pill pill-updated" title="Halaman ini baru saja diperbarui">✨ UPDATED</span></span>
+      </a>
+    </div>
+    <div class="curriculum-level-group">
+      <div class="curriculum-level-title">Level 7: Debugging &amp; Maintenance</div>
+      <a class="curriculum-item-link" href="../07-learning-to-debug-and-maintain/01-error-handling.html" data-chiron-updated="false">
+        <span>📄</span> 01 — Error Handling
+      </a>
+      <a class="curriculum-item-link" href="../07-learning-to-debug-and-maintain/02-testing-and-debugging.html" data-chiron-updated="false">
+        <span>📄</span> Level 7
+      </a>
+      <a class="curriculum-item-link" href="../07-learning-to-debug-and-maintain/03-coupling-and-technical-debt.html" data-chiron-updated="false">
+        <span>📄</span> Level 7
+      </a>
+      <a class="curriculum-item-link" href="../07-learning-to-debug-and-maintain/04-change-impact-analysis.html" data-chiron-updated="false">
+        <span>📄</span> Level 7
+      </a>
+    </div>
+    <div class="curriculum-level-group">
+      <div class="curriculum-level-title">Level 8: Reference &amp; Codebase Audit</div>
+      <a class="curriculum-item-link" href="../08-reference/01-codebase-glossary.html" data-chiron-updated="false">
+        <span>📄</span> Level 8
+      </a>
+      <a class="curriculum-item-link" href="../08-reference/02-source-code-index.html" data-chiron-updated="false">
+        <span>📄</span> Level 8
+      </a>
+      <a class="curriculum-item-link" href="../08-reference/03-existing-documentation-audit.html" data-chiron-updated="false">
+        <span>📄</span> Level 8
+      </a>
+      <a class="curriculum-item-link" href="../08-reference/04-open-questions-and-unverified-findings.html" data-chiron-updated="false">
+        <span>📄</span> Level 8
+      </a>
+    </div>
+    <div class="curriculum-level-group">
+      <div class="curriculum-level-title">Visual Diagrams &amp; Sequence Maps</div>
+      <a class="curriculum-item-link" href="../diagrams/application-startup.html" data-chiron-updated="false">
+        <span>📄</span> Diagram — Alur Peluncuran Aplikasi (Application Startup Sequence)
+      </a>
+      <a class="curriculum-item-link" href="../diagrams/architecture-overview.html" data-chiron-updated="false">
+        <span>📄</span> Diagram — Ikhtisar Arsitektur (Architecture Overview)
+      </a>
+      <a class="curriculum-item-link" href="../diagrams/core-user-journeys.html" data-chiron-updated="false">
+        <span>📄</span> Diagram — Alur Pengguna Utama (Core User Journeys)
+      </a>
+      <a class="curriculum-item-link" href="../diagrams/feature-dependencies.html" data-chiron-updated="false">
+        <span>📄</span> Diagram — Dependensi Fitur &amp; Modul (Feature Dependencies)
+      </a>
+      <a class="curriculum-item-link" href="../diagrams/navigation-overview.html" data-chiron-updated="false">
+        <span>📄</span> Diagram — Peta Navigasi Lengkap (Navigation Overview)
+      </a>
+    </div>
+    <div class="curriculum-level-group">
+      <div class="curriculum-level-title">Course Index &amp; Syllabus</div>
+      <a class="curriculum-item-link" href="../README.html" data-chiron-updated="true">
+        <span>📄</span> SAMIR iOS — Learning Curve &amp; Engineering Guide <span class="chiron-drawer-marker-badges"><span class="marker-pill pill-updated" title="Halaman ini baru saja diperbarui">✨ UPDATED</span></span>
       </a>
     </div>
   </div>
@@ -891,36 +1351,33 @@ private func flutterRootRoute(for vc: UIViewController?) -> String? {
     }
   }
 
-  // ScrollSpy for TOC Tree
-  document.addEventListener('DOMContentLoaded', function() {
+  window.addEventListener('DOMContentLoaded', () => {
     try {
-      const savedCollapsed = localStorage.getItem('chiron_toc_collapsed');
-      if (savedCollapsed === '1' && window.innerWidth > 1200) {
+      if (localStorage.getItem('chiron_toc_collapsed') === '1' && window.innerWidth > 1200) {
         document.body.classList.add('toc-collapsed');
         const topbarBtn = document.getElementById('topbarTocBtn');
-        if (topbarBtn) {
-          topbarBtn.classList.remove('active');
-          topbarBtn.title = "Tampilkan Daftar Isi (Mode Normal)";
-        }
+        if (topbarBtn) topbarBtn.classList.remove('active');
       }
     } catch (e) {}
 
-    const sections = document.querySelectorAll('main.docs-content section[id], main.docs-content div[id], main.docs-content header[id]');
-    const tocLinks = document.querySelectorAll('.docs-toc-sidebar .toc-tree-link');
+    const sectionIds = ['sec-title', 'sec-1-ikhtisar-koreksi-konseptual', 'sec-2-mengapa-arsitektur-ini-dipilih-tradeoff-analysis', 'sec-3-pembedahan-showroot-vs-showpage', 'sub-a-flutterenginemanagersharedshowroot', 'sub-b-flutterenginemanagersharedshowpage', 'sub-c-mental-model-kunci-analogi-hidesbottombarwhenpushed-ios-native', 'sec-4-mekanisme-dynamic-chrome-tabbar-visibility', 'sec-5-mengapa-showflutterpage-di-tabbar-hanya-menerima-mine', 'sec-6-peta-komunikasi-lengkap-navigasi-dua-arah', 'sub-a-native-rarr-flutter', 'sub-b-flutter-rarr-native', 'sec-7-gotchas-debugging-checklist', 'sub-solid', 'sub-blueprint', 'sub-quiz'];
+    const tocLinks = document.querySelectorAll('.toc-tree-link');
 
-    window.addEventListener('scroll', function() {
-      let currentId = '';
-      sections.forEach(sec => {
-        const top = sec.getBoundingClientRect().top;
-        if (top <= 120) {
-          currentId = sec.getAttribute('id');
+    window.addEventListener('scroll', () => {
+      let currentSection = '';
+      const scrollPos = window.scrollY + 140;
+
+      sectionIds.forEach(id => {
+        const el = document.getElementById(id);
+        if (el && el.offsetTop <= scrollPos) {
+          currentSection = id;
         }
       });
 
-      if (currentId) {
+      if (currentSection) {
         tocLinks.forEach(link => {
           link.classList.remove('active');
-          if (link.getAttribute('href') === '#' + currentId) {
+          if (link.getAttribute('href') === '#' + currentSection) {
             link.classList.add('active');
           }
         });
@@ -990,19 +1447,19 @@ private func flutterRootRoute(for vc: UIViewController?) -> String? {
 
   // Quiz Evaluation Logic
   const explanations = {
-    "1": {
-      "success": "Tepat sekali! Menggunakan push untuk navigasi tab utama akan mengotori Navigator stack, sehingga pengguna harus menekan tombol Back puluhan kali jika sering berpindah tab.",
-      "danger": "Kurang tepat. Alasan utamanya adalah push akan menumpuk riwayat navigasi (history stack), padahal tab utama harus bertindak sebagai switch stateless di level root (IndexedStack)."
-    },
-    "2": {
-      "success": "Benar! Monotonic request ID mencegah situasi race condition di mana respons render dari tab sebelumnya yang tiba terlambat menimpa tampilan tab aktif.",
-      "danger": "Kurang tepat. Request ID dipakai untuk memvalidasi apakah frame yang baru selesai dirender di Flutter masih sesuai dengan tab yang sedang aktif dipilih pengguna."
-    },
-    "3": {
-      "success": "Tepat! Sub-halaman Flutter membutuhkan pengalaman layar penuh (full-screen), sehingga TabBar native disembunyikan dan container Flutter diperluas memenuhi view.bounds.",
-      "danger": "Kurang tepat. TabBar native disembunyikan sementara (isHidden = true) dan frame diperluas, lalu dimunculkan kembali saat pengguna kembali ke root."
-    }
-  };
+  "1": {
+    "success": "Tepat! Hardcoded string tidak memiliki type-safety sehingga typo pada parameter URL scheme hanya dapat terdeteksi saat aplikasi mengalami crash di runtime.",
+    "danger": "Kurang tepat. String hardcoded menghilangkan pengecekan tipe statis (compile-time safety), meningkatkan risiko runtime exception ketika route dipanggil."
+  },
+  "2": {
+    "success": "Benar! UI bertugas menampilkan data dan menangkap input; keputusan ke mana alur berpindah didelegasikan sepenuhnya ke Coordinator.",
+    "danger": "Kurang tepat. Coordinator membebaskan UI dari logika routing, sehingga satu layar dapat dipakai ulang dalam berbagai konteks perjalanan bisnis."
+  },
+  "3": {
+    "success": "Tepat sekali! Rute deep link ditahan sebagai pending intent, lalu dieksekusi setelah pengguna berhasil login atau melewati guard otentikasi.",
+    "danger": "Kurang tepat. Deep link wajib ditahan sementara (pending state) sampai syarat otentikasi terpenuhi, bukan diabaikan atau diterobos secara tidak aman."
+  }
+};
 
   function submitQuiz(quizId, selectedOption, isCorrect) {
     const card = document.getElementById('quiz-' + quizId);
@@ -1022,6 +1479,11 @@ private func flutterRootRoute(for vc: UIViewController?) -> String? {
     feedback.innerHTML = '<strong>' + (isCorrect ? '🎉 Jawaban Tepat!' : '❌ Jawaban Salah!') + '</strong> ' + 
       (isCorrect ? explanations[quizId].success : explanations[quizId].danger);
   }
+</script>
+
+<!-- Embed Course Updates Manifest -->
+<script>
+  window.CHIRON_COURSE_UPDATES = {"course": "samir-mobile-ios", "last_synced_at": "2026-11-09T14:15:00+07:00", "sync_title": "Sinkronisasi branch chore/iOS-Docs-DA dengan main (v1.3.8-iOS & iOS 15.0)", "sync_commit": "e5b7352", "updated_pages": {"00-learning-roadmap.html": {"tag": "Silabus Diperbarui", "summary": "Penambahan modul navigasi 05 — Arsitektur Hybrid TabBar & Flutter Persistent Host ke peta belajar Level 4."}, "01-project-foundation/01-application-overview.html": {"tag": "Target iOS 15 & PRODTEST", "summary": "Pembaruan deployment target ke iOS 15.0+, penambahan kondisi kompilasi PRODTEST di arsitektur Tiga Serangkai, dan penyesuaian walkthrough."}, "01-project-foundation/03-technology-stack-and-build.html": {"tag": "Upgrade SDK & Pods", "summary": "Upgrade AppsFlyerFramework 7.0.2, Tingyun 2.17.9, pencopotan CocoaPods TrustDecision, dan skema build PRODTEST."}, "02-understanding-app-startup/03-startup-sequence-and-initial-routing.html": {"tag": "Urutan 11 Bootstrapping", "summary": "Penyelarasan urutan eksekusi aktual didFinishLaunchingWithOptions (AppsFlyer DeepLink & Points Report dijalankan lebih awal) dan integrasi IDScreenCaptureWarningManager."}, "02-understanding-app-startup/04-czmodulemanager-deep-dive.html": {"tag": "Sinkronisasi Baris Kode", "summary": "Pembaruan nomor baris acuan pada LoanConfirmService (#L964), IDCodeViewController (#L451), dan penanganan pending deeplink pada splash countdown."}, "04-understanding-navigation/05-hybrid-tabbar-navigation.html": {"tag": "Modul Baru", "summary": "Arsitektur Single Persistent Flutter Host di bawah UITabBar, pembagian tab Native vs Flutter, dan sinkronisasi route chrome."}, "05-learning-business-flows/03-core-feature-flows.html": {"tag": "Dual Benefit Style B", "summary": "Pola A/B test paket keuntungan VIP (Style B) di konfirmasi pinjaman, komponen LoanBenefitCouponReminderView, dan sel repaid Beranda baru."}, "05-learning-business-flows/04-cross-feature-journeys.html": {"tag": "Web Caching & JSBridge", "summary": "JSBridge clearAccountCache untuk logout via Web H5, dan pembaruan arsitektur caching useProtocolCachePolicy dengan validasi ETag & Last-Modified."}, "06-understanding-data-and-dependencies/01-dependency-catalog.html": {"tag": "Katalog Dependensi", "summary": "Dokumentasi breaking change AppsFlyer 7.0.2 (AppsFlyerDeepLinkDelegate & sessionReadyListener), Tingyun 2.17.9, dan removal TrustDecision."}, "06-understanding-data-and-dependencies/05-native-flutter-integration.html": {"tag": "FChannel Baru", "summary": "Penambahan method platform channel logout dan handleLoginError pada samir_native_channel."}, "README.html": {"tag": "Indeks Silabus", "summary": "Penyelarasan struktur kurikulum Level 4 dengan 5 modul navigasi lengkap."}}};
 </script>
 
 <!-- Chiron Annotations, Page Markers & Multi-IDE Launcher Engine -->

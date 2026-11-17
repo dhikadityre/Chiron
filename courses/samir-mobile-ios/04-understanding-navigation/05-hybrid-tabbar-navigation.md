@@ -180,3 +180,253 @@ Alasan desain bisnis:
 3. **Safe Area Inset Terpotong:**
    - *Penyebab:* Perhitungan safe area guide native tidak dikirim ke Flutter saat tinggi tab bar berubah.
    - *Mitigasi:* Verifikasi fungsi `updatePersistentSafeArea(top:bottom:)` di `SamirFlutterViewController`.
+
+---
+
+## 8. Pembedahan Teknis Engine & Host Invariants (Deep Dive Inisialisasi)
+
+Bagian ini merangkum pembedahan teknis mendalam terhadap detail konfigurasi dan runtime yang sering menjadi pertanyaan arsitektur pada `FlutterEngineManager.swift` dan `pubspec.yaml`:
+
+### A. Mengapa Bundle Identifier Flutter Berbeda? (`iosBundleIdentifier` di `pubspec.yaml`)
+Pada `flutter/pubspec.yaml`:
+```yaml
+  module:
+    androidX: true
+    androidPackage: com.sahabatmikro.flutter_module
+    iosBundleIdentifier: com.sahabatmikro.flutterModule
+```
+1. **Identitas Modul Add-to-App:** Properti `module:` menegaskan bahwa project Flutter ini adalah *embedded module*, bukan aplikasi standalone.
+2. **Kompilasi Wrapper iOS (`.ios/`):** Saat Flutter toolchain membangun wrapper CocoaPods di folder ephemeral `.ios/`, nilai `com.sahabatmikro.flutterModule` digunakan sebagai `CFBundleIdentifier` untuk modul framework Flutter tersebut.
+3. **Mencegah Tabrakan Bundle ID:** Identifier ini sengaja dibedakan dari Bundle ID aplikasi native utama (`IDSamirLoan`, misal `com.sahabatmikro.id` / `com.samir.loan`) agar tidak terjadi *bundle collision* di build system Apple/Xcode saat framework di-link melalui `podhelper.rb`.
+
+### B. Misteri `"samir_single_flutter_engine"`: Mengapa Tidak Ditemukan di Flutter?
+Pada `FlutterEngineManager.swift`:
+```swift
+private let engine = FlutterEngine(name: "samir_single_flutter_engine")
+```
+1. **Host-Side Identifier (Native Runtime):** String ini adalah argumen konstruktor bawaan `FlutterEngine(name: String)` dari framework iOS (`FlutterEngine.h`).
+2. **Hanya Berlaku di Sisi Native iOS:** Nilai ini **tidak pernah diekspos atau dikirim ke isolate Dart**.
+3. **Tujuan Utama:**
+   - **Thread Profiling & Tracing:** Flutter Engine menggunakannya untuk menamai thread internal C++ (misal `io.flutter.1.ui`, profiler trace) pada Xcode Debugger, Instruments, dan crash reports.
+   - **Key Identifikasi:** Berguna jika aplikasi menggunakan `FlutterEngineGroup` atau cache engine (`FlutterEngineCache`) untuk membedakan instans engine yang berjalan di memory. Di sini dinamai `samir_single_flutter_engine` untuk menegaskan arsitektur *Single Shared Engine*.
+
+### C. Anatomi `SamirFlutterViewController`: Mengapa Terlihat "Empty View"?
+```swift
+public final class SamirFlutterViewController: FlutterViewController
+```
+1. **Bukan Empty View:** Terlihat kosong di kode Swift karena tidak menambahkan komponen UIKit standar (`UILabel`, `UIButton`, dll). Seluruh piksel visual dirender langsung oleh Flutter Engine di atas canvas grafis GPU via **`CAMetalLayer`** (Metal surface).
+2. **Tanggung Jawab Khusus Subclass:**
+   - **Anti-Flicker (`backgroundColor`):** Menyetel background ke `#F5F5F5` (abu-abu muda) untuk mencegah kedipan hitam/putih sesaat sebelum frame pertama Flutter selesai digambar.
+   - **Bypass UIKit Layout Insets:** Menyetel `edgesForExtendedLayout = [.top, .bottom]` dan `extendedLayoutIncludesOpaqueBars = true` agar surface Flutter memenuhi container tanpa intervensi layout otomatis UIKit.
+   - **Safe Area Dinamis (`updatePersistentSafeArea`):** Meneruskan kalkulasi safe area insets khusus container persistent saat status bar atau header berubah.
+   - **Sinkronisasi Status Bar (`setNativeStatusBarOverlayHidden`):** Mengontrol visibilitas status bar overlay native (tag 100) saat tab Flutter aktif.
+3. **Siapa Saja Konsumennya?**
+   - **`FlutterEngineManager`:** Menginstansiasi dan menyimpannya sebagai singleton (`sharedViewController()`).
+   - **`IDMainTabBarController`:** Menempelkan view-nya ke dalam `flutterContainerView` (`installPersistentRoot`).
+   - **`FlutterNativeChannel+route.swift`:** Mengecek `persistentRootViewController` untuk menentukan konteks navigasi modal / push-pop.
+
+### D. Inisialisasi `initialRoute: "/root"` (Cold-Start Prewarm)
+Pada `FlutterEngineManager.swift`:
+```swift
+hasRun = engine.run(withEntrypoint: nil, initialRoute: "/root")
+```
+1. **Target Rute Flutter:** Di sisi Flutter (`routers.dart` dan `route_paths.dart`), rute `"/root"` diarahkan ke `FlutterRootPage`.
+2. **Struktur `IndexedStack`:** `FlutterRootPage` membungkus `MineHomePage` (`/mine`) dan `RepayHomePage` (`/repay`) secara bersamaan.
+3. **Mengapa Di-hardcode di Startup?**
+   - Saat aplikasi melakukan `prewarm()` di startup native (`IDSamirMainModule`), engine langsung mem-booting tree `/root` dan menginisialisasi Dart isolate serta routing tree ke memori.
+   - Saat pengguna kemudian mengetuk tab "Tagihan" atau "Saya" di `IDMainTabBarController`, halamannya **langsung muncul secara instan tanpa jeda rendering awal (zero cold-start latency)**.
+
+### E. Protokol `lifecycleChannel` & State Baku (`AppLifecycleState.resumed` / `.inactive`)
+```swift
+engine.lifecycleChannel.sendMessage("AppLifecycleState.resumed")
+engine.lifecycleChannel.sendMessage("AppLifecycleState.inactive")
+```
+1. **Channel Bawaan Framework:** `engine.lifecycleChannel` adalah `FlutterBasicMessageChannel<String>` resmi bawaan Flutter (`"flutter/lifecycle"`).
+2. **Bukan String Bebas:** String `"AppLifecycleState.resumed"` dan `"AppLifecycleState.inactive"` adalah **protokol baku Flutter framework** (sesuai enum Dart `AppLifecycleState`). Jika dikirim string sembarang, Flutter tidak akan memproses perubahan lifecycle.
+3. **Tujuan Efisiensi Daya & Baterai:**
+   - Dalam pola persistent host, view Flutter tidak pernah di-destroy saat user berpindah ke tab native (Beranda).
+   - Mengirim `"AppLifecycleState.inactive"` mematikan render loop, timer animasi, dan ticker Flutter saat tab native aktif, sehingga **menghemat CPU & baterai**.
+   - Begitu user kembali ke tab Flutter, pengiriman `"AppLifecycleState.resumed"` membangunkan render loop kembali.
+
+### F. Filosofi `precondition` vs Clean Architecture: Fail-Fast & Invariant Enforcement
+```swift
+precondition(
+    hasRun,
+    "FlutterEngineManager.prewarm() must run before installing the Flutter host"
+)
+```
+1. **Cara Kerja `precondition` di Swift:**
+   - Mengevaluasi kondisi logis. Jika `false`, aplikasi akan **crash seketika (fatal error)** baik di mode **Debug maupun Release**.
+   - Berbeda dari `assert` yang dinonaktifkan di build Release, `precondition` menjamin kepatuhan runtime (*hard invariant*).
+2. **Kesesuaian dengan Clean Architecture:**
+   - **Menjunjung Tinggi Design by Contract (DbC) & Fail-Fast:** Dalam arsitektur modular, dependensi siklus hidup antar modul (Engine harus berjalan sebelum Host ViewController dipasang) adalah sebuah *system invariant*. Membiarkan aplikasi berjalan dalam state cacat (*undefined/corrupted state*) melanggar integritas arsitektur.
+   - **Bedakan Programmer Error vs Recoverable Error:**
+     - *Programmer Invariant Violation* (kesalahan urutan inisialisasi di kode): Tepat menggunakan `precondition` / `fatalError` agar terdeteksi sejak awal dan tidak menimbulkan bug hantu di produksi.
+     - *Runtime / Recoverable Error* (kegagalan jaringan, payload JSON salah, user cancel): Wajib menggunakan `Error`, `Result`, atau `do-catch`, **bukan** `precondition`.
+3. **Contoh Penggunaan Umum:**
+   ```swift
+   // Memastikan parameter konfigurasi wajib telah disuplai saat dependency didaftarkan
+   final class SecureStorageService {
+       private let serviceIdentifier: String
+       
+       init(identifier: String) {
+           precondition(!identifier.isEmpty, "Service identifier cannot be empty.")
+           self.serviceIdentifier = identifier
+       }
+   }
+   ```
+
+---
+
+## 9. Pembedahan Siklus Hidup & Urutan Proses di Balik Layar (Under-the-Hood Sequence)
+
+Bagian ini menguraikan secara mendalam bagaimana Flutter Engine berinteraksi dengan runtime iOS, apa saja yang dilakukan `prewarm()` di tingkat thread & memori, serta alur milidetik di balik layar saat layar Flutter dimuat atau dibuka oleh pengguna.
+
+### A. Konsep Siklus Hidup (Lifecycle) Flutter di Host Native
+Flutter pada dasarnya bukanlah kumpulan View UIKit standar, melainkan sebuah **mesin rendering grafis mandiri** yang menggambar seluruh pikselnya secara otonom di atas permukaan **`CAMetalLayer`** (Metal GPU pada iOS).
+
+```
+┌────────────────────────────────────────────────────────┐
+│                      iOS System                        │
+│                 (Main Thread / UIKit)                  │
+└───────────────────────────┬────────────────────────────┘
+                            │
+               lifecycleChannel.sendMessage
+                            │
+      ┌─────────────────────┴─────────────────────┐
+      │ "AppLifecycleState.inactive"              │ "AppLifecycleState.resumed"
+      ▼                                           ▼
+┌───────────────────────────┐               ┌───────────────────────────┐
+│     FLUTTER ENGINE        │               │      FLUTTER ENGINE       │
+│        (TIDUR)            │               │         (BANGUN)          │
+│ • VSync listener dimatikan│               │ • VSync listener menyala  │
+│ • Render loop berhenti    │               │ • Render loop aktif       │
+│ • Animasi/Ticker di-pause │               │ • Merespons tap gesture   │
+│ • CPU = 0%, Baterai hemat │               │ • Siap menggambar 60/120fps│
+└───────────────────────────┘               └───────────────────────────┘
+```
+
+#### Mengapa Native Harus Mengatur Lifecycle Secara Eksplisit?
+Dalam arsitektur *Single Persistent Host* SAMIR, `SamirFlutterViewController` **tidak pernah di-destroy atau di-dealloc** saat pengguna membuka Tab Beranda (Native). View-nya hanya disembunyikan (`isHidden = true`).
+
+Tanpa intervensi native:
+- Flutter Engine tidak mengetahui bahwa tampilannya sedang tidak terlihat di layar.
+- Engine akan terus mendengarkan VSync, mengeksekusi ticker animasi, dan mengonsumsi daya komputasi.
+- **Dampak Negatif:** CPU boros dan baterai perangkat cepat terkuras.
+
+Oleh karena itu, native mengatur transisi:
+1. **`AppLifecycleState.inactive`**: Dikirim saat tab Flutter tertutup. Engine mematikan ticker & frame rendering loop (`scheduleFrame`), menurunkan penggunaan CPU ke 0%.
+2. **`AppLifecycleState.resumed`**: Dikirim sesaat sebelum kontainer Flutter ditampilkan kembali. Engine menghidupkan kembali VSync frame scheduling dan memicu `onResume()` pada `PageLifecycleMixin`.
+
+---
+
+### B. Anatomi Proses `prewarm()` di Balik Layar (Cold-Start Execution)
+Pemanggilan `FlutterEngineManager.shared.prewarm()` pada `IDSamirMainModule.swift:L61` menjalankan serangkaian inisialisasi berat di startup aplikasi:
+
+```mermaid
+sequenceDiagram
+    autonumber
+    participant Main as iOS Main Thread
+    participant Engine as Flutter C++ Engine
+    participant DartVM as Dart VM & Isolate
+    participant Tree as Flutter Widget Tree
+
+    Main->>Engine: engine.run(entrypoint: nil, initialRoute: "/root")
+    activate Engine
+    Note over Engine: 1. Alokasi 3 Background Threads:<br/>UI Thread, Raster (GPU) Thread, IO Thread
+    Engine->>DartVM: 2. Booting Dart Virtual Machine (Dart VM)
+    activate DartVM
+    Note over DartVM: 3. Load snapshot kode biner (App.framework)<br/>Jalankan main() di lib/main.dart
+    DartVM->>Tree: 4. Jalankan _bootstrap() & runApp(MyApp)
+    activate Tree
+    Note over Tree: Inisialisasi Tingyun, Global, Dio,<br/>dan bangun FlutterRootPage (/root)
+    Tree->>Engine: 5. Render first frame ke GPU buffer (offscreen)
+    deactivate Tree
+    deactivate DartVM
+    Engine-->>Main: hasRun = true
+    deactivate Engine
+    Main->>Engine: engine.lifecycleChannel.sendMessage("AppLifecycleState.inactive")
+    Note over Engine: 6. Engine tertidur di RAM (~35 MB).<br/>Render loop stop, siap pakai seketika.
+```
+
+#### Rincian 6 Langkah Prewarm:
+1. **Alokasi 3 Worker Thread C++ Flutter:**
+   - **UI Task Runner:** Thread yang mengeksekusi isolate Dart dan membangun Widget/Element/RenderObject tree.
+   - **Raster Task Runner (GPU):** Thread yang menerjemahkan display list menjadi perintah instruksi grafis Metal.
+   - **IO Task Runner:** Thread latar belakang untuk memuat font, gambar terkompresi, dan shader compilation.
+2. **Booting Dart Virtual Machine (Dart VM):**
+   - Heap memori Dart diinisialisasi. Waktu *cold start* VM (~200–400ms) dihabiskan pada fase splash startup, bukan saat interaksi pengguna.
+3. **Pemuatan AOT Snapshot (`App.framework`):**
+   - Biner kompilasi Ahead-Of-Time dimuat ke memori dan mengeksekusi fungsi `main()` di `lib/main.dart`.
+4. **Eksekusi `_bootstrap()`:**
+   - Menginisialisasi plugin monitoring APM Tingyun, membaca konfigurasi persistent di `Global.init()`, dan mengonfigurasi HTTP client `Dio`.
+   - Mendaftarkan handler platform channel via `FlutterNativeRouteDispatcher.setup()`.
+5. **Konstruksi Awal Rute `"/root"`:**
+   - Memanggil `runApp(const MyApp())` dengan rute awal `"/root"`.
+   - `FlutterRootPage` dimount bersama `IndexedStack` yang menampung instance awal `MineHomePage` dan `RepayHomePage`.
+   - Menunggu `WidgetsBinding.instance.endOfFrame` agar frame pertama selesai digambar ke offscreen buffer.
+6. **Transisi Cepat ke Status `inactive()`:**
+   - Begitu frame offscreen selesai, native langsung mengirim `"AppLifecycleState.inactive"`.
+   - Engine standby di memori (~35 MB) tanpa membebani CPU.
+
+---
+
+### C. Urutan Langkah Demi Langkah Saat Screen Flutter Dibuka (Tab Switching)
+Ketika pengguna berada di **Tab Beranda (Native)** lalu mengetuk **Tab Tagihan (`/repay`)** atau **Tab Saya (`/mine`)**:
+
+```mermaid
+sequenceDiagram
+    autonumber
+    actor User
+    participant NativeBar as UITabBar / IDMainTabBarController
+    participant Manager as FlutterEngineManager
+    participant Channel as BinaryMessenger / MethodChannel
+    participant Dart as Dart Runtime (GoRouter & IndexedStack)
+    participant GPU as Metal GPU (CAMetalLayer)
+
+    User->>NativeBar: Tap Tab "Tagihan" (/repay)
+    NativeBar->>Manager: 1. resume()
+    Manager->>Channel: Kirim "AppLifecycleState.resumed"
+    Note over Dart: Engine terbangun, VSync loop aktif kembali
+
+    NativeBar->>Manager: 2. showRoot(route: "/repay", requestID: 101)
+    Manager->>Channel: invokeMethod("showFlutterRoute", {"route": "/repay", ...})
+    
+    Channel->>Dart: 3. Diterima oleh FlutterNativeRouteDispatcher
+    Dart->>Dart: 4. Routers.go("/repay") -> FlutterRootController.select("/repay")
+    Note over Dart: 5. IndexedStack berganti index (0 -> 1)<br/>Widget Repay sudah ada di RAM (tanpa re-create)
+
+    Dart->>GPU: 6. ensureVisualUpdate() -> Render frame baru
+    GPU-->>Dart: await WidgetsBinding.instance.endOfFrame (Frame Ready!)
+    
+    Dart->>Dart: 7. Trigger FlutterNativePageSignal.refreshRepayHome() (Fetch API)
+    Dart-->>Channel: 8. Return response: { requestId: 101, frameReady: true }
+    
+    Channel-->>Manager: 9. Callback diterima Native
+    Manager->>NativeBar: 10. Validasi requestId == activeID
+    NativeBar->>NativeBar: 11. flutterContainerView.isHidden = false
+    NativeBar->>NativeBar: 12. updatePersistentFlutterHostLayout() & Safe Area
+    Note over User,GPU: 13. UI Flutter tampil instan tanpa kedip (Zero Delay)
+```
+
+#### Rincian Alur Eksekusi:
+1. **Pemicu Native (`UITabBar`):** Tab selection memanggil `updatePersistentFlutterHost(for:)` di `IDMainTabBarController`.
+2. **Pembangkitan Engine (`resume`):** Native mengirim `"AppLifecycleState.resumed"` melalui `engine.lifecycleChannel`. `SchedulerBinding` di Flutter mengaktifkan kembali ticker VSync.
+3. **Pengiriman Intent Rute (`showRoot`):** Native menetapkan integer monotonic `requestID` (misal 101) dan memanggil MethodChannel `"showFlutterRoute"`.
+4. **Peralihan Indeks `IndexedStack`:** Di sisi Flutter, `FlutterRootController.select(route)` mengubah indeks target. Karena anak widget sudah ada di RAM, tidak ada siklus *re-inflation* widget dari nol.
+5. **Sinkronisasi Frame GPU (`endOfFrame`):** Flutter memanggil `WidgetsBinding.instance.ensureVisualUpdate()` dan menahan eksekusi (`await endOfFrame`) sampai GPU Metal selesai menggambar frame rute baru.
+6. **Pengambilan Data Asinkron:** Sinyal `refreshRepayHome()` ditembakkan untuk memicu request HTTP API di background tanpa menahan transisi visual.
+7. **Penyajian Mulus ke Layar Native:** Flutter mengembalikan payload `{ requestId: 101, frameReady: true }`. Native memvalidasi `requestId`, lalu menyetel `flutterContainerView.isHidden = false` dan menyesuaikan frame Safe Area.
+
+---
+
+### D. Tiga Pilar Arsitektur: Zero-Delay, Anti-Flicker, dan Anti-Race Condition
+
+| Pilar Arsitektural | Mekanisme Implementasi | Masalah yang Dicegah |
+| :--- | :--- | :--- |
+| **1. Zero Cold-Start Delay** | `prewarm()` di startup + `IndexedStack` di `FlutterRootPage`. | Mencegah jeda hitam/loading 300–500ms saat pengguna pertama kali membuka tab Flutter. |
+| **2. Garansi Zero-Flicker** | Native menahan `flutterContainerView.isHidden = true` hingga Flutter mengonfirmasi `await endOfFrame`. | Mencegah layar putih sesaat atau kedipan layout yang belum selesai digambar oleh GPU. |
+| **3. Anti Race-Condition** | Validasi monotonic integer `requestID` pada callback completion native. | Mencegah salah tampilan halaman jika pengguna mengetuk tab berulang kali dalam tempo sangat cepat. |
+| **4. Asynchronous Data Fetch** | Pemisahan render layout awal dari fetching HTTP API (Dio). | Mencegah UI tersendat (stutter/freeze) karena menunggu respons jaringan internet. |
+
+

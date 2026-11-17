@@ -55,11 +55,27 @@ class MockElement {
     this.attributes = {};
     this.children = [];
     this.parentNode = null;
-    this.textContent = '';
+    this._textContent = '';
     this._innerHTML = '';
     this._listeners = {};
     this.style = {};
     this.dataset = {};
+  }
+
+  get textContent() {
+    return this._textContent;
+  }
+
+  set textContent(val) {
+    this._textContent = String(val);
+  }
+
+  get innerText() {
+    return this._textContent;
+  }
+
+  set innerText(val) {
+    this._textContent = String(val);
   }
 
   get className() {
@@ -362,4 +378,42 @@ state = Markers.getMarkers();
 assert.strictEqual(state.bookmark, null, "Bookmark should be null after toggle off");
 console.log("✓ Test 10: Toggle Bookmark OFF successfully unsets bookmark");
 
-console.log("\n🎉 ALL 10 UNIT & INTEGRATION TESTS PASSED 100%!");
+// 11. Verify Updated Page Indicator and Filter Pill
+Markers.setCourseUpdates({
+  course: 'samir-mobile-ios',
+  updated_pages: {
+    '01-project-foundation/01-application-overview.html': {
+      tag: 'Target iOS 15 & PRODTEST',
+      summary: 'Pembaruan deployment target ke iOS 15.0+'
+    }
+  }
+});
+
+// Check that drawerLink1 (01-application-overview.html) now has pill-updated
+const link1Badges = drawerLink1.querySelector('.chiron-drawer-marker-badges');
+assert(link1Badges, "drawerLink1 must have marker badges container");
+assert(link1Badges.innerHTML.includes('pill-updated'), "drawerLink1 must render updated badge");
+assert(link1Badges.innerHTML.includes('✨ UPDATED'), "drawerLink1 must contain '✨ UPDATED' text");
+assert.strictEqual(drawerLink1.dataset.chironUpdated, 'true', "drawerLink1 dataset.chironUpdated must be 'true'");
+
+// Check that drawerLinkCurrent (03-dependency-direction.html) is not updated
+assert.strictEqual(drawerLinkCurrent.dataset.chironUpdated, 'false');
+
+// Check filter pill count
+const updateCountEl = mockDoc.getElementById('curriculumUpdatedCount');
+assert(updateCountEl, "curriculumUpdatedCount element should exist");
+assert.strictEqual(updateCountEl.textContent, '1', "curriculumUpdatedCount must display 1");
+
+// Simulate clicking "✨ Diperbarui" filter pill
+const filterBar = mockDoc.getElementById('curriculumMarkerFilters');
+assert(filterBar, "Curriculum marker filters bar must exist");
+const updatedFilterBtn = filterBar.querySelector('.pill-updated');
+assert(updatedFilterBtn, "Updated filter button must exist");
+updatedFilterBtn.dispatchEvent({ type: 'click', preventDefault: () => {} });
+
+assert.strictEqual(drawerLink1.style.display, 'flex', "Updated link must remain visible under updated filter");
+assert.strictEqual(drawerLinkCurrent.style.display, 'none', "Non-updated link must be hidden under updated filter");
+console.log("✓ Test 11: Updated Page Indicators & Curriculum Drawer Filter verified successfully!");
+
+console.log("\n🎉 ALL 11 UNIT & INTEGRATION TESTS PASSED 100%!");
+process.exit(0);

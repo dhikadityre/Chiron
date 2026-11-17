@@ -41,7 +41,7 @@ TRACK_CONFIG = {
         "name": "SAMIR Mobile iOS",
         "badge": "CHIRON CLASSROOM • SAMIR MOBILE iOS",
         "scope": "SAMIR Mobile (iOS Native UIKit & FChannel)",
-        "branch": "learn/iOS-Arch",
+        "branch": "chore/iOS-Docs-DA",
         "lang": "swift",
         "source_dir": IOS_SOURCE_DIR,
         "target_dir": IOS_TARGET_DIR,
@@ -1069,7 +1069,7 @@ def generate_interactive_quizzes(track_key, lesson_item, md_content):
     return full_quiz_section, explanations_json
 
 
-def compile_lesson_to_html(lesson_item, catalog, flat_lessons, track_key):
+def compile_lesson_to_html(lesson_item, catalog, flat_lessons, track_key, course_updates=None):
     """
     Compiles a single lesson item into a standalone Chiron HTML file with full UI chrome.
     """
@@ -1087,6 +1087,26 @@ def compile_lesson_to_html(lesson_item, catalog, flat_lessons, track_key):
 
     title = lesson_item["title"]
     subtitle = lesson_item["subtitle"]
+
+    # Check if page is marked as updated
+    target_rel_clean = target_rel.replace("\\", "/")
+    page_update = None
+    if course_updates and "updated_pages" in course_updates:
+        page_update = course_updates["updated_pages"].get(target_rel_clean)
+
+    update_banner_html = ""
+    if page_update:
+        tag_str = html.escape(page_update.get("tag", "Pembaruan Terkini"))
+        summary_str = html.escape(page_update.get("summary", ""))
+        sync_title = html.escape(course_updates.get("sync_title", "Pembaruan Arsitektur"))
+        branch_name = html.escape(track["branch"])
+        update_banner_html = f'''      <div class="chiron-update-banner">
+        <span class="chiron-update-tag">✨ TERAKHIR DIPERBARUI</span>
+        <div class="chiron-update-desc">
+          <strong>{tag_str}:</strong> {summary_str}
+          <span class="update-meta">Sinkronisasi branch <code>{branch_name}</code> ({sync_title})</span>
+        </div>
+      </div>'''
     
     # 1. Parse Markdown Body & Extract Headings
     body_html, toc_tree = parse_markdown_to_chiron_html(md_raw, track_key, lesson_item)
@@ -1110,8 +1130,15 @@ def compile_lesson_to_html(lesson_item, catalog, flat_lessons, track_key):
         icon = "🟢" if is_active else "📄"
         sib_filename = Path(sib["target_rel_path"]).name
         href = "#" if is_active else sib_filename
+        sib_target_rel = sib["target_rel_path"].replace("\\", "/")
+        is_sib_updated = bool(course_updates and "updated_pages" in course_updates and sib_target_rel in course_updates["updated_pages"])
+        
+        tab_badges_html = ""
+        if is_sib_updated:
+            tab_badges_html = ' <span class="chiron-tab-marker-badges"><span class="marker-pill pill-updated" title="Halaman ini baru saja diperbarui">✨</span></span>'
+
         doc_tabs_html.append(f'''      <a class="doc-tab{act_cls}" href="{href}" title="{sib_filename}">
-        <span class="tab-icon">{icon}</span> {sib_filename}
+        <span class="tab-icon">{icon}</span> {sib_filename}{tab_badges_html}
         <span class="tab-close" onclick="event.preventDefault();{"" if is_active else " this.parentElement.remove();"}">×</span>
       </a>''')
       
@@ -1119,12 +1146,16 @@ def compile_lesson_to_html(lesson_item, catalog, flat_lessons, track_key):
     toc_nodes_html = []
     mob_toc_nodes_html = []
     
+    toc_updated_pill = ""
+    if page_update:
+        toc_updated_pill = ' <span class="chiron-toc-marker-badges"><span class="marker-pill pill-updated" title="Halaman diperbarui">✨</span></span>'
+
     toc_nodes_html.append(f'''      <div class="toc-tree-node root-node" id="toc-node-root">
         <div class="toc-node-row">
           <span class="toc-caret" onclick="toggleTocBranch(this)">▾</span>
           <a class="toc-tree-link root-link" href="#sec-title" title="{html.escape(title)}">
             {html.escape(title)}
-          </a>
+          </a>{toc_updated_pill}
         </div>
         <div class="toc-branch">''')
         
@@ -1133,7 +1164,7 @@ def compile_lesson_to_html(lesson_item, catalog, flat_lessons, track_key):
         <span class="toc-caret" onclick="toggleTocBranch(this)">▾</span>
         <a class="toc-tree-link root-link" href="#sec-title" onclick="toggleMobileToc()">
           {html.escape(title)}
-        </a>
+        </a>{toc_updated_pill}
       </div>
       <div class="toc-branch">''')
 
@@ -1240,8 +1271,16 @@ def compile_lesson_to_html(lesson_item, catalog, flat_lessons, track_key):
             icon = "🟢" if is_cur else "📄"
             lbl_suffix = " (Sedang Dibaca)" if is_cur else ""
             item_href = "#" if is_cur else f"{to_root}{itm['target_rel_path']}"
-            drawer_levels_html.append(f'''      <a class="curriculum-item-link{act_cls}" href="{item_href}">
-        <span>{icon}</span> {html.escape(itm["title"])}{lbl_suffix}
+            itm_target_rel = itm["target_rel_path"].replace("\\", "/")
+            is_itm_updated = bool(course_updates and "updated_pages" in course_updates and itm_target_rel in course_updates["updated_pages"])
+            
+            data_updated_attr = ' data-chiron-updated="true"' if is_itm_updated else ' data-chiron-updated="false"'
+            drawer_badge_html = ""
+            if is_itm_updated:
+                drawer_badge_html = ' <span class="chiron-drawer-marker-badges"><span class="marker-pill pill-updated" title="Halaman ini baru saja diperbarui">✨ UPDATED</span></span>'
+
+            drawer_levels_html.append(f'''      <a class="curriculum-item-link{act_cls}" href="{item_href}"{data_updated_attr}>
+        <span>{icon}</span> {html.escape(itm["title"])}{lbl_suffix}{drawer_badge_html}
       </a>''')
         drawer_levels_html.append('    </div>')
 
@@ -1351,6 +1390,7 @@ def compile_lesson_to_html(lesson_item, catalog, flat_lessons, track_key):
         <span>⏱️ Estimasi: <strong>20 Menit</strong></span>
         <span>🏷️ Git Branch: <strong>{track["branch"]}</strong></span>
       </div>
+{update_banner_html}
     </header>
 
     <!-- BAGIAN 1: DOKUMEN PEMBELAJARAN LENGKAP -->
@@ -1670,6 +1710,11 @@ def compile_lesson_to_html(lesson_item, catalog, flat_lessons, track_key):
   }}
 </script>
 
+<!-- Embed Course Updates Manifest -->
+<script>
+  window.CHIRON_COURSE_UPDATES = {json.dumps(course_updates, ensure_ascii=False) if course_updates else "null"};
+</script>
+
 <!-- Chiron Annotations, Page Markers & Multi-IDE Launcher Engine -->
 <script src="{rel_to_assets}/chiron-client.js"></script>
 <script src="{rel_to_assets}/chiron-ide-launcher.js"></script>
@@ -1799,13 +1844,24 @@ def compile_entire_track(track_key):
     print(f"   Target: {track['target_dir']}")
     print(f"=======================================================")
     
+    # Load course_updates.json if present
+    course_updates_path = track["target_dir"] / "course_updates.json"
+    course_updates = None
+    if course_updates_path.exists():
+        try:
+            with open(course_updates_path, "r", encoding="utf-8") as f:
+                course_updates = json.load(f)
+            print(f"✨ Ditemukan berkas course_updates.json ({len(course_updates.get('updated_pages', {}))} halaman diperbarui).")
+        except Exception as e:
+            print(f"⚠️ Gagal membaca course_updates.json: {e}")
+
     catalog, flat_lessons = build_curriculum_catalog(track["source_dir"], track["levels"])
     print(f"📦 Ditemukan {len(flat_lessons)} berkas materi (.md) terstruktur dalam {len(catalog)} level.")
     
     # 1. Compile each lesson
     compiled_paths = []
     for idx, lesson in enumerate(flat_lessons, 1):
-        target_path = compile_lesson_to_html(lesson, catalog, flat_lessons, track_key)
+        target_path = compile_lesson_to_html(lesson, catalog, flat_lessons, track_key, course_updates=course_updates)
         compiled_paths.append(target_path)
         print(f"  [{idx:02d}/{len(flat_lessons):02d}] ✅ Dikompilasi: {lesson['target_rel_path']}")
         

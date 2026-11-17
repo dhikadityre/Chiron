@@ -1,14 +1,14 @@
 # iOS Application Startup Sequence Resources
 
-## Codebase Sources (GitLab: learn/iOS-Arch & Workspace)
+## Codebase Sources (GitLab: iOS-Develop & Workspace)
 
-- [IDSamirMainModule.swift](http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/learn/iOS-Arch/ios/IDSamirLoan/Application/SamirMainModule/Classes/IDModule/IDSamirMainModule.swift#L54-L129)
+- [IDSamirMainModule.swift](http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/iOS-Develop/ios/IDSamirLoan/Application/SamirMainModule/Classes/IDModule/IDSamirMainModule.swift#L54-L129)
   Core module lifecycle handler yang menjalankan 11 langkah inisialisasi SDK, penentuan root window, dan pendaftaran remote notifications.
-- [FlutterEngineManager.swift](http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/learn/iOS-Arch/ios/IDSamirLoan/Application/SamirCommonModule/Classes/FChannel/FlutterEngineManager.swift#L27-L158)
+- [FlutterEngineManager.swift](http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/iOS-Develop/ios/IDSamirLoan/Application/SamirCommonModule/Classes/FChannel/FlutterEngineManager.swift#L27-L158)
   Single engine manager yang mem-booting Dart VM runtime di background (`prewarm()`) dan memegang penjagaan crash `precondition(hasRun)`.
-- [IDLaunchViewController.swift](http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/learn/iOS-Arch/ios/IDSamirLoan/Application/SamirMainModule/Classes/IDController/IDLaunchViewController.swift)
+- [IDLaunchViewController.swift](http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/iOS-Develop/ios/IDSamirLoan/Application/SamirMainModule/Classes/IDController/IDLaunchViewController.swift)
   Layar splash screen dengan hitung mundur 3 detik dan tombol 'Lewati' yang memicu callback delegasi `IDLaunchViewProtocol`.
-- [IDMainTabBarController.swift](http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/learn/iOS-Arch/ios/IDSamirLoan/Application/SamirMainModule/Classes/IDController/IDMainTabBarController.swift)
+- [IDMainTabBarController.swift](http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/iOS-Develop/ios/IDSamirLoan/Application/SamirMainModule/Classes/IDController/IDMainTabBarController.swift)
   Root container controller pasca-startup yang menyusun 3 tab native dan memasang host container Flutter Engine.
 - [03-startup-sequence-and-initial-routing.md](file:///Users/samir/Documents/Workspace/SAMIR/Documentation/docs-learning-curve/iOS/02-understanding-app-startup/03-startup-sequence-and-initial-routing.md)
   Dokumentasi acuan SSOT pada learning curve iOS SAMIR.

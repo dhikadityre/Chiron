@@ -32,7 +32,7 @@
     <!-- Document Tabs Strip (Crossnote Style) -->
     <div class="topbar-tabs-scroll" id="docTabsStrip">
       <a class="doc-tab active" href="#" title="01-application-overview.html">
-        <span class="tab-icon">🟢</span> 01-application-overview.html
+        <span class="tab-icon">🟢</span> 01-application-overview.html <span class="chiron-tab-marker-badges"><span class="marker-pill pill-updated" title="Halaman ini baru saja diperbarui">✨</span></span>
         <span class="tab-close" onclick="event.preventDefault();">×</span>
       </a>
       <a class="doc-tab" href="02-repository-structure.html" title="02-repository-structure.html">
@@ -40,7 +40,7 @@
         <span class="tab-close" onclick="event.preventDefault(); this.parentElement.remove();">×</span>
       </a>
       <a class="doc-tab" href="03-technology-stack-and-build.html" title="03-technology-stack-and-build.html">
-        <span class="tab-icon">📄</span> 03-technology-stack-and-build.html
+        <span class="tab-icon">📄</span> 03-technology-stack-and-build.html <span class="chiron-tab-marker-badges"><span class="marker-pill pill-updated" title="Halaman ini baru saja diperbarui">✨</span></span>
         <span class="tab-close" onclick="event.preventDefault(); this.parentElement.remove();">×</span>
       </a>
     </div>
@@ -81,7 +81,14 @@
         <span>📚 Modul: <strong>01-application-overview</strong></span>
         <span>🎯 Scope: <strong>SAMIR Mobile (iOS Native UIKit & FChannel)</strong></span>
         <span>⏱️ Estimasi: <strong>20 Menit</strong></span>
-        <span>🏷️ Git Branch: <strong>learn/iOS-Arch</strong></span>
+        <span>🏷️ Git Branch: <strong>chore/iOS-Docs-DA</strong></span>
+      </div>
+      <div class="chiron-update-banner">
+        <span class="chiron-update-tag">✨ TERAKHIR DIPERBARUI</span>
+        <div class="chiron-update-desc">
+          <strong>Target iOS 15 &amp; PRODTEST:</strong> Pembaruan deployment target ke iOS 15.0+, penambahan kondisi kompilasi PRODTEST di arsitektur Tiga Serangkai, dan penyesuaian walkthrough.
+          <span class="update-meta">Sinkronisasi branch <code>chore/iOS-Docs-DA</code> (Sinkronisasi branch chore/iOS-Docs-DA dengan main (v1.3.8-iOS &amp; iOS 15.0))</span>
+        </div>
       </div>
     </header>
 
@@ -129,12 +136,12 @@
 <div id="sub-1-identitas-profil-teknis-aplikasi" class="doc-subsection">
 <h4>1. Identitas & Profil Teknis Aplikasi</h4>
 </div>
-<p>Berdasarkan file <a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/learn/iOS-Arch/ios/IDSamirLoan.xcodeproj/project.pbxproj" target="_blank" rel="noopener noreferrer">🦊 ios/IDSamirLoan.xcodeproj/project.pbxproj <span class="branch-tag">learn/iOS-Arch</span> ↗</a> dan <a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/learn/iOS-Arch/ios/IDSamirLoan/Application/IDSamirLoan-Info.plist" target="_blank" rel="noopener noreferrer">🦊 ios/IDSamirLoan/Application/IDSamirLoan-Info.plist <span class="branch-tag">learn/iOS-Arch</span> ↗</a>:</p>
-<div class="table-container"><table class="data-table"><thead><tr><th>Properti</th><th>Nilai Aktual di Repositori</th><th>Keterangan / Sumber</th></tr></thead><tbody><tr><td><strong>App Name</strong></td><td><code>Samir</code> (atau <code>Samir &lt;hari&gt;</code> di non-PROD)</td><td>Ditentukan via <code>app_environment.sh</code></td></tr><tr><td><strong>Product Bundle Identifier</strong></td><td><code>com.samir.loan</code></td><td><code>project.pbxproj:L25</code></td></tr><tr><td><strong>Apple App ID</strong></td><td><code>6475002606</code></td><td>Terdaftar di <code>AppEnv.swift</code> & Firebase</td></tr><tr><td><strong>Deployment Target</strong></td><td><code>iOS 14.0</code></td><td><code>project.pbxproj:L1283</code>, <code>Podfile:L8</code></td></tr><tr><td><strong>Bahasa Utama</strong></td><td>Swift 5.0 (dengan integrasi Flutter Engine & library ObjC)</td><td><code>project.pbxproj:L1530</code></td></tr><tr><td><strong>URL Scheme</strong></td><td><code>samir://</code></td><td><code>AppEnv.swift</code>, <code>IDRouterConstants.swift</code></td></tr><tr><td><strong>Orientasi Layar</strong></td><td>Portrait Only (<code>UIInterfaceOrientationPortrait</code>)</td><td><code>IDSamirLoan-Info.plist</code></td></tr><tr><td><strong>Interface Style</strong></td><td>Light Mode Only (<code>UIUserInterfaceStyle = Light</code>)</td><td><code>IDSamirLoan-Info.plist</code></td></tr></tbody></table></div>
+<p>Berdasarkan file <a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/chore/iOS-Docs-DA/ios/IDSamirLoan.xcodeproj/project.pbxproj" target="_blank" rel="noopener noreferrer">🦊 ios/IDSamirLoan.xcodeproj/project.pbxproj <span class="branch-tag">chore/iOS-Docs-DA</span> ↗</a> dan <a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/chore/iOS-Docs-DA/ios/IDSamirLoan/Application/IDSamirLoan-Info.plist" target="_blank" rel="noopener noreferrer">🦊 ios/IDSamirLoan/Application/IDSamirLoan-Info.plist <span class="branch-tag">chore/iOS-Docs-DA</span> ↗</a>:</p>
+<div class="table-container"><table class="data-table"><thead><tr><th>Properti</th><th>Nilai Aktual di Repositori</th><th>Keterangan / Sumber</th></tr></thead><tbody><tr><td><strong>App Name</strong></td><td><code>Samir</code> (atau <code>Samir &lt;hari&gt;</code> di non-PROD)</td><td>Ditentukan via <code>app_environment.sh</code></td></tr><tr><td><strong>Product Bundle Identifier</strong></td><td><code>com.samir.loan</code></td><td><code>project.pbxproj:L25</code></td></tr><tr><td><strong>Apple App ID</strong></td><td><code>6475002606</code></td><td>Terdaftar di <code>AppEnv.swift</code> & Firebase</td></tr><tr><td><strong>Deployment Target</strong></td><td><code>iOS 15.0</code></td><td><code>project.pbxproj:L1283</code>, <code>Podfile:L8</code></td></tr><tr><td><strong>Bahasa Utama</strong></td><td>Swift 5.0 (dengan integrasi Flutter Engine & library ObjC)</td><td><code>project.pbxproj:L1530</code></td></tr><tr><td><strong>URL Scheme</strong></td><td><code>samir://</code></td><td><code>AppEnv.swift</code>, <code>IDRouterConstants.swift</code></td></tr><tr><td><strong>Orientasi Layar</strong></td><td>Portrait Only (<code>UIInterfaceOrientationPortrait</code>)</td><td><code>IDSamirLoan-Info.plist</code></td></tr><tr><td><strong>Interface Style</strong></td><td>Light Mode Only (<code>UIUserInterfaceStyle = Light</code>)</td><td><code>IDSamirLoan-Info.plist</code></td></tr></tbody></table></div>
 <div id="sub-2-izin-privasi-perangkat-device-permissions" class="doc-subsection">
 <h4>2. Izin Privasi Perangkat (Device Permissions)</h4>
 </div>
-<p>Aplikasi finansial memerlukan data perangkat untuk verifikasi identitas (e-KYC) dan mitigasi risiko fraud. Seluruh teks izin didefinisikan dalam Bahasa Indonesia di <a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/learn/iOS-Arch/ios/IDSamirLoan/Application/IDSamirLoan-Info.plist" target="_blank" rel="noopener noreferrer">🦊 ios/IDSamirLoan/Application/IDSamirLoan-Info.plist <span class="branch-tag">learn/iOS-Arch</span> ↗</a>:</p>
+<p>Aplikasi finansial memerlukan data perangkat untuk verifikasi identitas (e-KYC) dan mitigasi risiko fraud. Seluruh teks izin didefinisikan dalam Bahasa Indonesia di <a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/chore/iOS-Docs-DA/ios/IDSamirLoan/Application/IDSamirLoan-Info.plist" target="_blank" rel="noopener noreferrer">🦊 ios/IDSamirLoan/Application/IDSamirLoan-Info.plist <span class="branch-tag">chore/iOS-Docs-DA</span> ↗</a>:</p>
 <pre><code class="language-xml">&lt;!-- Info.plist Permisions --&gt;
 &lt;key&gt;NSCameraUsageDescription&lt;/key&gt;
 &lt;string&gt;Izinkan kami menggunakan kamera Anda untuk mengambil foto KTP dan verifikasi wajah.&lt;/string&gt;
@@ -150,7 +157,7 @@
 <div id="sub-3-entitlements-aplikasi-lifecycle-apns" class="doc-subsection">
 <h4>3. Entitlements Aplikasi & Lifecycle APNs</h4>
 </div>
-<p>File <a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/learn/iOS-Arch/ios/IDSamirLoan/IDSamirLoan.entitlements" target="_blank" rel="noopener noreferrer">🦊 ios/IDSamirLoan/IDSamirLoan.entitlements <span class="branch-tag">learn/iOS-Arch</span> ↗</a> mendefinisikan kapabilitas runtime:</p>
+<p>File <a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/chore/iOS-Docs-DA/ios/IDSamirLoan/IDSamirLoan.entitlements" target="_blank" rel="noopener noreferrer">🦊 ios/IDSamirLoan/IDSamirLoan.entitlements <span class="branch-tag">chore/iOS-Docs-DA</span> ↗</a> mendefinisikan kapabilitas runtime:</p>
 <pre><code class="language-xml">&lt;dict&gt;
     &lt;key&gt;aps-environment&lt;/key&gt;
     &lt;string&gt;development&lt;/string&gt;
@@ -204,7 +211,7 @@ graph TD
     subgraph Xcode_Config ["Xcode Build Configurations (project.pbxproj: TEST / PROD / PRODTEST)"]
         direction TB
         C1["ID_ENVIRONMENT<br/>(User-Defined Setting)"]
-        C2["SWIFT_ACTIVE_COMPILATION_CONDITIONS<br/>(TEST / PROD)"]
+        C2["SWIFT_ACTIVE_COMPILATION_CONDITIONS<br/>(TEST / PROD / PRODTEST)"]
         C3["GCC_PREPROCESSOR_DEFINITIONS<br/>(TEST=1, EGGSHELL=1, PROD=1)"]
     end
 
@@ -231,7 +238,7 @@ graph TD
 </div>
 <div class="doc-subpoint-block" id="item-a-perbandingan-kompiler-mekanisme-kerja">
 <h5>A. Perbandingan Kompiler & Mekanisme Kerja</h5>
-<div class="table-container"><table class="data-table"><thead><tr><th>Parameter</th><th>GCC Preprocessor Macros (<code>GCC_PREPROCESSOR_DEFINITIONS</code>)</th><th>Swift Active Compilation Conditions (<code>SWIFT_ACTIVE_COMPILATION_CONDITIONS</code>)</th><th>User-Defined Environment (<code>ID_ENVIRONMENT</code>)</th></tr></thead><tbody><tr><td><strong>Kompiler / Parser</strong></td><td><strong>Apple Clang</strong> (C / C++ / Objective-C)</td><td><strong>Swiftc</strong> (Swift Compiler)</td><td><strong>Shell Script</strong> (<code>app_environment.sh</code>)</td></tr><tr><td><strong>Berkas Sasaran</strong></td><td><code>.m</code>, <code>.h</code>, <code>.c</code>, <code>.cpp</code>, <code>.mm</code></td><td><code>.swift</code></td><td><code>environment_preprocess.h</code> & <code>Info.plist</code></td></tr><tr><td><strong>Bentuk Format</strong></td><td><em>Key-Value</em> atau <em>Macro Flag</em> (<code>TEST=1</code>, <code>EGGSHELL=1</code>, <code>PROD=1</code>)</td><td><em>Boolean Identifier</em> tunggal (<code>TEST</code>, <code>PROD</code>)</td><td>String value (<code>TEST</code>, <code>PROD</code>)</td></tr><tr><td><strong>Sintaks Evaluasi</strong></td><td><code>#if (defined TEST)</code>, <code>#if (defined EGGSHELL)</code></td><td><code>#if TEST</code>, <code>#else</code></td><td><code>if [ &quot;$env&quot; != &quot;PROD&quot; ]; then ...</code></td></tr><tr><td><strong>Status Default Xcode</strong></td><td>Default hanya <code>DEBUG=1</code>. Custom flag (<code>TEST</code>, <code>EGGSHELL</code>) di-define manual.</td><td>Default hanya <code>DEBUG</code>. Custom flag (<code>TEST</code>, <code>PROD</code>) di-define manual.</td><td>Dibuat manual oleh arsitek SAMIR.</td></tr></tbody></table></div>
+<div class="table-container"><table class="data-table"><thead><tr><th>Parameter</th><th>GCC Preprocessor Macros (<code>GCC_PREPROCESSOR_DEFINITIONS</code>)</th><th>Swift Active Compilation Conditions (<code>SWIFT_ACTIVE_COMPILATION_CONDITIONS</code>)</th><th>User-Defined Environment (<code>ID_ENVIRONMENT</code>)</th></tr></thead><tbody><tr><td><strong>Kompiler / Parser</strong></td><td><strong>Apple Clang</strong> (C / C++ / Objective-C)</td><td><strong>Swiftc</strong> (Swift Compiler)</td><td><strong>Shell Script</strong> (<code>app_environment.sh</code>)</td></tr><tr><td><strong>Berkas Sasaran</strong></td><td><code>.m</code>, <code>.h</code>, <code>.c</code>, <code>.cpp</code>, <code>.mm</code></td><td><code>.swift</code></td><td><code>environment_preprocess.h</code> & <code>Info.plist</code></td></tr><tr><td><strong>Bentuk Format</strong></td><td><em>Key-Value</em> atau <em>Macro Flag</em> (<code>TEST=1</code>, <code>EGGSHELL=1</code>, <code>PROD=1</code>)</td><td><em>Boolean Identifier</em> tunggal (<code>TEST</code>, <code>PROD</code>, <code>PRODTEST</code>)</td><td>String value (<code>TEST</code>, <code>PROD</code>)</td></tr><tr><td><strong>Sintaks Evaluasi</strong></td><td><code>#if (defined TEST)</code>, <code>#if (defined EGGSHELL)</code></td><td><code>#if TEST</code>, <code>#if PRODTEST</code>, <code>#else</code></td><td><code>if [ &quot;$env&quot; != &quot;PROD&quot; ]; then ...</code></td></tr><tr><td><strong>Status Default Xcode</strong></td><td>Default hanya <code>DEBUG=1</code>. Custom flag (<code>TEST</code>, <code>EGGSHELL</code>) di-define manual.</td><td>Default hanya <code>DEBUG</code>. Custom flag (<code>TEST</code>, <code>PROD</code>, <code>PRODTEST</code>) di-define manual.</td><td>Dibuat manual oleh arsitek SAMIR.</td></tr></tbody></table></div>
 </div>
 <div class="doc-subpoint-block" id="item-b-pilar-1-siapa-yang-mengonsumsi-id-environment-alur-bundle-packaging">
 <h5>B. Pilar 1: Siapa yang Mengonsumsi <code>ID_ENVIRONMENT</code>? (Alur Bundle & Packaging)</h5>
@@ -239,9 +246,9 @@ graph TD
 <ol>
 <li><strong>Konsumen Langsung (Direct Consumer):</strong>
 <ul>
-<li>Skrip shell build phase <a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/learn/iOS-Arch/ios/IDSamirLoan/Application/Configuration/Environment/app_environment.sh#L8-L37" target="_blank" rel="noopener noreferrer">🦊 app_environment.sh <span class="branch-tag">learn/iOS-Arch</span> ↗</a> dieksekusi sebelum proses kompilasi kode dimulai.
+<li>Skrip shell build phase <a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/chore/iOS-Docs-DA/ios/IDSamirLoan/Application/Configuration/Environment/app_environment.sh#L8-L37" target="_blank" rel="noopener noreferrer">🦊 app_environment.sh <span class="branch-tag">chore/iOS-Docs-DA</span> ↗</a> dieksekusi sebelum proses kompilasi kode dimulai.
 </li>
-<li>Skrip ini membaca variabel <code>env=${ID_ENVIRONMENT}</code> lalu men-generate berkas header C sementara: <a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/learn/iOS-Arch/ios/environment_preprocess.h" target="_blank" rel="noopener noreferrer">🦊 environment_preprocess.h <span class="branch-tag">learn/iOS-Arch</span> ↗</a> dengan isi:
+<li>Skrip ini membaca variabel <code>env=${ID_ENVIRONMENT}</code> lalu men-generate berkas header C sementara: <a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/chore/iOS-Docs-DA/ios/environment_preprocess.h" target="_blank" rel="noopener noreferrer">🦊 environment_preprocess.h <span class="branch-tag">chore/iOS-Docs-DA</span> ↗</a> dengan isi:
 </li></ul>
 </li></ol>
 <pre><code class="language-c">     #define ID_ENVIRONMENT              TEST
@@ -253,7 +260,7 @@ graph TD
 <li><strong>Xcode Info.plist Preprocessor (<code>INFOPLIST_PREPROCESS = YES</code>):</strong>
 </li></ul>
 </li></ol>
-<p>Xcode menginjeksi <code>environment_preprocess.h</code> sebagai prefix header ke <a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/learn/iOS-Arch/ios/IDSamirLoan/Application/IDSamirLoan-Info.plist#L8" target="_blank" rel="noopener noreferrer">🦊 IDSamirLoan-Info.plist <span class="branch-tag">learn/iOS-Arch</span> ↗</a> untuk mengganti:</p>
+<p>Xcode menginjeksi <code>environment_preprocess.h</code> sebagai prefix header ke <a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/chore/iOS-Docs-DA/ios/IDSamirLoan/Application/IDSamirLoan-Info.plist#L8" target="_blank" rel="noopener noreferrer">🦊 IDSamirLoan-Info.plist <span class="branch-tag">chore/iOS-Docs-DA</span> ↗</a> untuk mengganti:</p>
 <ul>
 <li><code>CFBundleDisplayName</code> $\rightarrow$ <code>ID_ENVIRONMENT_APP_NAME</code>
 </li>
@@ -270,7 +277,7 @@ graph TD
 <ol>
 <li><strong>Konsumen Langsung (Direct Consumer):</strong>
 <ul>
-<li>Di seluruh codebase Swift SAMIR, hanya ada <strong>SATU file</strong> yang langsung mengevaluasi <code>#if TEST</code>, yaitu <a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/learn/iOS-Arch/ios/IDSamirLoan/Application/CZSwiftEnviromentLib/Classes/Base/AppEnv.swift#L26" target="_blank" rel="noopener noreferrer">🦊 AppEnv.swift:L26 <span class="branch-tag">learn/iOS-Arch</span> ↗</a>.
+<li>Di seluruh codebase Swift SAMIR, hanya ada <strong>SATU file</strong> yang langsung mengevaluasi <code>#if TEST</code>, yaitu <a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/chore/iOS-Docs-DA/ios/IDSamirLoan/Application/CZSwiftEnviromentLib/Classes/Base/AppEnv.swift#L26" target="_blank" rel="noopener noreferrer">🦊 AppEnv.swift:L26 <span class="branch-tag">chore/iOS-Docs-DA</span> ↗</a>.
 </li>
 <li><code>AppEnv</code> menyuplai dictionary konfigurasi sesuai kondisi:
 <ul>
@@ -286,48 +293,48 @@ graph TD
 </li>
 <li><strong>Core Facade (Penyimpan State Runtime):</strong>
 <ul>
-<li><a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/learn/iOS-Arch/ios/IDSamirLoan/Application/CZSwiftEnviromentLib/Classes/Base/CZEnvironmentManager.swift#L95" target="_blank" rel="noopener noreferrer">🦊 CZEnvironmentManager.swift:L95 <span class="branch-tag">learn/iOS-Arch</span> ↗</a> menyimpan data dari <code>AppEnv.default.config</code> ke dalam variabel <code>cachedConfigData</code>.
+<li><a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/chore/iOS-Docs-DA/ios/IDSamirLoan/Application/CZSwiftEnviromentLib/Classes/Base/CZEnvironmentManager.swift#L95" target="_blank" rel="noopener noreferrer">🦊 CZEnvironmentManager.swift:L95 <span class="branch-tag">chore/iOS-Docs-DA</span> ↗</a> menyimpan data dari <code>AppEnv.default.config</code> ke dalam variabel <code>cachedConfigData</code>.
 </li></ul>
 </li>
 <li><strong>Konsumen Turunan (Downstream Consumers):</strong>
 </li></ol>
 <p>Seluruh modul mengambil nilai konfigurasi melalui <code>CZEnvironmentManager.stringValueForKey(...)</code>:</p>
 <ul>
-<li><strong>Jaringan API Native:</strong> <a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/learn/iOS-Arch/ios/IDSamirLoan/Application/SamirNetworkModule/Classes/Common/IDNetworkManager.swift#L72" target="_blank" rel="noopener noreferrer">🦊 IDNetworkManager.swift:L72 <span class="branch-tag">learn/iOS-Arch</span> ↗</a> menetapkan <code>manager.baseUrl</code> untuk seluruh HTTP/REST request pinjaman.
+<li><strong>Jaringan API Native:</strong> <a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/chore/iOS-Docs-DA/ios/IDSamirLoan/Application/SamirNetworkModule/Classes/Common/IDNetworkManager.swift#L72" target="_blank" rel="noopener noreferrer">🦊 IDNetworkManager.swift:L72 <span class="branch-tag">chore/iOS-Docs-DA</span> ↗</a> menetapkan <code>manager.baseUrl</code> untuk seluruh HTTP/REST request pinjaman.
 </li>
-<li><strong>Bridge Host ke Flutter Module:</strong> <a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/learn/iOS-Arch/ios/IDSamirLoan/Application/SamirCommonModule/Classes/FChannel/FlutterNativeChannel+method.swift#L14" target="_blank" rel="noopener noreferrer">🦊 FlutterNativeChannel+method.swift:L14 <span class="branch-tag">learn/iOS-Arch</span> ↗</a> mengeksekusi handler method <code>getNativeAppEnv</code> untuk mengoper <code>apiBaseUrl</code>, <code>webBaseUrl</code>, <code>trackBaseUrl</code>, dan <code>clientId</code> ke <strong>Flutter Engine</strong>, sehingga Tab Tagihan (Repay) dan Tab Saya (Mine) yang berbasis Flutter otomatis mengikuti konfigurasi environment iOS host.
+<li><strong>Bridge Host ke Flutter Module:</strong> <a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/chore/iOS-Docs-DA/ios/IDSamirLoan/Application/SamirCommonModule/Classes/FChannel/FlutterNativeChannel+method.swift#L14" target="_blank" rel="noopener noreferrer">🦊 FlutterNativeChannel+method.swift:L14 <span class="branch-tag">chore/iOS-Docs-DA</span> ↗</a> mengeksekusi handler method <code>getNativeAppEnv</code> untuk mengoper <code>apiBaseUrl</code>, <code>webBaseUrl</code>, <code>trackBaseUrl</code>, dan <code>clientId</code> ke <strong>Flutter Engine</strong>, sehingga Tab Tagihan (Repay) dan Tab Saya (Mine) yang berbasis Flutter otomatis mengikuti konfigurasi environment iOS host.
 </li>
-<li><strong>Layanan Siklus Pinjaman:</strong> <a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/learn/iOS-Arch/ios/IDSamirLoan/Application/SamirLoanModule/Classes/LoanConfirmModule/Services/LoanConfirmRepayPlanService.swift#L190" target="_blank" rel="noopener noreferrer">🦊 LoanConfirmRepayPlanService.swift:L190 <span class="branch-tag">learn/iOS-Arch</span> ↗</a> mengambil <code>apiBaseUrl</code> untuk kalkulasi tenor dan jadwal angsuran.
+<li><strong>Layanan Siklus Pinjaman:</strong> <a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/chore/iOS-Docs-DA/ios/IDSamirLoan/Application/SamirLoanModule/Classes/LoanConfirmModule/Services/LoanConfirmRepayPlanService.swift#L190" target="_blank" rel="noopener noreferrer">🦊 LoanConfirmRepayPlanService.swift:L190 <span class="branch-tag">chore/iOS-Docs-DA</span> ↗</a> mengambil <code>apiBaseUrl</code> untuk kalkulasi tenor dan jadwal angsuran.
 </li>
-<li><strong>Webview H5 Terintegrasi:</strong> <a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/learn/iOS-Arch/ios/IDSamirLoan/Application/SamirWebViewModule/Classes/NewWebView/Controller/BaseWebViewController.swift#L572" target="_blank" rel="noopener noreferrer">🦊 BaseWebViewController.swift:L572 <span class="branch-tag">learn/iOS-Arch</span> ↗</a>, <a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/learn/iOS-Arch/ios/IDSamirLoan/Application/SamirWebViewModule/Classes/Controller/IDBusinessWebViewController.swift#L413" target="_blank" rel="noopener noreferrer">🦊 IDBusinessWebViewController.swift:L413 <span class="branch-tag">learn/iOS-Arch</span> ↗</a>, dan <a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/learn/iOS-Arch/ios/IDSamirLoan/Application/SamirWebViewModule/Classes/Helper/UnionLoginWebHelper.swift#L46" target="_blank" rel="noopener noreferrer">🦊 UnionLoginWebHelper.swift:L46 <span class="branch-tag">learn/iOS-Arch</span> ↗</a> memuat agreement dan form perizinan OJK dari <code>webBaseUrl</code>.
+<li><strong>Webview H5 Terintegrasi:</strong> <a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/chore/iOS-Docs-DA/ios/IDSamirLoan/Application/SamirWebViewModule/Classes/NewWebView/Controller/BaseWebViewController.swift#L572" target="_blank" rel="noopener noreferrer">🦊 BaseWebViewController.swift:L572 <span class="branch-tag">chore/iOS-Docs-DA</span> ↗</a>, <a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/chore/iOS-Docs-DA/ios/IDSamirLoan/Application/SamirWebViewModule/Classes/Controller/IDBusinessWebViewController.swift#L413" target="_blank" rel="noopener noreferrer">🦊 IDBusinessWebViewController.swift:L413 <span class="branch-tag">chore/iOS-Docs-DA</span> ↗</a>, dan <a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/chore/iOS-Docs-DA/ios/IDSamirLoan/Application/SamirWebViewModule/Classes/Helper/UnionLoginWebHelper.swift#L46" target="_blank" rel="noopener noreferrer">🦊 UnionLoginWebHelper.swift:L46 <span class="branch-tag">chore/iOS-Docs-DA</span> ↗</a> memuat agreement dan form perizinan OJK dari <code>webBaseUrl</code>.
 </li>
-<li><strong>Points & Event Tracking:</strong> <a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/learn/iOS-Arch/ios/IDSamirLoan/Application/SamirPointsModule/Classes/Custom/IDCustomPointNetworkManager.swift#L117" target="_blank" rel="noopener noreferrer">🦊 IDCustomPointNetworkManager.swift:L117 <span class="branch-tag">learn/iOS-Arch</span> ↗</a> mengonfigurasi <code>baseUrl</code> tracking dan <code>reportUrl</code>.
+<li><strong>Points & Event Tracking:</strong> <a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/chore/iOS-Docs-DA/ios/IDSamirLoan/Application/SamirPointsModule/Classes/Custom/IDCustomPointNetworkManager.swift#L117" target="_blank" rel="noopener noreferrer">🦊 IDCustomPointNetworkManager.swift:L117 <span class="branch-tag">chore/iOS-Docs-DA</span> ↗</a> mengonfigurasi <code>baseUrl</code> tracking dan <code>reportUrl</code>.
 </li></ul>
 </div>
 <div class="doc-subpoint-block" id="item-d-pilar-3-siapa-yang-mengonsumsi-gcc-preprocessor-definitions-inventaris-lengkap-15-berkas-nyata">
 <h5>D. Pilar 3: Siapa yang Mengonsumsi <code>GCC_PREPROCESSOR_DEFINITIONS</code>? (Inventaris Lengkap 15 Berkas Nyata)</h5>
 <p>Pilar ketiga bertanggung jawab atas <strong>percabangan logika bisnis runtime dan saklar fitur (Feature Toggles)</strong>.</p>
 <ul>
-<li><strong>Konsumen Langsung di Clang:</strong> <a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/learn/iOS-Arch/ios/IDSamirLoan/Application/CZSwiftEnviromentLib/Classes/Base/CZBuildEnvironment.m#L10-L34" target="_blank" rel="noopener noreferrer">🦊 CZBuildEnvironment.m:L10-34 <span class="branch-tag">learn/iOS-Arch</span> ↗</a> mengevaluasi <code>#if (defined TEST)</code> dan <code>#if (defined EGGSHELL)</code>.
+<li><strong>Konsumen Langsung di Clang:</strong> <a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/chore/iOS-Docs-DA/ios/IDSamirLoan/Application/CZSwiftEnviromentLib/Classes/Base/CZBuildEnvironment.m#L10-L34" target="_blank" rel="noopener noreferrer">🦊 CZBuildEnvironment.m:L10-34 <span class="branch-tag">chore/iOS-Docs-DA</span> ↗</a> mengevaluasi <code>#if (defined TEST)</code> dan <code>#if (defined EGGSHELL)</code>.
 </li>
-<li><strong>Swift Bridge:</strong> <a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/learn/iOS-Arch/ios/IDSamirLoan/Application/CZSwiftEnviromentLib/Classes/Base/CZPreBuildMacro.swift#L10-L22" target="_blank" rel="noopener noreferrer">🦊 CZPreBuildMacro.swift:L10-22 <span class="branch-tag">learn/iOS-Arch</span> ↗</a> membungkusnya menjadi method statis <code>cz_buildTest()</code>, <code>cz_buildProd()</code>, dan <code>cz_buildEggShell()</code>.
+<li><strong>Swift Bridge:</strong> <a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/chore/iOS-Docs-DA/ios/IDSamirLoan/Application/CZSwiftEnviromentLib/Classes/Base/CZPreBuildMacro.swift#L10-L22" target="_blank" rel="noopener noreferrer">🦊 CZPreBuildMacro.swift:L10-22 <span class="branch-tag">chore/iOS-Docs-DA</span> ↗</a> membungkusnya menjadi method statis <code>cz_buildTest()</code>, <code>cz_buildProd()</code>, dan <code>cz_buildEggShell()</code>.
 </li></ul>
 <p>Berikut adalah <strong>daftar inventaris lengkap dan tuntas dari 15 berkas kode nyata</strong> (yang menghasilkan 45+ baris pemanggilan) di repositori SAMIR iOS:</p>
-<div class="table-container"><table class="data-table"><thead><tr><th>No</th><th>Berkas Kode Sumber</th><th>Domain Bisnis</th><th>Logika & Perilaku Nyata di Kode</th></tr></thead><tbody><tr><td><strong>1</strong></td><td><a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/learn/iOS-Arch/ios/IDSamirLoan/main.swift#L27" target="_blank" rel="noopener noreferrer">🦊 main.swift:L27 <span class="branch-tag">learn/iOS-Arch</span> ↗</a></td><td><strong>APM Performance Monitor</strong></td><td>Memilih AppID TingYun APM SDK antara testing (<code>a3aa8552...</code>) vs live production (<code>614f29b4...</code>).</td></tr><tr><td><strong>2</strong></td><td><a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/learn/iOS-Arch/ios/IDSamirLoan/Application/SamirNetworkModule/Classes/Common/IDNetworkManager.swift#L73-L74" target="_blank" rel="noopener noreferrer">🦊 IDNetworkManager.swift:L73-74 <span class="branch-tag">learn/iOS-Arch</span> ↗</a></td><td><strong>Keamanan Jaringan & SSL</strong></td><td>Menyalakan <code>debugLogEnabled</code> saat <code>cz_buildTest()</code> dan mewajibkan <code>validatesDomainName = true</code> (SSL certificate check) saat <code>cz_buildProd()</code>.</td></tr><tr><td><strong>3</strong></td><td><a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/learn/iOS-Arch/ios/IDSamirLoan/Application/SamirAuthModule/Classes/IDCommon/IDAuthAPI.swift#L50-L72" target="_blank" rel="noopener noreferrer">🦊 IDAuthAPI.swift:L50-72 <span class="branch-tag">learn/iOS-Arch</span> ↗</a></td><td><strong>e-KYC & Face Liveness</strong></td><td>Menukar kredensial Advance.AI Liveness: <code>accessKey</code>, <code>secretKey</code>, dan lisensi demo (<code>ai.advance.liveness.demo</code>) vs prod (<code>com.sahabatmikro</code>).</td></tr><tr><td><strong>4</strong></td><td><a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/learn/iOS-Arch/ios/IDSamirLoan/Application/SamirCommonModule/Classes/IDCommon/IDTrustDecision/IDTrustDecisionManager.swift#L41" target="_blank" rel="noopener noreferrer">🦊 IDTrustDecisionManager.swift:L41 <span class="branch-tag">learn/iOS-Arch</span> ↗</a></td><td><strong>Anti-Fraud & Risk Assessment</strong></td><td>Mengganti partner key fraud detection (TongDun/TrustDecision) dari <code>Samir_id_test</code> ke akun live <code>Samir_id</code>.</td></tr><tr><td><strong>5</strong></td><td><a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/learn/iOS-Arch/ios/IDSamirLoan/Application/SamirLoginModule/Classes/IDViewcontroller/V2/LoginViewV2Controller.swift#L406" target="_blank" rel="noopener noreferrer">🦊 LoginViewV2Controller.swift:L406, 470, 486, 548, 569, 589 <span class="branch-tag">learn/iOS-Arch</span> ↗</a></td><td><strong>Autentikasi V2 (OTP Bypass)</strong></td><td><strong>Bypass SMS:</strong> Jika <code>cz_buildTest()</code> aktif, parameter kode OTP (<code>model?.code</code>) otomatis diteruskan ke view verifikasi tanpa menunggu SMS gateway.</td></tr><tr><td><strong>6</strong></td><td><a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/learn/iOS-Arch/ios/IDSamirLoan/Application/SamirLoginModule/Classes/IDViewcontroller/V2/CodeViewV2Controller.swift#L234" target="_blank" rel="noopener noreferrer">🦊 CodeViewV2Controller.swift:L234, 589, 730, 797, 815, 855, 887, 918 <span class="branch-tag">learn/iOS-Arch</span> ↗</a></td><td><strong>Verifikasi V2 (Captcha Label)</strong></td><td>Menambahkan <code>codeLabel</code> ke UI dan menampilkan teks <code>Captcha: \(code)</code> langsung di layar HP saat testing.</td></tr><tr><td><strong>7</strong></td><td><a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/learn/iOS-Arch/ios/IDSamirLoan/Application/SamirLoginModule/Classes/IDViewcontroller/IDNLoginViewController.swift#L315" target="_blank" rel="noopener noreferrer">🦊 IDNLoginViewController.swift:L315, 354, 368, 390, 408, 426 <span class="branch-tag">learn/iOS-Arch</span> ↗</a></td><td><strong>Autentikasi V1 (Legacy Login)</strong></td><td>Logika bypass SMS OTP untuk alur antarmuka login versi 1.</td></tr><tr><td><strong>8</strong></td><td><a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/learn/iOS-Arch/ios/IDSamirLoan/Application/SamirLoginModule/Classes/IDViewcontroller/IDCodeViewController.swift#L177" target="_blank" rel="noopener noreferrer">🦊 IDCodeViewController.swift:L177, 479, 619, 673, 696, 719 <span class="branch-tag">learn/iOS-Arch</span> ↗</a></td><td><strong>Verifikasi V1 (Legacy Captcha)</strong></td><td>Menampilkan teks kode verifikasi di layar untuk login versi 1.</td></tr><tr><td><strong>9</strong></td><td><a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/learn/iOS-Arch/ios/IDSamirLoan/Application/SamirMainModule/Classes/IDController/IDMainTabBarController.swift#L39" target="_blank" rel="noopener noreferrer">🦊 IDMainTabBarController.swift:L39 <span class="branch-tag">learn/iOS-Arch</span> ↗</a></td><td><strong>Developer In-App Debugger</strong></td><td>Menyuntikkan floating widget pengembang <code>DebugUI.setup()</code> ke TabBar jika <code>cz_buildTest()</code> aktif.</td></tr><tr><td><strong>10</strong></td><td><a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/learn/iOS-Arch/ios/IDSamirLoan/Application/SamirMineModule/Classes/IDController/IDMineAboutController.swift#L46" target="_blank" rel="noopener noreferrer">🦊 IDMineAboutController.swift:L46 <span class="branch-tag">learn/iOS-Arch</span> ↗</a></td><td><strong>Mode Cangkang / Eggshell</strong></td><td><strong>Backdoor Pindah Akun:</strong> Jika <code>cz_buildEggShell()</code> aktif, klik pada view Tentang Kami membuka <code>IDSwitchAccountController</code> untuk berganti akun testing.</td></tr><tr><td><strong>11</strong></td><td><a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/learn/iOS-Arch/ios/IDSamirLoan/Application/SamirMainModule/Classes/IDModule/IDSamirMainModule.swift#L160" target="_blank" rel="noopener noreferrer">🦊 IDSamirMainModule.swift:L160 <span class="branch-tag">learn/iOS-Arch</span> ↗</a></td><td><strong>APNs Token & AppsFlyer</strong></td><td>Mengaktifkan <code>AppsFlyerLib.shared().useUninstallSandbox = true</code> dan mencetak log debug device token APNs.</td></tr><tr><td><strong>12</strong></td><td><a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/learn/iOS-Arch/ios/IDSamirLoan/Application/SamirPointsModule/Classes/IDTiktokManager.swift#L19" target="_blank" rel="noopener noreferrer">🦊 IDTiktokManager.swift:L19 <span class="branch-tag">learn/iOS-Arch</span> ↗</a></td><td><strong>Ad Attribution (TikTok Ads)</strong></td><td>Menahan reporting event instalasi berbayar agar testing QA tidak mengotori analitik konversi iklan.</td></tr><tr><td><strong>13</strong></td><td><a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/learn/iOS-Arch/ios/IDSamirLoan/Application/SamirPointsModule/Classes/Custom/IDCustomPointNetworkManager.swift#L146" target="_blank" rel="noopener noreferrer">🦊 IDCustomPointNetworkManager.swift:L146, 151, 156, 160 <span class="branch-tag">learn/iOS-Arch</span> ↗</a></td><td><strong>Points & Reward Tracking</strong></td><td>Mengabaikan validasi pelaporan poin saat berjalan di mode <code>cz_buildTest()</code>.</td></tr><tr><td><strong>14</strong></td><td><a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/learn/iOS-Arch/ios/IDSamirLoan/Application/SamirPointsModule/Classes/IDDataReportUtils.swift#L53" target="_blank" rel="noopener noreferrer">🦊 IDDataReportUtils.swift:L53 <span class="branch-tag">learn/iOS-Arch</span> ↗</a></td><td><strong>Big Data Reporting</strong></td><td>Mengisolasi pengiriman event big data analitik ke server pengujian.</td></tr><tr><td><strong>15</strong></td><td><a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/learn/iOS-Arch/ios/IDSamirLoan/Application/CZSwiftEnviromentLib/Classes/Base/CZEnvironmentManager.swift#L87" target="_blank" rel="noopener noreferrer">🦊 CZEnvironmentManager.swift:L87 <span class="branch-tag">learn/iOS-Arch</span> ↗</a></td><td><strong>Core Environment Resolution</strong></td><td>Mengecek <code>defaultEnvironmentType()</code> fallback: jika <code>cz_buildTest()</code> bernilai true maka me-return <code>.TEST</code>, selain itu <code>.PROD</code>.</td></tr></tbody></table></div>
+<div class="table-container"><table class="data-table"><thead><tr><th>No</th><th>Berkas Kode Sumber</th><th>Domain Bisnis</th><th>Logika & Perilaku Nyata di Kode</th></tr></thead><tbody><tr><td><strong>1</strong></td><td><a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/chore/iOS-Docs-DA/ios/IDSamirLoan/main.swift#L27" target="_blank" rel="noopener noreferrer">🦊 main.swift:L27 <span class="branch-tag">chore/iOS-Docs-DA</span> ↗</a></td><td><strong>APM Performance Monitor</strong></td><td>Memilih AppID TingYun APM SDK antara testing (<code>a3aa8552...</code>) vs live production (<code>614f29b4...</code>).</td></tr><tr><td><strong>2</strong></td><td><a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/chore/iOS-Docs-DA/ios/IDSamirLoan/Application/SamirNetworkModule/Classes/Common/IDNetworkManager.swift#L73-L74" target="_blank" rel="noopener noreferrer">🦊 IDNetworkManager.swift:L73-74 <span class="branch-tag">chore/iOS-Docs-DA</span> ↗</a></td><td><strong>Keamanan Jaringan & SSL</strong></td><td>Menyalakan <code>debugLogEnabled</code> saat <code>cz_buildTest()</code> dan mewajibkan <code>validatesDomainName = true</code> (SSL certificate check) saat <code>cz_buildProd()</code>.</td></tr><tr><td><strong>3</strong></td><td><a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/chore/iOS-Docs-DA/ios/IDSamirLoan/Application/SamirAuthModule/Classes/IDCommon/IDAuthAPI.swift#L50-L72" target="_blank" rel="noopener noreferrer">🦊 IDAuthAPI.swift:L50-72 <span class="branch-tag">chore/iOS-Docs-DA</span> ↗</a></td><td><strong>e-KYC & Face Liveness</strong></td><td>Menukar kredensial Advance.AI Liveness: <code>accessKey</code>, <code>secretKey</code>, dan lisensi demo (<code>ai.advance.liveness.demo</code>) vs prod (<code>com.sahabatmikro</code>).</td></tr><tr><td><strong>4</strong></td><td><a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/chore/iOS-Docs-DA/ios/IDSamirLoan/Application/SamirCommonModule/Classes/IDCommon/IDTrustDecision/IDTrustDecisionManager.swift#L41" target="_blank" rel="noopener noreferrer">🦊 IDTrustDecisionManager.swift:L41 <span class="branch-tag">chore/iOS-Docs-DA</span> ↗</a></td><td><strong>Anti-Fraud & Risk Assessment</strong></td><td>Mengganti partner key fraud detection (TongDun/TrustDecision) dari <code>Samir_id_test</code> ke akun live <code>Samir_id</code>.</td></tr><tr><td><strong>5</strong></td><td><a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/chore/iOS-Docs-DA/ios/IDSamirLoan/Application/SamirLoginModule/Classes/IDViewcontroller/V2/LoginViewV2Controller.swift#L406" target="_blank" rel="noopener noreferrer">🦊 LoginViewV2Controller.swift:L406, 470, 486, 548, 569, 589 <span class="branch-tag">chore/iOS-Docs-DA</span> ↗</a></td><td><strong>Autentikasi V2 (OTP Bypass)</strong></td><td><strong>Bypass SMS:</strong> Jika <code>cz_buildTest()</code> aktif, parameter kode OTP (<code>model?.code</code>) otomatis diteruskan ke view verifikasi tanpa menunggu SMS gateway.</td></tr><tr><td><strong>6</strong></td><td><a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/chore/iOS-Docs-DA/ios/IDSamirLoan/Application/SamirLoginModule/Classes/IDViewcontroller/V2/CodeViewV2Controller.swift#L234" target="_blank" rel="noopener noreferrer">🦊 CodeViewV2Controller.swift:L234, 589, 730, 797, 815, 855, 887, 918 <span class="branch-tag">chore/iOS-Docs-DA</span> ↗</a></td><td><strong>Verifikasi V2 (Captcha Label)</strong></td><td>Menambahkan <code>codeLabel</code> ke UI dan menampilkan teks <code>Captcha: \(code)</code> langsung di layar HP saat testing.</td></tr><tr><td><strong>7</strong></td><td><a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/chore/iOS-Docs-DA/ios/IDSamirLoan/Application/SamirLoginModule/Classes/IDViewcontroller/IDNLoginViewController.swift#L315" target="_blank" rel="noopener noreferrer">🦊 IDNLoginViewController.swift:L315, 354, 368, 390, 408, 426 <span class="branch-tag">chore/iOS-Docs-DA</span> ↗</a></td><td><strong>Autentikasi V1 (Legacy Login)</strong></td><td>Logika bypass SMS OTP untuk alur antarmuka login versi 1.</td></tr><tr><td><strong>8</strong></td><td><a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/chore/iOS-Docs-DA/ios/IDSamirLoan/Application/SamirLoginModule/Classes/IDViewcontroller/IDCodeViewController.swift#L177" target="_blank" rel="noopener noreferrer">🦊 IDCodeViewController.swift:L177, 479, 619, 673, 696, 719 <span class="branch-tag">chore/iOS-Docs-DA</span> ↗</a></td><td><strong>Verifikasi V1 (Legacy Captcha)</strong></td><td>Menampilkan teks kode verifikasi di layar untuk login versi 1.</td></tr><tr><td><strong>9</strong></td><td><a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/chore/iOS-Docs-DA/ios/IDSamirLoan/Application/SamirMainModule/Classes/IDController/IDMainTabBarController.swift#L39" target="_blank" rel="noopener noreferrer">🦊 IDMainTabBarController.swift:L39 <span class="branch-tag">chore/iOS-Docs-DA</span> ↗</a></td><td><strong>Developer In-App Debugger</strong></td><td>Menyuntikkan floating widget pengembang <code>DebugUI.setup()</code> ke TabBar jika <code>cz_buildTest()</code> aktif.</td></tr><tr><td><strong>10</strong></td><td><a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/chore/iOS-Docs-DA/ios/IDSamirLoan/Application/SamirMineModule/Classes/IDController/IDMineAboutController.swift#L46" target="_blank" rel="noopener noreferrer">🦊 IDMineAboutController.swift:L46 <span class="branch-tag">chore/iOS-Docs-DA</span> ↗</a></td><td><strong>Mode Cangkang / Eggshell</strong></td><td><strong>Backdoor Pindah Akun:</strong> Jika <code>cz_buildEggShell()</code> aktif, klik pada view Tentang Kami membuka <code>IDSwitchAccountController</code> untuk berganti akun testing.</td></tr><tr><td><strong>11</strong></td><td><a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/chore/iOS-Docs-DA/ios/IDSamirLoan/Application/SamirMainModule/Classes/IDModule/IDSamirMainModule.swift#L160" target="_blank" rel="noopener noreferrer">🦊 IDSamirMainModule.swift:L160 <span class="branch-tag">chore/iOS-Docs-DA</span> ↗</a></td><td><strong>APNs Token & AppsFlyer</strong></td><td>Mengaktifkan <code>AppsFlyerLib.shared().useUninstallSandbox = true</code> dan mencetak log debug device token APNs.</td></tr><tr><td><strong>12</strong></td><td><a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/chore/iOS-Docs-DA/ios/IDSamirLoan/Application/SamirPointsModule/Classes/IDTiktokManager.swift#L19" target="_blank" rel="noopener noreferrer">🦊 IDTiktokManager.swift:L19 <span class="branch-tag">chore/iOS-Docs-DA</span> ↗</a></td><td><strong>Ad Attribution (TikTok Ads)</strong></td><td>Menahan reporting event instalasi berbayar agar testing QA tidak mengotori analitik konversi iklan.</td></tr><tr><td><strong>13</strong></td><td><a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/chore/iOS-Docs-DA/ios/IDSamirLoan/Application/SamirPointsModule/Classes/Custom/IDCustomPointNetworkManager.swift#L146" target="_blank" rel="noopener noreferrer">🦊 IDCustomPointNetworkManager.swift:L146, 151, 156, 160 <span class="branch-tag">chore/iOS-Docs-DA</span> ↗</a></td><td><strong>Points & Reward Tracking</strong></td><td>Mengabaikan validasi pelaporan poin saat berjalan di mode <code>cz_buildTest()</code>.</td></tr><tr><td><strong>14</strong></td><td><a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/chore/iOS-Docs-DA/ios/IDSamirLoan/Application/SamirPointsModule/Classes/IDDataReportUtils.swift#L53" target="_blank" rel="noopener noreferrer">🦊 IDDataReportUtils.swift:L53 <span class="branch-tag">chore/iOS-Docs-DA</span> ↗</a></td><td><strong>Big Data Reporting</strong></td><td>Mengisolasi pengiriman event big data analitik ke server pengujian.</td></tr><tr><td><strong>15</strong></td><td><a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/chore/iOS-Docs-DA/ios/IDSamirLoan/Application/CZSwiftEnviromentLib/Classes/Base/CZEnvironmentManager.swift#L87" target="_blank" rel="noopener noreferrer">🦊 CZEnvironmentManager.swift:L87 <span class="branch-tag">chore/iOS-Docs-DA</span> ↗</a></td><td><strong>Core Environment Resolution</strong></td><td>Mengecek <code>defaultEnvironmentType()</code> fallback: jika <code>cz_buildTest()</code> bernilai true maka me-return <code>.TEST</code>, selain itu <code>.PROD</code>.</td></tr></tbody></table></div>
 </div>
 <div class="doc-subpoint-block" id="item-e-faq-arsitektur-penting">
 <h5>E. FAQ Arsitektur Penting</h5>
 <ol>
 <li><strong>Mengapa <code>CZBuildEnvironment.m</code> Dibuat Secara Manual?</strong>
 </li></ol>
-<p>Berkas <a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/learn/iOS-Arch/ios/IDSamirLoan/Application/CZSwiftEnviromentLib/Classes/Base/CZBuildEnvironment.m" target="_blank" rel="noopener noreferrer">🦊 CZBuildEnvironment.m <span class="branch-tag">learn/iOS-Arch</span> ↗</a> dan <a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/learn/iOS-Arch/ios/IDSamirLoan/Application/CZSwiftEnviromentLib/Classes/Base/CZBuildEnvironment.h" target="_blank" rel="noopener noreferrer">🦊 CZBuildEnvironment.h <span class="branch-tag">learn/iOS-Arch</span> ↗</a> ditulis secara manual oleh engineer iOS SAMIR (<code>SamiriOS</code>) pada 20 November 2023.</p>
+<p>Berkas <a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/chore/iOS-Docs-DA/ios/IDSamirLoan/Application/CZSwiftEnviromentLib/Classes/Base/CZBuildEnvironment.m" target="_blank" rel="noopener noreferrer">🦊 CZBuildEnvironment.m <span class="branch-tag">chore/iOS-Docs-DA</span> ↗</a> dan <a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/chore/iOS-Docs-DA/ios/IDSamirLoan/Application/CZSwiftEnviromentLib/Classes/Base/CZBuildEnvironment.h" target="_blank" rel="noopener noreferrer">🦊 CZBuildEnvironment.h <span class="branch-tag">chore/iOS-Docs-DA</span> ↗</a> ditulis secara manual oleh engineer iOS SAMIR (<code>SamiriOS</code>) pada 20 November 2023.</p>
 <ul>
-<li><strong>Alasan Arsitektur:</strong> Kompiler C/Clang mengevaluasi preprocessor macro (<code>GCC_PREPROCESSOR_DEFINITIONS</code>) secara instan pada level teks sebelum parsing. Kode Objective-C ini berfungsi sebagai <strong>C Preprocessor Bridge</strong> yang membungkus macro compiler ke dalam method statis Objective-C, lalu diekspos ke Swift via <a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/learn/iOS-Arch/ios/IDSamirLoan/Application/CZSwiftEnviromentLib/Classes/Base/CZPreBuildMacro.swift" target="_blank" rel="noopener noreferrer">🦊 CZPreBuildMacro.swift <span class="branch-tag">learn/iOS-Arch</span> ↗</a>.
+<li><strong>Alasan Arsitektur:</strong> Kompiler C/Clang mengevaluasi preprocessor macro (<code>GCC_PREPROCESSOR_DEFINITIONS</code>) secara instan pada level teks sebelum parsing. Kode Objective-C ini berfungsi sebagai <strong>C Preprocessor Bridge</strong> yang membungkus macro compiler ke dalam method statis Objective-C, lalu diekspos ke Swift via <a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/chore/iOS-Docs-DA/ios/IDSamirLoan/Application/CZSwiftEnviromentLib/Classes/Base/CZPreBuildMacro.swift" target="_blank" rel="noopener noreferrer">🦊 CZPreBuildMacro.swift <span class="branch-tag">chore/iOS-Docs-DA</span> ↗</a>.
 </li></ul>
 <ol>
 <li><strong>Mengapa <code>appleId</code> (<code>6475002606</code>) Aman Disimpan di Repo?</strong>
 </li></ol>
-<p>Nilai <code>appleId</code> di <a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/learn/iOS-Arch/ios/IDSamirLoan/Application/CZSwiftEnviromentLib/Classes/Base/AppEnv.swift" target="_blank" rel="noopener noreferrer">🦊 AppEnv.swift <span class="branch-tag">learn/iOS-Arch</span> ↗</a> adalah <strong>App Store ID (Track ID)</strong> publik yang diterbitkan oleh Apple (URL publik: <code>https://apps.apple.com/app/id6475002606</code>).</p>
+<p>Nilai <code>appleId</code> di <a class="gitlab-code-link" href="http://gitlab.samir.co.id/samir_it/samir-mobile/-/blob/chore/iOS-Docs-DA/ios/IDSamirLoan/Application/CZSwiftEnviromentLib/Classes/Base/AppEnv.swift" target="_blank" rel="noopener noreferrer">🦊 AppEnv.swift <span class="branch-tag">chore/iOS-Docs-DA</span> ↗</a> adalah <strong>App Store ID (Track ID)</strong> publik yang diterbitkan oleh Apple (URL publik: <code>https://apps.apple.com/app/id6475002606</code>).</p>
 <ul>
 <li>Digunakan untuk in-app review redirect (<code>itms-apps://itunes.apple.com/app/id6475002606</code>), integrasi Firebase, Universal Links, dan SKAdNetwork.
 </li>
@@ -347,7 +354,7 @@ graph TD
 <section id="sec-walkthrough" class="doc-section">
 <h3>🪜 E. Step-by-Step Walkthrough (Alur Pemahaman Aplikasi)</h3>
 <ol>
-<li><strong>Unduh & Pasang</strong>: Aplikasi diinstal di iPhone (minimal iOS 14.0).
+<li><strong>Unduh & Pasang</strong>: Aplikasi diinstal di iPhone (minimal iOS 15.0).
 </li>
 <li><strong>Boot Awal & Environment Resolution</strong>:
 <ul>
@@ -456,9 +463,9 @@ sequenceDiagram
 </li></ul>
 <p>Aplikasi finansial dan verifikasi KTP/wajah sangat sensitif terhadap rotasi kamera dan konsistensi kontras warna saat proses OCR. Membatasi orientasi ke portrait dan light-mode mengeliminasi ratusan edge-case bug pada layout kamera dan form tabel.</p>
 <ul>
-<li><strong>Mengapa Minimal iOS 14.0?</strong>
+<li><strong>Mengapa Minimal iOS 15.0?</strong>
 </li></ul>
-<p>Mulai iOS 14.0, Apple mewajibkan framework <code>AppTrackingTransparency</code> (<code>ATTrackingManager</code>). Selain itu, Flutter Engine terbaru dan pustaka kriptografi modern (<code>CryptoKit</code>) bekerja optimal di iOS 14+.</p>
+<p>Mulai pembaruan v1.3.8, target deployment ditingkatkan ke iOS 15.0 untuk mengoptimalkan performa Flutter Engine terbaru, adaptasi arsitektur Swift concurrency modern, integrasi AppsFlyer Framework 7.x, dan memanfaatkan API UIKit iOS 15+ (seperti <code>UITabBarAppearance</code>).</p>
 <ul>
 <li><strong>Mengapa Menggunakan Single Prewarmed Flutter Engine?</strong>
 </li></ul>
@@ -478,11 +485,11 @@ sequenceDiagram
 <section id="sec-mistakes" class="doc-section">
 <h3>⚠️ H. Common Mistakes & Debugging</h3>
 <ul>
-<li><strong>Kesalahan Umum</strong>: Mencoba menjalankan aplikasi dengan simulator ber-iOS 13.
+<li><strong>Kesalahan Umum</strong>: Mencoba menjalankan aplikasi dengan simulator ber-iOS 14 ke bawah.
 <ul>
 <li><strong>Efek</strong>: Xcode akan menampilkan error build / deploy <code>The run destination is not valid for running the scheme</code>.
 </li>
-<li><strong>Solusi</strong>: Pastikan simulator atau iPhone fisik menggunakan iOS 14.0 atau lebih baru.
+<li><strong>Solusi</strong>: Pastikan simulator atau iPhone fisik menggunakan iOS 15.0 atau lebih baru.
 </li></ul>
 </li>
 <li><strong>Kesalahan Dark Mode</strong>: Berasumsi aplikasi mendukung Dark Mode otomatis.
@@ -647,7 +654,7 @@ public final class AppSessionManager: SessionProvider {
     <!-- Footer -->
     <footer>
       <div>Chiron Codebase Mastery Academy • SAMIR Mobile iOS</div>
-      <div>Anchor Branch: <strong>learn/iOS-Arch</strong></div>
+      <div>Anchor Branch: <strong>chore/iOS-Docs-DA</strong></div>
     </footer>
 
   </main>
@@ -672,7 +679,7 @@ public final class AppSessionManager: SessionProvider {
           <span class="toc-caret" onclick="toggleTocBranch(this)">▾</span>
           <a class="toc-tree-link root-link" href="#sec-title" title="01 — Application Overview">
             01 — Application Overview
-          </a>
+          </a> <span class="chiron-toc-marker-badges"><span class="marker-pill pill-updated" title="Halaman diperbarui">✨</span></span>
         </div>
         <div class="toc-branch">
           <div class="toc-node-row">
@@ -788,7 +795,7 @@ public final class AppSessionManager: SessionProvider {
         <span class="toc-caret" onclick="toggleTocBranch(this)">▾</span>
         <a class="toc-tree-link root-link" href="#sec-title" onclick="toggleMobileToc()">
           01 — Application Overview
-        </a>
+        </a> <span class="chiron-toc-marker-badges"><span class="marker-pill pill-updated" title="Halaman diperbarui">✨</span></span>
       </div>
       <div class="toc-branch">
         <div class="toc-node-row">
@@ -901,155 +908,158 @@ public final class AppSessionManager: SessionProvider {
   <div class="drawer-body" id="curriculumListBody">
     <div class="curriculum-level-group">
       <div class="curriculum-level-title">Level 0: Learning Roadmap</div>
-      <a class="curriculum-item-link" href="../00-learning-roadmap.html">
-        <span>📄</span> Kurikulum &amp; Roadmap Pembelajaran SAMIR iOS
+      <a class="curriculum-item-link" href="../00-learning-roadmap.html" data-chiron-updated="true">
+        <span>📄</span> Kurikulum &amp; Roadmap Pembelajaran SAMIR iOS <span class="chiron-drawer-marker-badges"><span class="marker-pill pill-updated" title="Halaman ini baru saja diperbarui">✨ UPDATED</span></span>
       </a>
     </div>
     <div class="curriculum-level-group">
       <div class="curriculum-level-title">Level 1: Project Foundation</div>
-      <a class="curriculum-item-link active" href="#">
-        <span>🟢</span> 01 — Application Overview (Sedang Dibaca)
+      <a class="curriculum-item-link active" href="#" data-chiron-updated="true">
+        <span>🟢</span> 01 — Application Overview (Sedang Dibaca) <span class="chiron-drawer-marker-badges"><span class="marker-pill pill-updated" title="Halaman ini baru saja diperbarui">✨ UPDATED</span></span>
       </a>
-      <a class="curriculum-item-link" href="../01-project-foundation/02-repository-structure.html">
+      <a class="curriculum-item-link" href="../01-project-foundation/02-repository-structure.html" data-chiron-updated="false">
         <span>📄</span> 02 — Repository Structure
       </a>
-      <a class="curriculum-item-link" href="../01-project-foundation/03-technology-stack-and-build.html">
-        <span>📄</span> 03 — Technology Stack &amp; Build Configuration
+      <a class="curriculum-item-link" href="../01-project-foundation/03-technology-stack-and-build.html" data-chiron-updated="true">
+        <span>📄</span> 03 — Technology Stack &amp; Build Configuration <span class="chiron-drawer-marker-badges"><span class="marker-pill pill-updated" title="Halaman ini baru saja diperbarui">✨ UPDATED</span></span>
       </a>
     </div>
     <div class="curriculum-level-group">
       <div class="curriculum-level-title">Level 2: Understanding App Startup</div>
-      <a class="curriculum-item-link" href="../02-understanding-app-startup/01-ios-entry-point.html">
+      <a class="curriculum-item-link" href="../02-understanding-app-startup/01-ios-entry-point.html" data-chiron-updated="false">
         <span>📄</span> 01 — iOS Entry Point
       </a>
-      <a class="curriculum-item-link" href="../02-understanding-app-startup/02-application-lifecycle.html">
+      <a class="curriculum-item-link" href="../02-understanding-app-startup/02-application-lifecycle.html" data-chiron-updated="false">
         <span>📄</span> 02 — Application Lifecycle
       </a>
-      <a class="curriculum-item-link" href="../02-understanding-app-startup/03-startup-sequence-and-initial-routing.html">
-        <span>📄</span> 03 — Startup Sequence &amp; Initial Routing
+      <a class="curriculum-item-link" href="../02-understanding-app-startup/03-startup-sequence-and-initial-routing.html" data-chiron-updated="true">
+        <span>📄</span> 03 — Startup Sequence &amp; Initial Routing <span class="chiron-drawer-marker-badges"><span class="marker-pill pill-updated" title="Halaman ini baru saja diperbarui">✨ UPDATED</span></span>
       </a>
-      <a class="curriculum-item-link" href="../02-understanding-app-startup/04-czmodulemanager-deep-dive.html">
-        <span>📄</span> 04 — CZModuleManager Deep Dive
+      <a class="curriculum-item-link" href="../02-understanding-app-startup/04-czmodulemanager-deep-dive.html" data-chiron-updated="true">
+        <span>📄</span> 04 — CZModuleManager Deep Dive <span class="chiron-drawer-marker-badges"><span class="marker-pill pill-updated" title="Halaman ini baru saja diperbarui">✨ UPDATED</span></span>
       </a>
     </div>
     <div class="curriculum-level-group">
       <div class="curriculum-level-title">Level 3: Understanding Architecture</div>
-      <a class="curriculum-item-link" href="../03-understanding-architecture/01-architecture-overview.html">
+      <a class="curriculum-item-link" href="../03-understanding-architecture/01-architecture-overview.html" data-chiron-updated="false">
         <span>📄</span> 01 — Architecture Overview
       </a>
-      <a class="curriculum-item-link" href="../03-understanding-architecture/02-layers-and-responsibilities.html">
+      <a class="curriculum-item-link" href="../03-understanding-architecture/02-layers-and-responsibilities.html" data-chiron-updated="false">
         <span>📄</span> 02 — Layers &amp; Responsibilities
       </a>
-      <a class="curriculum-item-link" href="../03-understanding-architecture/03-dependency-direction.html">
+      <a class="curriculum-item-link" href="../03-understanding-architecture/03-dependency-direction.html" data-chiron-updated="false">
         <span>📄</span> 03 — Dependency Direction
       </a>
-      <a class="curriculum-item-link" href="../03-understanding-architecture/04-shared-components-and-services.html">
+      <a class="curriculum-item-link" href="../03-understanding-architecture/04-shared-components-and-services.html" data-chiron-updated="false">
         <span>📄</span> 04 — Shared Components &amp; Services
       </a>
     </div>
     <div class="curriculum-level-group">
       <div class="curriculum-level-title">Level 4: Understanding Navigation</div>
-      <a class="curriculum-item-link" href="../04-understanding-navigation/01-feature-inventory.html">
+      <a class="curriculum-item-link" href="../04-understanding-navigation/01-feature-inventory.html" data-chiron-updated="false">
         <span>📄</span> 01 — Feature Inventory
       </a>
-      <a class="curriculum-item-link" href="../04-understanding-navigation/02-navigation-fundamentals.html">
+      <a class="curriculum-item-link" href="../04-understanding-navigation/02-navigation-fundamentals.html" data-chiron-updated="false">
         <span>📄</span> 02 — Navigation Fundamentals
       </a>
-      <a class="curriculum-item-link" href="../04-understanding-navigation/03-complete-navigation-map.html">
+      <a class="curriculum-item-link" href="../04-understanding-navigation/03-complete-navigation-map.html" data-chiron-updated="false">
         <span>📄</span> 03 — Complete Navigation Map
       </a>
-      <a class="curriculum-item-link" href="../04-understanding-navigation/04-navigation-conditions-and-edge-cases.html">
+      <a class="curriculum-item-link" href="../04-understanding-navigation/04-navigation-conditions-and-edge-cases.html" data-chiron-updated="false">
         <span>📄</span> 04 — Navigation Conditions &amp; Edge Cases
+      </a>
+      <a class="curriculum-item-link" href="../04-understanding-navigation/05-hybrid-tabbar-navigation.html" data-chiron-updated="true">
+        <span>📄</span> 05 — Arsitektur Navigasi Hybrid TabBar &amp; Flutter Persistent Host <span class="chiron-drawer-marker-badges"><span class="marker-pill pill-updated" title="Halaman ini baru saja diperbarui">✨ UPDATED</span></span>
       </a>
     </div>
     <div class="curriculum-level-group">
       <div class="curriculum-level-title">Level 5: Learning Business Flows</div>
-      <a class="curriculum-item-link" href="../05-learning-business-flows/01-user-journey-overview.html">
+      <a class="curriculum-item-link" href="../05-learning-business-flows/01-user-journey-overview.html" data-chiron-updated="false">
         <span>📄</span> 01 — User Journey Overview
       </a>
-      <a class="curriculum-item-link" href="../05-learning-business-flows/02-authentication-and-session-flow.html">
+      <a class="curriculum-item-link" href="../05-learning-business-flows/02-authentication-and-session-flow.html" data-chiron-updated="false">
         <span>📄</span> 02 — Authentication &amp; Session Flow
       </a>
-      <a class="curriculum-item-link" href="../05-learning-business-flows/03-core-feature-flows.html">
-        <span>📄</span> 03 — Core Feature Flows
+      <a class="curriculum-item-link" href="../05-learning-business-flows/03-core-feature-flows.html" data-chiron-updated="true">
+        <span>📄</span> 03 — Core Feature Flows <span class="chiron-drawer-marker-badges"><span class="marker-pill pill-updated" title="Halaman ini baru saja diperbarui">✨ UPDATED</span></span>
       </a>
-      <a class="curriculum-item-link" href="../05-learning-business-flows/04-cross-feature-journeys.html">
-        <span>📄</span> 04 — Cross-Feature Journeys
+      <a class="curriculum-item-link" href="../05-learning-business-flows/04-cross-feature-journeys.html" data-chiron-updated="true">
+        <span>📄</span> 04 — Cross-Feature Journeys <span class="chiron-drawer-marker-badges"><span class="marker-pill pill-updated" title="Halaman ini baru saja diperbarui">✨ UPDATED</span></span>
       </a>
-      <a class="curriculum-item-link" href="../05-learning-business-flows/05-production-low-level-flows.html">
+      <a class="curriculum-item-link" href="../05-learning-business-flows/05-production-low-level-flows.html" data-chiron-updated="false">
         <span>📄</span> 05 — Production Low-Level Execution Flows
       </a>
     </div>
     <div class="curriculum-level-group">
       <div class="curriculum-level-title">Level 6: Data &amp; Dependencies</div>
-      <a class="curriculum-item-link" href="../06-understanding-data-and-dependencies/01-dependency-catalog.html">
-        <span>📄</span> 01 — Dependency Catalog
+      <a class="curriculum-item-link" href="../06-understanding-data-and-dependencies/01-dependency-catalog.html" data-chiron-updated="true">
+        <span>📄</span> 01 — Dependency Catalog <span class="chiron-drawer-marker-badges"><span class="marker-pill pill-updated" title="Halaman ini baru saja diperbarui">✨ UPDATED</span></span>
       </a>
-      <a class="curriculum-item-link" href="../06-understanding-data-and-dependencies/02-networking-and-api-flow.html">
+      <a class="curriculum-item-link" href="../06-understanding-data-and-dependencies/02-networking-and-api-flow.html" data-chiron-updated="false">
         <span>📄</span> 02 — Networking &amp; API Flow
       </a>
-      <a class="curriculum-item-link" href="../06-understanding-data-and-dependencies/03-models-and-data-transformation.html">
+      <a class="curriculum-item-link" href="../06-understanding-data-and-dependencies/03-models-and-data-transformation.html" data-chiron-updated="false">
         <span>📄</span> 03 — Models &amp; Data Transformation
       </a>
-      <a class="curriculum-item-link" href="../06-understanding-data-and-dependencies/04-state-management-and-persistence.html">
+      <a class="curriculum-item-link" href="../06-understanding-data-and-dependencies/04-state-management-and-persistence.html" data-chiron-updated="false">
         <span>📄</span> 04 — State Management &amp; Persistence
       </a>
-      <a class="curriculum-item-link" href="../06-understanding-data-and-dependencies/05-native-flutter-integration.html">
-        <span>📄</span> 05 — Native-Flutter Integration
+      <a class="curriculum-item-link" href="../06-understanding-data-and-dependencies/05-native-flutter-integration.html" data-chiron-updated="true">
+        <span>📄</span> 05 — Native-Flutter Integration <span class="chiron-drawer-marker-badges"><span class="marker-pill pill-updated" title="Halaman ini baru saja diperbarui">✨ UPDATED</span></span>
       </a>
     </div>
     <div class="curriculum-level-group">
       <div class="curriculum-level-title">Level 7: Debugging &amp; Maintenance</div>
-      <a class="curriculum-item-link" href="../07-learning-to-debug-and-maintain/01-error-handling.html">
+      <a class="curriculum-item-link" href="../07-learning-to-debug-and-maintain/01-error-handling.html" data-chiron-updated="false">
         <span>📄</span> 01 — Error Handling
       </a>
-      <a class="curriculum-item-link" href="../07-learning-to-debug-and-maintain/02-testing-and-debugging.html">
+      <a class="curriculum-item-link" href="../07-learning-to-debug-and-maintain/02-testing-and-debugging.html" data-chiron-updated="false">
         <span>📄</span> Level 7
       </a>
-      <a class="curriculum-item-link" href="../07-learning-to-debug-and-maintain/03-coupling-and-technical-debt.html">
+      <a class="curriculum-item-link" href="../07-learning-to-debug-and-maintain/03-coupling-and-technical-debt.html" data-chiron-updated="false">
         <span>📄</span> Level 7
       </a>
-      <a class="curriculum-item-link" href="../07-learning-to-debug-and-maintain/04-change-impact-analysis.html">
+      <a class="curriculum-item-link" href="../07-learning-to-debug-and-maintain/04-change-impact-analysis.html" data-chiron-updated="false">
         <span>📄</span> Level 7
       </a>
     </div>
     <div class="curriculum-level-group">
       <div class="curriculum-level-title">Level 8: Reference &amp; Codebase Audit</div>
-      <a class="curriculum-item-link" href="../08-reference/01-codebase-glossary.html">
+      <a class="curriculum-item-link" href="../08-reference/01-codebase-glossary.html" data-chiron-updated="false">
         <span>📄</span> Level 8
       </a>
-      <a class="curriculum-item-link" href="../08-reference/02-source-code-index.html">
+      <a class="curriculum-item-link" href="../08-reference/02-source-code-index.html" data-chiron-updated="false">
         <span>📄</span> Level 8
       </a>
-      <a class="curriculum-item-link" href="../08-reference/03-existing-documentation-audit.html">
+      <a class="curriculum-item-link" href="../08-reference/03-existing-documentation-audit.html" data-chiron-updated="false">
         <span>📄</span> Level 8
       </a>
-      <a class="curriculum-item-link" href="../08-reference/04-open-questions-and-unverified-findings.html">
+      <a class="curriculum-item-link" href="../08-reference/04-open-questions-and-unverified-findings.html" data-chiron-updated="false">
         <span>📄</span> Level 8
       </a>
     </div>
     <div class="curriculum-level-group">
       <div class="curriculum-level-title">Visual Diagrams &amp; Sequence Maps</div>
-      <a class="curriculum-item-link" href="../diagrams/application-startup.html">
+      <a class="curriculum-item-link" href="../diagrams/application-startup.html" data-chiron-updated="false">
         <span>📄</span> Diagram — Alur Peluncuran Aplikasi (Application Startup Sequence)
       </a>
-      <a class="curriculum-item-link" href="../diagrams/architecture-overview.html">
+      <a class="curriculum-item-link" href="../diagrams/architecture-overview.html" data-chiron-updated="false">
         <span>📄</span> Diagram — Ikhtisar Arsitektur (Architecture Overview)
       </a>
-      <a class="curriculum-item-link" href="../diagrams/core-user-journeys.html">
+      <a class="curriculum-item-link" href="../diagrams/core-user-journeys.html" data-chiron-updated="false">
         <span>📄</span> Diagram — Alur Pengguna Utama (Core User Journeys)
       </a>
-      <a class="curriculum-item-link" href="../diagrams/feature-dependencies.html">
+      <a class="curriculum-item-link" href="../diagrams/feature-dependencies.html" data-chiron-updated="false">
         <span>📄</span> Diagram — Dependensi Fitur &amp; Modul (Feature Dependencies)
       </a>
-      <a class="curriculum-item-link" href="../diagrams/navigation-overview.html">
+      <a class="curriculum-item-link" href="../diagrams/navigation-overview.html" data-chiron-updated="false">
         <span>📄</span> Diagram — Peta Navigasi Lengkap (Navigation Overview)
       </a>
     </div>
     <div class="curriculum-level-group">
       <div class="curriculum-level-title">Course Index &amp; Syllabus</div>
-      <a class="curriculum-item-link" href="../README.html">
-        <span>📄</span> SAMIR iOS — Learning Curve &amp; Engineering Guide
+      <a class="curriculum-item-link" href="../README.html" data-chiron-updated="true">
+        <span>📄</span> SAMIR iOS — Learning Curve &amp; Engineering Guide <span class="chiron-drawer-marker-badges"><span class="marker-pill pill-updated" title="Halaman ini baru saja diperbarui">✨ UPDATED</span></span>
       </a>
     </div>
   </div>
@@ -1299,6 +1309,11 @@ public final class AppSessionManager: SessionProvider {
     feedback.innerHTML = '<strong>' + (isCorrect ? '🎉 Jawaban Tepat!' : '❌ Jawaban Salah!') + '</strong> ' + 
       (isCorrect ? explanations[quizId].success : explanations[quizId].danger);
   }
+</script>
+
+<!-- Embed Course Updates Manifest -->
+<script>
+  window.CHIRON_COURSE_UPDATES = {"course": "samir-mobile-ios", "last_synced_at": "2026-11-09T14:15:00+07:00", "sync_title": "Sinkronisasi branch chore/iOS-Docs-DA dengan main (v1.3.8-iOS & iOS 15.0)", "sync_commit": "e5b7352", "updated_pages": {"00-learning-roadmap.html": {"tag": "Silabus Diperbarui", "summary": "Penambahan modul navigasi 05 — Arsitektur Hybrid TabBar & Flutter Persistent Host ke peta belajar Level 4."}, "01-project-foundation/01-application-overview.html": {"tag": "Target iOS 15 & PRODTEST", "summary": "Pembaruan deployment target ke iOS 15.0+, penambahan kondisi kompilasi PRODTEST di arsitektur Tiga Serangkai, dan penyesuaian walkthrough."}, "01-project-foundation/03-technology-stack-and-build.html": {"tag": "Upgrade SDK & Pods", "summary": "Upgrade AppsFlyerFramework 7.0.2, Tingyun 2.17.9, pencopotan CocoaPods TrustDecision, dan skema build PRODTEST."}, "02-understanding-app-startup/03-startup-sequence-and-initial-routing.html": {"tag": "Urutan 11 Bootstrapping", "summary": "Penyelarasan urutan eksekusi aktual didFinishLaunchingWithOptions (AppsFlyer DeepLink & Points Report dijalankan lebih awal) dan integrasi IDScreenCaptureWarningManager."}, "02-understanding-app-startup/04-czmodulemanager-deep-dive.html": {"tag": "Sinkronisasi Baris Kode", "summary": "Pembaruan nomor baris acuan pada LoanConfirmService (#L964), IDCodeViewController (#L451), dan penanganan pending deeplink pada splash countdown."}, "04-understanding-navigation/05-hybrid-tabbar-navigation.html": {"tag": "Modul Baru", "summary": "Arsitektur Single Persistent Flutter Host di bawah UITabBar, pembagian tab Native vs Flutter, dan sinkronisasi route chrome."}, "05-learning-business-flows/03-core-feature-flows.html": {"tag": "Dual Benefit Style B", "summary": "Pola A/B test paket keuntungan VIP (Style B) di konfirmasi pinjaman, komponen LoanBenefitCouponReminderView, dan sel repaid Beranda baru."}, "05-learning-business-flows/04-cross-feature-journeys.html": {"tag": "Web Caching & JSBridge", "summary": "JSBridge clearAccountCache untuk logout via Web H5, dan pembaruan arsitektur caching useProtocolCachePolicy dengan validasi ETag & Last-Modified."}, "06-understanding-data-and-dependencies/01-dependency-catalog.html": {"tag": "Katalog Dependensi", "summary": "Dokumentasi breaking change AppsFlyer 7.0.2 (AppsFlyerDeepLinkDelegate & sessionReadyListener), Tingyun 2.17.9, dan removal TrustDecision."}, "06-understanding-data-and-dependencies/05-native-flutter-integration.html": {"tag": "FChannel Baru", "summary": "Penambahan method platform channel logout dan handleLoginError pada samir_native_channel."}, "README.html": {"tag": "Indeks Silabus", "summary": "Penyelarasan struktur kurikulum Level 4 dengan 5 modul navigasi lengkap."}}};
 </script>
 
 <!-- Chiron Annotations, Page Markers & Multi-IDE Launcher Engine -->
