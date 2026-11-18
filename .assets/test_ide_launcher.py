@@ -17,11 +17,14 @@ sys.path.insert(0, str(CHIRON_ROOT / ".assets"))
 from chiron_sync import (
     build_open_command,
     execute_open_ide,
+    load_chiron_config,
     CHIRON_CONFIG_FILE,
     CHIRON_ROOT
 )
 
-TEST_FILE = "/Users/samir/Documents/Workspace/SAMIR/Mobile/Nexus/samir-mobile-nexus/ios/IDSamirLoan/Application/SamirMainModule/Classes/IDModule/IDSamirMainModule.swift"
+_cfg = load_chiron_config()
+_repo_nexus = _cfg.get("repositories", {}).get("samir-mobile", {}).get("local_path", "")
+TEST_FILE = str(Path(_repo_nexus) / "ios/IDSamirLoan/Application/SamirMainModule/Classes/IDModule/IDSamirMainModule.swift")
 
 
 def test_unit_build_open_command():

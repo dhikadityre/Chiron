@@ -43,10 +43,11 @@ console.log("   -> Parsed single line URL successfully!");
 
 console.log("--- [TEST 3: Resolve Local File Path from Config] ---");
 const localPath = launcher.resolveLocalPath(parsed1, config);
-assert.strictEqual(
-  localPath,
-  "/Users/samir/Documents/Workspace/SAMIR/Mobile/Nexus/samir-mobile-nexus/ios/IDSamirLoan/Application/SamirMainModule/Classes/IDModule/IDSamirMainModule.swift"
+const expectedLocalPath = path.join(
+  config.repositories["samir-mobile"].local_path,
+  "ios/IDSamirLoan/Application/SamirMainModule/Classes/IDModule/IDSamirMainModule.swift"
 );
+assert.strictEqual(localPath, expectedLocalPath);
 console.log("   -> Local path resolved correctly via config mappings!");
 
 console.log("--- [TEST 4: Build IDE URI Schemes] ---");
